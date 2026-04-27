@@ -39,8 +39,7 @@ const emit = defineEmits<{
 }>()
 
 defineSlots<{
-  [key: string]: (row: Record<string, unknown>) => unknown
-  empty?(): unknown
+  [key: string]: (row?: Record<string, unknown>) => unknown
 }>()
 
 function onSort(col: UidTableColumn): void {

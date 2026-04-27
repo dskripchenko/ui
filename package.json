@@ -29,7 +29,7 @@
   ],
   "scripts": {
     "dev": "storybook dev -p 6006",
-    "build": "vue-tsc --noEmit && vite build",
+    "build": "vue-tsc --noEmit -p tsconfig.build.json && vite build",
     "build:lib": "vite build",
     "test": "vitest run",
     "test:watch": "vitest",

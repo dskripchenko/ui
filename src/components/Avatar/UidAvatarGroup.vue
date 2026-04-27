@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, useSlots, type VNode } from 'vue'
+import { computed, type VNode } from 'vue'
 
 export interface UidAvatarGroupProps {
   max?: number
@@ -9,10 +9,10 @@ const props = withDefaults(defineProps<UidAvatarGroupProps>(), {
   max: undefined,
 })
 
-const slots = useSlots()
+const slots = defineSlots<{ default?(): VNode[] }>()
 
 const allChildren = computed<VNode[]>(() =>
-  slots.default?.()?.flatMap(vnode =>
+  slots.default?.()?.flatMap((vnode: VNode) =>
     vnode.type === Symbol.for('v-fgt') ? (vnode.children as VNode[]) : [vnode],
   ) ?? [],
 )
