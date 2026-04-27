@@ -1,0 +1,113 @@
+.uid-tabs {
+  display: flex;
+  flex-direction: column;
+}
+
+.uid-tabs--vertical {
+  flex-direction: row;
+  gap: var(--uid-space-md);
+}
+
+/* Tab list */
+.uid-tabs__list {
+  display: flex;
+  flex-shrink: 0;
+  gap: var(--uid-space-xs);
+  border-bottom: 1px solid var(--uid-color-border);
+}
+
+.uid-tabs--vertical .uid-tabs__list {
+  flex-direction: column;
+  border-bottom: none;
+  border-right: 1px solid var(--uid-color-border);
+  padding-right: 0;
+  gap: var(--uid-space-2xs);
+}
+
+.uid-tabs__panels {
+  flex: 1;
+}
+
+/* Tab button */
+.uid-tab {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--uid-space-sm);
+  padding: var(--uid-space-sm) 12px;
+  border: none;
+  border-radius: var(--uid-radius-sm) var(--uid-radius-sm) 0 0;
+  background: transparent;
+  font-size: var(--uid-font-size-sm);
+  font-weight: 500;
+  color: var(--uid-tab-color, var(--uid-color-text-secondary));
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color var(--uid-duration-fast) var(--uid-ease-out),
+              background var(--uid-duration-fast) var(--uid-ease-out);
+}
+
+.uid-tab::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: transparent;
+  border-radius: 1px;
+  transition: background var(--uid-duration-fast) var(--uid-ease-out);
+}
+
+.uid-tab:hover:not([disabled]) {
+  color: var(--uid-tab-color-hover, var(--uid-color-text-primary));
+  background: var(--uid-color-surface-hover);
+}
+
+.uid-tab--active {
+  color: var(--uid-tab-color-active, var(--uid-color-primary));
+}
+
+.uid-tab--active::after {
+  background: var(--uid-color-primary);
+}
+
+.uid-tab[disabled] {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.uid-tab:focus-visible {
+  outline: 2px solid var(--uid-color-focus-ring);
+  outline-offset: -2px;
+  border-radius: var(--uid-radius-sm);
+}
+
+/* Vertical tab button */
+.uid-tabs--vertical .uid-tab {
+  border-radius: var(--uid-radius-sm) 0 0 var(--uid-radius-sm);
+  justify-content: flex-start;
+  padding: var(--uid-space-sm) 12px;
+}
+
+.uid-tabs--vertical .uid-tab::after {
+  top: 0;
+  bottom: 0;
+  left: auto;
+  right: -1px;
+  width: 2px;
+  height: auto;
+}
+
+/* Panel */
+.uid-tab-panel {
+  padding: var(--uid-space-md) 0;
+  outline: none;
+}
+
+.uid-tab-panel:focus-visible {
+  outline: 2px solid var(--uid-color-focus-ring);
+  outline-offset: 2px;
+  border-radius: var(--uid-radius-sm);
+}

@@ -1,0 +1,11 @@
+:root {
+  --uid-space-0:    0;
+  --uid-space-2xs:  2px;
+  --uid-space-xs:   4px;
+  --uid-space-sm:   8px;
+  --uid-space-md:   16px;
+  --uid-space-lg:   24px;
+  --uid-space-xl:   32px;
+  --uid-space-2xl:  48px;
+  --uid-space-3xl:  64px;
+}

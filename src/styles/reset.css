@@ -1,0 +1,11 @@
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img, svg { display: block; max-width: 100%; }
+button, input, textarea, select { font: inherit; }
+p, h1, h2, h3, h4 { margin: 0; overflow-wrap: break-word; }

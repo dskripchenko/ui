@@ -1,0 +1,7 @@
+:root {
+  font-family: var(--uid-font-family-sans);
+  font-size: var(--uid-font-size-md);
+  line-height: var(--uid-line-height-normal);
+  color: var(--uid-text-primary);
+  background: var(--uid-surface-base);
+}

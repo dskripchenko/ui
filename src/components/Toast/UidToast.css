@@ -1,0 +1,118 @@
+/* === Provider list === */
+
+.uid-toast-list {
+  position: fixed;
+  bottom: var(--uid-space-lg);
+  right: var(--uid-space-lg);
+  z-index: var(--uid-z-toast);
+  display: flex;
+  flex-direction: column;
+  gap: var(--uid-space-sm);
+  align-items: flex-end;
+  pointer-events: none;
+  max-width: 400px;
+  width: calc(100vw - var(--uid-space-lg) * 2);
+}
+
+/* === Single toast === */
+
+.uid-toast {
+  --uid-toast-bg:     var(--uid-surface-overlay);
+  --uid-toast-color:  var(--uid-text-primary);
+  --uid-toast-border: var(--uid-border-default);
+  --uid-toast-accent: var(--uid-accent);
+
+  display: flex;
+  align-items: flex-start;
+  gap: var(--uid-space-sm);
+  padding: var(--uid-space-sm) var(--uid-space-md);
+  background: var(--uid-toast-bg);
+  border: 1px solid var(--uid-toast-border);
+  border-left: 3px solid var(--uid-toast-accent);
+  border-radius: var(--uid-radius-md);
+  box-shadow: var(--uid-shadow-lg);
+  pointer-events: all;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.uid-toast__icon {
+  flex-shrink: 0;
+  display: flex;
+  color: var(--uid-toast-accent);
+  margin-top: 1px;
+}
+
+.uid-toast__content {
+  flex: 1;
+  min-width: 0;
+}
+
+.uid-toast__title {
+  margin: 0 0 2px;
+  font-size: var(--uid-font-size-sm);
+  font-weight: var(--uid-font-weight-semibold);
+  color: var(--uid-toast-color);
+  line-height: 1.4;
+}
+
+.uid-toast__message {
+  margin: 0;
+  font-size: var(--uid-font-size-sm);
+  color: var(--uid-text-secondary);
+  line-height: 1.4;
+}
+
+.uid-toast__close {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--uid-space-xs);
+  margin: calc(-1 * var(--uid-space-xs)) calc(-1 * var(--uid-space-xs)) 0 0;
+  border: none;
+  background: transparent;
+  color: var(--uid-text-tertiary);
+  cursor: pointer;
+  border-radius: var(--uid-radius-sm);
+  transition: color var(--uid-duration-fast) var(--uid-ease-out);
+}
+
+.uid-toast__close:hover {
+  color: var(--uid-text-primary);
+}
+
+.uid-toast__close:focus-visible {
+  outline: 2px solid var(--uid-accent);
+  outline-offset: 1px;
+}
+
+/* === Variants === */
+
+.uid-toast--info    { --uid-toast-accent: var(--uid-accent); }
+.uid-toast--success { --uid-toast-accent: var(--uid-success); }
+.uid-toast--warning { --uid-toast-accent: var(--uid-warning); }
+.uid-toast--danger  { --uid-toast-accent: var(--uid-danger); }
+
+/* === TransitionGroup animations === */
+
+.uid-toast-enter-active,
+.uid-toast-leave-active {
+  transition:
+    opacity var(--uid-duration-base) var(--uid-ease-out),
+    transform var(--uid-duration-base) var(--uid-ease-out);
+}
+
+.uid-toast-move {
+  transition: transform var(--uid-duration-base) var(--uid-ease-out);
+}
+
+.uid-toast-enter-from,
+.uid-toast-leave-to {
+  opacity: 0;
+  transform: translateX(100%);
+}
+
+.uid-toast-leave-active {
+  position: absolute;
+}

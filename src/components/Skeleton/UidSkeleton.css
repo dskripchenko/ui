@@ -1,0 +1,37 @@
+.uid-skeleton {
+  display: inline-block;
+  background: linear-gradient(
+    90deg,
+    var(--uid-surface-raised) 25%,
+    color-mix(in srgb, var(--uid-text-tertiary) 18%, var(--uid-surface-raised)) 50%,
+    var(--uid-surface-raised) 75%
+  );
+  background-size: 200% 100%;
+  animation: uid-skeleton-shimmer 1.6s ease-in-out infinite;
+  border-radius: var(--uid-radius-sm);
+  vertical-align: middle;
+}
+
+.uid-skeleton--rounded {
+  border-radius: var(--uid-radius-md);
+}
+
+.uid-skeleton--full {
+  border-radius: var(--uid-radius-full);
+}
+
+.uid-skeleton-lines {
+  display: flex;
+  flex-direction: column;
+  gap: var(--uid-space-sm);
+  width: 100%;
+}
+
+.uid-skeleton-lines .uid-skeleton {
+  display: block;
+}
+
+@keyframes uid-skeleton-shimmer {
+  from { background-position: 200% center; }
+  to   { background-position: -200% center; }
+}

@@ -1,0 +1,9 @@
+.uid-wizard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--uid-wizard-gap, var(--uid-space-lg));
+}
+
+.uid-wizard-step {
+  flex: 1;
+}

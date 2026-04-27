@@ -1,0 +1,122 @@
+.uid-stepper {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: flex-start;
+}
+
+.uid-stepper__step {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.uid-stepper:not(.uid-stepper--vertical) .uid-stepper__step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: calc(var(--uid-stepper-indicator-size, 32px) / 2);
+  left: calc(50% + var(--uid-stepper-indicator-size, 32px) / 2);
+  width: calc(100% - var(--uid-stepper-indicator-size, 32px));
+  height: 2px;
+  background: var(--uid-stepper-connector, var(--uid-color-border));
+  transition: background var(--uid-duration-base);
+}
+
+.uid-stepper:not(.uid-stepper--vertical) .uid-stepper__step--completed:not(:last-child)::after {
+  background: var(--uid-stepper-connector-completed, var(--uid-color-primary));
+}
+
+.uid-stepper__indicator {
+  width: var(--uid-stepper-indicator-size, 32px);
+  height: var(--uid-stepper-indicator-size, 32px);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 600;
+  z-index: 1;
+  background: var(--uid-stepper-indicator-bg, var(--uid-color-bg-subtle));
+  border: 2px solid var(--uid-stepper-indicator-border, var(--uid-color-border));
+  color: var(--uid-stepper-indicator-color, var(--uid-color-text-secondary));
+  transition:
+    background var(--uid-duration-base),
+    border-color var(--uid-duration-base),
+    color var(--uid-duration-base);
+}
+
+.uid-stepper__step--current .uid-stepper__indicator {
+  background: var(--uid-stepper-indicator-bg-current, var(--uid-color-primary));
+  border-color: var(--uid-stepper-indicator-border-current, var(--uid-color-primary));
+  color: var(--uid-stepper-indicator-color-current, var(--uid-color-text-on-primary));
+}
+
+.uid-stepper__step--completed .uid-stepper__indicator {
+  background: var(--uid-stepper-indicator-bg-completed, var(--uid-color-primary));
+  border-color: var(--uid-stepper-indicator-border-completed, var(--uid-color-primary));
+  color: var(--uid-stepper-indicator-color-completed, var(--uid-color-text-on-primary));
+}
+
+.uid-stepper__content {
+  margin-top: var(--uid-space-sm);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.uid-stepper__label {
+  font-size: var(--uid-font-size-sm, 14px);
+  font-weight: 500;
+  color: var(--uid-stepper-label-color, var(--uid-color-text));
+  transition: color var(--uid-duration-base);
+}
+
+.uid-stepper__step--pending .uid-stepper__label {
+  color: var(--uid-stepper-label-color-pending, var(--uid-color-text-secondary));
+}
+
+.uid-stepper__description {
+  font-size: var(--uid-font-size-xs, 12px);
+  color: var(--uid-stepper-desc-color, var(--uid-color-text-tertiary));
+}
+
+/* Vertical */
+.uid-stepper--vertical {
+  flex-direction: column;
+}
+
+.uid-stepper--vertical .uid-stepper__step {
+  flex: none;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 12px;
+  padding-bottom: var(--uid-space-lg);
+}
+
+.uid-stepper--vertical .uid-stepper__step:last-child {
+  padding-bottom: 0;
+}
+
+.uid-stepper--vertical .uid-stepper__step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: var(--uid-stepper-indicator-size, 32px);
+  left: calc(var(--uid-stepper-indicator-size, 32px) / 2 - 1px);
+  width: 2px;
+  height: calc(100% - var(--uid-stepper-indicator-size, 32px));
+  background: var(--uid-stepper-connector, var(--uid-color-border));
+  transition: background var(--uid-duration-base);
+}
+
+.uid-stepper--vertical .uid-stepper__step--completed:not(:last-child)::after {
+  background: var(--uid-stepper-connector-completed, var(--uid-color-primary));
+}
+
+.uid-stepper--vertical .uid-stepper__content {
+  margin-top: 4px;
+  text-align: left;
+}

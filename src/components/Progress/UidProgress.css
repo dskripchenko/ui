@@ -1,0 +1,80 @@
+.uid-progress-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--uid-space-xs);
+}
+
+.uid-progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--uid-space-sm);
+}
+
+.uid-progress-label,
+.uid-progress-value {
+  font-size: var(--uid-font-size-sm);
+  color: var(--uid-text-secondary);
+  line-height: 1.4;
+}
+
+/* === Track === */
+
+.uid-progress {
+  --uid-progress-height: 8px;
+  --uid-progress-bg:     var(--uid-border-subtle);
+  --uid-progress-fill:   var(--uid-accent);
+  --uid-progress-radius: var(--uid-radius-full);
+
+  position: relative;
+  width: 100%;
+  height: var(--uid-progress-height);
+  background: var(--uid-progress-bg);
+  border-radius: var(--uid-progress-radius);
+  overflow: hidden;
+}
+
+/* === Bar === */
+
+.uid-progress__bar {
+  height: 100%;
+  background: var(--uid-progress-fill);
+  border-radius: var(--uid-progress-radius);
+  transition: width var(--uid-duration-base) var(--uid-ease-out);
+}
+
+/* === Indeterminate === */
+
+.uid-progress--indeterminate::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      90deg,
+      transparent 0%,
+      var(--uid-progress-fill) 40%,
+      var(--uid-progress-fill) 60%,
+      transparent 100%
+    )
+    no-repeat center / 50% 100%;
+  animation: uid-progress-indeterminate 1.5s linear infinite;
+}
+
+@keyframes uid-progress-indeterminate {
+  from { background-position: -50% center; }
+  to   { background-position: 150% center; }
+}
+
+/* === Sizes === */
+
+.uid-progress--sm { --uid-progress-height: 4px; }
+.uid-progress--lg { --uid-progress-height: 12px; }
+
+/* === Variants === */
+
+.uid-progress--default { --uid-progress-fill: var(--uid-accent); }
+.uid-progress--info    { --uid-progress-fill: var(--uid-accent); }
+.uid-progress--success { --uid-progress-fill: var(--uid-success); }
+.uid-progress--warning { --uid-progress-fill: var(--uid-warning); }
+.uid-progress--danger  { --uid-progress-fill: var(--uid-danger); }

@@ -1,0 +1,86 @@
+.uid-radio {
+  --uid-radio-size:           16px;
+  --uid-radio-border:         var(--uid-border-default);
+  --uid-radio-bg:             var(--uid-surface-raised);
+  --uid-radio-checked-border: var(--uid-accent);
+  --uid-radio-dot:            var(--uid-accent);
+  --uid-radio-gap:            var(--uid-space-sm);
+
+  display: inline-flex;
+  align-items: center;
+  gap: var(--uid-radio-gap);
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Visually hidden native input */
+.uid-radio__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Custom circle */
+.uid-radio__circle {
+  flex-shrink: 0;
+  width: var(--uid-radio-size);
+  height: var(--uid-radio-size);
+  border: 1.5px solid var(--uid-radio-border);
+  border-radius: 50%;
+  background: var(--uid-radio-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    border-color var(--uid-duration-fast) var(--uid-ease-out),
+    box-shadow var(--uid-duration-fast) var(--uid-ease-out);
+}
+
+/* Inner dot */
+.uid-radio__circle::after {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--uid-radio-dot);
+  opacity: 0;
+  transform: scale(0.5);
+  transition:
+    opacity var(--uid-duration-fast) var(--uid-ease-out),
+    transform var(--uid-duration-fast) var(--uid-ease-out);
+}
+
+/* Checked */
+.uid-radio__input:checked + .uid-radio__circle {
+  border-color: var(--uid-radio-checked-border);
+}
+
+.uid-radio__input:checked + .uid-radio__circle::after {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Focus ring */
+.uid-radio__input:focus-visible + .uid-radio__circle {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--uid-accent) 15%, transparent);
+  border-color: var(--uid-accent);
+  outline: none;
+}
+
+.uid-radio__text {
+  font-size: var(--uid-font-size-md);
+  color: var(--uid-text-primary);
+  line-height: 1.4;
+}
+
+/* Disabled */
+.uid-radio--disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}

@@ -1,0 +1,24 @@
+.uid-link {
+  color: var(--uid-link-color, var(--uid-color-primary));
+  text-decoration: var(--uid-link-decoration, underline);
+  text-underline-offset: 2px;
+  cursor: pointer;
+  transition: color var(--uid-duration-fast) var(--uid-ease-out),
+              opacity var(--uid-duration-fast) var(--uid-ease-out);
+}
+
+.uid-link:hover:not(.uid-link--disabled) {
+  color: var(--uid-link-color-hover, var(--uid-color-primary-hover));
+}
+
+.uid-link:focus-visible {
+  outline: 2px solid var(--uid-color-focus-ring);
+  outline-offset: 2px;
+  border-radius: var(--uid-radius-sm);
+}
+
+.uid-link--disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}

@@ -1,0 +1,7 @@
+:root {
+  --uid-radius-none:  0;
+  --uid-radius-sm:    3px;
+  --uid-radius-md:    6px;
+  --uid-radius-lg:    10px;
+  --uid-radius-full:  9999px;
+}

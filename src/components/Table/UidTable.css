@@ -1,0 +1,107 @@
+.uid-table-wrap {
+  background: var(--uid-table-bg, var(--uid-color-surface));
+  border-radius: var(--uid-table-radius, var(--uid-radius-md));
+}
+
+.uid-table-wrap--bordered {
+  border: 1px solid var(--uid-color-border);
+  overflow: hidden;
+}
+
+.uid-table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.uid-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--uid-font-size-sm);
+}
+
+/* Head */
+.uid-table__head {
+  background: var(--uid-table-head-bg, var(--uid-color-surface-raised));
+}
+
+.uid-table__th {
+  padding: 12px var(--uid-space-md);
+  font-size: var(--uid-font-size-xs, 11px);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--uid-table-th-color, var(--uid-color-text-secondary));
+  border-bottom: 1px solid var(--uid-color-border);
+  white-space: nowrap;
+}
+
+.uid-table__th--left { text-align: left; }
+.uid-table__th--center { text-align: center; }
+.uid-table__th--right { text-align: right; }
+
+.uid-table__th--sortable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.uid-table__th--sortable:hover {
+  background: var(--uid-color-surface-hover);
+  color: var(--uid-color-text-primary);
+}
+
+.uid-table__th--active {
+  color: var(--uid-color-primary);
+}
+
+.uid-table__th-content {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--uid-space-xs);
+}
+
+.uid-table__sort-icon {
+  flex-shrink: 0;
+  opacity: 0.5;
+}
+
+.uid-table__th--active .uid-table__sort-icon {
+  opacity: 1;
+}
+
+/* Body */
+.uid-table__row {
+  transition: background var(--uid-duration-fast) var(--uid-ease-out);
+}
+
+.uid-table__row:hover {
+  background: var(--uid-table-row-bg-hover, var(--uid-color-surface-hover));
+}
+
+.uid-table__row + .uid-table__row {
+  border-top: 1px solid var(--uid-color-border);
+}
+
+.uid-table--striped .uid-table__row:nth-child(even) {
+  background: var(--uid-table-row-bg-stripe, var(--uid-color-surface-raised));
+}
+
+.uid-table--striped .uid-table__row:nth-child(even):hover {
+  background: var(--uid-table-row-bg-hover, var(--uid-color-surface-hover));
+}
+
+.uid-table__td {
+  padding: 12px var(--uid-space-md);
+  color: var(--uid-color-text-primary);
+  vertical-align: middle;
+}
+
+.uid-table__td--left { text-align: left; }
+.uid-table__td--center { text-align: center; }
+.uid-table__td--right { text-align: right; }
+
+.uid-table__td--center,
+.uid-table__td--empty {
+  text-align: center;
+  padding: var(--uid-space-xl) var(--uid-space-md);
+  color: var(--uid-color-text-secondary);
+}

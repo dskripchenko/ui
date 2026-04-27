@@ -1,0 +1,7 @@
+.uid-stack {
+  display: flex;
+}
+
+.uid-stack--inline {
+  display: inline-flex;
+}

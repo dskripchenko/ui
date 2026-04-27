@@ -1,0 +1,19 @@
+.uid-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--uid-space-2xs);
+  font-size: var(--uid-font-size-sm);
+  font-weight: var(--uid-font-weight-medium);
+  color: var(--uid-text-primary);
+  line-height: var(--uid-line-height-tight);
+  cursor: default;
+}
+
+.uid-label--disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.uid-label__required {
+  color: var(--uid-danger);
+}

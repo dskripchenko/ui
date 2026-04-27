@@ -1,0 +1,60 @@
+.uid-badge {
+  --uid-badge-bg:     color-mix(in srgb, var(--uid-text-primary) 10%, transparent);
+  --uid-badge-color:  var(--uid-text-primary);
+  --uid-badge-radius: var(--uid-radius-full);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px var(--uid-space-xs);
+  background: var(--uid-badge-bg);
+  color: var(--uid-badge-color);
+  border-radius: var(--uid-badge-radius);
+  font-size: var(--uid-font-size-xs);
+  font-weight: var(--uid-font-weight-medium);
+  line-height: 1.4;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+/* Dot mode */
+.uid-badge--dot {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border-radius: 50%;
+}
+
+/* Sizes */
+.uid-badge--sm {
+  font-size: 10px;
+  padding: 1px 5px;
+}
+
+/* Variants */
+.uid-badge--info {
+  --uid-badge-bg:    color-mix(in srgb, var(--uid-accent) 15%, transparent);
+  --uid-badge-color: var(--uid-accent-text);
+}
+
+.uid-badge--success {
+  --uid-badge-bg:    var(--uid-success-subtle);
+  --uid-badge-color: var(--uid-success);
+}
+
+.uid-badge--warning {
+  --uid-badge-bg:    var(--uid-warning-subtle);
+  --uid-badge-color: var(--uid-warning);
+}
+
+.uid-badge--danger {
+  --uid-badge-bg:    var(--uid-danger-subtle);
+  --uid-badge-color: var(--uid-danger);
+}
+
+/* Dot variant colors */
+.uid-badge--dot.uid-badge--default { background: var(--uid-text-tertiary); }
+.uid-badge--dot.uid-badge--info    { background: var(--uid-accent); }
+.uid-badge--dot.uid-badge--success { background: var(--uid-success); }
+.uid-badge--dot.uid-badge--warning { background: var(--uid-warning); }
+.uid-badge--dot.uid-badge--danger  { background: var(--uid-danger); }

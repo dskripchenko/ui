@@ -1,0 +1,23 @@
+:root {
+  --uid-font-family-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --uid-font-family-mono: 'IBM Plex Mono', 'Fira Code', ui-monospace, monospace;
+
+  --uid-font-size-xs:   12px;
+  --uid-font-size-sm:   14px;
+  --uid-font-size-md:   16px;
+  --uid-font-size-lg:   18px;
+  --uid-font-size-xl:   20px;
+  --uid-font-size-2xl:  24px;
+  --uid-font-size-3xl:  30px;
+  --uid-font-size-4xl:  36px;
+
+  --uid-font-weight-regular:   400;
+  --uid-font-weight-medium:    500;
+  --uid-font-weight-semibold:  600;
+  --uid-font-weight-bold:      700;
+
+  --uid-line-height-tight:   1.25;
+  --uid-line-height-snug:    1.375;
+  --uid-line-height-normal:  1.5;
+  --uid-line-height-relaxed: 1.625;
+}

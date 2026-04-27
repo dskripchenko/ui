@@ -1,0 +1,5 @@
+export { default as UidWizard } from './UidWizard.vue'
+export { default as UidWizardStep } from './UidWizardStep.vue'
+export type { UidWizardProps } from './UidWizard.vue'
+export type { UidWizardStepProps } from './UidWizardStep.vue'
+export type { WizardStepDef } from './context.js'

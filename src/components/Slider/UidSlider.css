@@ -1,0 +1,89 @@
+.uid-slider {
+  display: flex;
+  flex-direction: column;
+  gap: var(--uid-space-sm);
+  width: 100%;
+}
+
+.uid-slider__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.uid-slider__label {
+  font-size: var(--uid-font-size-sm, 14px);
+  font-weight: 500;
+  color: var(--uid-color-text);
+}
+
+.uid-slider__value {
+  font-size: var(--uid-font-size-sm, 14px);
+  font-weight: 600;
+  color: var(--uid-color-primary);
+  min-width: 2ch;
+  text-align: right;
+}
+
+.uid-slider__input {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: var(--uid-slider-track-height, 4px);
+  border-radius: var(--uid-radius-full, 9999px);
+  outline: none;
+  cursor: pointer;
+  background: linear-gradient(
+    to right,
+    var(--uid-slider-fill-color, var(--uid-color-primary)) 0%,
+    var(--uid-slider-fill-color, var(--uid-color-primary)) var(--_fill, 0%),
+    var(--uid-slider-track-bg, var(--uid-color-border)) var(--_fill, 0%),
+    var(--uid-slider-track-bg, var(--uid-color-border)) 100%
+  );
+  transition: opacity var(--uid-duration-fast);
+}
+
+.uid-slider__input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: var(--uid-slider-thumb-size, 18px);
+  height: var(--uid-slider-thumb-size, 18px);
+  border-radius: 50%;
+  background: var(--uid-slider-thumb-bg, var(--uid-color-primary));
+  border: 2px solid var(--uid-color-bg);
+  box-shadow: var(--uid-shadow-sm);
+  cursor: pointer;
+  transition: transform var(--uid-duration-fast);
+}
+
+.uid-slider__input::-moz-range-thumb {
+  width: var(--uid-slider-thumb-size, 18px);
+  height: var(--uid-slider-thumb-size, 18px);
+  border-radius: 50%;
+  background: var(--uid-slider-thumb-bg, var(--uid-color-primary));
+  border: 2px solid var(--uid-color-bg);
+  box-shadow: var(--uid-shadow-sm);
+  cursor: pointer;
+  transition: transform var(--uid-duration-fast);
+}
+
+.uid-slider__input:hover::-webkit-slider-thumb {
+  transform: scale(1.2);
+}
+
+.uid-slider__input:hover::-moz-range-thumb {
+  transform: scale(1.2);
+}
+
+.uid-slider__input:focus-visible::-webkit-slider-thumb {
+  box-shadow: var(--uid-focus-ring, 0 0 0 3px var(--uid-color-primary-subtle));
+}
+
+.uid-slider__input:focus-visible::-moz-range-thumb {
+  box-shadow: var(--uid-focus-ring, 0 0 0 3px var(--uid-color-primary-subtle));
+}
+
+.uid-slider--disabled .uid-slider__input {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}

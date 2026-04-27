@@ -1,0 +1,10 @@
+:root {
+  --uid-z-base:      0;
+  --uid-z-raised:    1;
+  --uid-z-dropdown:  100;
+  --uid-z-sticky:    200;
+  --uid-z-overlay:   300;
+  --uid-z-modal:     400;
+  --uid-z-toast:     500;
+  --uid-z-tooltip:   600;
+}

@@ -1,0 +1,27 @@
+.uid-layout-simple {
+  display: flex;
+  flex-direction: column;
+  min-height: var(--uid-layout-simple-min-height, 100vh);
+}
+
+.uid-layout-simple--full {
+  height: 100vh;
+  overflow: hidden;
+}
+
+.uid-layout-simple__header {
+  flex-shrink: 0;
+}
+
+.uid-layout-simple__content {
+  flex: 1;
+  width: 100%;
+}
+
+.uid-layout-simple--full .uid-layout-simple__content {
+  overflow-y: auto;
+}
+
+.uid-layout-simple__footer {
+  flex-shrink: 0;
+}

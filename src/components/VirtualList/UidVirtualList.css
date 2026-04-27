@@ -1,0 +1,22 @@
+.uid-virtual-list {
+  overflow-y: auto;
+  position: relative;
+  will-change: scroll-position;
+}
+
+.uid-virtual-list__spacer {
+  position: relative;
+}
+
+.uid-virtual-list__content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  will-change: transform;
+}
+
+.uid-virtual-list__item {
+  overflow: hidden;
+  box-sizing: border-box;
+}

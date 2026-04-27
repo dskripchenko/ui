@@ -1,0 +1,78 @@
+.uid-accordion {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--uid-accordion-border, var(--uid-color-border));
+  border-radius: var(--uid-accordion-radius, var(--uid-radius-md));
+  overflow: hidden;
+}
+
+.uid-accordion-item + .uid-accordion-item {
+  border-top: 1px solid var(--uid-color-border);
+}
+
+/* Trigger */
+.uid-accordion-item__trigger {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 12px;
+  padding: var(--uid-space-md);
+  border: none;
+  background: var(--uid-accordion-trigger-bg, transparent);
+  font-size: var(--uid-font-size-base);
+  font-weight: 500;
+  color: var(--uid-color-text-primary);
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--uid-duration-fast) var(--uid-ease-out);
+}
+
+.uid-accordion-item__trigger:hover:not([disabled]) {
+  background: var(--uid-color-surface-hover);
+}
+
+.uid-accordion-item__trigger:focus-visible {
+  outline: 2px solid var(--uid-color-focus-ring);
+  outline-offset: -2px;
+}
+
+.uid-accordion-item__trigger[disabled] {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.uid-accordion-item__title {
+  flex: 1;
+}
+
+.uid-accordion-item__chevron {
+  flex-shrink: 0;
+  color: var(--uid-color-text-secondary);
+  transition: transform var(--uid-duration-base) var(--uid-ease-in-out);
+}
+
+.uid-accordion-item--open .uid-accordion-item__chevron {
+  transform: rotate(180deg);
+}
+
+/* Body — CSS grid trick for smooth height animation */
+.uid-accordion-item__body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--uid-duration-base) var(--uid-ease-in-out);
+}
+
+.uid-accordion-item__body:not([hidden]) {
+  grid-template-rows: 1fr;
+}
+
+.uid-accordion-item__body[hidden] {
+  display: grid;
+  visibility: hidden;
+}
+
+.uid-accordion-item__body-inner {
+  overflow: hidden;
+  padding: 0 var(--uid-space-md) var(--uid-space-md);
+  color: var(--uid-color-text-secondary);
+}

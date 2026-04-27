@@ -1,0 +1,7 @@
+export { default as UidSidebar } from './UidSidebar.vue'
+export { default as UidSidebarItem } from './UidSidebarItem.vue'
+export { default as UidSidebarGroup } from './UidSidebarGroup.vue'
+export { default as UidSidebarDivider } from './UidSidebarDivider.vue'
+export type { UidSidebarProps } from './UidSidebar.vue'
+export type { UidSidebarItemProps } from './UidSidebarItem.vue'
+export type { UidSidebarGroupProps } from './UidSidebarGroup.vue'

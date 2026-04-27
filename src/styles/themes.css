@@ -1,0 +1,111 @@
+:root[data-theme='light'] {
+  --uid-surface-base:     var(--uid-color-zinc-50);
+  --uid-surface-raised:   var(--uid-color-white);
+  --uid-surface-overlay:  var(--uid-color-white);
+
+  --uid-text-primary:     var(--uid-color-zinc-900);
+  --uid-text-secondary:   var(--uid-color-zinc-500);
+  --uid-text-tertiary:    var(--uid-color-zinc-400);
+  --uid-text-on-accent:   var(--uid-color-white);
+
+  --uid-border-subtle:    var(--uid-color-zinc-200);
+  --uid-border-default:   var(--uid-color-zinc-300);
+  --uid-border-hover:     var(--uid-color-zinc-400);
+
+  --uid-accent:           var(--uid-color-teal-500);
+  --uid-accent-hover:     var(--uid-color-teal-600);
+  --uid-accent-subtle:    var(--uid-color-teal-50);
+  --uid-accent-text:      var(--uid-color-teal-700);
+
+  --uid-danger:           var(--uid-color-rose-600);
+  --uid-danger-hover:     var(--uid-color-rose-700);
+  --uid-danger-subtle:    var(--uid-color-rose-50);
+
+  --uid-success:          var(--uid-color-emerald-600);
+  --uid-success-subtle:   var(--uid-color-emerald-50);
+
+  --uid-warning:          var(--uid-color-amber-600);
+  --uid-warning-subtle:   var(--uid-color-amber-50);
+
+  --uid-info:             var(--uid-color-blue-600);
+  --uid-info-subtle:      var(--uid-color-blue-50);
+
+  --uid-shadow-sm:  0 1px 2px rgb(0 0 0 / 0.05);
+  --uid-shadow-md:  0 4px 12px rgb(0 0 0 / 0.08);
+  --uid-shadow-lg:  0 8px 24px rgb(0 0 0 / 0.12);
+}
+
+:root[data-theme='dark'] {
+  --uid-surface-base:     #1c1c1e;
+  --uid-surface-raised:   #2c2c2e;
+  --uid-surface-overlay:  #3a3a3c;
+
+  --uid-text-primary:     var(--uid-color-zinc-100);
+  --uid-text-secondary:   var(--uid-color-zinc-400);
+  --uid-text-tertiary:    var(--uid-color-zinc-600);
+  --uid-text-on-accent:   var(--uid-color-white);
+
+  --uid-border-subtle:    var(--uid-color-zinc-700);
+  --uid-border-default:   var(--uid-color-zinc-600);
+  --uid-border-hover:     var(--uid-color-zinc-400);
+
+  --uid-accent:           var(--uid-color-teal-400);
+  --uid-accent-hover:     var(--uid-color-teal-300);
+  --uid-accent-subtle:    var(--uid-color-teal-900);
+  --uid-accent-text:      var(--uid-color-teal-300);
+
+  --uid-danger:           var(--uid-color-rose-400);
+  --uid-danger-hover:     var(--uid-color-rose-500);
+  --uid-danger-subtle:    var(--uid-color-rose-950);
+
+  --uid-success:          var(--uid-color-emerald-400);
+  --uid-success-subtle:   var(--uid-color-emerald-950);
+
+  --uid-warning:          var(--uid-color-amber-400);
+  --uid-warning-subtle:   var(--uid-color-amber-950);
+
+  --uid-info:             var(--uid-color-blue-400);
+  --uid-info-subtle:      var(--uid-color-blue-950);
+
+  --uid-shadow-sm:  0 1px 2px rgb(0 0 0 / 0.2);
+  --uid-shadow-md:  0 4px 12px rgb(0 0 0 / 0.4);
+  --uid-shadow-lg:  0 8px 24px rgb(0 0 0 / 0.6);
+}
+
+/* Aliases: компоненты используют --uid-color-* → маппинг на семантические токены */
+:root {
+  --uid-color-bg:              var(--uid-surface-raised);
+  --uid-color-bg-subtle:       var(--uid-surface-base);
+  --uid-color-overlay:         var(--uid-surface-overlay);
+  --uid-color-surface:         var(--uid-surface-raised);
+  --uid-color-surface-raised:  var(--uid-surface-raised);
+  --uid-color-surface-hover:   var(--uid-surface-base);
+
+  --uid-color-text:            var(--uid-text-primary);
+  --uid-color-text-primary:    var(--uid-text-primary);
+  --uid-color-text-secondary:  var(--uid-text-secondary);
+  --uid-color-text-tertiary:   var(--uid-text-tertiary);
+  --uid-color-text-disabled:   var(--uid-text-tertiary);
+  --uid-color-text-on-primary: var(--uid-text-on-accent);
+
+  --uid-color-border:          var(--uid-border-default);
+  --uid-color-border-hover:    var(--uid-border-hover);
+
+  --uid-color-primary:         var(--uid-accent);
+  --uid-color-primary-hover:   var(--uid-accent-hover);
+  --uid-color-primary-subtle:  var(--uid-accent-subtle);
+  --uid-color-focus-ring:      var(--uid-accent);
+
+  --uid-color-danger:          var(--uid-danger);
+  --uid-color-danger-subtle:   var(--uid-danger-subtle);
+
+  --uid-color-success:         var(--uid-success);
+  --uid-color-success-subtle:  var(--uid-success-subtle);
+
+  --uid-color-warning:         var(--uid-warning);
+  --uid-color-warning-subtle:  var(--uid-warning-subtle);
+  --uid-color-warning-dark:    var(--uid-warning);
+
+  --uid-color-info:            var(--uid-info);
+  --uid-color-info-subtle:     var(--uid-info-subtle);
+}

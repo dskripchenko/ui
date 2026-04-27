@@ -1,0 +1,106 @@
+.uid-button {
+  --uid-button-bg:        var(--uid-accent);
+  --uid-button-bg-hover:  var(--uid-accent-hover);
+  --uid-button-color:     var(--uid-text-on-accent);
+  --uid-button-border:    transparent;
+  --uid-button-radius:    var(--uid-radius-md);
+  --uid-button-height:    var(--uid-size-md);
+  --uid-button-padding-x: var(--uid-space-md);
+  --uid-button-padding-y: var(--uid-space-xs);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--uid-space-xs);
+  min-height: var(--uid-button-height);
+  padding: var(--uid-button-padding-y) var(--uid-button-padding-x);
+  border: 1px solid var(--uid-button-border);
+  border-radius: var(--uid-button-radius);
+  background: var(--uid-button-bg);
+  color: var(--uid-button-color);
+  font: inherit;
+  font-size: var(--uid-font-size-md);
+  font-weight: var(--uid-font-weight-medium);
+  line-height: 1;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  user-select: none;
+  transition:
+    background var(--uid-duration-fast) var(--uid-ease-out),
+    border-color var(--uid-duration-fast) var(--uid-ease-out),
+    color var(--uid-duration-fast) var(--uid-ease-out),
+    opacity var(--uid-duration-fast) var(--uid-ease-out);
+}
+
+.uid-button:hover:not([disabled]):not([data-loading='true']) {
+  background: var(--uid-button-bg-hover);
+}
+
+.uid-button:active:not([disabled]):not([data-loading='true']) {
+  transform: scale(0.98);
+}
+
+.uid-button:focus-visible {
+  outline: 2px solid var(--uid-accent);
+  outline-offset: 2px;
+  border-radius: inherit;
+}
+
+.uid-button[disabled],
+.uid-button[aria-disabled='true'] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.uid-button[data-loading='true'] {
+  opacity: 0.7;
+  cursor: wait;
+  pointer-events: none;
+}
+
+/* Варианты */
+.uid-button--secondary {
+  --uid-button-bg:        var(--uid-surface-raised);
+  --uid-button-bg-hover:  var(--uid-border-subtle);
+  --uid-button-color:     var(--uid-text-primary);
+  --uid-button-border:    var(--uid-border-default);
+}
+
+.uid-button--ghost {
+  --uid-button-bg:        transparent;
+  --uid-button-bg-hover:  var(--uid-border-subtle);
+  --uid-button-color:     var(--uid-text-primary);
+  --uid-button-border:    transparent;
+}
+
+.uid-button--danger {
+  --uid-button-bg:        var(--uid-danger);
+  --uid-button-bg-hover:  var(--uid-danger-hover);
+  --uid-button-color:     var(--uid-text-on-accent);
+}
+
+.uid-button--danger:focus-visible {
+  outline-color: var(--uid-danger);
+}
+
+/* Размеры */
+.uid-button--sm {
+  --uid-button-height:    var(--uid-size-sm);
+  --uid-button-padding-x: var(--uid-space-sm);
+  font-size: var(--uid-font-size-sm);
+}
+
+.uid-button--lg {
+  --uid-button-height:    var(--uid-size-lg);
+  --uid-button-padding-x: var(--uid-space-lg);
+  font-size: var(--uid-font-size-lg);
+}
+
+/* Слоты */
+.uid-button__prepend,
+.uid-button__append {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}

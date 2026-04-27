@@ -1,0 +1,7 @@
+export { default as UidTabs } from './UidTabs.vue'
+export { default as UidTab } from './UidTab.vue'
+export { default as UidTabPanel } from './UidTabPanel.vue'
+export type { UidTabsProps } from './UidTabs.vue'
+export type { UidTabProps } from './UidTab.vue'
+export type { UidTabPanelProps } from './UidTabPanel.vue'
+export type { TabValue } from './context.js'

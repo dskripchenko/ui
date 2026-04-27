@@ -1,0 +1,37 @@
+.uid-divider {
+  display: flex;
+  align-items: center;
+  color: var(--uid-divider-color, var(--uid-color-text-disabled));
+  font-size: var(--uid-font-size-sm);
+}
+
+.uid-divider--horizontal {
+  flex-direction: row;
+  width: 100%;
+}
+
+.uid-divider--horizontal::before,
+.uid-divider--horizontal::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--uid-divider-line, var(--uid-color-border));
+}
+
+.uid-divider--horizontal .uid-divider__label {
+  padding: 0 12px;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.uid-divider--horizontal:not(:has(.uid-divider__label))::after {
+  display: none;
+}
+
+.uid-divider--vertical {
+  flex-direction: column;
+  align-self: stretch;
+  width: 1px;
+  height: auto;
+  background: var(--uid-divider-line, var(--uid-color-border));
+}

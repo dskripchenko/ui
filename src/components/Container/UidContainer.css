@@ -1,0 +1,15 @@
+.uid-container {
+  width: 100%;
+  margin-inline: auto;
+}
+
+.uid-container--sm   { max-width: var(--uid-container-sm,   640px);  }
+.uid-container--md   { max-width: var(--uid-container-md,   768px);  }
+.uid-container--lg   { max-width: var(--uid-container-lg,  1024px);  }
+.uid-container--xl   { max-width: var(--uid-container-xl,  1280px);  }
+.uid-container--2xl  { max-width: var(--uid-container-2xl, 1536px);  }
+.uid-container--full { max-width: 100%; }
+
+.uid-container--padded {
+  padding-inline: var(--uid-container-padding-x, var(--uid-space-md));
+}

@@ -1,0 +1,92 @@
+.uid-alert {
+  --uid-alert-bg:     var(--uid-accent-subtle);
+  --uid-alert-color:  var(--uid-accent-text);
+  --uid-alert-border: var(--uid-accent);
+
+  display: flex;
+  align-items: flex-start;
+  gap: var(--uid-space-sm);
+  padding: var(--uid-space-sm) var(--uid-space-md);
+  background: var(--uid-alert-bg);
+  border: 1px solid color-mix(in srgb, var(--uid-alert-border) 30%, transparent);
+  border-left: 3px solid var(--uid-alert-border);
+  border-radius: var(--uid-radius-md);
+  color: var(--uid-alert-color);
+}
+
+.uid-alert__icon {
+  flex-shrink: 0;
+  display: flex;
+  margin-top: 1px;
+}
+
+.uid-alert__content {
+  flex: 1;
+  min-width: 0;
+}
+
+.uid-alert__title {
+  margin: 0 0 var(--uid-space-xs);
+  font-size: var(--uid-font-size-sm);
+  font-weight: var(--uid-font-weight-semibold);
+  color: var(--uid-alert-color);
+  line-height: 1.4;
+}
+
+.uid-alert__body {
+  font-size: var(--uid-font-size-sm);
+  color: var(--uid-text-primary);
+  line-height: 1.5;
+}
+
+.uid-alert__close {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--uid-space-xs);
+  margin: calc(-1 * var(--uid-space-xs)) calc(-1 * var(--uid-space-xs)) 0 0;
+  border: none;
+  background: transparent;
+  color: var(--uid-alert-color);
+  cursor: pointer;
+  border-radius: var(--uid-radius-sm);
+  opacity: 0.7;
+  transition: opacity var(--uid-duration-fast) var(--uid-ease-out);
+}
+
+.uid-alert__close:hover {
+  opacity: 1;
+}
+
+.uid-alert__close:focus-visible {
+  outline: 2px solid var(--uid-alert-border);
+  outline-offset: 1px;
+  opacity: 1;
+}
+
+/* === Variants === */
+
+.uid-alert--info {
+  --uid-alert-bg:     var(--uid-accent-subtle);
+  --uid-alert-color:  var(--uid-accent-text);
+  --uid-alert-border: var(--uid-accent);
+}
+
+.uid-alert--success {
+  --uid-alert-bg:     var(--uid-success-subtle);
+  --uid-alert-color:  var(--uid-success);
+  --uid-alert-border: var(--uid-success);
+}
+
+.uid-alert--warning {
+  --uid-alert-bg:     var(--uid-warning-subtle);
+  --uid-alert-color:  var(--uid-warning);
+  --uid-alert-border: var(--uid-warning);
+}
+
+.uid-alert--danger {
+  --uid-alert-bg:     var(--uid-danger-subtle);
+  --uid-alert-color:  var(--uid-danger);
+  --uid-alert-border: var(--uid-danger);
+}

@@ -1,0 +1,21 @@
+.uid-spinner {
+  --uid-spinner-size:  20px;
+  --uid-spinner-color: currentColor;
+  --uid-spinner-width: 2px;
+
+  display: inline-block;
+  width: var(--uid-spinner-size);
+  height: var(--uid-spinner-size);
+  border: var(--uid-spinner-width) solid color-mix(in srgb, var(--uid-spinner-color) 20%, transparent);
+  border-top-color: var(--uid-spinner-color);
+  border-radius: 50%;
+  flex-shrink: 0;
+  animation: uid-spin var(--uid-duration-slow) linear infinite;
+}
+
+@keyframes uid-spin {
+  to { transform: rotate(360deg); }
+}
+
+.uid-spinner--sm { --uid-spinner-size: 16px; }
+.uid-spinner--lg { --uid-spinner-size: 28px; --uid-spinner-width: 2.5px; }

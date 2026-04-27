@@ -1,0 +1,265 @@
+<script setup lang="ts">
+import './UidDatePicker.css'
+import { computed, onUnmounted, ref, watch } from 'vue'
+import { ChevronDown, ChevronLeft, ChevronRight } from 'lucide-vue-next'
+import UidIcon from '../../icons/UidIcon.vue'
+
+export interface UidDatePickerProps {
+  min?: string
+  max?: string
+  disabled?: boolean
+  placeholder?: string
+  format?: (date: Date) => string
+}
+
+const props = withDefaults(defineProps<UidDatePickerProps>(), {
+  min: undefined,
+  max: undefined,
+  disabled: false,
+  placeholder: 'Выберите дату',
+  format: undefined,
+})
+
+const model = defineModel<string | null>({ default: null })
+
+const isOpen = ref(false)
+const containerRef = ref<HTMLElement | null>(null)
+const triggerRef = ref<HTMLElement | null>(null)
+
+const today = new Date()
+
+const viewYear = ref(today.getFullYear())
+const viewMonth = ref(today.getMonth())
+
+const MONTHS = [
+  'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+  'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь',
+]
+const WEEKDAYS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс']
+
+function parseISO(s: string): Date {
+  return new Date(s + 'T00:00:00')
+}
+
+function toISO(d: Date): string {
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${y}-${m}-${day}`
+}
+
+function formatDisplay(s: string): string {
+  if (props.format) return props.format(parseISO(s))
+  const d = parseISO(s)
+  return `${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}.${d.getFullYear()}`
+}
+
+const displayValue = computed(() => model.value ? formatDisplay(model.value) : '')
+
+interface CalendarDay {
+  date: Date
+  iso: string
+  current: boolean
+}
+
+const calendarDays = computed((): CalendarDay[] => {
+  const firstDay = new Date(viewYear.value, viewMonth.value, 1)
+  const lastDay = new Date(viewYear.value, viewMonth.value + 1, 0)
+  const startOffset = (firstDay.getDay() + 6) % 7
+
+  const days: CalendarDay[] = []
+
+  for (let i = startOffset; i > 0; i--) {
+    const d = new Date(viewYear.value, viewMonth.value, 1 - i)
+    days.push({ date: d, iso: toISO(d), current: false })
+  }
+
+  for (let d = 1; d <= lastDay.getDate(); d++) {
+    const date = new Date(viewYear.value, viewMonth.value, d)
+    days.push({ date, iso: toISO(date), current: true })
+  }
+
+  let next = 1
+  while (days.length < 42) {
+    const d = new Date(viewYear.value, viewMonth.value + 1, next++)
+    days.push({ date: d, iso: toISO(d), current: false })
+  }
+
+  return days
+})
+
+const todayISO = computed(() => toISO(today))
+
+function isDisabled(iso: string): boolean {
+  if (props.min && iso < props.min) return true
+  if (props.max && iso > props.max) return true
+  return false
+}
+
+function open() {
+  if (props.disabled) return
+  if (model.value) {
+    const d = parseISO(model.value)
+    viewYear.value = d.getFullYear()
+    viewMonth.value = d.getMonth()
+  } else {
+    viewYear.value = today.getFullYear()
+    viewMonth.value = today.getMonth()
+  }
+  isOpen.value = true
+}
+
+function close() {
+  isOpen.value = false
+}
+
+function toggle() {
+  if (isOpen.value) close(); else open()
+}
+
+function selectDay(day: CalendarDay) {
+  if (isDisabled(day.iso)) return
+  model.value = day.iso
+  close()
+  triggerRef.value?.focus()
+}
+
+function prevMonth() {
+  if (viewMonth.value === 0) { viewMonth.value = 11; viewYear.value-- }
+  else viewMonth.value--
+}
+
+function nextMonth() {
+  if (viewMonth.value === 11) { viewMonth.value = 0; viewYear.value++ }
+  else viewMonth.value++
+}
+
+function clearValue(e: MouseEvent) {
+  e.stopPropagation()
+  model.value = null
+}
+
+function onOutsideClick(e: PointerEvent) {
+  const target = e.target as Node
+  if (!containerRef.value?.contains(target)) close()
+}
+
+watch(isOpen, (val) => {
+  if (val) document.addEventListener('pointerdown', onOutsideClick)
+  else document.removeEventListener('pointerdown', onOutsideClick)
+})
+
+function onTriggerKeydown(e: KeyboardEvent) {
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle() }
+  else if (e.key === 'Escape') close()
+}
+
+onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
+</script>
+
+<template>
+  <div
+    ref="containerRef"
+    class="uid-datepicker"
+    :class="{ 'uid-datepicker--open': isOpen, 'uid-datepicker--disabled': disabled }"
+  >
+    <div
+      ref="triggerRef"
+      class="uid-datepicker__trigger"
+      tabindex="0"
+      :aria-expanded="isOpen"
+      :aria-disabled="disabled"
+      @click="toggle"
+      @keydown="onTriggerKeydown"
+    >
+      <span
+        class="uid-datepicker__value"
+        :class="{ 'uid-datepicker__value--placeholder': !model }"
+      >
+        {{ model ? displayValue : placeholder }}
+      </span>
+      <div class="uid-datepicker__suffix">
+        <button
+          v-if="model"
+          type="button"
+          class="uid-datepicker__clear"
+          aria-label="Очистить"
+          @click="clearValue"
+        >
+          ×
+        </button>
+        <UidIcon
+          :icon="ChevronDown"
+          :size="16"
+          class="uid-datepicker__chevron"
+          :class="{ 'uid-datepicker__chevron--open': isOpen }"
+          aria-hidden="true"
+        />
+      </div>
+    </div>
+
+    <Transition name="uid-datepicker-panel">
+      <div
+        v-if="isOpen"
+        class="uid-datepicker__panel"
+        role="dialog"
+        aria-label="Выбор даты"
+      >
+        <div class="uid-datepicker__nav">
+          <button
+            type="button"
+            class="uid-datepicker__nav-btn"
+            aria-label="Предыдущий месяц"
+            @click="prevMonth"
+          >
+            <UidIcon
+              :icon="ChevronLeft"
+              :size="16"
+            />
+          </button>
+          <span class="uid-datepicker__month-label">
+            {{ MONTHS[viewMonth] }} {{ viewYear }}
+          </span>
+          <button
+            type="button"
+            class="uid-datepicker__nav-btn"
+            aria-label="Следующий месяц"
+            @click="nextMonth"
+          >
+            <UidIcon
+              :icon="ChevronRight"
+              :size="16"
+            />
+          </button>
+        </div>
+
+        <div class="uid-datepicker__grid">
+          <span
+            v-for="wd in WEEKDAYS"
+            :key="wd"
+            class="uid-datepicker__weekday"
+          >{{ wd }}</span>
+
+          <button
+            v-for="day in calendarDays"
+            :key="day.iso"
+            type="button"
+            class="uid-datepicker__day"
+            :class="{
+              'uid-datepicker__day--other': !day.current,
+              'uid-datepicker__day--today': day.iso === todayISO,
+              'uid-datepicker__day--selected': day.iso === model,
+              'uid-datepicker__day--disabled': isDisabled(day.iso),
+            }"
+            :disabled="isDisabled(day.iso)"
+            :aria-current="day.iso === todayISO ? 'date' : undefined"
+            :aria-selected="day.iso === model"
+            @click="selectDay(day)"
+          >
+            {{ day.date.getDate() }}
+          </button>
+        </div>
+      </div>
+    </Transition>
+  </div>
+</template>
