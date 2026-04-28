@@ -11,6 +11,12 @@ const config: StorybookConfig = {
     name: '@storybook/vue3-vite',
     options: {},
   },
+  viteFinal: async (cfg) => {
+    if (process.env.STORYBOOK_BASE_PATH) {
+      cfg.base = process.env.STORYBOOK_BASE_PATH
+    }
+    return cfg
+  },
 }
 
 export default config
