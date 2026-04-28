@@ -37,7 +37,6 @@
   stroke-width: 2;
   stroke-linecap: round;
   transition: transform var(--uid-duration-base) var(--uid-ease-in-out);
-  transform-box: fill-box;
 }
 
 .uid-gauge__needle-pivot {
