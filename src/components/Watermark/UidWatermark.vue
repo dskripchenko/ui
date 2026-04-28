@@ -42,7 +42,9 @@ function build(): void {
   const dpr = typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1
 
   ctx.font = props.font
-  const lineHeight = parseInt(props.font, 10) * 1.4 || 24
+  const sizeMatch = props.font.match(/(\d+(?:\.\d+)?)\s*px/i)
+  const fontSize = sizeMatch ? parseFloat(sizeMatch[1]) : 16
+  const lineHeight = fontSize * 1.4
   let textWidth = 0
   for (const line of lines) {
     textWidth = Math.max(textWidth, ctx.measureText(line).width)
