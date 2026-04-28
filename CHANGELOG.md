@@ -1,5 +1,60 @@
 # @dskripchenko/ui
 
+## 0.5.0
+
+### Minor Changes
+
+- 81c1186: Заход 4 — 5 новых компонентов:
+  - **UidCalendar** — полноразмерный месячный календарь с событиями, навигацией по месяцам, кнопкой «Сегодня», compact-вариантом и `min`/`max`
+  - **UidCarousel** — слайдер с автоплеем, индикаторами, стрелками, горизонтальным/вертикальным режимом и keyboard-навигацией; generic-типизация для items
+  - **UidCascader** — каскадный выбор уровень за уровнем (страна → город → район), с поддержкой hover/click expand-trigger, отображением пути и кастомным separator
+  - **UidTransfer** — два списка с переносом элементов между ними, опциональным поиском, выбором всех в текущей фильтрации
+  - **UidNotificationBadge** — счётчик/точка поверх любого элемента (иконки, аватара, кнопки) с настройкой placement, tone, max и offset
+
+- 22f2c82: **i18n**: все строки в компонентах вынесены в локали с возможностью переопределения.
+
+  Новые экспорты:
+  - `UidLocaleProvider` — обёртка-компонент с пропом `locale: UidLocale | UidPartialLocale`
+  - `useLocale()` — composable для чтения текущей локали
+  - `provideLocale(source)` — программное предоставление локали
+  - Готовые локали: `ru` (по умолчанию) и `en`
+  - Типы: `UidLocale`, `UidPartialLocale`
+
+  Поддержано переопределение строк во всех ключевых компонентах: Select, Combobox, DatePicker, DateRangePicker, TimePicker, TreeSelect, NumberInput, TagsInput, FileUpload, Mention, BackTop, Tour, TreeView, Pagination, Modal, Drawer, Toast, Alert, Tag, Code, DescriptionList.
+
+  Использование:
+
+  ```vue
+  <UidLocaleProvider :locale="en">
+    <App />
+  </UidLocaleProvider>
+  ```
+
+  Или частичное переопределение:
+
+  ```vue
+  <UidLocaleProvider :locale="{ tour: { next: 'Forward' } }">
+    <App />
+  </UidLocaleProvider>
+  ```
+
+  Дефолт остался `ru` — без оборачивания всё работает как раньше.
+
+### Patch Changes
+
+- a7c0e6b: A11y-улучшения и инструмент анализа размера:
+  - **Bundle visualizer** — подключён `rollup-plugin-visualizer`, новый скрипт `pnpm build:analyze` генерирует интерактивный treemap в `stats.html`
+  - **DatePicker** — полная клавиатурная навигация по сетке дней (стрелки, PageUp/Down, Home/End, Enter, Escape) с roving tabindex; trigger получил `role="combobox"`, `aria-haspopup="dialog"`, `aria-label`
+  - **Triggers пиков** в DateRangePicker, TimePicker, TreeSelect — добавлены `role="combobox"`/`aria-haspopup`/`aria-controls`/`aria-label`
+  - **UidMenu trigger** — `tabindex="0"`, `role="button"`, `aria-haspopup="menu"`, `aria-expanded`, `aria-controls`
+  - **UidPopover trigger** — `role="button"`, `tabindex`, `aria-haspopup="dialog"`, Enter/Space; popover с `role="dialog"`
+  - **UidCombobox** — `role="combobox"` перенесён с обёртки на `<input>` (по WAI-ARIA 1.2)
+  - **UidCard** при `clickable` — получает `role="button"`, `tabindex`, обработку Enter/Space, событие `click`
+  - **UidTable** — sortable заголовки получили `tabindex`, `role="button"`, обработку Enter/Space
+  - **UidAnchor** — активная ссылка получает `aria-current="location"`
+  - **UidTour** — Escape закрывает тур, ArrowLeft/Right переключают шаги, фокус переносится в попап при открытии и возвращается на исходный элемент при закрытии
+  - **UidFileUpload** — устранён двойной tabstop (input получил `tabindex="-1"` и `aria-hidden`)
+
 ## 0.4.0
 
 ### Minor Changes
