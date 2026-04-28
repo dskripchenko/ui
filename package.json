@@ -1,6 +1,40 @@
 {
   "name": "@dskripchenko/ui",
   "version": "0.6.0",
+  "description": "Vue 3 component, token, and theme library on CSS custom properties",
+  "keywords": [
+    "vue",
+    "vue3",
+    "ui",
+    "ui-kit",
+    "components",
+    "component-library",
+    "design-system",
+    "css-variables",
+    "design-tokens",
+    "typescript",
+    "storybook",
+    "lucide",
+    "i18n",
+    "a11y"
+  ],
+  "homepage": "https://dskripchenko.github.io/ui/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dskripchenko/ui.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dskripchenko/ui/issues"
+  },
+  "license": "MIT",
+  "author": "Denis Skripchenko (https://github.com/dskripchenko)",
+  "engines": {
+    "node": ">=20"
+  },
+  "packageManager": "pnpm@10.28.0",
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
