@@ -8,7 +8,7 @@ A Vue 3 component, token, and theme library on CSS custom properties.
 [![bundle](https://img.shields.io/bundlephobia/minzip/@dskripchenko/ui)](https://bundlephobia.com/package/@dskripchenko/ui)
 [![license](https://img.shields.io/npm/l/@dskripchenko/ui.svg)](./LICENSE)
 
-> **Status:** early development. The API is unstable until `1.0`.
+> **Status:** stable. SemVer guarantees apply — breaking changes only on a major bump.
 
 📖 **Storybook:** [dskripchenko.github.io/ui](https://dskripchenko.github.io/ui/)
 

@@ -8,7 +8,7 @@
 [![bundle](https://img.shields.io/bundlephobia/minzip/@dskripchenko/ui)](https://bundlephobia.com/package/@dskripchenko/ui)
 [![license](https://img.shields.io/npm/l/@dskripchenko/ui.svg)](./LICENSE)
 
-> **Статус:** ранняя разработка. API нестабилен до `1.0`.
+> **Статус:** стабильно. Действуют гарантии SemVer — ломающие изменения только в major-версиях.
 
 📖 **Storybook:** [dskripchenko.github.io/ui](https://dskripchenko.github.io/ui/)
 

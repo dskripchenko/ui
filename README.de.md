@@ -8,7 +8,7 @@ Eine Bibliothek aus Vue-3-Komponenten, Tokens und Themes auf Basis von CSS Custo
 [![bundle](https://img.shields.io/bundlephobia/minzip/@dskripchenko/ui)](https://bundlephobia.com/package/@dskripchenko/ui)
 [![license](https://img.shields.io/npm/l/@dskripchenko/ui.svg)](./LICENSE)
 
-> **Status:** frühe Entwicklung. Das API ist bis `1.0` instabil.
+> **Status:** stabil. SemVer-Garantien gelten — Breaking Changes nur in Major-Versionen.
 
 📖 **Storybook:** [dskripchenko.github.io/ui](https://dskripchenko.github.io/ui/)
 

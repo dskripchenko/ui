@@ -8,7 +8,7 @@
 [![bundle](https://img.shields.io/bundlephobia/minzip/@dskripchenko/ui)](https://bundlephobia.com/package/@dskripchenko/ui)
 [![license](https://img.shields.io/npm/l/@dskripchenko/ui.svg)](./LICENSE)
 
-> **状态：** 早期开发阶段。`1.0` 之前 API 不稳定。
+> **状态：** 稳定。遵循 SemVer 保障——破坏性变更仅在主版本中发布。
 
 📖 **Storybook：**[dskripchenko.github.io/ui](https://dskripchenko.github.io/ui/)
 
