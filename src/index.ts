@@ -177,6 +177,23 @@ export type { UidMentionProps, MentionOption } from './components/Mention/index.
 export { UidTreeSelect } from './components/TreeSelect/index.js'
 export type { UidTreeSelectProps } from './components/TreeSelect/index.js'
 
+export { UidNotificationBadge } from './components/NotificationBadge/index.js'
+export type {
+  UidNotificationBadgeProps, BadgePlacement, BadgeTone,
+} from './components/NotificationBadge/index.js'
+
+export { UidCarousel } from './components/Carousel/index.js'
+export type { UidCarouselProps } from './components/Carousel/index.js'
+
+export { UidTransfer } from './components/Transfer/index.js'
+export type { UidTransferProps, TransferItem, TransferKey } from './components/Transfer/index.js'
+
+export { UidCascader } from './components/Cascader/index.js'
+export type { UidCascaderProps, CascaderOption, CascaderValue } from './components/Cascader/index.js'
+
+export { UidCalendar } from './components/Calendar/index.js'
+export type { UidCalendarProps, CalendarEvent } from './components/Calendar/index.js'
+
 export { UidStepper } from './components/Stepper/index.js'
 export type { UidStepperProps, StepperStep } from './components/Stepper/index.js'
 

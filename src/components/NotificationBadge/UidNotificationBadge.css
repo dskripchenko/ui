@@ -1,0 +1,88 @@
+.uid-notification-badge {
+  --uid-notif-badge-size:    18px;
+  --uid-notif-badge-color:   var(--uid-color-text-on-primary);
+  --uid-notif-badge-bg:      var(--uid-color-danger);
+  --uid-notif-badge-offset-x: 0px;
+  --uid-notif-badge-offset-y: 0px;
+
+  position: relative;
+  display: inline-flex;
+}
+
+.uid-notification-badge__dot,
+.uid-notification-badge__count {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--uid-notif-badge-bg);
+  color: var(--uid-notif-badge-color);
+  border-radius: 999px;
+  box-shadow: 0 0 0 2px var(--uid-color-bg);
+  pointer-events: none;
+  font-variant-numeric: tabular-nums;
+}
+
+.uid-notification-badge__dot {
+  width: 8px;
+  height: 8px;
+}
+
+.uid-notification-badge__count {
+  min-width: var(--uid-notif-badge-size);
+  height: var(--uid-notif-badge-size);
+  padding: 0 6px;
+  font-size: 11px;
+  font-weight: var(--uid-font-weight-semibold);
+  line-height: 1;
+}
+
+/* Placement */
+.uid-notification-badge--top-right .uid-notification-badge__dot,
+.uid-notification-badge--top-right .uid-notification-badge__count {
+  top: var(--uid-notif-badge-offset-y);
+  right: var(--uid-notif-badge-offset-x);
+  transform: translate(50%, -50%);
+}
+
+.uid-notification-badge--top-left .uid-notification-badge__dot,
+.uid-notification-badge--top-left .uid-notification-badge__count {
+  top: var(--uid-notif-badge-offset-y);
+  left: var(--uid-notif-badge-offset-x);
+  transform: translate(-50%, -50%);
+}
+
+.uid-notification-badge--bottom-right .uid-notification-badge__dot,
+.uid-notification-badge--bottom-right .uid-notification-badge__count {
+  bottom: var(--uid-notif-badge-offset-y);
+  right: var(--uid-notif-badge-offset-x);
+  transform: translate(50%, 50%);
+}
+
+.uid-notification-badge--bottom-left .uid-notification-badge__dot,
+.uid-notification-badge--bottom-left .uid-notification-badge__count {
+  bottom: var(--uid-notif-badge-offset-y);
+  left: var(--uid-notif-badge-offset-x);
+  transform: translate(-50%, 50%);
+}
+
+/* Tones */
+.uid-notification-badge--primary .uid-notification-badge__dot,
+.uid-notification-badge--primary .uid-notification-badge__count {
+  background: var(--uid-color-primary);
+}
+
+.uid-notification-badge--success .uid-notification-badge__dot,
+.uid-notification-badge--success .uid-notification-badge__count {
+  background: var(--uid-color-success);
+}
+
+.uid-notification-badge--warning .uid-notification-badge__dot,
+.uid-notification-badge--warning .uid-notification-badge__count {
+  background: var(--uid-color-warning);
+}
+
+.uid-notification-badge--info .uid-notification-badge__dot,
+.uid-notification-badge--info .uid-notification-badge__count {
+  background: var(--uid-color-info);
+}
