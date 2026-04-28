@@ -1,50 +1,50 @@
-# Гайдлайны компонентов
+# Component guidelines
 
-Единые правила, которым подчиняется каждый компонент в kit'е. Читай этот файл перед добавлением нового компонента.
+Rules every component in the kit must follow. Read this before adding a new component.
 
-## Структура папки
+## Folder structure
 
 ```
 src/components/Button/
-├── UidButton.vue          # шаблон + script setup
-├── UidButton.css          # стили (импорт из <script setup>)
+├── UidButton.vue          # template + script setup
+├── UidButton.css          # styles (imported from <script setup>)
 ├── UidButton.stories.ts   # Storybook
 ├── UidButton.spec.ts      # Vitest + @vue/test-utils
-└── index.ts              # реэкспорт компонента и его типов
+└── index.ts               # component + types re-export
 ```
 
-## Именование
+## Naming
 
-| Сущность | Префикс | Пример |
+| Entity | Prefix | Example |
 |---|---|---|
-| Имя компонента | `Uid` (PascalCase) | `UidButton`, `UidInputField` |
-| CSS-класс корня | `uid-` (kebab-case) | `.uid-button`, `.uid-input-field` |
-| Класс модификатора | BEM-double-dash | `.uid-button--primary`, `.uid-button--size-sm` |
-| Класс элемента | BEM-double-underscore | `.uid-button__icon`, `.uid-input-field__label` |
-| CSS-переменная компонента | `--uid-{component}-*` | `--uid-button-bg`, `--uid-button-radius` |
-| Тип пропсов | `{Component}Props` | `UidButtonProps` |
-| Enum-варианты как тип | `{Component}{Aspect}` | `UidButtonVariant`, `UidButtonSize` |
+| Component name | `Uid` (PascalCase) | `UidButton`, `UidInputField` |
+| Root CSS class | `uid-` (kebab-case) | `.uid-button`, `.uid-input-field` |
+| Modifier class | BEM double-dash | `.uid-button--primary`, `.uid-button--size-sm` |
+| Element class | BEM double-underscore | `.uid-button__icon` |
+| Component CSS variable | `--uid-{component}-*` | `--uid-button-bg` |
+| Props type | `{Component}Props` | `UidButtonProps` |
+| Enum variant type | `{Component}{Aspect}` | `UidButtonVariant`, `UidButtonSize` |
 
 ## API: props, events, slots
 
 ### Props
 
-- Обязательно типизированы. Дефолты — через `withDefaults`.
-- Размеры — именованная шкала: `'sm' | 'md' | 'lg'`. Не пропускать произвольные числа.
-- Варианты — конечный union: `'primary' | 'secondary' | 'ghost' | 'danger'`.
-- Никаких `any`, никаких `Object`-пропсов без интерфейса.
+- Always typed. Defaults via `withDefaults`.
+- Sizes — named scale: `'sm' | 'md' | 'lg'`. No raw numbers.
+- Variants — finite union: `'primary' | 'secondary' | 'ghost' | 'danger'`.
+- No `any`, no `Object` props without an interface.
 
-Компоненты, принимающие пользовательский ввод (`UidInput`, `UidSelect`, `UidCheckbox` и др.), расширяют общий интерфейс `ValidatableProps`:
+Form-input components (`UidInput`, `UidSelect`, `UidCheckbox`, …) extend the common `ValidatableProps`:
 
 ```ts
 interface ValidatableProps {
   rules?: RuleInput   // 'required|email' | RuleFn | (string | RuleFn)[]
-  name?:  string      // имя поля — нужно для cross-field правил в useForm
-  label?: string      // подставляется в сообщения об ошибках
+  name?:  string      // field name — needed for cross-field rules in useForm
+  label?: string      // substituted into error messages
 }
 ```
 
-Подробно — [`VALIDATION.md`](./VALIDATION.md).
+See [validation](./en/validation.md).
 
 ```ts
 export type UidButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger'
@@ -69,8 +69,8 @@ const props = withDefaults(defineProps<UidButtonProps>(), {
 
 ### Events
 
-- Имена событий — kebab-case с префиксом без `on`: `click`, `update:modelValue`, `change`, `close`.
-- Типизация через `defineEmits` с дженериком.
+- Names — kebab-case, no `on` prefix: `click`, `update:modelValue`, `change`, `close`.
+- Typed via `defineEmits` generic.
 
 ```ts
 const emit = defineEmits<{
@@ -81,9 +81,9 @@ const emit = defineEmits<{
 
 ### Slots
 
-- Дефолтный слот — основной контент.
-- Именованные слоты — для опциональных частей: `prepend`, `append`, `icon`, `header`, `footer`.
-- Типизация через `defineSlots` (Vue 3.3+).
+- Default slot — main content.
+- Named slots — for optional pieces: `prepend`, `append`, `icon`, `header`, `footer`.
+- Typed via `defineSlots` (Vue 3.3+).
 
 ```ts
 defineSlots<{
@@ -95,65 +95,63 @@ defineSlots<{
 
 ### v-model
 
-- Используем `defineModel()` (Vue 3.4+) — короче и типобезопаснее, чем пара prop+emit.
+- Use `defineModel()` (Vue 3.4+) — shorter and type-safer than the `prop+emit` pair.
 
 ```ts
 const model = defineModel<string>()
 ```
 
-## Скругления компонентов
+## Component radii
 
-Шкала радиусов намеренно маленькая — пять значений, из которых в большинстве компонентов используется одно.
+The radius scale is intentionally tiny — five values, most components use one.
 
-| Компонент | Радиус |
+| Component | Radius |
 |---|---|
 | `UidButton`, `UidInput`, `UidSelect`, `UidTextarea` | `--uid-radius-md` (6px) |
 | `UidDropdown`, `UidMenu`, `UidAlert`, `UidToast` | `--uid-radius-md` (6px) |
 | `UidCard`, `UidModal`, `UidDrawer`, `UidPopover` | `--uid-radius-lg` (10px) |
 | `UidBadge`, `UidTag`, `UidTooltip`, `UidCheckbox` | `--uid-radius-sm` (3px) |
 | `UidAvatar` | `--uid-radius-full` (9999px) |
-| Таблицы, разделители, code-блоки | `--uid-radius-none` (0) |
+| Tables, dividers, code blocks | `--uid-radius-none` (0) |
 
-Если сомневаешься — `md`. `full` используется только осознанно, не по умолчанию.
+When in doubt — `md`. `full` is intentional, never default.
 
-## Размеры компонентов
+## Component sizes
 
-Все интерактивные компоненты поддерживают три размера через проп `size: 'sm' | 'md' | 'lg'`.
+Every interactive component supports three sizes via `size: 'sm' | 'md' | 'lg'`.
 
-| Размер | Высота | Padding-x | Шрифт | Иконка |
+| Size | Height | Padding-x | Font | Icon |
 |---|---|---|---|---|
 | `sm` | 32px (`--uid-size-sm`) | `--uid-space-sm` (8px) | `--uid-font-size-sm` (14px) | 16px |
 | `md` | 40px (`--uid-size-md`) | `--uid-space-md` (16px) | `--uid-font-size-md` (16px) | 20px |
 | `lg` | 48px (`--uid-size-lg`) | `--uid-space-lg` (24px) | `--uid-font-size-lg` (18px) | 20px |
 
-Высота задаётся через `min-height`, не `height` — чтобы многострочный контент мог растянуть элемент.  
-Компоненты без текстового контента (иконки, аватары) используют `width` + `height` напрямую.  
-Иконка в `lg` остаётся 20px — увеличение до 24px создаёт зрительный дисбаланс с текстом.
+Height uses `min-height`, not `height` — multiline content can grow the element.
+Components without text (icons, avatars) use `width` + `height` directly.
+Icons in `lg` stay 20px — bumping to 24px throws off visual balance with the text.
 
-## Стили
+## Styles
 
-- Файл `Component.css` импортируется в `<script setup>`: `import './UidButton.css'`.
-- **Без `scoped`.** Изоляция — через префикс `.uid-{component}` и BEM.
-- Все настраиваемые значения — через локальные CSS-переменные с фолбэком на семантику ([TOKENS.md](./TOKENS.md)).
-- Состояния — через атрибуты или классы-модификаторы:
-  - `:hover`, `:focus-visible`, `:active` — псевдоклассы.
-  - `disabled` — атрибут `disabled` или `[aria-disabled="true"]`, не класс.
-  - `loading`, `selected`, `expanded` — `data-*` атрибуты или классы-модификаторы.
-- Focus-ring — всегда через `:focus-visible` (не `:focus`). Единый стиль для всех компонентов:
+- `Component.css` is imported from `<script setup>`: `import './UidButton.css'`.
+- **No `scoped`.** Isolation via `.uid-{component}` prefix + BEM.
+- All knobs go through local CSS variables that fall back to semantic tokens (see [tokens](./en/tokens.md)).
+- States — via attributes or modifier classes:
+  - `:hover`, `:focus-visible`, `:active` — pseudo-classes.
+  - `disabled` — `disabled` attribute or `[aria-disabled="true"]`, not a class.
+  - `loading`, `selected`, `expanded` — `data-*` attributes or modifier classes.
+- Focus ring — always `:focus-visible` (not `:focus`). One uniform style across the kit:
   ```css
   .uid-button:focus-visible {
     outline: 2px solid var(--uid-accent);
     outline-offset: 2px;
-    border-radius: inherit; /* следует скруглению элемента */
+    border-radius: inherit;
   }
-
-  /* В состоянии error — ring меняет цвет */
   .uid-input--error:focus-visible {
     outline-color: var(--uid-danger);
   }
   ```
 
-### Шаблон CSS-файла
+### CSS file template
 
 ```css
 .uid-button {
@@ -192,48 +190,37 @@ const model = defineModel<string>()
   cursor: not-allowed;
 }
 
-/* Варианты */
 .uid-button--secondary {
   --uid-button-bg:       var(--uid-surface-raised);
   --uid-button-bg-hover: var(--uid-border-subtle);
   --uid-button-color:    var(--uid-text-primary);
 }
 
-/* Размеры */
 .uid-button--sm { --uid-button-height: var(--uid-size-sm); --uid-button-padding-x: var(--uid-space-sm); font-size: var(--uid-font-size-sm); }
 .uid-button--lg { --uid-button-height: var(--uid-size-lg); --uid-button-padding-x: var(--uid-space-lg); font-size: var(--uid-font-size-lg); }
 ```
 
-## Состояния
-
-Единые правила для всех компонентов. Без консистентности состояний интерфейс ощущается «рваным».
+## States
 
 ### Hover
 
-Элементы с семантическим `-hover` токеном используют его напрямую:
+Components with a semantic `-hover` token use it directly:
 ```css
 .uid-button:hover { background: var(--uid-button-bg-hover); }
 ```
 
-Поверхности без выделенного `-hover` токена (пункты меню, строки таблицы, nav-элементы) — через полупрозрачный overlay:
+Surfaces without a `-hover` token (menu items, table rows, nav items) use a translucent overlay:
 ```css
-.uid-menu-item:hover {
-  background: rgb(0 0 0 / 0.04);       /* light theme */
-}
-:root[data-theme='dark'] .uid-menu-item:hover {
-  background: rgb(255 255 255 / 0.06); /* dark theme */
-}
+.uid-menu-item:hover { background: rgb(0 0 0 / 0.04); }
+:root[data-theme='dark'] .uid-menu-item:hover { background: rgb(255 255 255 / 0.06); }
 ```
 
-Переход всегда: `transition: <свойство> var(--uid-duration-fast) var(--uid-ease-out)`.
+Always `transition: <prop> var(--uid-duration-fast) var(--uid-ease-out)`.
 
 ### Active / Pressed
 
-Кнопки и кликабельные элементы дают тактильный отклик:
 ```css
-.uid-button:active {
-  transform: scale(0.98);
-}
+.uid-button:active { transform: scale(0.98); }
 ```
 
 ### Disabled
@@ -246,21 +233,17 @@ const model = defineModel<string>()
 }
 ```
 
-`pointer-events: none` **не используется** — это ломает тултипы на задизейбленных элементах, которые объясняют причину блокировки.
+`pointer-events: none` is **avoided** — it kills tooltips on disabled elements that explain why they're disabled.
 
 ### Error
 
-Применяется к контролам форм (`UidInput`, `UidSelect`, `UidTextarea`):
+For form controls (`UidInput`, `UidSelect`, `UidTextarea`):
 ```css
-.uid-input--error {
-  border-color: var(--uid-danger);
-}
-.uid-input--error:focus-visible {
-  outline-color: var(--uid-danger);
-}
+.uid-input--error { border-color: var(--uid-danger); }
+.uid-input--error:focus-visible { outline-color: var(--uid-danger); }
 ```
 
-Ошибка всегда сопровождается текстом — только цвет бордера недостаточен для a11y.
+An error always comes with text — colour alone isn't enough for a11y.
 
 ### Loading
 
@@ -268,33 +251,33 @@ const model = defineModel<string>()
 .uid-button[data-loading='true'] {
   opacity: 0.7;
   cursor: wait;
-  pointer-events: none; /* здесь pointer-events уместен — действие уже выполняется */
+  pointer-events: none;
 }
 ```
 
-## Доступность (a11y)
+## Accessibility
 
-Минимум, который должен соблюдать каждый компонент:
+Minimum every component must meet:
 
-- Семантические теги в первую очередь (`<button>`, `<input>`, `<dialog>`). Если нативного нет — корректные `role`.
-- Все интерактивные элементы достижимы клавиатурой (Tab/Shift+Tab, Enter/Space, Esc для закрытия).
-- Состояния отражаются через ARIA: `aria-disabled`, `aria-expanded`, `aria-selected`, `aria-invalid`, `aria-describedby`.
-- У контролов формы должен быть label (через слот `label`, проп `label`, или `aria-label`/`aria-labelledby`).
-- Focus-ring виден, не убирать `outline` без замены через `:focus-visible`.
-- Не использовать только цвет для передачи смысла (ошибка — это цвет + текст/иконка, а не только красный бордер).
+- Native semantic elements first (`<button>`, `<input>`, `<dialog>`). If there's no native element, use the right `role`.
+- All interactive elements reachable via keyboard (Tab/Shift+Tab, Enter/Space, Esc to close).
+- States surfaced via ARIA: `aria-disabled`, `aria-expanded`, `aria-selected`, `aria-invalid`, `aria-describedby`.
+- Form controls have a label (slot, prop, `aria-label`/`aria-labelledby`).
+- Focus ring visible — never strip `outline` without replacing it via `:focus-visible`.
+- Don't use colour alone to convey meaning (error = colour + text/icon, not just a red border).
 
-В Storybook включён `@storybook/addon-a11y`. Перед PR компонент должен пройти его проверки без критичных нарушений.
+Storybook ships with `@storybook/addon-a11y`. A component must pass it without critical violations before the PR.
 
-## Тесты
+## Tests
 
-Юнит-тесты на компонент — обязательны для:
+Unit tests are required for:
 
-- проп → классы/атрибуты;
-- эмиссия событий;
-- v-model двусторонняя связь;
-- a11y-инварианты (например, `aria-disabled` при `disabled`).
+- prop → classes/attributes
+- event emission
+- v-model two-way binding
+- a11y invariants (e.g. `aria-disabled` when `disabled`)
 
-Визуальные кейсы покрываются Storybook'ом.
+Visual cases live in Storybook.
 
 ```ts
 import { mount } from '@vue/test-utils'
@@ -302,13 +285,13 @@ import { describe, expect, it } from 'vitest'
 import UidButton from './UidButton.vue'
 
 describe('UidButton', () => {
-  it('эмитит click при нажатии', async () => {
+  it('emits click', async () => {
     const wrapper = mount(UidButton, { slots: { default: 'OK' } })
     await wrapper.trigger('click')
     expect(wrapper.emitted('click')).toHaveLength(1)
   })
 
-  it('не эмитит click при disabled', async () => {
+  it('does not emit click when disabled', async () => {
     const wrapper = mount(UidButton, { props: { disabled: true } })
     await wrapper.trigger('click')
     expect(wrapper.emitted('click')).toBeUndefined()
@@ -318,15 +301,15 @@ describe('UidButton', () => {
 
 ## Storybook
 
-Каждый компонент = одна `.stories.ts` минимум со следующими кейсами:
+One `.stories.ts` per component, with at minimum:
 
-- `Default` — базовый, без пропсов.
-- По одной story на каждый `variant`.
-- По одной story на каждый `size` (или единая `Sizes` со всеми вариантами рядом).
-- `Disabled`, `Loading` — если применимо.
-- `Playground` — все аргументы как `argTypes`, чтобы тыкать в панели.
+- `Default` — bare, no props.
+- One story per `variant`.
+- One story per `size` (or a single `Sizes` showing them side-by-side).
+- `Disabled`, `Loading` — if applicable.
+- `Playground` — all args as `argTypes` to poke at.
 
-Шаблон story:
+Story template:
 
 ```ts
 import type { Meta, StoryObj } from '@storybook/vue3'
@@ -352,37 +335,21 @@ export const Playground: Story = {
   render: (args) => ({
     components: { UidButton },
     setup: () => ({ args }),
-    template: `<UidButton v-bind="args">Кнопка</UidButton>`,
-  }),
-}
-
-export const Variants: Story = {
-  render: () => ({
-    components: { UidButton },
-    template: `
-      <div style="display:flex; gap:12px;">
-        <UidButton variant="primary">Primary</UidButton>
-        <UidButton variant="secondary">Secondary</UidButton>
-        <UidButton variant="ghost">Ghost</UidButton>
-        <UidButton variant="danger">Danger</UidButton>
-      </div>
-    `,
+    template: `<UidButton v-bind="args">Button</UidButton>`,
   }),
 }
 ```
 
 ## Definition of Done
 
-Компонент считается готовым к мерджу, когда:
+- [ ] Folder layout matches the convention above.
+- [ ] Props/Events/Slots typed; JSDoc where the meaning isn't obvious from the name.
+- [ ] Styles use semantic tokens or local variables fallbacking to them only.
+- [ ] Works in both light and dark in Storybook.
+- [ ] Storybook covers Default + Variants + States.
+- [ ] `addon-a11y` shows no critical violations.
+- [ ] Unit tests cover props → render and events.
+- [ ] Component exported from `src/index.ts`.
+- [ ] Changeset added (`pnpm changeset`).
 
-- [ ] Структура папки соответствует разделу выше.
-- [ ] Props/Events/Slots типизированы и описаны через JSDoc там, где смысл не очевиден из имени.
-- [ ] Стили используют только семантические токены или локальные переменные с фолбэком на них.
-- [ ] Корректно работает в light и dark в Storybook'е.
-- [ ] Storybook содержит все обязательные кейсы (Default + Variants + States).
-- [ ] `addon-a11y` не показывает критичных нарушений.
-- [ ] Юнит-тесты покрывают props → render и события.
-- [ ] Компонент экспортирован из `src/index.ts`.
-- [ ] Добавлен changeset (`pnpm changeset`).
-
-См. также шаблон в [`templates/COMPONENT.md`](./templates/COMPONENT.md).
+See also the template at [`templates/COMPONENT.md`](./templates/COMPONENT.md).

@@ -1,86 +1,86 @@
-# Шаблон описания компонента
+# Component description template
 
-Используй этот шаблон при добавлении нового компонента — копируй в `src/components/{Name}/README.md` (опционально) или используй как чек-лист в PR-описании.
+Use this template when adding a new component — copy into `src/components/{Name}/README.md` (optional) or use as a checklist in your PR description.
 
 ---
 
-## `Uk{Name}`
+## `Uid{Name}`
 
-> Одна-две строки: что это и зачем.
+> One or two lines: what it is and why.
 
 ### API
 
 #### Props
 
-| Имя | Тип | Дефолт | Описание |
+| Name | Type | Default | Description |
 |---|---|---|---|
-| `variant` | `'primary' \| 'secondary'` | `'primary'` | Визуальный вариант |
-| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Размер |
-| `disabled` | `boolean` | `false` | Запрет взаимодействия |
+| `variant` | `'primary' \| 'secondary'` | `'primary'` | Visual variant |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Size |
+| `disabled` | `boolean` | `false` | Disables interaction |
 
 #### Events
 
-| Имя | Payload | Когда |
+| Name | Payload | When |
 |---|---|---|
-| `click` | `MouseEvent` | Пользователь кликнул |
-| `update:modelValue` | `string` | Изменилось значение (v-model) |
+| `click` | `MouseEvent` | User clicks the component |
+| `update:modelValue` | `string` | Value changed (v-model) |
 
 #### Slots
 
-| Имя | Контент |
+| Name | Content |
 |---|---|
-| `default` | Основной контент |
-| `prepend` | Контент перед основным (например, иконка) |
-| `append` | Контент после основного |
+| `default` | Main content |
+| `prepend` | Content before main (e.g. icon) |
+| `append` | Content after main |
 
 #### v-model
 
-- Обычный `v-model` биндится на `modelValue` / `update:modelValue` — значение типа `…`.
+- Plain `v-model` binds to `modelValue` / `update:modelValue` — value of type `…`.
 
-### CSS API (переменные)
+### CSS API (variables)
 
-Локальные переменные компонента, доступные для переопределения снаружи:
+Local component variables, available for outside override:
 
-| Переменная | Дефолт (фолбэк на токен) | Что управляет |
+| Variable | Default (token fallback) | Controls |
 |---|---|---|
-| `--uid-{name}-bg` | `var(--uid-accent)` | Фон |
-| `--uid-{name}-bg-hover` | `var(--uid-accent-hover)` | Фон при hover |
-| `--uid-{name}-color` | `var(--uid-text-on-accent)` | Цвет текста |
-| `--uid-{name}-radius` | `var(--uid-radius-md)` | Скругление |
-| `--uid-{name}-height` | `var(--uid-size-md)` | Высота (интерактивные элементы) |
-| `--uid-{name}-padding-x` | `var(--uid-space-md)` | Горизонтальный padding |
-| `--uid-{name}-padding-y` | `var(--uid-space-sm)` | Вертикальный padding |
+| `--uid-{name}-bg` | `var(--uid-accent)` | Background |
+| `--uid-{name}-bg-hover` | `var(--uid-accent-hover)` | Hover background |
+| `--uid-{name}-color` | `var(--uid-text-on-accent)` | Text color |
+| `--uid-{name}-radius` | `var(--uid-radius-md)` | Border radius |
+| `--uid-{name}-height` | `var(--uid-size-md)` | Height (interactive elements) |
+| `--uid-{name}-padding-x` | `var(--uid-space-md)` | Horizontal padding |
+| `--uid-{name}-padding-y` | `var(--uid-space-sm)` | Vertical padding |
 
-### Доступность
+### Accessibility
 
-- Семантический корневой элемент: `<button>` / `<input>` / `<role="…">`.
-- Поддерживаемые клавиши: `Tab`, `Enter`, `Space`, `Esc` (если применимо).
-- ARIA-атрибуты, которые проставляются автоматически: `aria-disabled`, `aria-invalid`, …
-- Что должен сделать пользователь kit'a: предоставить `aria-label` / `label`, если нет видимого текста.
+- Semantic root element: `<button>` / `<input>` / `<role="…">`.
+- Supported keys: `Tab`, `Enter`, `Space`, `Esc` (where applicable).
+- Auto-applied ARIA: `aria-disabled`, `aria-invalid`, …
+- Consumer responsibility: provide `aria-label` / `label` when there's no visible text.
 
-### Примеры
+### Examples
 
 ```html
 <UidFoo variant="primary" size="md" @click="handleClick">
-  Кнопка
+  Button
 </UidFoo>
 ```
 
 ```html
 <UidFoo v-model="value" :disabled="loading">
   <template #prepend><Icon name="check" /></template>
-  Сохранить
+  Save
 </UidFoo>
 ```
 
 ### Definition of Done
 
-- [ ] Папка компонента соответствует структуре из [COMPONENT_GUIDELINES](../COMPONENT_GUIDELINES.md)
-- [ ] Props/Events/Slots типизированы
-- [ ] Стили только через токены / локальные переменные
-- [ ] Работает в light и dark
+- [ ] Folder matches structure from [COMPONENT_GUIDELINES](../COMPONENT_GUIDELINES.md)
+- [ ] Props/Events/Slots typed
+- [ ] Styles via tokens / local variables only
+- [ ] Works in light and dark
 - [ ] Storybook: Default + Variants + States + Playground
-- [ ] `addon-a11y` без критики
-- [ ] Юнит-тесты на props → render + события
-- [ ] Экспорт из `src/index.ts`
-- [ ] Changeset добавлен
+- [ ] `addon-a11y` clean
+- [ ] Unit tests for props → render + events
+- [ ] Exported from `src/index.ts`
+- [ ] Changeset added

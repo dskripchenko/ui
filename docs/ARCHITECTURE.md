@@ -1,94 +1,77 @@
-# Архитектура
+# Architecture
 
-## Стек
+## Stack
 
-| Слой | Инструмент |
+| Layer | Tool |
 |---|---|
-| Фреймворк | Vue 3 (`<script setup>`, Composition API) |
-| Язык | TypeScript (strict) |
-| Стили | Plain CSS + CSS Custom Properties |
-| Сборка библиотеки | Vite (library mode) |
-| Типы | `vite-plugin-dts` |
-| Документация / dev | Storybook 8 (framework `@storybook/vue3-vite`) |
-| Тесты | Vitest + `@vue/test-utils` |
-| Линт / формат | ESLint (flat config) + Prettier |
-| Версионирование | Changesets |
-| Менеджер пакетов | pnpm |
+| Framework | Vue 3 (`<script setup>`, Composition API) |
+| Language | TypeScript (strict) |
+| Styles | Plain CSS + CSS Custom Properties |
+| Library build | Vite (library mode) |
+| Types | `vite-plugin-dts` |
+| Docs / dev | Storybook 8 (`@storybook/vue3-vite`) |
+| Tests | Vitest + `@vue/test-utils` |
+| Lint / format | ESLint (flat config) + Prettier |
+| Versioning | Changesets |
+| Package manager | pnpm |
 
-## Структура репозитория
+## Repository layout
 
 ```
 .
 ├── src/
-│   ├── tokens/                # дизайн-токены как CSS-переменные
-│   │   ├── colors.css         # primitives: палитра без семантики
+│   ├── tokens/                # design tokens as CSS variables
+│   │   ├── colors.css         # primitive palette, no semantics
 │   │   ├── typography.css
 │   │   ├── spacing.css
 │   │   ├── radius.css
 │   │   ├── shadow.css
 │   │   ├── motion.css
 │   │   ├── z-index.css
-│   │   └── index.css          # импортирует всё выше
+│   │   └── index.css          # imports everything above
 │   │
 │   ├── styles/
-│   │   ├── reset.css          # минимальный reset
-│   │   ├── themes.css         # :root[data-theme="light|dark"] — семантические токены
-│   │   └── global.css         # глобальные стили (font-family, base text)
+│   │   ├── reset.css          # minimal reset
+│   │   ├── themes.css         # :root[data-theme="light|dark"] — semantic tokens
+│   │   └── global.css         # global styles (font-family, base text)
 │   │
-│   ├── icons/                 # UidIcon + registry + реэкспорт lucide-vue-next
-│   │   ├── UidIcon.vue
-│   │   ├── UidIcon.css
-│   │   ├── UidIcon.stories.ts
-│   │   ├── UidIcon.spec.ts
-│   │   ├── registry.ts        # registerIcons + getRegisteredIcon
-│   │   └── index.ts           # экспорт + re-export всего lucide-vue-next
+│   ├── locales/               # built-in localizations (ru, en) + UidLocale type
+│   ├── icons/                 # UidIcon + registry + lucide-vue-next re-export
 │   │
-│   ├── components/            # атомарные компоненты (Button, Input, Modal…)
+│   ├── components/            # atomic components (Button, Input, Modal…)
 │   │   └── Button/
 │   │       ├── UidButton.vue
 │   │       ├── UidButton.css
 │   │       ├── UidButton.stories.ts
 │   │       ├── UidButton.spec.ts
-│   │       └── index.ts       # реэкспорт компонента и его типов
+│   │       └── index.ts       # component + types re-export
 │   │
-│   ├── patterns/              # составные блоки (Header, Footer, Sidebar, PageHeader…)
-│   │   └── Header/
-│   │       ├── UidHeader.vue
-│   │       ├── UidHeader.css
-│   │       ├── UidHeader.stories.ts
-│   │       └── index.ts
-│   │
-│   ├── layouts/               # шаблоны страниц (Simple, Sidebar, Auth, Wizard)
-│   │   └── SidebarLayout/
-│   │       ├── UidSidebarLayout.vue
-│   │       ├── UidSidebarLayout.css
-│   │       ├── UidSidebarLayout.stories.ts
-│   │       └── index.ts
-│   │
-│   ├── composables/           # useFocusTrap, useId, useTheme, useSidebar, useWizard…
-│   ├── utils/                 # чистые утилиты без Vue
-│   ├── types/                 # общие типы (Size, Variant, Tone…)
-│   └── index.ts               # публичный barrel
+│   ├── patterns/              # composite blocks (Header, Footer, Sidebar, …)
+│   ├── layouts/               # page templates (Simple, Sidebar, Auth, Wizard)
+│   ├── composables/           # useFocusTrap, useTheme, useLocale, …
+│   ├── utils/                 # framework-free utilities
+│   ├── types/                 # shared types (Size, Variant, Tone…)
+│   └── index.ts               # public barrel
 │
-├── docs/                      # проектная документация (этот файл и др.)
-├── .storybook/                # конфиг Storybook
+├── docs/                      # project documentation (this file et al.)
+├── .storybook/                # Storybook config
 ├── package.json
 ├── tsconfig.json
 ├── vite.config.ts
 └── README.md
 ```
 
-## Сборка
+## Build
 
-Vite в library mode, два формата:
+Vite library mode produces two formats:
 
 - `dist/index.mjs` — ESM
-- `dist/index.cjs` — CJS (на случай legacy-проектов; можно отказаться позже)
-- `dist/index.d.ts` — типы
+- `dist/index.cjs` — CJS (legacy)
+- `dist/index.d.ts` — types
 
-Внешними зависимостями (`external`) объявляются `vue` и любые peer-deps. Stylesheets отдаются отдельными файлами и не инлайнятся в JS.
+`vue` and any peer-deps are marked external. Stylesheets are emitted as separate files and never inlined into JS.
 
-### `package.json` (ключевые поля)
+### `package.json` essentials
 
 ```json
 {
@@ -110,64 +93,59 @@ Vite в library mode, два формата:
     },
     "./styles/tokens.css": "./dist/styles/tokens.css",
     "./styles/themes.css": "./dist/styles/themes.css",
-    "./styles/reset.css": "./dist/styles/reset.css"
+    "./styles/reset.css": "./dist/styles/reset.css",
+    "./styles/global.css": "./dist/styles/global.css"
   },
   "sideEffects": ["**/*.css"],
   "files": ["dist"],
-  "peerDependencies": {
-    "vue": "^3.4.0"
-  },
-  "dependencies": {
-    "lucide-vue-next": "^0.460.0"
-  }
+  "peerDependencies": { "vue": "^3.4.0" },
+  "dependencies": { "lucide-vue-next": "^0.460.0" }
 }
 ```
 
-`sideEffects: ["**/*.css"]` — критично: разрешает tree-shaking JS, но защищает CSS от удаления бандлерами.
+`sideEffects: ["**/*.css"]` is critical: it allows JS tree-shaking while preventing bundlers from dropping CSS.
 
-## Стратегия CSS
+## CSS strategy
 
-- Один компонент → один `.css`-файл рядом, импортируется из `<script setup>`:
+- One component → one `.css` file next to it, imported from `<script setup>`:
   ```ts
   import './UidButton.css'
   ```
-- Без `scoped`. Изоляция — за счёт префикса класса `uid-<component>` и BEM-подобной вложенности (`uid-button__icon`, `uid-button--primary`).
-- Все «переменные» компонента (цвета, отступы) задаются через локальные CSS custom properties с фолбэком на семантические токены. Это даёт пользователю возможность переопределить компонент без `!important`.
+- No `scoped`. Isolation comes from the `uid-<component>` class prefix and BEM-style nesting (`uid-button__icon`, `uid-button--primary`).
+- All "knobs" of a component are exposed as local CSS custom properties with a fallback to semantic tokens. This lets users override a component without `!important`.
 
-Подробнее — [`TOKENS.md`](./TOKENS.md) и [`THEMING.md`](./THEMING.md).
+See [`docs/en/tokens.md`](./en/tokens.md) and [`docs/en/theming.md`](./en/theming.md) for details.
 
-## Слои API
+## API tiers
 
-В kit'е три слоя сущностей — границы между ними важны:
+The kit has three tiers — the boundaries between them matter:
 
-| Слой | Что | Пример | Где живёт |
+| Tier | What | Example | Lives in |
 |---|---|---|---|
-| Components | Атомарные UI-элементы | `UidButton`, `UidInput`, `UidModal` | `src/components/` |
-| Patterns | Составные блоки страницы | `UidHeader`, `UidSidebar`, `UidPageHeader`, `UidEmptyState` | `src/patterns/` |
-| Layouts | Шаблоны целых страниц | `UidSimpleLayout`, `UidSidebarLayout`, `UidAuthLayout`, `UidWizardLayout` | `src/layouts/` |
+| Components | Atomic UI elements | `UidButton`, `UidInput`, `UidModal` | `src/components/` |
+| Patterns | Composite page blocks | `UidHeader`, `UidSidebar`, `UidPageHeader`, `UidEmptyState` | `src/patterns/` |
+| Layouts | Whole-page templates | `UidSimpleLayout`, `UidSidebarLayout`, `UidAuthLayout`, `UidWizardLayout` | `src/layouts/` |
 
-Дополнительно — иконки (`UidIcon` + ~1500 Lucide-иконок), живут отдельно в `src/icons/` и доступны через sub-export `@dskripchenko/ui/icons`.
+Icons (`UidIcon` + ~1500 Lucide icons) live separately in `src/icons/` and are exposed via the `@dskripchenko/ui/icons` sub-export.
 
-Подробно про слои patterns/layouts — в [`PATTERNS.md`](./PATTERNS.md). Про иконки — в [`ICONS.md`](./ICONS.md).
+## Public API
 
-## Публичный API
+`src/index.ts` is the only entry point. It re-exports:
 
-`src/index.ts` — единственная точка входа. Реэкспортирует:
+- All `Uid*` components (from `components/`, `patterns/`, `layouts/`)
+- Their prop types (`UidButtonProps`, etc.)
+- Stable composables (`useTheme`, `useLocale`, `useToast`, `useSidebar`, `useWizard`, …)
+- Shared types from `src/types/`
+- Built-in locales (`ru`, `en`)
 
-- все компоненты с префиксом `Uid` (из `components/`, `patterns/`, `layouts/`)
-- их типы пропсов (`UidButtonProps`, `UidSidebarLayoutProps` и т.д.)
-- composables, помеченные как стабильные (`useTheme`, `useSidebar`, `useWizard`, `useToast`…)
-- общие типы из `src/types/`
+## SSR compatibility
 
-Экспериментальные сущности живут в `src/{components,patterns,layouts}/_experimental/` и **не реэкспортируются** из `index.ts` — пользователь может импортировать напрямую, осознавая риск.
+Components must not access `window`/`document` in `setup`. Any DOM access goes inside `onMounted` or a composable that encapsulates it (e.g. `useFocusTrap`).
 
-## Совместимость с SSR
-
-Компоненты не должны обращаться к `window`/`document` в `setup`. Любой DOM-доступ — внутри `onMounted` или composable, который сам это инкапсулирует (например `useFocusTrap`).
-
-## Тулинг (минимум на старте)
+## Tooling
 
 - `eslint` + `@vue/eslint-config-typescript` + `eslint-plugin-vue`
-- `prettier` (только форматирование, без правил линтера)
-- `vitest` с jsdom-окружением
-- `@storybook/vue3-vite`, аддоны: `@storybook/addon-essentials`, `@storybook/addon-a11y`, `@storybook/addon-themes` (для переключения light/dark)
+- `prettier` (formatting only, no lint rules)
+- `vitest` with jsdom environment
+- `@storybook/vue3-vite`, addons: `@storybook/addon-essentials`, `@storybook/addon-a11y`, `@storybook/addon-themes`
+- `rollup-plugin-visualizer` (optional, via `pnpm build:analyze`)

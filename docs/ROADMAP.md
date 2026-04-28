@@ -1,136 +1,88 @@
 # Roadmap
 
-Текущий состав библиотеки и планы развития.
+Current state of the library and what's next.
 
-## Состояние
+## Status
 
-Все исходные фазы (Phase 0–10+) закрыты. В библиотеке **59 компонентов**: 47 атомарных, 7 паттернов, 4 лейаута + 9 composables.
+All originally planned phases (0–10+) are closed. The library currently ships **70+ components**: ~60 atomic, 7 patterns, 4 layouts, 4 chart primitives, plus 10 composables and an i18n provider.
 
-## Реализовано
+## Done
 
-### Phase 0 — Фундамент
+### Phase 0 — Foundation
 
 - [x] Vite library mode + TypeScript
 - [x] ESLint flat config + Prettier
-- [x] Storybook 8 (`@storybook/vue3-vite`) + аддоны: `essentials`, `a11y`, `themes`
+- [x] Storybook 8 + addons (`essentials`, `a11y`, `themes`)
 - [x] Vitest + jsdom + `@vue/test-utils`
-- [x] Changesets + GitHub Actions релизный пайплайн
-- [x] Дизайн-токены: `colors`, `typography`, `spacing`, `radius`, `shadow`, `motion`, `z-index`
-- [x] Семантические токены + темы `:root[data-theme='light' | 'dark']`
-- [x] Reset-стили и `global.css`
-- [x] `useTheme()` — переключение темы и подписка на `prefers-color-scheme`
-- [x] **Иконки** — `lucide-vue-next` + `UidIcon` + sub-export `@dskripchenko/ui/icons`
+- [x] Changesets + GitHub Actions release pipeline
+- [x] Storybook deploy to GitHub Pages
+- [x] Design tokens: colors, typography, spacing, radius, shadow, motion, z-index
+- [x] Semantic tokens + themes (`:root[data-theme='light' | 'dark']`)
+- [x] Reset and `global.css`
+- [x] `useTheme()` — toggle theme + subscribe to `prefers-color-scheme`
+- [x] Icons — `lucide-vue-next` + `UidIcon` + `@dskripchenko/ui/icons` sub-export
 
-### Phase 1 — Базовые формы
+### Phase 1–6 — Core components
 
-- [x] `UidButton`, `UidInput`, `UidTextarea`
-- [x] `UidCheckbox`, `UidRadio` + `UidRadioGroup`, `UidSwitch`
-- [x] `UidLabel`, `UidFormField`
-- [x] `useField()` для валидации
-
-### Phase 2 — Обратная связь
-
-- [x] `UidSpinner`, `UidSkeleton`
-- [x] `UidBadge`, `UidAlert`, `UidProgress`
-- [x] `UidToast` + `UidToastProvider` + `useToast()`
-
-### Phase 3 — Оверлеи
-
-- [x] `useFocusTrap()`, `usePopover()`, `useScrollLock()`
-- [x] `UidModal`, `UidDrawer`
-- [x] `UidTooltip`, `UidPopover`
-- [x] `UidMenu` + `UidMenuItem` + `UidMenuSeparator`
-
-### Phase 4 — Навигация
-
-- [x] `UidTabs` + `UidTab` + `UidTabPanel`
-- [x] `UidBreadcrumb` + `UidBreadcrumbItem`, `UidLink`
-- [x] `UidPagination`, `UidPaginationCursor`, `UidLoadMore`, `UidInfiniteScroll`, `UidPageSize`
-
-### Phase 5 — Отображение данных
-
-- [x] `UidCard`, `UidAvatar` + `UidAvatarGroup`
-- [x] `UidTag`, `UidDivider`
-- [x] `UidAccordion` + `UidAccordionItem`
-- [x] `UidTable` (sortable)
-
-### Phase 6 — Layout-помощники
-
-- [x] `UidStack`, `UidGrid`, `UidContainer`
+- [x] Forms: Button, Input, Textarea, Checkbox, Radio, Switch, Label, FormField
+- [x] Feedback: Spinner, Skeleton, Badge, Alert, Progress, Toast
+- [x] Overlays: Modal, Drawer, Tooltip, Popover, Menu
+- [x] Navigation: Tabs, Breadcrumb, Link, Pagination (+ Cursor/LoadMore/InfiniteScroll/PageSize)
+- [x] Data: Card, Avatar, Tag, Divider, Accordion, Table
+- [x] Layout helpers: Stack, Grid, Container
 
 ### Phase 7 — Patterns
 
-- [x] `UidHeader`, `UidFooter`
-- [x] `UidSidebar` + `UidSidebarItem` + `UidSidebarGroup` + `UidSidebarDivider`
-- [x] `UidPageHeader`
-- [x] `UidEmptyState`, `UidErrorState`
-- [x] `UidResult` (success/info/warning/error)
+- [x] Header, Footer, Sidebar (+ Item, Group, Divider)
+- [x] PageHeader, EmptyState, ErrorState, Result
 
 ### Phase 8 — Wizards
 
-- [x] `UidStepper`
-- [x] `UidWizard` + `UidWizardStep`
-- [x] `useWizard()`
+- [x] Stepper, Wizard, WizardStep + `useWizard()`
 
 ### Phase 9 — Layouts
 
-- [x] `UidSimpleLayout`, `UidSidebarLayout`, `UidAuthLayout`, `UidWizardLayout`
-- [x] `useSidebar()`
+- [x] SimpleLayout, SidebarLayout, AuthLayout, WizardLayout + `useSidebar()`
 
-### Phase 10+ — Сложные компоненты
+### Phase 10+ — Advanced
 
-- [x] `UidSelect` (комбобокс с поиском, группами, опциональным clear)
-- [x] `UidDatePicker`
-- [x] `UidSlider`
-- [x] `UidColorPicker` (HSV + alpha + presets)
-- [x] `UidCommand` (ctrl+k палитра) + `useCommandPalette()`
-- [x] `UidVirtualList`
+- [x] Select, DatePicker, Slider, ColorPicker, Command, VirtualList
 
-### Расширение базы (после Phase 10)
+### Expansion (after Phase 10)
 
-**Заход 1 — формы и данные (`v0.2.0`):**
-- [x] `UidNumberInput`, `UidTimePicker`, `UidDateRangePicker`
-- [x] `UidTagsInput`, `UidCombobox`
-- [x] `UidTreeView` + `UidTreeItem`
-- [x] `UidTimeline` + `UidTimelineItem`
-- [x] `UidFileUpload`, `UidCode`
+**Round 1 — forms & data (`v0.2.0`):** NumberInput, TimePicker, DateRangePicker, TagsInput, Combobox, TreeView, Timeline, FileUpload, Code
 
-**Заход 2 — средний приоритет (`v0.3.0`):**
-- [x] `UidRating`, `UidSplitter`
-- [x] `UidStat`
-- [x] `UidDescriptionList` + `UidDescriptionItem`
-- [x] `UidResult` (паттерн)
+**Round 2 — medium priority (`v0.3.0`):** Rating, Splitter, Stat, DescriptionList, Result (pattern)
 
-**Заход 3 — низкий приоритет (`v0.4.0`):**
-- [x] `UidBackTop`, `UidAffix`, `UidAnchor` (навигация)
-- [x] `UidWatermark` (canvas-overlay)
-- [x] `UidTour` (onboarding)
-- [x] `UidMention` (@-упоминания)
-- [x] `UidTreeSelect` (Tree + Select)
+**Round 3 — low priority (`v0.4.0`):** BackTop, Affix, Anchor, Watermark, Tour, Mention, TreeSelect
 
-## Что дальше
+**Round 4 — niche (`v0.5.0`):** Calendar, Carousel, Cascader, Transfer, NotificationBadge
 
-В порядке убывания пользы:
+### Quality & DX
 
-### Качество и DX
+- [x] Bundle visualizer (`pnpm build:analyze`)
+- [x] A11y audit (roving tabindex, keyboard nav, ARIA)
+- [x] i18n — `UidLocaleProvider` + `useLocale` + `ru`/`en` built-in locales
+- [x] Charts — Sparkline, ProgressRing, Gauge, Heatmap (SVG, no runtime deps)
+- [x] Multi-language documentation (en/ru/de/zh)
 
-- [ ] **i18n** — все строки в компонентах (`Очистить`, `Поиск...`, `Готово` и т.п.) сейчас захардкожены на русском. Вынести в провайдер с переопределением.
-- [ ] **A11y-аудит** — пройти Storybook addon-a11y по всем компонентам, исправить замечания.
-- [ ] **Bundle-визуализатор** — `rollup-plugin-visualizer`, понять самые жирные компоненты.
-- [ ] **Документационный сайт** — VitePress отдельно от Storybook, с гайдами по темизации/токенам/паттернам.
+## What's next
 
-### Возможные компоненты (по запросу)
+In order of decreasing usefulness:
 
-Не нужны прямо сейчас, но имеют ясные сценарии:
+### Possible components (on demand)
 
-- [ ] `UidCalendar` — полный календарь с событиями (у нас только `UidDatePicker`)
-- [ ] `UidCarousel` — слайдер изображений/слайдов
-- [ ] `UidCascader` — каскадный выбор уровень за уровнем
-- [ ] `UidTransfer` — два списка с переносом элементов между ними
-- [ ] `UidNotificationBadge` — точка/число поверх иконки
+- [ ] Dual range slider with two thumbs
+- [ ] TimePicker with seconds support and 24-hour AM/PM hybrid
+- [ ] Tree-grid (table whose rows expand into trees)
 
-## Принципы
+### Quality & DX
 
-1. Делай то, что нужно прямо сейчас. Не разрабатывай впрок.
-2. Для каждого нового компонента — `.vue` + `.css` + `.spec.ts` + `.stories.ts` + `index.ts`, экспорт через `src/index.ts`.
-3. Если компонент сложнее, чем кажется (Calendar, Cascader), — рассмотри headless-библиотеку как peer-dep вместо своей реализации.
+- [ ] Visual regression tests (Chromatic / Percy)
+- [ ] Bundle-size budget enforced in CI
+
+## Principles
+
+1. Build for what's needed now. Don't build for hypotheticals.
+2. Every new component ships with `.vue` + `.css` + `.spec.ts` + `.stories.ts` + `index.ts`, exported from `src/index.ts`.
+3. If a component is harder than it looks (Calendar, Cascader), consider a headless library as a peer-dep instead of a custom build.

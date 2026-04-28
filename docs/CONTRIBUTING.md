@@ -1,26 +1,28 @@
-# Контрибьютинг
+# Contributing
 
-Это репозиторий одного автора, но workflow всё равно зафиксирован — чтобы не забывать «как мы это делаем».
+A single-author repo, but the workflow is documented to keep things consistent.
 
-## Окружение
+## Environment
 
 - Node.js 20 LTS+
 - pnpm 9+
 
 ```bash
 pnpm install
-pnpm dev          # Storybook
-pnpm test         # Vitest в watch
-pnpm test --run   # Vitest one-shot
+pnpm dev               # Storybook
+pnpm test              # Vitest in watch mode
+pnpm test --run        # one-shot
 pnpm lint
 pnpm typecheck
-pnpm build        # сборка библиотеки в dist/
+pnpm build             # build the library into dist/
+pnpm build-storybook   # build Storybook into storybook-static/
+pnpm build:analyze     # build with rollup-plugin-visualizer (stats.html)
 ```
 
-## Workflow добавления компонента
+## Adding a component
 
-1. **Завести ветку**: `feat/component-button`, `feat/tokens-shadow`, `fix/input-focus-ring` и т.п.
-2. **Создать структуру** (см. [COMPONENT_GUIDELINES](./COMPONENT_GUIDELINES.md#структура-папки)):
+1. **Branch:** `feat/component-button`, `feat/tokens-shadow`, `fix/input-focus-ring`.
+2. **Folder structure** (see [COMPONENT_GUIDELINES](./COMPONENT_GUIDELINES.md#folder-structure)):
    ```
    src/components/Foo/
      UidFoo.vue
@@ -29,72 +31,77 @@ pnpm build        # сборка библиотеки в dist/
      UidFoo.spec.ts
      index.ts
    ```
-3. **Реализовать компонент** по гайдлайнам:
-   - Props/Events/Slots типизированы.
-   - Стили — только через токены и локальные CSS-переменные.
-   - A11y минимум.
-4. **Написать stories** — минимум `Default`, `Variants`/`Sizes`, `Playground`.
-5. **Написать тесты** — props → render, события, ключевые состояния.
-6. **Добавить экспорт** в `src/index.ts`:
+3. **Implement** following the guidelines:
+   - Props/Events/Slots typed.
+   - Styles via tokens and local CSS variables only.
+   - A11y minimum.
+4. **Stories** — at least `Default`, `Variants`/`Sizes`, `Playground`.
+5. **Tests** — props → render, events, key states.
+6. **Public export** in `src/index.ts`:
    ```ts
    export { default as UidFoo } from './components/Foo/UidFoo.vue'
    export type { UidFooProps, UidFooVariant, UidFooSize } from './components/Foo'
    ```
-7. **Пройти чек-лист** Definition of Done из [COMPONENT_GUIDELINES](./COMPONENT_GUIDELINES.md#definition-of-done).
-8. **Создать changeset**:
+7. **Pass the Definition of Done** in [COMPONENT_GUIDELINES](./COMPONENT_GUIDELINES.md#definition-of-done).
+8. **Changeset:**
    ```bash
    pnpm changeset
    ```
-   Выбери тип бампа (см. ниже) и опиши изменение в свободной форме.
-9. **Открыть PR**, дождаться CI, мерджить.
+   Pick a bump type and describe the change.
+9. **PR**, wait for CI, merge.
 
-## Версионирование
+## Versioning
 
-Используется [Changesets](https://github.com/changesets/changesets) и SemVer.
+[Changesets](https://github.com/changesets/changesets) + SemVer.
 
-| Тип | Когда |
+| Bump | When |
 |---|---|
-| `patch` | Багфиксы, изменения стилей без изменения API, доки |
-| `minor` | Новый компонент, новый проп/вариант (с дефолтом), новая story |
-| `major` | Удаление/переименование пропа, изменение поведения по умолчанию, удаление компонента |
+| `patch` | Bug fixes, style tweaks without API change, docs |
+| `minor` | New component, new prop/variant (with default), new story |
+| `major` | Removing/renaming a prop, changing default behavior, removing a component |
 
-До `1.0.0` действует «zero-major»: ломающие изменения идут как `minor`. Не повышать в `1.0.0` пока API хотя бы 5 ключевых компонентов не устоится.
+Until `1.0.0` we operate in "zero-major": breaking changes go as `minor`. Don't bump to `1.0.0` until at least 5 key components have stabilized.
 
-## Релиз
+## Release
 
-Релиз делается локально (CI релиз можно настроить позже):
+Releases are automated via GitHub Actions on push to `main`:
+
+- Push to `main` → `changesets/action` opens a "Version Packages" PR
+- Merging that PR triggers `pnpm release`, which builds and publishes to npm
+
+Manual release (local fallback):
 
 ```bash
-pnpm changeset version    # применит changesets, обновит версии и CHANGELOG
-git add -A && git commit -m "release: версии"
+pnpm changeset version    # apply changesets, bump versions, update CHANGELOG
+git add -A && git commit -m "release: versions"
 pnpm build
-pnpm changeset publish    # опубликует в npm + проставит git-теги
+pnpm changeset publish    # publish to npm + tag
 git push --follow-tags
 ```
 
-Перед `pnpm changeset publish` проверь:
+Pre-publish checklist:
 
-- [ ] `pnpm test --run` проходит
-- [ ] `pnpm typecheck` проходит
-- [ ] `pnpm build` без warning'ов
-- [ ] `dist/` содержит `index.mjs`, `index.cjs`, `index.d.ts` и стили
-- [ ] `npm pack --dry-run` показывает только нужные файлы
+- [ ] `pnpm test --run` passes
+- [ ] `pnpm typecheck` passes
+- [ ] `pnpm build` is clean
+- [ ] `dist/` contains `index.mjs`, `index.cjs`, `index.d.ts`, and styles
+- [ ] `npm pack --dry-run` shows only intended files
 
-## Коммиты
+## Commit style
 
-Формат — Conventional Commits (нестрого, но желательно):
+Conventional Commits (loose):
 
 ```
-feat(button): добавить вариант ghost
-fix(input): не терять фокус при ререндере
-docs(tokens): описать категорию shadow
-chore: обновить storybook до 8.4
+feat(button): add ghost variant
+fix(input): retain focus on rerender
+docs(tokens): document shadow scale
+chore: bump storybook to 8.4
 ```
 
-Тип: `feat | fix | docs | chore | refactor | test | style`. Скоуп — имя компонента или общая область (`tokens`, `themes`, `build`).
+Type: `feat | fix | docs | chore | refactor | test | style`. Scope: component name or area (`tokens`, `themes`, `build`).
 
-## Что менять без PR не стоит
+## What not to touch outside a PR
 
-- `package.json` `name` / `version` (версии рулит Changesets)
-- Структуру `exports` в `package.json` — это часть публичного API, изменения только через major
-- Перенос файлов внутри `src/components/*` — ломает импорты у внешних пользователей, если они импортируют не из barrel'a
+- `name` / `version` in `package.json` (Changesets owns versions)
+- `exports` in `package.json` — public API; changes are major
+- File moves inside `src/components/*` — breaks deep imports for users who don't go through the barrel

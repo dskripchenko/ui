@@ -1,34 +1,38 @@
 # @dskripchenko/ui
 
-Набор Vue 3 компонентов, токенов и тем на CSS custom properties.
+A Vue 3 component, token, and theme library on CSS custom properties.
+
+[**English**](./README.md) · [Русский](./README.ru.md) · [Deutsch](./README.de.md) · [中文](./README.zh.md)
 
 [![npm](https://img.shields.io/npm/v/@dskripchenko/ui.svg)](https://www.npmjs.com/package/@dskripchenko/ui)
 [![bundle](https://img.shields.io/bundlephobia/minzip/@dskripchenko/ui)](https://bundlephobia.com/package/@dskripchenko/ui)
 [![license](https://img.shields.io/npm/l/@dskripchenko/ui.svg)](./LICENSE)
 
-> **Статус:** ранняя разработка. API нестабилен до `1.0`.
+> **Status:** early development. The API is unstable until `1.0`.
 
 📖 **Storybook:** [dskripchenko.github.io/ui](https://dskripchenko.github.io/ui/)
 
-## Особенности
+## Highlights
 
-- **59 компонентов** — формы, навигация, оверлеи, отображение данных, паттерны и лейауты
-- **Vue 3 + TypeScript** — Composition API, `<script setup>`, полная типизация
-- **CSS custom properties** — никакого CSS-in-JS, Tailwind или препроцессоров; всё через переменные
-- **Light / Dark темы** — через `data-theme` на `:root`, легко переопределяются
-- **Tree-shakeable** — импорт по компонентам, ESM + CJS сборки
-- **A11y** — `:focus-visible`, ARIA-атрибуты, keyboard-навигация во всех интерактивных компонентах
-- **~1500 иконок** — `lucide-vue-next` под капотом + sub-export `@dskripchenko/ui/icons`
+- **70+ components** — forms, navigation, overlays, data display, charts, patterns, layouts
+- **Vue 3 + TypeScript** — Composition API, `<script setup>`, fully typed
+- **CSS custom properties** — no CSS-in-JS, no Tailwind, no preprocessors; everything is variables
+- **Light / Dark themes** — toggled via `data-theme` on `:root`, easy to override
+- **Tree-shakable** — per-component imports, ESM + CJS builds
+- **A11y** — `:focus-visible`, ARIA attributes, keyboard navigation across every interactive component
+- **i18n** — built-in `ru` + `en` locales, `UidLocaleProvider` for partial overrides or custom locales
+- **~1500 icons** — `lucide-vue-next` under the hood + `@dskripchenko/ui/icons` sub-export
+- **Zero runtime chart deps** — built-in SVG primitives (Sparkline, ProgressRing, Gauge, Heatmap)
 
-## Установка
+## Install
 
 ```bash
 pnpm add @dskripchenko/ui
-# или
+# or
 npm install @dskripchenko/ui
 ```
 
-## Быстрый старт
+## Quick start
 
 ```ts
 // main.ts
@@ -44,70 +48,65 @@ createApp(App).mount('#app')
 ```vue
 <!-- App.vue -->
 <script setup lang="ts">
-import { UidButton, UidIcon } from '@dskripchenko/ui'
+import { UidButton, UidIcon, UidLocaleProvider, en } from '@dskripchenko/ui'
 import { Check } from '@dskripchenko/ui/icons'
 </script>
 
 <template>
-  <UidButton variant="primary">
-    <UidIcon :icon="Check" /> Привет
-  </UidButton>
+  <UidLocaleProvider :locale="en">
+    <UidButton variant="primary">
+      <UidIcon :icon="Check" /> Save
+    </UidButton>
+  </UidLocaleProvider>
 </template>
 ```
 
-Переключение темы — атрибут на `<html>`:
+Switch theme by attribute on `<html>`:
 
 ```html
 <html data-theme="dark">
 ```
 
-## Состав библиотеки
+## What's inside
 
-### Базовые формы и ввод
+A short selection — the full catalog is in [Storybook](https://dskripchenko.github.io/ui/).
 
-`UidButton`, `UidInput`, `UidTextarea`, `UidNumberInput`, `UidCheckbox`, `UidRadio`, `UidRadioGroup`, `UidSwitch`, `UidLabel`, `UidFormField`, `UidSelect`, `UidCombobox`, `UidTagsInput`, `UidDatePicker`, `UidDateRangePicker`, `UidTimePicker`, `UidColorPicker`, `UidSlider`, `UidRating`, `UidFileUpload`, `UidMention`, `UidTreeSelect`
+**Forms & input:** Button, Input, Textarea, NumberInput, Checkbox, Radio, Switch, Label, FormField, Select, Combobox, TagsInput, DatePicker, DateRangePicker, TimePicker, ColorPicker, Slider, Rating, FileUpload, Mention, TreeSelect, Cascader
 
-### Обратная связь
+**Feedback:** Spinner, Skeleton, Badge, Alert, Progress, Toast, Tour
 
-`UidSpinner`, `UidSkeleton`, `UidBadge`, `UidAlert`, `UidProgress`, `UidToast`, `UidToastProvider`, `UidTour`
+**Overlays:** Modal, Drawer, Tooltip, Popover, Menu, Command
 
-### Оверлеи
+**Navigation:** Tabs, Breadcrumb, Link, Pagination (+ Cursor / LoadMore / InfiniteScroll / PageSize), BackTop, Affix, Anchor
 
-`UidModal`, `UidDrawer`, `UidTooltip`, `UidPopover`, `UidMenu`, `UidMenuItem`, `UidCommand`
+**Data display:** Card, Avatar, AvatarGroup, Tag, Divider, Accordion, Table, VirtualList, Stat, DescriptionList, Timeline, TreeView, Code, Watermark, Carousel, Calendar, NotificationBadge
 
-### Навигация
+**Layout helpers:** Stack, Grid, Container, Splitter
 
-`UidTabs`, `UidTab`, `UidTabPanel`, `UidBreadcrumb`, `UidLink`, `UidPagination`, `UidPaginationCursor`, `UidLoadMore`, `UidInfiniteScroll`, `UidPageSize`, `UidBackTop`, `UidAffix`, `UidAnchor`
+**Charts:** Sparkline, ProgressRing, Gauge, Heatmap
 
-### Отображение данных
+**Wizards:** Stepper, Wizard, WizardStep
 
-`UidCard`, `UidAvatar`, `UidAvatarGroup`, `UidTag`, `UidDivider`, `UidAccordion`, `UidTable`, `UidVirtualList`, `UidStat`, `UidDescriptionList`, `UidDescriptionItem`, `UidTimeline`, `UidTimelineItem`, `UidTreeView`, `UidCode`, `UidWatermark`
+**Patterns:** Header, Footer, Sidebar, PageHeader, EmptyState, ErrorState, Result
 
-### Layout-помощники
+**Layouts:** SimpleLayout, SidebarLayout, AuthLayout, WizardLayout
 
-`UidStack`, `UidGrid`, `UidContainer`, `UidSplitter`
+**Composables:** useTheme, useLocale, useField, useToast, useWizard, useSidebar, useCommandPalette, useFocusTrap, useScrollLock, usePopover
 
-### Wizards
+## Documentation
 
-`UidStepper`, `UidWizard`, `UidWizardStep`
+User docs are translated into four languages — pick yours:
 
-### Patterns
+- 🇬🇧 **English** (default): [getting-started](./docs/en/getting-started.md), [theming](./docs/en/theming.md), [tokens](./docs/en/tokens.md), [icons](./docs/en/icons.md), [patterns](./docs/en/patterns.md), [validation](./docs/en/validation.md), [charts](./docs/en/charts.md), [i18n](./docs/en/i18n.md)
+- 🇷🇺 **Русский**: [docs/ru/](./docs/ru/)
+- 🇩🇪 **Deutsch**: [docs/de/](./docs/de/)
+- 🇨🇳 **中文**: [docs/zh/](./docs/zh/)
 
-`UidHeader`, `UidFooter`, `UidSidebar`, `UidPageHeader`, `UidEmptyState`, `UidErrorState`, `UidResult`
+Contributor docs (English only): [Architecture](./docs/ARCHITECTURE.md), [Component guidelines](./docs/COMPONENT_GUIDELINES.md), [Contributing](./docs/CONTRIBUTING.md), [Roadmap](./docs/ROADMAP.md).
 
-### Layouts
+## Theming
 
-`UidSimpleLayout`, `UidSidebarLayout`, `UidAuthLayout`, `UidWizardLayout`
-
-### Composables
-
-`useTheme`, `useField`, `useToast`, `useWizard`, `useSidebar`, `useCommandPalette`, `useFocusTrap`, `useScrollLock`, `usePopover`
-
-Полный каталог с интерактивными примерами — в **[Storybook](https://dskripchenko.github.io/ui/)**.
-
-## Темизация
-
-Все цвета, отступы, шрифты — CSS-переменные. Переопределить тему — задать токены на `:root` или контейнере:
+Every colour, spacing, and font is a CSS variable. Override the theme by setting tokens on `:root` or on a container:
 
 ```css
 :root[data-theme='dark'] {
@@ -116,42 +115,31 @@ import { Check } from '@dskripchenko/ui/icons'
 }
 ```
 
-Подробнее — [`docs/THEMING.md`](./docs/THEMING.md) и [`docs/TOKENS.md`](./docs/TOKENS.md).
+See [theming](./docs/en/theming.md) and [tokens](./docs/en/tokens.md) for details.
 
-## Иконки
+## Icons
 
-Sub-export `@dskripchenko/ui/icons` реэкспортирует все ~1500 иконок Lucide:
+The `@dskripchenko/ui/icons` sub-export re-exports all ~1500 Lucide icons:
 
 ```ts
 import { UidIcon } from '@dskripchenko/ui'
 import { Heart, Star } from '@dskripchenko/ui/icons'
 ```
 
-Подробнее — [`docs/ICONS.md`](./docs/ICONS.md).
+See [icons](./docs/en/icons.md).
 
-## Документация
-
-- [Архитектура](./docs/ARCHITECTURE.md) — структура пакета, сборка, экспорт
-- [Дизайн-токены](./docs/TOKENS.md) — система CSS-переменных
-- [Темизация](./docs/THEMING.md) — light/dark и кастомизация
-- [Иконки](./docs/ICONS.md) — `UidIcon` и реестр Lucide
-- [Валидация форм](./docs/VALIDATION.md) — `useField`, правила
-- [Patterns и Layouts](./docs/PATTERNS.md) — составные блоки и шаблоны страниц
-- [Гайдлайны компонентов](./docs/COMPONENT_GUIDELINES.md) — конвенции
-- [Roadmap](./docs/ROADMAP.md) — план развития
-- [Контрибьютинг](./docs/CONTRIBUTING.md) — workflow
-
-## Разработка
+## Development
 
 ```bash
 pnpm install
-pnpm dev              # Storybook на :6006
-pnpm test             # Vitest
-pnpm build            # Сборка библиотеки
-pnpm build-storybook  # Сборка Storybook → storybook-static
-pnpm changeset        # Описать изменения для следующего релиза
+pnpm dev               # Storybook on :6006
+pnpm test              # Vitest
+pnpm build             # Library build
+pnpm build-storybook   # Storybook → storybook-static
+pnpm build:analyze     # Bundle visualizer
+pnpm changeset         # Describe a change for the next release
 ```
 
-## Лицензия
+## License
 
 MIT
