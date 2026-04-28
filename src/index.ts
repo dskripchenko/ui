@@ -139,6 +139,23 @@ export type { UidFileUploadProps, UploadedFile } from './components/FileUpload/i
 export { UidCode } from './components/Code/index.js'
 export type { UidCodeProps } from './components/Code/index.js'
 
+export { UidRating } from './components/Rating/index.js'
+export type { UidRatingProps, RatingTone } from './components/Rating/index.js'
+
+export { UidSplitter } from './components/Splitter/index.js'
+export type { UidSplitterProps } from './components/Splitter/index.js'
+
+export { UidStat } from './components/Stat/index.js'
+export type { UidStatProps, StatTone, StatVariant } from './components/Stat/index.js'
+
+export { UidDescriptionList, UidDescriptionItem } from './components/DescriptionList/index.js'
+export type {
+  UidDescriptionListProps, UidDescriptionItemProps,
+} from './components/DescriptionList/index.js'
+
+export { UidResult } from './patterns/Result/index.js'
+export type { UidResultProps, ResultStatus } from './patterns/Result/index.js'
+
 export { UidStepper } from './components/Stepper/index.js'
 export type { UidStepperProps, StepperStep } from './components/Stepper/index.js'
 

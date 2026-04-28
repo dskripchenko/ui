@@ -1,0 +1,91 @@
+.uid-pattern-result {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--uid-space-2xl) var(--uid-space-md);
+  gap: var(--uid-space-md);
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+.uid-pattern-result__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--uid-color-bg-subtle);
+  color: var(--uid-color-text-secondary);
+}
+
+.uid-pattern-result--success .uid-pattern-result__icon {
+  background: var(--uid-color-success-subtle);
+  color: var(--uid-color-success);
+}
+
+.uid-pattern-result--info .uid-pattern-result__icon {
+  background: var(--uid-color-info-subtle);
+  color: var(--uid-color-info);
+}
+
+.uid-pattern-result--warning .uid-pattern-result__icon {
+  background: var(--uid-color-warning-subtle);
+  color: var(--uid-color-warning);
+}
+
+.uid-pattern-result--error .uid-pattern-result__icon {
+  background: var(--uid-color-danger-subtle);
+  color: var(--uid-color-danger);
+}
+
+.uid-pattern-result__title {
+  margin: 0;
+  font-size: var(--uid-font-size-xl, 22px);
+  font-weight: var(--uid-font-weight-semibold);
+  color: var(--uid-color-text);
+  line-height: 1.3;
+}
+
+.uid-pattern-result__description {
+  margin: 0;
+  font-size: var(--uid-font-size-md);
+  color: var(--uid-color-text-secondary);
+  line-height: 1.5;
+  max-width: 480px;
+}
+
+.uid-pattern-result__content {
+  width: 100%;
+  margin-top: var(--uid-space-md);
+  padding: var(--uid-space-md);
+  background: var(--uid-color-bg-subtle);
+  border-radius: var(--uid-radius-md);
+  font-size: var(--uid-font-size-sm);
+  color: var(--uid-color-text-secondary);
+  text-align: left;
+}
+
+.uid-pattern-result__actions {
+  display: flex;
+  gap: var(--uid-space-sm);
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: var(--uid-space-sm);
+}
+
+/* Compact */
+.uid-pattern-result--compact {
+  padding: var(--uid-space-md);
+  gap: var(--uid-space-sm);
+}
+
+.uid-pattern-result--compact .uid-pattern-result__icon {
+  width: 48px;
+  height: 48px;
+}
+
+.uid-pattern-result--compact .uid-pattern-result__title {
+  font-size: var(--uid-font-size-lg, 18px);
+}
