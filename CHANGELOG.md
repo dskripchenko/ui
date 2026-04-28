@@ -1,5 +1,24 @@
 # @dskripchenko/ui
 
+## 0.6.0
+
+### Minor Changes
+
+- 286f079: Заход 5 — графики (SVG-примитивы, без runtime-зависимостей):
+  - **UidSparkline** — мини-график тренда: line/bar/area, smoothing, dots, zero-line; для KPI-карточек и инлайн-вставок
+  - **UidProgressRing** — круговой прогресс на SVG `stroke-dasharray`, indeterminate-режим, кастомный лейбл/слот
+  - **UidGauge** — полукруг-циферблат с цветовыми диапазонами (`ranges`) и опциональной стрелкой; aria-meter
+  - **UidHeatmap** — календарный heatmap GitHub-style с авто-пресчётом уровней, легендой и tooltip через `<title>`
+
+  Полные графики (Line/Bar/Pie/Area) намеренно не входят в kit — рекомендации по парной интеграции с Chart.js / ECharts описаны в `docs/CHARTS.md`.
+
+### Patch Changes
+
+- 1ee3a22: Закрыт остаток a11y-аудита:
+  - **TreeView** — roving tabindex (только активный узел в Tab order, остальные `-1`), полная клавиатурная навигация: ArrowUp/Down между видимыми соседями, ArrowRight раскрывает или переходит вглубь, ArrowLeft сворачивает или возвращает к родителю, Home/End на первый/последний видимый узел.
+  - **TimePicker** — каждая колонка получила `role="listbox"` + `aria-label`, ячейки `role="option"` + `aria-selected`. ArrowUp/Down/Home/End навигирует по значениям внутри колонки с плавной прокруткой, Enter подтверждает выбор, Escape закрывает.
+  - **ColorPicker** — hue/alpha-треки получили `role="slider"` + `aria-valuemin/max/now` + `tabindex`. Стрелки регулируют значение (Shift = шаг 10), Home/End — крайние значения. Sat/Brightness-область — `role="application"` с двумерной навигацией стрелками.
+
 ## 0.5.0
 
 ### Minor Changes
