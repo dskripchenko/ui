@@ -31,6 +31,7 @@ const props = withDefaults(defineProps<UidStatProps>(), {
 })
 
 defineSlots<{
+  default?(): unknown
   icon?(): unknown
   value?(): unknown
   trend?(): unknown

@@ -17,17 +17,19 @@ export default meta
 type Story = StoryObj<typeof UidStat>
 
 export const Default: Story = {
-  args: {
-    title: 'Активные пользователи',
-    value: 12483,
-    trend: 12.5,
-    icon: Users,
-    footer: 'за последние 7 дней',
-  },
-  render: (args: Record<string, unknown>) => ({
+  render: () => ({
     components: { UidStat },
-    setup: () => ({ args }),
-    template: `<UidStat v-bind="args" style="width:280px" />`,
+    setup: () => ({ Users }),
+    template: `
+      <UidStat
+        title="Активные пользователи"
+        :value="12483"
+        :trend="12.5"
+        :icon="Users"
+        footer="за последние 7 дней"
+        style="width:280px"
+      />
+    `,
   }),
 }
 
