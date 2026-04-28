@@ -1,0 +1,52 @@
+.uid-sparkline {
+  --uid-sparkline-color: var(--uid-color-primary);
+  --uid-sparkline-area-opacity: 0.15;
+
+  display: inline-block;
+  vertical-align: middle;
+  line-height: 0;
+}
+
+.uid-sparkline__svg {
+  display: block;
+  overflow: visible;
+}
+
+.uid-sparkline__line {
+  fill: none;
+  stroke: var(--uid-sparkline-color);
+  stroke-width: var(--uid-sparkline-stroke, 1.5);
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.uid-sparkline__area {
+  fill: var(--uid-sparkline-color);
+  fill-opacity: var(--uid-sparkline-area-opacity);
+  stroke: none;
+}
+
+.uid-sparkline__bar {
+  fill: var(--uid-sparkline-color);
+  rx: 1;
+}
+
+.uid-sparkline__bar--negative {
+  fill: var(--uid-color-danger);
+}
+
+.uid-sparkline__dot {
+  fill: var(--uid-color-bg);
+  stroke: var(--uid-sparkline-color);
+  stroke-width: 2;
+}
+
+.uid-sparkline__dot--last {
+  fill: var(--uid-sparkline-color);
+}
+
+.uid-sparkline__zero {
+  stroke: var(--uid-color-border);
+  stroke-width: 1;
+  stroke-dasharray: 2 2;
+}

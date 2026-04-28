@@ -194,6 +194,18 @@ export type { UidCascaderProps, CascaderOption, CascaderValue } from './componen
 export { UidCalendar } from './components/Calendar/index.js'
 export type { UidCalendarProps, CalendarEvent } from './components/Calendar/index.js'
 
+export { UidSparkline } from './components/Sparkline/index.js'
+export type { UidSparklineProps, SparklineType } from './components/Sparkline/index.js'
+
+export { UidProgressRing } from './components/ProgressRing/index.js'
+export type { UidProgressRingProps, RingTone } from './components/ProgressRing/index.js'
+
+export { UidGauge } from './components/Gauge/index.js'
+export type { UidGaugeProps, GaugeTone, GaugeRange } from './components/Gauge/index.js'
+
+export { UidHeatmap } from './components/Heatmap/index.js'
+export type { UidHeatmapProps, HeatmapPoint } from './components/Heatmap/index.js'
+
 export { UidStepper } from './components/Stepper/index.js'
 export type { UidStepperProps, StepperStep } from './components/Stepper/index.js'
 

@@ -1,0 +1,54 @@
+.uid-progress-ring {
+  --uid-ring-color: var(--uid-color-primary);
+  --uid-ring-track: var(--uid-color-bg-subtle);
+
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.uid-progress-ring__svg {
+  display: block;
+  transform: rotate(-90deg);
+}
+
+.uid-progress-ring__track {
+  fill: none;
+  stroke: var(--uid-ring-track);
+}
+
+.uid-progress-ring__progress {
+  fill: none;
+  stroke: var(--uid-ring-color);
+  stroke-linecap: round;
+  transition: stroke-dashoffset var(--uid-duration-base) var(--uid-ease-in-out);
+}
+
+.uid-progress-ring__indeterminate .uid-progress-ring__progress {
+  animation: uid-ring-spin 1s linear infinite;
+}
+
+@keyframes uid-ring-spin {
+  to { stroke-dashoffset: -1000; }
+}
+
+.uid-progress-ring__label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--uid-ring-label-size, 14px);
+  font-weight: var(--uid-font-weight-semibold);
+  color: var(--uid-color-text);
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+
+/* Tones */
+.uid-progress-ring--success { --uid-ring-color: var(--uid-color-success); }
+.uid-progress-ring--warning { --uid-ring-color: var(--uid-color-warning); }
+.uid-progress-ring--danger  { --uid-ring-color: var(--uid-color-danger); }
+.uid-progress-ring--info    { --uid-ring-color: var(--uid-color-info); }

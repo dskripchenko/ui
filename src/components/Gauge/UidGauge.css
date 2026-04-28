@@ -1,0 +1,92 @@
+.uid-gauge {
+  --uid-gauge-color: var(--uid-color-primary);
+  --uid-gauge-track: var(--uid-color-bg-subtle);
+
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1;
+}
+
+.uid-gauge__svg {
+  display: block;
+  overflow: visible;
+}
+
+.uid-gauge__track {
+  fill: none;
+  stroke: var(--uid-gauge-track);
+  stroke-linecap: round;
+}
+
+.uid-gauge__progress {
+  fill: none;
+  stroke: var(--uid-gauge-color);
+  stroke-linecap: round;
+  transition: stroke-dashoffset var(--uid-duration-base) var(--uid-ease-in-out);
+}
+
+.uid-gauge__range {
+  fill: none;
+  stroke-linecap: butt;
+}
+
+.uid-gauge__needle {
+  stroke: var(--uid-color-text);
+  stroke-width: 2;
+  stroke-linecap: round;
+  transition: transform var(--uid-duration-base) var(--uid-ease-in-out);
+  transform-box: fill-box;
+}
+
+.uid-gauge__needle-pivot {
+  fill: var(--uid-color-text);
+}
+
+.uid-gauge__content {
+  position: absolute;
+  bottom: 8%;
+  left: 0;
+  right: 0;
+  text-align: center;
+  pointer-events: none;
+}
+
+.uid-gauge__value {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 2px;
+  font-size: var(--uid-gauge-value-size, 22px);
+  font-weight: var(--uid-font-weight-semibold);
+  color: var(--uid-color-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.uid-gauge__suffix {
+  font-size: 0.6em;
+  font-weight: var(--uid-font-weight-medium);
+  color: var(--uid-color-text-tertiary);
+}
+
+.uid-gauge__label {
+  margin-top: 2px;
+  font-size: var(--uid-font-size-sm);
+  color: var(--uid-color-text-tertiary);
+}
+
+.uid-gauge__limits {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 2px;
+  font-size: var(--uid-font-size-xs);
+  color: var(--uid-color-text-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Tones */
+.uid-gauge--success { --uid-gauge-color: var(--uid-color-success); }
+.uid-gauge--warning { --uid-gauge-color: var(--uid-color-warning); }
+.uid-gauge--danger  { --uid-gauge-color: var(--uid-color-danger); }
+.uid-gauge--info    { --uid-gauge-color: var(--uid-color-info); }
