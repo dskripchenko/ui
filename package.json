@@ -1,6 +1,6 @@
 {
   "name": "@dskripchenko/ui",
-  "version": "0.6.0",
+  "version": "1.0.0",
   "description": "Vue 3 component, token, and theme library on CSS custom properties",
   "keywords": [
     "vue",
