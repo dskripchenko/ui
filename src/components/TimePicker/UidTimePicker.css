@@ -1,0 +1,187 @@
+.uid-timepicker {
+  position: relative;
+  width: 100%;
+}
+
+.uid-timepicker__trigger {
+  display: flex;
+  align-items: center;
+  gap: var(--uid-space-sm);
+  width: 100%;
+  padding: var(--uid-space-sm) 12px;
+  border: 1px solid var(--uid-color-border);
+  border-radius: var(--uid-radius-md);
+  background: var(--uid-color-bg);
+  cursor: pointer;
+  user-select: none;
+  transition: border-color var(--uid-duration-fast), box-shadow var(--uid-duration-fast);
+  outline: none;
+  min-height: 38px;
+}
+
+.uid-timepicker__trigger:hover {
+  border-color: var(--uid-color-border-hover, var(--uid-color-text-secondary));
+}
+
+.uid-timepicker--open .uid-timepicker__trigger,
+.uid-timepicker__trigger:focus-visible {
+  border-color: var(--uid-color-primary);
+  box-shadow: 0 0 0 3px var(--uid-color-primary-subtle);
+}
+
+.uid-timepicker--disabled .uid-timepicker__trigger {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.uid-timepicker__icon {
+  color: var(--uid-color-text-secondary);
+  flex-shrink: 0;
+}
+
+.uid-timepicker__value {
+  flex: 1;
+  font-size: var(--uid-font-size-md);
+  color: var(--uid-color-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.uid-timepicker__value--placeholder {
+  color: var(--uid-color-text-tertiary);
+}
+
+.uid-timepicker__clear {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  background: none;
+  border: none;
+  border-radius: var(--uid-radius-sm);
+  cursor: pointer;
+  color: var(--uid-color-text-secondary);
+  font-size: 16px;
+  line-height: 1;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.uid-timepicker__clear:hover {
+  color: var(--uid-color-text);
+}
+
+.uid-timepicker__panel {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: var(--uid-z-dropdown);
+  background: var(--uid-color-bg);
+  border: 1px solid var(--uid-color-border);
+  border-radius: var(--uid-radius-md);
+  box-shadow: var(--uid-shadow-md);
+  user-select: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.uid-timepicker__columns {
+  display: flex;
+  align-items: stretch;
+  padding: var(--uid-space-xs);
+}
+
+.uid-timepicker__column {
+  display: flex;
+  flex-direction: column;
+  width: 56px;
+  height: 192px;
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+  scrollbar-width: thin;
+}
+
+.uid-timepicker__column + .uid-timepicker__column {
+  border-left: 1px solid var(--uid-color-border);
+}
+
+.uid-timepicker__cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  flex-shrink: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: var(--uid-font-size-sm);
+  font-variant-numeric: tabular-nums;
+  color: var(--uid-color-text);
+  border-radius: var(--uid-radius-sm);
+  margin: 1px 4px;
+  scroll-snap-align: center;
+  transition: background var(--uid-duration-fast), color var(--uid-duration-fast);
+}
+
+.uid-timepicker__cell:hover:not(:disabled) {
+  background: var(--uid-color-bg-subtle);
+}
+
+.uid-timepicker__cell--selected {
+  background: var(--uid-color-primary);
+  color: var(--uid-color-text-on-primary);
+  font-weight: 600;
+}
+
+.uid-timepicker__cell:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.uid-timepicker__footer {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--uid-space-sm);
+  padding: var(--uid-space-sm);
+  border-top: 1px solid var(--uid-color-border);
+}
+
+.uid-timepicker__btn {
+  flex: 1;
+  padding: 6px 12px;
+  border: 1px solid var(--uid-color-border);
+  border-radius: var(--uid-radius-sm);
+  background: var(--uid-color-bg);
+  color: var(--uid-color-text);
+  font-size: var(--uid-font-size-sm);
+  cursor: pointer;
+  transition: background var(--uid-duration-fast);
+}
+
+.uid-timepicker__btn:hover {
+  background: var(--uid-color-bg-subtle);
+}
+
+.uid-timepicker__btn--primary {
+  background: var(--uid-color-primary);
+  color: var(--uid-color-text-on-primary);
+  border-color: var(--uid-color-primary);
+}
+
+.uid-timepicker__btn--primary:hover {
+  background: var(--uid-color-primary-hover);
+  border-color: var(--uid-color-primary-hover);
+}
+
+/* Transition */
+.uid-timepicker-panel-enter-active,
+.uid-timepicker-panel-leave-active {
+  transition: opacity var(--uid-duration-fast), transform var(--uid-duration-fast);
+}
+
+.uid-timepicker-panel-enter-from,
+.uid-timepicker-panel-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
+}

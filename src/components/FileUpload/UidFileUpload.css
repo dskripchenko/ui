@@ -1,0 +1,181 @@
+.uid-file-upload {
+  display: flex;
+  flex-direction: column;
+  gap: var(--uid-space-sm);
+}
+
+.uid-file-upload__label {
+  display: flex;
+  align-items: center;
+  gap: var(--uid-space-2xs);
+  font-size: var(--uid-font-size-sm);
+  font-weight: var(--uid-font-weight-medium);
+  color: var(--uid-text-primary);
+}
+
+.uid-file-upload__required {
+  color: var(--uid-danger);
+}
+
+.uid-file-upload__dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--uid-space-sm);
+  padding: var(--uid-space-xl);
+  border: 2px dashed var(--uid-color-border);
+  border-radius: var(--uid-radius-md);
+  background: var(--uid-color-bg-subtle);
+  text-align: center;
+  cursor: pointer;
+  transition:
+    border-color var(--uid-duration-fast) var(--uid-ease-out),
+    background var(--uid-duration-fast) var(--uid-ease-out);
+  outline: none;
+}
+
+.uid-file-upload__dropzone:hover,
+.uid-file-upload__dropzone:focus-visible {
+  border-color: var(--uid-color-primary);
+  background: var(--uid-color-primary-subtle);
+}
+
+.uid-file-upload__dropzone--active {
+  border-color: var(--uid-color-primary);
+  background: var(--uid-color-primary-subtle);
+}
+
+.uid-file-upload__icon {
+  color: var(--uid-color-text-secondary);
+}
+
+.uid-file-upload__primary-text {
+  font-size: var(--uid-font-size-md);
+  color: var(--uid-color-text);
+  font-weight: var(--uid-font-weight-medium);
+}
+
+.uid-file-upload__primary-text strong {
+  color: var(--uid-color-primary);
+}
+
+.uid-file-upload__secondary-text {
+  font-size: var(--uid-font-size-sm);
+  color: var(--uid-color-text-tertiary);
+}
+
+.uid-file-upload__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+/* List */
+.uid-file-upload__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--uid-space-sm);
+}
+
+.uid-file-upload__item {
+  display: flex;
+  align-items: center;
+  gap: var(--uid-space-sm);
+  padding: var(--uid-space-sm) 12px;
+  border: 1px solid var(--uid-color-border);
+  border-radius: var(--uid-radius-md);
+  background: var(--uid-color-bg);
+}
+
+.uid-file-upload__item--error {
+  border-color: var(--uid-color-danger);
+  background: color-mix(in srgb, var(--uid-color-danger) 5%, var(--uid-color-bg));
+}
+
+.uid-file-upload__file-icon {
+  flex-shrink: 0;
+  color: var(--uid-color-text-secondary);
+}
+
+.uid-file-upload__file-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.uid-file-upload__file-name {
+  font-size: var(--uid-font-size-sm);
+  font-weight: var(--uid-font-weight-medium);
+  color: var(--uid-color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.uid-file-upload__file-meta {
+  font-size: var(--uid-font-size-xs);
+  color: var(--uid-color-text-tertiary);
+  display: flex;
+  gap: var(--uid-space-sm);
+}
+
+.uid-file-upload__progress {
+  height: 4px;
+  background: var(--uid-color-bg-subtle);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.uid-file-upload__progress-bar {
+  height: 100%;
+  background: var(--uid-color-primary);
+  transition: width var(--uid-duration-base) var(--uid-ease-out);
+}
+
+.uid-file-upload__remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  border: none;
+  background: none;
+  border-radius: var(--uid-radius-sm);
+  color: var(--uid-color-text-secondary);
+  cursor: pointer;
+  transition: background var(--uid-duration-fast), color var(--uid-duration-fast);
+}
+
+.uid-file-upload__remove:hover {
+  background: var(--uid-color-bg-subtle);
+  color: var(--uid-color-danger);
+}
+
+/* States */
+.uid-file-upload--disabled .uid-file-upload__dropzone {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.uid-file-upload__hint {
+  margin: 0;
+  font-size: var(--uid-font-size-sm);
+  color: var(--uid-color-text-secondary);
+  line-height: 1.4;
+}
+
+.uid-file-upload__hint--error {
+  color: var(--uid-danger);
+}

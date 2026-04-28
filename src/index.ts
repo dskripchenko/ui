@@ -110,6 +110,35 @@ export type { UidColorPickerProps } from './components/ColorPicker/index.js'
 export { UidCommand } from './components/Command/index.js'
 export type { UidCommandProps, CommandItem } from './components/Command/index.js'
 
+export { UidNumberInput } from './components/NumberInput/index.js'
+export type { UidNumberInputProps } from './components/NumberInput/index.js'
+
+export { UidTimePicker } from './components/TimePicker/index.js'
+export type { UidTimePickerProps } from './components/TimePicker/index.js'
+
+export { UidDateRangePicker } from './components/DateRangePicker/index.js'
+export type { UidDateRangePickerProps, DateRange } from './components/DateRangePicker/index.js'
+
+export { UidTagsInput } from './components/TagsInput/index.js'
+export type { UidTagsInputProps } from './components/TagsInput/index.js'
+
+export { UidCombobox } from './components/Combobox/index.js'
+export type { UidComboboxProps, ComboboxOption } from './components/Combobox/index.js'
+
+export { UidTreeView, UidTreeItem } from './components/TreeView/index.js'
+export type {
+  UidTreeViewProps, TreeNode, TreeKey, TreeSelectable, TreeContext,
+} from './components/TreeView/index.js'
+
+export { UidTimeline, UidTimelineItem } from './components/Timeline/index.js'
+export type { UidTimelineProps, UidTimelineItemProps, TimelineTone } from './components/Timeline/index.js'
+
+export { UidFileUpload } from './components/FileUpload/index.js'
+export type { UidFileUploadProps, UploadedFile } from './components/FileUpload/index.js'
+
+export { UidCode } from './components/Code/index.js'
+export type { UidCodeProps } from './components/Code/index.js'
+
 export { UidStepper } from './components/Stepper/index.js'
 export type { UidStepperProps, StepperStep } from './components/Stepper/index.js'
 

@@ -1,0 +1,137 @@
+.uid-tree {
+  font-size: var(--uid-font-size-md);
+  color: var(--uid-color-text);
+  user-select: none;
+}
+
+.uid-tree__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.uid-tree-item__row {
+  display: flex;
+  align-items: center;
+  gap: var(--uid-space-xs);
+  padding: 6px var(--uid-space-sm);
+  padding-left: calc(var(--uid-space-sm) + var(--uid-tree-level, 0) * 16px);
+  border-radius: var(--uid-radius-sm);
+  cursor: pointer;
+  transition: background var(--uid-duration-fast) var(--uid-ease-out);
+  outline: none;
+  min-height: 32px;
+}
+
+.uid-tree-item__row:hover {
+  background: var(--uid-color-bg-subtle);
+}
+
+.uid-tree-item__row:focus-visible {
+  outline: 2px solid var(--uid-color-primary);
+  outline-offset: -2px;
+}
+
+.uid-tree-item--selected > .uid-tree-item__row {
+  background: var(--uid-color-primary-subtle);
+  color: var(--uid-color-primary);
+  font-weight: 500;
+}
+
+.uid-tree-item--disabled > .uid-tree-item__row {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.uid-tree-item__chevron {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  color: var(--uid-color-text-secondary);
+  background: none;
+  border: none;
+  border-radius: var(--uid-radius-sm);
+  cursor: pointer;
+  padding: 0;
+  transition: transform var(--uid-duration-base);
+}
+
+.uid-tree-item__chevron--open {
+  transform: rotate(90deg);
+}
+
+.uid-tree-item__chevron--placeholder {
+  visibility: hidden;
+  cursor: default;
+}
+
+.uid-tree-item__check {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--uid-color-border);
+  border-radius: 3px;
+  background: var(--uid-color-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background var(--uid-duration-fast), border-color var(--uid-duration-fast);
+  color: var(--uid-color-text-on-primary);
+}
+
+.uid-tree-item__check--checked {
+  background: var(--uid-color-primary);
+  border-color: var(--uid-color-primary);
+}
+
+.uid-tree-item__check--indeterminate {
+  background: var(--uid-color-primary);
+  border-color: var(--uid-color-primary);
+}
+
+.uid-tree-item__check--indeterminate::after {
+  content: '';
+  width: 8px;
+  height: 2px;
+  background: var(--uid-color-text-on-primary);
+  border-radius: 1px;
+}
+
+.uid-tree-item__icon {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  color: var(--uid-color-text-secondary);
+}
+
+.uid-tree-item__label {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.uid-tree-item__children {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Indent guides */
+.uid-tree--guides .uid-tree-item__children {
+  position: relative;
+}
+
+.uid-tree--guides .uid-tree-item__children::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--uid-space-sm) + var(--uid-tree-level, 0) * 16px + 8px);
+  width: 1px;
+  background: var(--uid-color-border);
+}

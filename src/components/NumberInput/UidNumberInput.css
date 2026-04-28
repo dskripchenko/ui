@@ -1,0 +1,159 @@
+.uid-number-input {
+  --uid-number-input-height:    var(--uid-size-md);
+  --uid-number-input-padding-x: var(--uid-space-sm);
+  --uid-number-input-font-size: var(--uid-font-size-md);
+  --uid-number-input-bg:        var(--uid-surface-raised);
+  --uid-number-input-border:    var(--uid-border-default);
+  --uid-number-input-color:     var(--uid-text-primary);
+  --uid-number-input-radius:    var(--uid-radius-md);
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--uid-space-xs);
+}
+
+.uid-number-input__label {
+  display: flex;
+  align-items: center;
+  gap: var(--uid-space-2xs);
+  font-size: var(--uid-font-size-sm);
+  font-weight: var(--uid-font-weight-medium);
+  color: var(--uid-text-primary);
+  line-height: 1.4;
+}
+
+.uid-number-input__required {
+  color: var(--uid-danger);
+}
+
+.uid-number-input__control {
+  display: flex;
+  align-items: stretch;
+  min-height: var(--uid-number-input-height);
+  background: var(--uid-number-input-bg);
+  border: 1px solid var(--uid-number-input-border);
+  border-radius: var(--uid-number-input-radius);
+  overflow: hidden;
+  transition:
+    border-color var(--uid-duration-fast) var(--uid-ease-out),
+    box-shadow var(--uid-duration-fast) var(--uid-ease-out);
+}
+
+.uid-number-input__control:focus-within {
+  border-color: var(--uid-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--uid-accent) 15%, transparent);
+}
+
+.uid-number-input__input {
+  flex: 1;
+  min-width: 0;
+  padding: 0 var(--uid-number-input-padding-x);
+  border: none;
+  background: transparent;
+  color: var(--uid-number-input-color);
+  font: inherit;
+  font-size: var(--uid-number-input-font-size);
+  text-align: var(--uid-number-input-text-align, left);
+  outline: none;
+  -moz-appearance: textfield;
+}
+
+.uid-number-input__input::-webkit-outer-spin-button,
+.uid-number-input__input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.uid-number-input__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  background: var(--uid-surface-base);
+  border: none;
+  border-left: 1px solid var(--uid-number-input-border);
+  color: var(--uid-text-secondary);
+  cursor: pointer;
+  transition: background var(--uid-duration-fast) var(--uid-ease-out),
+              color var(--uid-duration-fast) var(--uid-ease-out);
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.uid-number-input__btn--prefix {
+  border-left: none;
+  border-right: 1px solid var(--uid-number-input-border);
+}
+
+.uid-number-input__btn:hover:not(:disabled) {
+  background: var(--uid-surface-overlay);
+  color: var(--uid-text-primary);
+}
+
+.uid-number-input__btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.uid-number-input__btn:focus-visible {
+  outline: 2px solid var(--uid-accent);
+  outline-offset: -2px;
+}
+
+.uid-number-input__hint {
+  margin: 0;
+  font-size: var(--uid-font-size-sm);
+  color: var(--uid-text-secondary);
+  line-height: 1.4;
+}
+
+.uid-number-input__hint--error {
+  color: var(--uid-danger);
+}
+
+/* States */
+.uid-number-input--error .uid-number-input__control {
+  border-color: var(--uid-danger);
+}
+
+.uid-number-input--error .uid-number-input__control:focus-within {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--uid-danger) 15%, transparent);
+}
+
+.uid-number-input--disabled .uid-number-input__control {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: var(--uid-surface-base);
+}
+
+.uid-number-input--disabled .uid-number-input__input,
+.uid-number-input--disabled .uid-number-input__btn {
+  pointer-events: none;
+}
+
+.uid-number-input--readonly .uid-number-input__control {
+  background: var(--uid-surface-base);
+  border-style: dashed;
+}
+
+/* Sizes */
+.uid-number-input--sm {
+  --uid-number-input-height:    var(--uid-size-sm);
+  --uid-number-input-font-size: var(--uid-font-size-sm);
+  --uid-number-input-padding-x: var(--uid-space-xs);
+}
+
+.uid-number-input--sm .uid-number-input__btn { width: 24px; }
+
+.uid-number-input--lg {
+  --uid-number-input-height:    var(--uid-size-lg);
+  --uid-number-input-font-size: var(--uid-font-size-lg);
+  --uid-number-input-padding-x: var(--uid-space-md);
+}
+
+.uid-number-input--lg .uid-number-input__btn { width: 36px; }
+
+/* Centered text variant */
+.uid-number-input--centered {
+  --uid-number-input-text-align: center;
+}
