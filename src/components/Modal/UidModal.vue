@@ -5,6 +5,9 @@ import { X } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
 import { useFocusTrap } from '../../composables/useFocusTrap.js'
 import { useScrollLock } from '../../composables/useScrollLock.js'
+import { useLocale } from '../../composables/useLocale.js'
+
+const locale = useLocale()
 
 export interface UidModalProps {
   title?: string
@@ -94,7 +97,7 @@ function onEscape(event: KeyboardEvent): void {
               v-if="!hideClose"
               type="button"
               class="uid-modal__close"
-              aria-label="Закрыть"
+              :aria-label="locale.modal.close"
               @click="close"
             >
               <UidIcon

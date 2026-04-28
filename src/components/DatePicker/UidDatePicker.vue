@@ -3,6 +3,7 @@ import './UidDatePicker.css'
 import { computed, nextTick, onUnmounted, ref, watch } from 'vue'
 import { ChevronDown, ChevronLeft, ChevronRight } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
+import { useLocale } from '../../composables/useLocale.js'
 
 export interface UidDatePickerProps {
   min?: string
@@ -16,9 +17,13 @@ const props = withDefaults(defineProps<UidDatePickerProps>(), {
   min: undefined,
   max: undefined,
   disabled: false,
-  placeholder: 'Выберите дату',
   format: undefined,
 })
+
+const locale = useLocale()
+const placeholderText = computed(() => props.placeholder ?? locale.value.datePicker.placeholder)
+const months = computed(() => locale.value.datePicker.months)
+const weekdays = computed(() => locale.value.datePicker.weekdaysShort)
 
 const model = defineModel<string | null>({ default: null })
 
@@ -32,12 +37,6 @@ const today = new Date()
 
 const viewYear = ref(today.getFullYear())
 const viewMonth = ref(today.getMonth())
-
-const MONTHS = [
-  'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
-  'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь',
-]
-const WEEKDAYS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс']
 
 function parseISO(s: string): Date {
   return new Date(s + 'T00:00:00')
@@ -220,7 +219,7 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
       tabindex="0"
       aria-haspopup="dialog"
       :aria-expanded="isOpen"
-      :aria-label="placeholder"
+      :aria-label="placeholderText"
       :aria-disabled="disabled"
       @click="toggle"
       @keydown="onTriggerKeydown"
@@ -229,14 +228,14 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
         class="uid-datepicker__value"
         :class="{ 'uid-datepicker__value--placeholder': !model }"
       >
-        {{ model ? displayValue : placeholder }}
+        {{ model ? displayValue : placeholderText }}
       </span>
       <div class="uid-datepicker__suffix">
         <button
           v-if="model"
           type="button"
           class="uid-datepicker__clear"
-          aria-label="Очистить"
+          :aria-label="locale.common.clear"
           @click="clearValue"
         >
           ×
@@ -262,7 +261,7 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
           <button
             type="button"
             class="uid-datepicker__nav-btn"
-            aria-label="Предыдущий месяц"
+            :aria-label="locale.datePicker.prevMonth"
             @click="prevMonth"
           >
             <UidIcon
@@ -271,12 +270,12 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
             />
           </button>
           <span class="uid-datepicker__month-label">
-            {{ MONTHS[viewMonth] }} {{ viewYear }}
+            {{ months[viewMonth] }} {{ viewYear }}
           </span>
           <button
             type="button"
             class="uid-datepicker__nav-btn"
-            aria-label="Следующий месяц"
+            :aria-label="locale.datePicker.nextMonth"
             @click="nextMonth"
           >
             <UidIcon
@@ -292,7 +291,7 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
           @keydown="onGridKeydown"
         >
           <span
-            v-for="wd in WEEKDAYS"
+            v-for="wd in weekdays"
             :key="wd"
             class="uid-datepicker__weekday"
           >{{ wd }}</span>

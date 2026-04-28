@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import './UidTagsInput.css'
 import { computed, ref, useId } from 'vue'
+import { useLocale } from '../../composables/useLocale.js'
 import type { Size } from '../../types/index.js'
 
 export interface UidTagsInputProps {
@@ -37,6 +38,7 @@ const model = defineModel<string[]>({ default: () => [] })
 const inputValue = ref('')
 const inputRef = ref<HTMLInputElement | null>(null)
 const inputId = props.id ?? useId()
+const locale = useLocale()
 
 const hasError = computed(() => !!props.error)
 const hintText = computed(() => props.error || props.hint)
@@ -163,7 +165,7 @@ function focusInput(): void {
           v-if="!disabled"
           type="button"
           class="uid-tags-input__chip-remove"
-          :aria-label="`Удалить ${tag}`"
+          :aria-label="locale.tagsInput.remove(tag)"
           @click.stop="removeAt(idx)"
         >×</button>
       </span>

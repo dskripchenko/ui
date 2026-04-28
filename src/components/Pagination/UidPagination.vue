@@ -3,6 +3,9 @@ import './UidPagination.css'
 import { computed } from 'vue'
 import { ChevronLeft, ChevronRight } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
+import { useLocale } from '../../composables/useLocale.js'
+
+const locale = useLocale()
 
 export interface UidPaginationProps {
   total: number
@@ -60,7 +63,7 @@ function goTo(page: number): void {
       type="button"
       class="uid-pagination__btn uid-pagination__btn--nav"
       :disabled="model <= 1"
-      aria-label="Предыдущая страница"
+      :aria-label="locale.pagination.prev"
       @click="goTo(model - 1)"
     >
       <UidIcon
@@ -85,7 +88,7 @@ function goTo(page: number): void {
         type="button"
         class="uid-pagination__btn"
         :class="{ 'uid-pagination__btn--active': page === model }"
-        :aria-label="`Страница ${page}`"
+        :aria-label="locale.pagination.page(page)"
         :aria-current="page === model ? 'page' : undefined"
         @click="goTo(page)"
       >
@@ -97,7 +100,7 @@ function goTo(page: number): void {
       type="button"
       class="uid-pagination__btn uid-pagination__btn--nav"
       :disabled="model >= totalPages"
-      aria-label="Следующая страница"
+      :aria-label="locale.pagination.next"
       @click="goTo(model + 1)"
     >
       <UidIcon

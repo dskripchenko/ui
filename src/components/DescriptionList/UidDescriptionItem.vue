@@ -2,7 +2,10 @@
 import { computed, inject, ref } from 'vue'
 import { Copy, Check } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
+import { useLocale } from '../../composables/useLocale.js'
 import { descriptionListKey, type DescriptionListContext } from './context.js'
+
+const locale = useLocale()
 
 export interface UidDescriptionItemProps {
   label?: string
@@ -58,7 +61,7 @@ async function onCopy(): Promise<void> {
         type="button"
         class="uid-description-item__copy"
         :class="{ 'uid-description-item__copy--copied': copied }"
-        :aria-label="copied ? 'Скопировано' : 'Скопировать'"
+        :aria-label="copied ? locale.copy.copied : locale.copy.copy"
         @click="onCopy"
       >
         <UidIcon

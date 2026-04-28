@@ -3,6 +3,7 @@ import './UidDateRangePicker.css'
 import { computed, onUnmounted, ref, watch } from 'vue'
 import { Calendar, ChevronLeft, ChevronRight } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
+import { useLocale } from '../../composables/useLocale.js'
 
 export interface DateRange {
   start: string | null
@@ -23,9 +24,11 @@ const props = withDefaults(defineProps<UidDateRangePickerProps>(), {
   max: undefined,
   disabled: false,
   clearable: true,
-  placeholder: 'Выберите диапазон',
   format: undefined,
 })
+
+const locale = useLocale()
+const placeholderText = computed(() => props.placeholder ?? locale.value.dateRangePicker.placeholder)
 
 const emit = defineEmits<{
   change: [value: DateRange]
@@ -46,11 +49,8 @@ const viewMonth = ref(today.getMonth())
 const draftStart = ref<string | null>(null)
 const hoverDate = ref<string | null>(null)
 
-const MONTHS = [
-  'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
-  'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь',
-]
-const WEEKDAYS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс']
+const MONTHS = computed(() => locale.value.datePicker.months)
+const WEEKDAYS = computed(() => locale.value.datePicker.weekdaysShort)
 
 function parseISO(s: string): Date {
   return new Date(s + 'T00:00:00')
@@ -112,11 +112,11 @@ const rightMonth = computed(() => {
   return buildMonth(y, m, 1)
 })
 
-const leftLabel = computed(() => `${MONTHS[viewMonth.value]} ${viewYear.value}`)
+const leftLabel = computed(() => `${MONTHS.value[viewMonth.value]} ${viewYear.value}`)
 const rightLabel = computed(() => {
   const m = viewMonth.value === 11 ? 0 : viewMonth.value + 1
   const y = viewMonth.value === 11 ? viewYear.value + 1 : viewYear.value
-  return `${MONTHS[m]} ${y}`
+  return `${MONTHS.value[m]} ${y}`
 })
 
 const todayISO = computed(() => toISO(today))
@@ -252,7 +252,7 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
       tabindex="0"
       aria-haspopup="dialog"
       :aria-expanded="isOpen"
-      :aria-label="placeholder"
+      :aria-label="placeholderText"
       :aria-disabled="disabled"
       @click="toggle"
       @keydown="onTriggerKeydown"
@@ -267,13 +267,13 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
         class="uid-daterange__value"
         :class="{ 'uid-daterange__value--placeholder': !model.start && !model.end }"
       >
-        {{ displayValue || placeholder }}
+        {{ displayValue || placeholderText }}
       </span>
       <button
         v-if="clearable && (model.start || model.end)"
         type="button"
         class="uid-daterange__clear"
-        aria-label="Очистить"
+        :aria-label="locale.common.clear"
         @click="clearValue"
       >
         ×
@@ -293,7 +293,7 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
               <button
                 type="button"
                 class="uid-daterange__nav-btn uid-daterange__nav-btn--prev"
-                aria-label="Предыдущий месяц"
+                :aria-label="locale.datePicker.prevMonth"
                 @click="prevMonth"
               >
                 <UidIcon
@@ -305,7 +305,7 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
               <button
                 type="button"
                 class="uid-daterange__nav-btn uid-daterange__nav-btn--next"
-                aria-label="Следующий месяц"
+                :aria-label="locale.datePicker.nextMonth"
                 @click="nextMonth"
               >
                 <UidIcon
@@ -347,7 +347,7 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
               <button
                 type="button"
                 class="uid-daterange__nav-btn uid-daterange__nav-btn--prev"
-                aria-label="Предыдущий месяц"
+                :aria-label="locale.datePicker.prevMonth"
                 @click="prevMonth"
               >
                 <UidIcon
@@ -359,7 +359,7 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
               <button
                 type="button"
                 class="uid-daterange__nav-btn uid-daterange__nav-btn--next"
-                aria-label="Следующий месяц"
+                :aria-label="locale.datePicker.nextMonth"
                 @click="nextMonth"
               >
                 <UidIcon
@@ -403,21 +403,21 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
             class="uid-daterange__btn"
             @click="selectPreset(7)"
           >
-            7 дней
+            {{ locale.dateRangePicker.presetLast(7) }}
           </button>
           <button
             type="button"
             class="uid-daterange__btn"
             @click="selectPreset(30)"
           >
-            30 дней
+            {{ locale.dateRangePicker.presetLast(30) }}
           </button>
           <button
             type="button"
             class="uid-daterange__btn"
             @click="selectPreset(90)"
           >
-            90 дней
+            {{ locale.dateRangePicker.presetLast(90) }}
           </button>
         </div>
       </div>

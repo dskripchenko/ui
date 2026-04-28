@@ -2,6 +2,7 @@
 import { computed, inject } from 'vue'
 import { ChevronRight, Check } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
+import { useLocale } from '../../composables/useLocale.js'
 import { treeContextKey, type TreeContext, type TreeNode } from './context.js'
 
 interface Props {
@@ -14,6 +15,7 @@ const props = defineProps<Props>()
 const injected = inject(treeContextKey)
 if (!injected) throw new Error('UidTreeItem must be used inside UidTree')
 const ctx = injected as TreeContext
+const locale = useLocale()
 
 const hasChildren = computed(() => !!props.node.children && props.node.children.length > 0)
 const isExpanded = computed(() => ctx.isExpanded(props.node.key))
@@ -80,7 +82,7 @@ function onKeydown(e: KeyboardEvent): void {
         type="button"
         class="uid-tree-item__chevron"
         :class="{ 'uid-tree-item__chevron--open': isExpanded }"
-        :aria-label="isExpanded ? 'Свернуть' : 'Развернуть'"
+        :aria-label="isExpanded ? locale.treeView.collapse : locale.treeView.expand"
         tabindex="-1"
         @click="onChevronClick"
       >

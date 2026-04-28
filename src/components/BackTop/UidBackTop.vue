@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import './UidBackTop.css'
-import { onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { ArrowUp } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
+import { useLocale } from '../../composables/useLocale.js'
 
 export interface UidBackTopProps {
   visibleAfter?: number
@@ -15,8 +16,10 @@ const props = withDefaults(defineProps<UidBackTopProps>(), {
   visibleAfter: 200,
   target: undefined,
   smooth: true,
-  ariaLabel: 'Наверх',
 })
+
+const locale = useLocale()
+const labelText = computed(() => props.ariaLabel ?? locale.value.backTop.label)
 
 const emit = defineEmits<{
   click: []
@@ -71,7 +74,7 @@ onUnmounted(() => {
       v-show="visible"
       type="button"
       class="uid-back-top"
-      :aria-label="ariaLabel"
+      :aria-label="labelText"
       @click="onClick"
     >
       <slot>

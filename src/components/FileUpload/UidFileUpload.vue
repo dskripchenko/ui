@@ -3,6 +3,7 @@ import './UidFileUpload.css'
 import { computed, ref, useId } from 'vue'
 import { Upload, FileText, X } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
+import { useLocale } from '../../composables/useLocale.js'
 
 export interface UploadedFile {
   file: File
@@ -32,9 +33,11 @@ const props = withDefaults(defineProps<UidFileUploadProps>(), {
   maxFiles: undefined,
   disabled: false,
   required: false,
-  primaryText: 'Перетащите файлы или нажмите для выбора',
-  secondaryText: 'Поддерживаются изображения, документы',
 })
+
+const locale = useLocale()
+const primaryTextValue = computed(() => props.primaryText ?? locale.value.fileUpload.primaryText)
+const secondaryTextValue = computed(() => props.secondaryText ?? locale.value.fileUpload.secondaryText)
 
 const emit = defineEmits<{
   add: [files: File[]]
@@ -178,9 +181,9 @@ function removeFile(item: UploadedFile): void {
         aria-hidden="true"
       />
       <p class="uid-file-upload__primary-text">
-        <span v-html="primaryText" />
+        <span v-html="primaryTextValue" />
       </p>
-      <p class="uid-file-upload__secondary-text">{{ secondaryText }}</p>
+      <p class="uid-file-upload__secondary-text">{{ secondaryTextValue }}</p>
 
       <input
         :id="inputId"
@@ -233,7 +236,7 @@ function removeFile(item: UploadedFile): void {
         <button
           type="button"
           class="uid-file-upload__remove"
-          :aria-label="`Удалить ${item.file.name}`"
+          :aria-label="locale.fileUpload.remove(item.file.name)"
           @click="removeFile(item)"
         >
           <UidIcon

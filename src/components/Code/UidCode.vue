@@ -3,6 +3,9 @@ import './UidCode.css'
 import { computed, ref } from 'vue'
 import { Copy, Check } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
+import { useLocale } from '../../composables/useLocale.js'
+
+const locale = useLocale()
 
 export interface UidCodeProps {
   code?: string
@@ -75,7 +78,7 @@ async function onCopy(): Promise<void> {
         type="button"
         class="uid-code__copy"
         :class="{ 'uid-code__copy--copied': copied }"
-        :aria-label="copied ? 'Скопировано' : 'Скопировать'"
+        :aria-label="copied ? locale.copy.copied : locale.copy.copy"
         @click="onCopy"
       >
         <UidIcon
@@ -83,7 +86,7 @@ async function onCopy(): Promise<void> {
           :size="12"
           aria-hidden="true"
         />
-        <span>{{ copied ? 'Скопировано' : 'Копировать' }}</span>
+        <span>{{ copied ? locale.copy.copied : locale.copy.copy }}</span>
       </button>
     </div>
 

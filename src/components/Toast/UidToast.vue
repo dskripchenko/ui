@@ -2,7 +2,10 @@
 import { computed, type Component } from 'vue'
 import { Info, CheckCircle2, AlertTriangle, AlertCircle, X } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
+import { useLocale } from '../../composables/useLocale.js'
 import type { Tone } from '../../types/index.js'
+
+const locale = useLocale()
 
 export interface UidToastProps {
   id: number
@@ -60,7 +63,7 @@ const currentIcon = computed<Component>(() => ICONS[props.variant ?? 'info'])
     <button
       type="button"
       class="uid-toast__close"
-      aria-label="Закрыть"
+      :aria-label="locale.toast.close"
       @click="emit('dismiss', id)"
     >
       <UidIcon

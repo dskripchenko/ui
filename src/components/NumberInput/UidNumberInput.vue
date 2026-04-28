@@ -3,6 +3,7 @@ import './UidNumberInput.css'
 import { computed, useId } from 'vue'
 import { Minus, Plus } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
+import { useLocale } from '../../composables/useLocale.js'
 import type { Size } from '../../types/index.js'
 
 export interface UidNumberInputProps {
@@ -44,6 +45,10 @@ const emit = defineEmits<{
 }>()
 
 const model = defineModel<number | null>({ default: null })
+
+const locale = useLocale()
+const incrementLabel = computed(() => locale.value.numberInput.increment(props.step))
+const decrementLabel = computed(() => locale.value.numberInput.decrement(props.step))
 
 const inputId = props.id ?? useId()
 const hasError = computed(() => !!props.error)
@@ -144,7 +149,7 @@ const displayValue = computed(() => model.value === null ? '' : String(model.val
         type="button"
         class="uid-number-input__btn uid-number-input__btn--prefix"
         :disabled="disabled || readonly || isMinReached"
-        :aria-label="`Уменьшить на ${step}`"
+        :aria-label="decrementLabel"
         tabindex="-1"
         @click="decrement"
       >
@@ -181,7 +186,7 @@ const displayValue = computed(() => model.value === null ? '' : String(model.val
         type="button"
         class="uid-number-input__btn"
         :disabled="disabled || readonly || isMaxReached"
-        :aria-label="`Увеличить на ${step}`"
+        :aria-label="incrementLabel"
         tabindex="-1"
         @click="increment"
       >

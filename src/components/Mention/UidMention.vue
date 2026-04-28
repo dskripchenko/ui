@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import './UidMention.css'
 import { computed, nextTick, ref, useId } from 'vue'
+import { useLocale } from '../../composables/useLocale.js'
 
 export interface MentionOption {
   value: string
@@ -22,9 +23,11 @@ export interface UidMentionProps {
 const props = withDefaults(defineProps<UidMentionProps>(), {
   prefix: '@',
   rows: 4,
-  emptyText: 'Никого не найдено',
   filter: undefined,
 })
+
+const locale = useLocale()
+const emptyMessage = computed(() => props.emptyText ?? locale.value.mention.noResults)
 
 const emit = defineEmits<{
   select: [option: MentionOption, prefix: string]
@@ -202,7 +205,7 @@ const dropdownStyle = computed(() => ({
         v-if="filtered.length === 0"
         class="uid-mention__empty"
       >
-        {{ emptyText }}
+        {{ emptyMessage }}
       </div>
     </div>
   </div>

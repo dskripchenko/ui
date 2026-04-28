@@ -4,6 +4,7 @@ import { computed, onUnmounted, ref, useId, watch } from 'vue'
 import { ChevronDown, X } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
 import UidTreeView from '../TreeView/UidTreeView.vue'
+import { useLocale } from '../../composables/useLocale.js'
 import type { TreeNode, TreeKey } from '../TreeView/context.js'
 
 export interface UidTreeSelectProps {
@@ -23,7 +24,6 @@ export interface UidTreeSelectProps {
 
 const props = withDefaults(defineProps<UidTreeSelectProps>(), {
   multiple: false,
-  placeholder: 'Выберите...',
   disabled: false,
   clearable: true,
   defaultExpandAll: false,
@@ -31,6 +31,9 @@ const props = withDefaults(defineProps<UidTreeSelectProps>(), {
   required: false,
   maxTagCount: undefined,
 })
+
+const locale = useLocale()
+const placeholderText = computed(() => props.placeholder ?? locale.value.treeSelect.placeholder)
 
 const emit = defineEmits<{
   change: [value: TreeKey | TreeKey[] | null]
@@ -168,7 +171,7 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
       aria-haspopup="tree"
       :aria-expanded="isOpen"
       :aria-controls="dropdownId"
-      :aria-label="placeholder"
+      :aria-label="placeholderText"
       :aria-disabled="disabled"
       :aria-invalid="hasError ? 'true' : undefined"
       @click="toggle"
@@ -185,7 +188,7 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
             <button
               type="button"
               class="uid-tree-select__chip-remove"
-              :aria-label="`Удалить ${node.label}`"
+              :aria-label="locale.treeSelect.removeTag(node.label)"
               @click.stop="removeTag($event, node.key)"
             >×</button>
           </span>
@@ -196,14 +199,14 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
           <span
             v-if="selectedNodes.length === 0"
             class="uid-tree-select__placeholder"
-          >{{ placeholder }}</span>
+          >{{ placeholderText }}</span>
         </template>
         <template v-else>
           <span v-if="selectedNodes.length > 0">{{ selectedNodes[0].label }}</span>
           <span
             v-else
             class="uid-tree-select__placeholder"
-          >{{ placeholder }}</span>
+          >{{ placeholderText }}</span>
         </template>
       </div>
 
@@ -212,7 +215,7 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
           v-if="clearable && selectedKeys.length > 0"
           type="button"
           class="uid-tree-select__clear"
-          aria-label="Очистить"
+          :aria-label="locale.common.clear"
           @click="clearValue"
         >
           <UidIcon

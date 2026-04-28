@@ -5,6 +5,9 @@ import { X } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
 import { useFocusTrap } from '../../composables/useFocusTrap.js'
 import { useScrollLock } from '../../composables/useScrollLock.js'
+import { useLocale } from '../../composables/useLocale.js'
+
+const locale = useLocale()
 
 export interface UidDrawerProps {
   title?: string
@@ -102,7 +105,7 @@ watch(model, async (open) => {
               v-if="!hideClose"
               type="button"
               class="uid-drawer__close"
-              aria-label="Закрыть"
+              :aria-label="locale.drawer.close"
               @click="close"
             >
               <UidIcon

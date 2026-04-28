@@ -225,8 +225,16 @@ export type { UidAuthLayoutProps } from './layouts/Auth/index.js'
 
 export { UidWizardLayout } from './layouts/Wizard/index.js'
 
+export { UidLocaleProvider } from './components/LocaleProvider/index.js'
+export type { UidLocaleProviderProps } from './components/LocaleProvider/index.js'
+
+export { ru, en } from './locales/index.js'
+export type { UidLocale, UidPartialLocale } from './locales/index.js'
+
 export { useTheme } from './composables/useTheme.js'
 export type { Theme } from './composables/useTheme.js'
+
+export { useLocale, provideLocale } from './composables/useLocale.js'
 
 export { useField } from './composables/useField.js'
 export type { UseFieldOptions } from './composables/useField.js'

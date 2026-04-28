@@ -4,6 +4,7 @@ import { computed, nextTick, onUnmounted, ref, watch } from 'vue'
 import { useId } from 'vue'
 import { Check, ChevronDown, X } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
+import { useLocale } from '../../composables/useLocale.js'
 
 export interface SelectOption {
   value: string | number
@@ -22,12 +23,14 @@ export interface UidSelectProps {
 }
 
 const props = withDefaults(defineProps<UidSelectProps>(), {
-  placeholder: 'Выберите...',
   disabled: false,
   searchable: false,
   clearable: false,
   size: 'md',
 })
+
+const locale = useLocale()
+const placeholderText = computed(() => props.placeholder ?? locale.value.select.placeholder)
 
 const emit = defineEmits<{
   change: [value: string | number | null]
@@ -180,14 +183,14 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
         class="uid-select__value"
         :class="{ 'uid-select__value--placeholder': !selectedOption }"
       >
-        {{ selectedOption?.label ?? placeholder }}
+        {{ selectedOption?.label ?? placeholderText }}
       </span>
       <div class="uid-select__suffix">
         <button
           v-if="clearable && model !== null"
           type="button"
           class="uid-select__clear"
-          aria-label="Очистить"
+          :aria-label="locale.common.clear"
           @click="clearValue"
         >
           <UidIcon
@@ -219,7 +222,7 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
             v-model="query"
             class="uid-select__search-input"
             type="text"
-            placeholder="Поиск..."
+            :placeholder="locale.common.search"
             autocomplete="off"
             @keydown="onListKeydown"
           >
@@ -276,7 +279,7 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
             v-else
             class="uid-select__empty"
           >
-            Ничего не найдено
+            {{ locale.select.noResults }}
           </div>
         </div>
       </div>

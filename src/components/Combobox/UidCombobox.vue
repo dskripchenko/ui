@@ -3,6 +3,7 @@ import './UidCombobox.css'
 import { computed, nextTick, onUnmounted, ref, useId, watch } from 'vue'
 import { Check, ChevronDown, X } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
+import { useLocale } from '../../composables/useLocale.js'
 import type { Size } from '../../types/index.js'
 
 export interface ComboboxOption {
@@ -29,15 +30,17 @@ export interface UidComboboxProps {
 }
 
 const props = withDefaults(defineProps<UidComboboxProps>(), {
-  placeholder: 'Начните вводить...',
   disabled: false,
   clearable: true,
   allowCreate: false,
   filter: undefined,
   size: 'md',
   required: false,
-  emptyText: 'Ничего не найдено',
 })
+
+const locale = useLocale()
+const placeholderText = computed(() => props.placeholder ?? locale.value.combobox.placeholder)
+const emptyMessage = computed(() => props.emptyText ?? locale.value.combobox.noResults)
 
 const emit = defineEmits<{
   change: [value: string | number | null]
@@ -226,7 +229,7 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
         :aria-autocomplete="'list'"
         :aria-activedescendant="isOpen ? `${listboxId}-${activeIndex}` : undefined"
         :aria-invalid="hasError ? 'true' : undefined"
-        :placeholder="placeholder"
+        :placeholder="placeholderText"
         :disabled="disabled"
         :required="required"
         :value="query"
@@ -239,7 +242,7 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
           v-if="clearable && model !== null"
           type="button"
           class="uid-combobox__clear"
-          aria-label="Очистить"
+          :aria-label="locale.common.clear"
           @click="clearValue"
         >
           <UidIcon
@@ -310,14 +313,14 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
         @click="createOption"
         @mouseenter="activeIndex = filtered.length"
       >
-        <span class="uid-combobox__option-label">+ Создать «{{ query }}»</span>
+        <span class="uid-combobox__option-label">{{ locale.combobox.create(query) }}</span>
       </button>
 
       <div
         v-if="filtered.length === 0 && !showCreate"
         class="uid-combobox__empty"
       >
-        {{ emptyText }}
+        {{ emptyMessage }}
       </div>
     </div>
 

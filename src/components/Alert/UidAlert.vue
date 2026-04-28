@@ -3,7 +3,10 @@ import './UidAlert.css'
 import { computed, type Component } from 'vue'
 import { Info, CheckCircle2, AlertTriangle, AlertCircle, X } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
+import { useLocale } from '../../composables/useLocale.js'
 import type { Tone } from '../../types/index.js'
+
+const locale = useLocale()
 
 export interface UidAlertProps {
   variant?: Tone
@@ -69,7 +72,7 @@ const defaultIcon = computed<Component>(() => ICONS[props.variant ?? 'info'])
       v-if="dismissible"
       type="button"
       class="uid-alert__close"
-      aria-label="Закрыть"
+      :aria-label="locale.common.close"
       @click="emit('dismiss')"
     >
       <UidIcon

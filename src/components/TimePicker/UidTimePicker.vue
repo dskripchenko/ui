@@ -3,6 +3,7 @@ import './UidTimePicker.css'
 import { computed, nextTick, onUnmounted, ref, watch } from 'vue'
 import { Clock } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
+import { useLocale } from '../../composables/useLocale.js'
 
 export interface UidTimePickerProps {
   step?: number
@@ -19,8 +20,10 @@ const props = withDefaults(defineProps<UidTimePickerProps>(), {
   hour12: false,
   disabled: false,
   clearable: true,
-  placeholder: 'Выберите время',
 })
+
+const locale = useLocale()
+const placeholderText = computed(() => props.placeholder ?? locale.value.timePicker.placeholder)
 
 const emit = defineEmits<{
   change: [value: string | null]
@@ -185,7 +188,7 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
       tabindex="0"
       aria-haspopup="dialog"
       :aria-expanded="isOpen"
-      :aria-label="placeholder"
+      :aria-label="placeholderText"
       :aria-disabled="disabled"
       @click="toggle"
       @keydown="onTriggerKeydown"
@@ -200,13 +203,13 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
         class="uid-timepicker__value"
         :class="{ 'uid-timepicker__value--placeholder': !model }"
       >
-        {{ model ? displayValue : placeholder }}
+        {{ model ? displayValue : placeholderText }}
       </span>
       <button
         v-if="clearable && model"
         type="button"
         class="uid-timepicker__clear"
-        aria-label="Очистить"
+        :aria-label="locale.common.clear"
         @click="clearValue"
       >
         ×
@@ -275,14 +278,14 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
             class="uid-timepicker__btn"
             @click="setNow"
           >
-            Сейчас
+            {{ locale.timePicker.now }}
           </button>
           <button
             type="button"
             class="uid-timepicker__btn uid-timepicker__btn--primary"
             @click="commit"
           >
-            Выбрать
+            {{ locale.timePicker.confirm }}
           </button>
         </div>
       </div>

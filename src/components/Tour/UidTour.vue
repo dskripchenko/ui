@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import './UidTour.css'
 import { computed, nextTick, onUnmounted, ref, watch } from 'vue'
+import { useLocale } from '../../composables/useLocale.js'
 
 export type TourPlacement = 'top' | 'right' | 'bottom' | 'left' | 'center'
 
@@ -26,11 +27,13 @@ const props = withDefaults(defineProps<UidTourProps>(), {
   maskClosable: false,
   showSkip: true,
   showProgress: true,
-  nextText: 'Далее',
-  prevText: 'Назад',
-  finishText: 'Готово',
-  skipText: 'Пропустить',
 })
+
+const locale = useLocale()
+const nextLabel = computed(() => props.nextText ?? locale.value.tour.next)
+const prevLabel = computed(() => props.prevText ?? locale.value.tour.prev)
+const finishLabel = computed(() => props.finishText ?? locale.value.tour.finish)
+const skipLabel = computed(() => props.skipText ?? locale.value.tour.skip)
 
 const emit = defineEmits<{
   finish: []
@@ -267,7 +270,7 @@ onUnmounted(() => {
               class="uid-tour__btn uid-tour__btn--ghost"
               @click="close"
             >
-              {{ skipText }}
+              {{ skipLabel }}
             </button>
             <button
               v-if="current > 0"
@@ -275,14 +278,14 @@ onUnmounted(() => {
               class="uid-tour__btn"
               @click="onPrev"
             >
-              {{ prevText }}
+              {{ prevLabel }}
             </button>
             <button
               type="button"
               class="uid-tour__btn uid-tour__btn--primary"
               @click="onNext"
             >
-              {{ current === steps.length - 1 ? finishText : nextText }}
+              {{ current === steps.length - 1 ? finishLabel : nextLabel }}
             </button>
           </div>
         </div>

@@ -2,7 +2,10 @@
 import './UidTag.css'
 import { X } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
+import { useLocale } from '../../composables/useLocale.js'
 import type { Tone } from '../../types/index.js'
+
+const locale = useLocale()
 
 export type UidTagVariant = Tone | 'default'
 
@@ -37,7 +40,7 @@ defineSlots<{
       v-if="dismissible"
       type="button"
       class="uid-tag__dismiss"
-      aria-label="Удалить"
+      :aria-label="locale.common.clear"
       @click.stop="emit('dismiss')"
     >
       <UidIcon
