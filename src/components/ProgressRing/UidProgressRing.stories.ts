@@ -20,9 +20,19 @@ export default meta
 type Story = StoryObj<typeof UidProgressRing>
 
 export const Default: Story = {
-  render: () => ({
+  args: {
+    value: 65,
+    max: 100,
+    size: 100,
+    strokeWidth: 8,
+    showLabel: true,
+    indeterminate: false,
+    tone: 'primary',
+  },
+  render: (args) => ({
     components: { UidProgressRing },
-    template: `<UidProgressRing :value="65" :size="100" show-label />`,
+    setup: () => ({ args }),
+    template: `<UidProgressRing v-bind="args" />`,
   }),
 }
 

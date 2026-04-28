@@ -19,9 +19,21 @@ export default meta
 type Story = StoryObj<typeof UidGauge>
 
 export const Default: Story = {
-  render: () => ({
+  args: {
+    value: 65,
+    min: 0,
+    max: 100,
+    size: 220,
+    suffix: '%',
+    label: 'Использование диска',
+    showLimits: true,
+    showValue: true,
+    tone: 'primary',
+  },
+  render: (args) => ({
     components: { UidGauge },
-    template: `<UidGauge :value="65" :size="220" suffix="%" label="Использование диска" show-limits />`,
+    setup: () => ({ args }),
+    template: `<UidGauge v-bind="args" />`,
   }),
 }
 

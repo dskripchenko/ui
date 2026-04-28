@@ -35,10 +35,18 @@ function buildYearOfData(seed = 42): { date: string; value: number }[] {
 }
 
 export const Default: Story = {
-  render: () => ({
+  args: {
+    cellSize: 12,
+    gap: 3,
+    levels: 5,
+    showLegend: true,
+    showWeekdays: true,
+    showMonths: true,
+  },
+  render: (args) => ({
     components: { UidHeatmap },
-    setup: () => ({ data: buildYearOfData() }),
-    template: `<UidHeatmap :data="data" />`,
+    setup: () => ({ args, data: buildYearOfData() }),
+    template: `<UidHeatmap :data="data" v-bind="args" />`,
   }),
 }
 

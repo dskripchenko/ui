@@ -23,10 +23,20 @@ const trendDown = [12, 10, 11, 8, 9, 6, 7, 4, 5, 3]
 const mixed = [3, -2, 5, -1, 4, -3, 6, 1, -2, 5]
 
 export const Default: Story = {
-  render: () => ({
+  args: {
+    type: 'line',
+    width: 180,
+    height: 48,
+    smooth: false,
+    showDots: false,
+    showLast: false,
+    showZero: false,
+    strokeWidth: 1.5,
+  },
+  render: (args) => ({
     components: { UidSparkline },
-    setup: () => ({ trendUp }),
-    template: `<UidSparkline :data="trendUp" :width="180" :height="48" />`,
+    setup: () => ({ args, trendUp }),
+    template: `<UidSparkline :data="trendUp" v-bind="args" />`,
   }),
 }
 

@@ -21,10 +21,23 @@ export default meta
 type Story = StoryObj<typeof UidRating>
 
 export const Default: Story = {
-  render: () => ({
+  args: {
+    modelValue: 3,
+    max: 5,
+    size: 'md',
+    tone: 'warning',
+    showLabel: true,
+    allowHalf: false,
+    readonly: false,
+    disabled: false,
+  },
+  render: (args) => ({
     components: { UidRating },
-    setup: () => ({ value: ref(3) }),
-    template: `<UidRating v-model="value" show-label />`,
+    setup: () => {
+      const value = ref(args.modelValue ?? 0)
+      return { args, value }
+    },
+    template: `<UidRating v-bind="args" v-model="value" />`,
   }),
 }
 
