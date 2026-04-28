@@ -2,6 +2,9 @@ import { resolve } from 'path'
 import { defineConfig } from 'vitest/config'
 import vue from '@vitejs/plugin-vue'
 import dts from 'vite-plugin-dts'
+import { visualizer } from 'rollup-plugin-visualizer'
+
+const analyze = process.env.ANALYZE === 'true'
 
 export default defineConfig({
   plugins: [
@@ -9,6 +12,13 @@ export default defineConfig({
     dts({
       tsconfigPath: resolve(__dirname, 'tsconfig.build.json'),
       entryRoot: resolve(__dirname, 'src'),
+    }),
+    analyze && visualizer({
+      filename: 'stats.html',
+      open: true,
+      gzipSize: true,
+      brotliSize: true,
+      template: 'treemap',
     }),
   ],
   build: {

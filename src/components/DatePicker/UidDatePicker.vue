@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import './UidDatePicker.css'
-import { computed, onUnmounted, ref, watch } from 'vue'
+import { computed, nextTick, onUnmounted, ref, watch } from 'vue'
 import { ChevronDown, ChevronLeft, ChevronRight } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
 
@@ -25,6 +25,8 @@ const model = defineModel<string | null>({ default: null })
 const isOpen = ref(false)
 const containerRef = ref<HTMLElement | null>(null)
 const triggerRef = ref<HTMLElement | null>(null)
+const gridRef = ref<HTMLElement | null>(null)
+const focusedISO = ref<string | null>(null)
 
 const today = new Date()
 
@@ -102,11 +104,59 @@ function open() {
     const d = parseISO(model.value)
     viewYear.value = d.getFullYear()
     viewMonth.value = d.getMonth()
+    focusedISO.value = model.value
   } else {
     viewYear.value = today.getFullYear()
     viewMonth.value = today.getMonth()
+    focusedISO.value = toISO(today)
   }
   isOpen.value = true
+  nextTick(focusActiveDay)
+}
+
+function focusActiveDay(): void {
+  const iso = focusedISO.value
+  if (!iso || !gridRef.value) return
+  const btn = gridRef.value.querySelector<HTMLElement>(`[data-iso="${iso}"]`)
+  btn?.focus()
+}
+
+function moveFocus(days: number): void {
+  if (!focusedISO.value) return
+  const d = parseISO(focusedISO.value)
+  d.setDate(d.getDate() + days)
+  focusedISO.value = toISO(d)
+  if (d.getFullYear() !== viewYear.value || d.getMonth() !== viewMonth.value) {
+    viewYear.value = d.getFullYear()
+    viewMonth.value = d.getMonth()
+  }
+  nextTick(focusActiveDay)
+}
+
+function onGridKeydown(e: KeyboardEvent): void {
+  switch (e.key) {
+    case 'ArrowLeft':  e.preventDefault(); moveFocus(-1); break
+    case 'ArrowRight': e.preventDefault(); moveFocus(1); break
+    case 'ArrowUp':    e.preventDefault(); moveFocus(-7); break
+    case 'ArrowDown':  e.preventDefault(); moveFocus(7); break
+    case 'Home':       e.preventDefault(); moveFocus(-((parseISO(focusedISO.value!).getDay() + 6) % 7)); break
+    case 'End':        e.preventDefault(); moveFocus(6 - ((parseISO(focusedISO.value!).getDay() + 6) % 7)); break
+    case 'PageUp':     e.preventDefault(); moveFocus(-30); break
+    case 'PageDown':   e.preventDefault(); moveFocus(30); break
+    case 'Enter':
+    case ' ':
+      if (focusedISO.value) {
+        e.preventDefault()
+        const day = calendarDays.value.find(d => d.iso === focusedISO.value)
+        if (day) selectDay(day)
+      }
+      break
+    case 'Escape':
+      e.preventDefault()
+      close()
+      triggerRef.value?.focus()
+      break
+  }
 }
 
 function close() {
@@ -166,8 +216,11 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
     <div
       ref="triggerRef"
       class="uid-datepicker__trigger"
+      role="combobox"
       tabindex="0"
+      aria-haspopup="dialog"
       :aria-expanded="isOpen"
+      :aria-label="placeholder"
       :aria-disabled="disabled"
       @click="toggle"
       @keydown="onTriggerKeydown"
@@ -233,7 +286,11 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
           </button>
         </div>
 
-        <div class="uid-datepicker__grid">
+        <div
+          ref="gridRef"
+          class="uid-datepicker__grid"
+          @keydown="onGridKeydown"
+        >
           <span
             v-for="wd in WEEKDAYS"
             :key="wd"
@@ -251,6 +308,8 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
               'uid-datepicker__day--selected': day.iso === model,
               'uid-datepicker__day--disabled': isDisabled(day.iso),
             }"
+            :data-iso="day.iso"
+            :tabindex="day.iso === focusedISO ? 0 : -1"
             :disabled="isDisabled(day.iso)"
             :aria-current="day.iso === todayISO ? 'date' : undefined"
             :aria-selected="day.iso === model"

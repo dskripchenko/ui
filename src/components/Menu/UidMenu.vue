@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import './UidMenu.css'
-import { ref, provide, watch, nextTick, onUnmounted } from 'vue'
+import { ref, provide, watch, nextTick, onUnmounted, useId } from 'vue'
 import { usePopover } from '../../composables/usePopover.js'
 import { MENU_CLOSE_KEY } from './context.js'
 
@@ -12,6 +12,7 @@ defineSlots<{
 const triggerRef = ref<HTMLElement | null>(null)
 const menuRef = ref<HTMLElement | null>(null)
 const open = ref(false)
+const menuId = useId()
 
 const { floatingStyle, update } = usePopover(triggerRef, menuRef, {
   placement: 'bottom-start',
@@ -87,6 +88,11 @@ onUnmounted(() => {
   <div
     ref="triggerRef"
     class="uid-menu-trigger"
+    role="button"
+    tabindex="0"
+    aria-haspopup="menu"
+    :aria-expanded="open"
+    :aria-controls="menuId"
     @click="toggle"
     @keydown="onTriggerKeydown"
   >
@@ -97,6 +103,7 @@ onUnmounted(() => {
     <Transition name="uid-menu">
       <div
         v-if="open"
+        :id="menuId"
         ref="menuRef"
         class="uid-menu"
         role="menu"

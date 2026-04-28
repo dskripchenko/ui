@@ -5,3 +5,4 @@ dist
 storybook-static
 coverage
 .npmrc
+stats.html

@@ -43,6 +43,7 @@ const isOpen = ref(false)
 const containerRef = ref<HTMLElement | null>(null)
 const triggerRef = ref<HTMLElement | null>(null)
 const inputId = useId()
+const dropdownId = useId()
 
 const hasError = computed(() => !!props.error)
 const hintText = computed(() => props.error || props.hint)
@@ -164,7 +165,10 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
       class="uid-tree-select__trigger"
       tabindex="0"
       role="combobox"
+      aria-haspopup="tree"
       :aria-expanded="isOpen"
+      :aria-controls="dropdownId"
+      :aria-label="placeholder"
       :aria-disabled="disabled"
       :aria-invalid="hasError ? 'true' : undefined"
       @click="toggle"
@@ -228,6 +232,7 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
 
     <div
       v-if="isOpen"
+      :id="dropdownId"
       class="uid-tree-select__dropdown"
     >
       <UidTreeView

@@ -181,8 +181,11 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
     <div
       ref="triggerRef"
       class="uid-timepicker__trigger"
+      role="combobox"
       tabindex="0"
+      aria-haspopup="dialog"
       :aria-expanded="isOpen"
+      :aria-label="placeholder"
       :aria-disabled="disabled"
       @click="toggle"
       @keydown="onTriggerKeydown"

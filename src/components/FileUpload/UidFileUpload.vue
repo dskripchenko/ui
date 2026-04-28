@@ -187,6 +187,8 @@ function removeFile(item: UploadedFile): void {
         ref="inputRef"
         class="uid-file-upload__input"
         type="file"
+        tabindex="-1"
+        aria-hidden="true"
         :multiple="multiple"
         :accept="accept"
         :disabled="disabled"

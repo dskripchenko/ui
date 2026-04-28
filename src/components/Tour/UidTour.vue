@@ -43,6 +43,8 @@ const current = defineModel<number>('current', { default: 0 })
 
 const targetRect = ref<DOMRect | null>(null)
 const popoverPos = ref<{ top: number; left: number } | null>(null)
+const popoverRef = ref<HTMLElement | null>(null)
+let lastFocused: HTMLElement | null = null
 
 const step = computed(() => props.steps[current.value])
 
@@ -169,13 +171,36 @@ function onResize(): void {
   resizeRaf = requestAnimationFrame(updateTarget)
 }
 
-watch(open, (val) => {
+function onKeydown(e: KeyboardEvent): void {
+  if (e.key === 'Escape') {
+    e.preventDefault()
+    close()
+  } else if (e.key === 'ArrowRight') {
+    e.preventDefault()
+    onNext()
+  } else if (e.key === 'ArrowLeft') {
+    e.preventDefault()
+    onPrev()
+  }
+}
+
+watch(open, async (val) => {
   if (val && typeof window !== 'undefined') {
+    lastFocused = document.activeElement as HTMLElement | null
     window.addEventListener('resize', onResize)
     window.addEventListener('scroll', onResize, true)
+    window.addEventListener('keydown', onKeydown)
+    await nextTick()
+    const focusBtn = popoverRef.value?.querySelector<HTMLElement>(
+      '.uid-tour__btn--primary',
+    )
+    focusBtn?.focus()
   } else {
     window.removeEventListener('resize', onResize)
     window.removeEventListener('scroll', onResize, true)
+    window.removeEventListener('keydown', onKeydown)
+    lastFocused?.focus?.()
+    lastFocused = null
   }
 }, { immediate: true })
 
@@ -183,6 +208,7 @@ onUnmounted(() => {
   if (typeof window === 'undefined') return
   window.removeEventListener('resize', onResize)
   window.removeEventListener('scroll', onResize, true)
+  window.removeEventListener('keydown', onKeydown)
 })
 </script>
 
@@ -207,6 +233,7 @@ onUnmounted(() => {
       />
 
       <div
+        ref="popoverRef"
         class="uid-tour__popover"
         :class="{ 'uid-tour__popover--center': isCenter }"
         :style="!isCenter ? popoverStyle : undefined"

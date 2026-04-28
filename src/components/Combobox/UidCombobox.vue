@@ -212,26 +212,24 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
       >*</span>
     </label>
 
-    <div
-      class="uid-combobox__control"
-      role="combobox"
-      :aria-expanded="isOpen"
-      :aria-controls="listboxId"
-      aria-haspopup="listbox"
-    >
+    <div class="uid-combobox__control">
       <input
         :id="inputId"
         ref="inputRef"
         class="uid-combobox__field"
         type="text"
+        role="combobox"
         autocomplete="off"
+        aria-haspopup="listbox"
+        :aria-expanded="isOpen"
+        :aria-controls="listboxId"
+        :aria-autocomplete="'list'"
+        :aria-activedescendant="isOpen ? `${listboxId}-${activeIndex}` : undefined"
+        :aria-invalid="hasError ? 'true' : undefined"
         :placeholder="placeholder"
         :disabled="disabled"
         :required="required"
         :value="query"
-        :aria-autocomplete="'list'"
-        :aria-activedescendant="isOpen ? `${listboxId}-${activeIndex}` : undefined"
-        :aria-invalid="hasError ? 'true' : undefined"
         @input="onInput"
         @focus="onFocus"
         @keydown="onKeydown"

@@ -83,10 +83,14 @@ const isEmpty = computed(() => !props.loading && props.data.length === 0)
                 { 'uid-table__th--active': sortKey === col.key },
               ]"
               :style="col.width ? { width: col.width } : undefined"
+              :tabindex="col.sortable ? 0 : undefined"
+              :role="col.sortable ? 'button' : undefined"
               :aria-sort="sortKey === col.key
                 ? (sortDirection === 'asc' ? 'ascending' : 'descending')
                 : (col.sortable ? 'none' : undefined)"
               @click="onSort(col)"
+              @keydown.enter.prevent="onSort(col)"
+              @keydown.space.prevent="onSort(col)"
             >
               <span class="uid-table__th-content">
                 {{ col.label }}

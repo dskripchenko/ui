@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import './UidPopover.css'
-import { ref, computed, nextTick, onMounted, onUnmounted } from 'vue'
+import { ref, computed, nextTick, onMounted, onUnmounted, useId } from 'vue'
 import { usePopover, type Placement } from '../../composables/usePopover.js'
 
 export interface UidPopoverProps {
@@ -19,6 +19,7 @@ defineSlots<{
 const referenceRef = ref<HTMLElement | null>(null)
 const floatingRef = ref<HTMLElement | null>(null)
 const open = ref(false)
+const popoverId = useId()
 
 const { floatingStyle, update } = usePopover(referenceRef, floatingRef, {
   placement: computed(() => props.placement),
@@ -64,7 +65,14 @@ onUnmounted(() => {
   <div
     ref="referenceRef"
     class="uid-popover-trigger"
+    role="button"
+    tabindex="0"
+    aria-haspopup="dialog"
+    :aria-expanded="open"
+    :aria-controls="popoverId"
     @click="toggle"
+    @keydown.enter.prevent="toggle"
+    @keydown.space.prevent="toggle"
   >
     <slot name="trigger" />
   </div>
@@ -73,8 +81,10 @@ onUnmounted(() => {
     <Transition name="uid-popover">
       <div
         v-if="open"
+        :id="popoverId"
         ref="floatingRef"
         class="uid-popover"
+        role="dialog"
         :style="floatingStyle"
       >
         <slot />

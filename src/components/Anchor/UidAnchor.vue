@@ -109,6 +109,7 @@ function onClick(e: MouseEvent, item: AnchorItem): void {
           :href="item.href"
           class="uid-anchor__link"
           :class="{ 'uid-anchor__link--active': current === item.key }"
+          :aria-current="current === item.key ? 'location' : undefined"
           @click="onClick($event, item)"
         >
           {{ item.title }}
@@ -126,6 +127,7 @@ function onClick(e: MouseEvent, item: AnchorItem): void {
               :href="child.href"
               class="uid-anchor__link"
               :class="{ 'uid-anchor__link--active': current === child.key }"
+              :aria-current="current === child.key ? 'location' : undefined"
               @click="onClick($event, child)"
             >
               {{ child.title }}

@@ -6,10 +6,14 @@ export interface UidCardProps {
   clickable?: boolean
 }
 
-withDefaults(defineProps<UidCardProps>(), {
+const props = withDefaults(defineProps<UidCardProps>(), {
   padding: 'md',
   clickable: false,
 })
+
+const emit = defineEmits<{
+  click: [event: MouseEvent | KeyboardEvent]
+}>()
 
 defineSlots<{
   media?(): unknown
@@ -17,12 +21,24 @@ defineSlots<{
   default(): unknown
   footer?(): unknown
 }>()
+
+function onKeydown(e: KeyboardEvent): void {
+  if (!props.clickable) return
+  if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault()
+    emit('click', e)
+  }
+}
 </script>
 
 <template>
   <div
     class="uid-card"
     :class="[`uid-card--pad-${padding}`, { 'uid-card--clickable': clickable }]"
+    :role="clickable ? 'button' : undefined"
+    :tabindex="clickable ? 0 : undefined"
+    @keydown="onKeydown"
+    @click="clickable && emit('click', $event)"
   >
     <div
       v-if="$slots.media"
