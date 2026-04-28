@@ -225,6 +225,53 @@ function onHexKeydown(e: KeyboardEvent) {
   if (e.key === 'Enter') applyHexInput()
 }
 
+function clamp(n: number, min: number, max: number): number {
+  return Math.max(min, Math.min(max, n))
+}
+
+function onGradientKeydown(e: KeyboardEvent): void {
+  const step = e.shiftKey ? 10 : 1
+  if (e.key === 'ArrowLeft') {
+    e.preventDefault(); saturation.value = clamp(saturation.value - step, 0, 100); emitColor()
+  } else if (e.key === 'ArrowRight') {
+    e.preventDefault(); saturation.value = clamp(saturation.value + step, 0, 100); emitColor()
+  } else if (e.key === 'ArrowDown') {
+    e.preventDefault(); brightness.value = clamp(brightness.value - step, 0, 100); emitColor()
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault(); brightness.value = clamp(brightness.value + step, 0, 100); emitColor()
+  } else if (e.key === 'Home') {
+    e.preventDefault(); saturation.value = 0; emitColor()
+  } else if (e.key === 'End') {
+    e.preventDefault(); saturation.value = 100; emitColor()
+  }
+}
+
+function onHueKeydown(e: KeyboardEvent): void {
+  const step = e.shiftKey ? 10 : 1
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
+    e.preventDefault(); hue.value = clamp(hue.value - step, 0, 360); emitColor()
+  } else if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
+    e.preventDefault(); hue.value = clamp(hue.value + step, 0, 360); emitColor()
+  } else if (e.key === 'Home') {
+    e.preventDefault(); hue.value = 0; emitColor()
+  } else if (e.key === 'End') {
+    e.preventDefault(); hue.value = 360; emitColor()
+  }
+}
+
+function onAlphaKeydown(e: KeyboardEvent): void {
+  const step = e.shiftKey ? 10 : 1
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
+    e.preventDefault(); alphaValue.value = clamp(alphaValue.value - step, 0, 100); emitColor()
+  } else if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
+    e.preventDefault(); alphaValue.value = clamp(alphaValue.value + step, 0, 100); emitColor()
+  } else if (e.key === 'Home') {
+    e.preventDefault(); alphaValue.value = 0; emitColor()
+  } else if (e.key === 'End') {
+    e.preventDefault(); alphaValue.value = 100; emitColor()
+  }
+}
+
 function selectPreset(color: string) {
   const parsed = parseHex(color)
   if (!parsed) return
@@ -298,9 +345,13 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
           ref="gradientRef"
           class="uid-colorpicker__gradient"
           :style="{ '--_hue': pureHue }"
+          tabindex="0"
+          role="application"
+          aria-label="Насыщенность и яркость"
           @pointerdown="onGradientPointerDown"
           @pointermove="onGradientPointerMove"
           @pointerup="onGradientPointerUp"
+          @keydown="onGradientKeydown"
         >
           <div
             class="uid-colorpicker__gradient-thumb"
@@ -313,9 +364,16 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
             <div
               ref="hueSliderRef"
               class="uid-colorpicker__hue-track"
+              role="slider"
+              tabindex="0"
+              aria-label="Оттенок"
+              :aria-valuemin="0"
+              :aria-valuemax="360"
+              :aria-valuenow="hue"
               @pointerdown="onHuePointerDown"
               @pointermove="onHuePointerMove"
               @pointerup="onHuePointerUp"
+              @keydown="onHueKeydown"
             >
               <div
                 class="uid-colorpicker__track-thumb"
@@ -328,9 +386,16 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
               ref="alphaSliderRef"
               class="uid-colorpicker__alpha-track"
               :style="{ '--_color': currentRgb }"
+              role="slider"
+              tabindex="0"
+              aria-label="Прозрачность"
+              :aria-valuemin="0"
+              :aria-valuemax="100"
+              :aria-valuenow="alphaValue"
               @pointerdown="onAlphaPointerDown"
               @pointermove="onAlphaPointerMove"
               @pointerup="onAlphaPointerUp"
+              @keydown="onAlphaKeydown"
             >
               <div
                 class="uid-colorpicker__track-thumb"

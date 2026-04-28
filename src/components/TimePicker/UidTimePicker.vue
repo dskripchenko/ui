@@ -148,6 +148,54 @@ function onTriggerKeydown(e: KeyboardEvent): void {
   else if (e.key === 'Escape') close()
 }
 
+function onColumnKeydown(e: KeyboardEvent, field: 'h' | 'm' | 's', list: number[]): void {
+  const current = draft.value[field]
+  const idx = list.indexOf(current)
+  if (e.key === 'ArrowDown') {
+    e.preventDefault()
+    const next = list[Math.min(list.length - 1, idx + 1)]
+    draft.value = { ...draft.value, [field]: next }
+    focusCell(field, next)
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault()
+    const next = list[Math.max(0, idx - 1)]
+    draft.value = { ...draft.value, [field]: next }
+    focusCell(field, next)
+  } else if (e.key === 'Home') {
+    e.preventDefault()
+    draft.value = { ...draft.value, [field]: list[0] }
+    focusCell(field, list[0])
+  } else if (e.key === 'End') {
+    e.preventDefault()
+    const last = list[list.length - 1]
+    draft.value = { ...draft.value, [field]: last }
+    focusCell(field, last)
+  } else if (e.key === 'Enter') {
+    e.preventDefault()
+    commit()
+  } else if (e.key === 'Escape') {
+    e.preventDefault()
+    close()
+    triggerRef.value?.focus()
+  }
+}
+
+function focusCell(field: 'h' | 'm' | 's', value: number): void {
+  const refMap = { h: hourColRef, m: minuteColRef, s: secondColRef }
+  const col = refMap[field].value
+  if (!col) return
+  nextTick(() => {
+    const list = field === 'h' ? hours.value : field === 'm' ? minutes.value : seconds.value
+    const idx = list.indexOf(value)
+    const cell = col.querySelectorAll<HTMLElement>('.uid-timepicker__cell')[idx]
+    cell?.focus()
+    if (cell) {
+      const offset = cell.offsetTop - col.clientHeight / 2 + cell.clientHeight / 2
+      col.scrollTop = offset
+    }
+  })
+}
+
 function scrollToSelected(): void {
   nextTick(() => {
     const scroll = (col: HTMLElement | null, value: number, list: number[]) => {
@@ -227,6 +275,9 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
           <div
             ref="hourColRef"
             class="uid-timepicker__column"
+            role="listbox"
+            aria-label="Часы"
+            @keydown="onColumnKeydown($event, 'h', hours)"
           >
             <button
               v-for="h in hours"
@@ -234,6 +285,9 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
               type="button"
               class="uid-timepicker__cell"
               :class="{ 'uid-timepicker__cell--selected': draft.h === h }"
+              role="option"
+              :aria-selected="draft.h === h"
+              :tabindex="draft.h === h ? 0 : -1"
               @click="selectHour(h)"
             >
               {{ pad(h) }}
@@ -242,6 +296,9 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
           <div
             ref="minuteColRef"
             class="uid-timepicker__column"
+            role="listbox"
+            aria-label="Минуты"
+            @keydown="onColumnKeydown($event, 'm', minutes)"
           >
             <button
               v-for="m in minutes"
@@ -249,6 +306,9 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
               type="button"
               class="uid-timepicker__cell"
               :class="{ 'uid-timepicker__cell--selected': draft.m === m }"
+              role="option"
+              :aria-selected="draft.m === m"
+              :tabindex="draft.m === m ? 0 : -1"
               @click="selectMinute(m)"
             >
               {{ pad(m) }}
@@ -258,6 +318,9 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
             v-if="withSeconds"
             ref="secondColRef"
             class="uid-timepicker__column"
+            role="listbox"
+            aria-label="Секунды"
+            @keydown="onColumnKeydown($event, 's', seconds)"
           >
             <button
               v-for="s in seconds"
@@ -265,6 +328,9 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
               type="button"
               class="uid-timepicker__cell"
               :class="{ 'uid-timepicker__cell--selected': draft.s === s }"
+              role="option"
+              :aria-selected="draft.s === s"
+              :tabindex="draft.s === s ? 0 : -1"
               @click="selectSecond(s)"
             >
               {{ pad(s) }}

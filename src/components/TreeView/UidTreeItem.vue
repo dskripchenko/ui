@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, inject } from 'vue'
+import { computed, inject, nextTick, ref, watch } from 'vue'
 import { ChevronRight, Check } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
 import { useLocale } from '../../composables/useLocale.js'
@@ -17,6 +17,8 @@ if (!injected) throw new Error('UidTreeItem must be used inside UidTree')
 const ctx = injected as TreeContext
 const locale = useLocale()
 
+const rowRef = ref<HTMLElement | null>(null)
+
 const hasChildren = computed(() => !!props.node.children && props.node.children.length > 0)
 const isExpanded = computed(() => ctx.isExpanded(props.node.key))
 const isSelected = computed(() => ctx.isSelected(props.node.key))
@@ -24,8 +26,21 @@ const isChecked = computed(() => ctx.isChecked(props.node.key))
 const isIndeterminate = computed(() => ctx.isIndeterminate(props.node.key))
 const isDisabled = computed(() => ctx.disabled.value || !!props.node.disabled)
 
+const isFocused = computed(() => ctx.focusedKey.value === props.node.key)
+const tabIndex = computed(() => {
+  if (isDisabled.value) return -1
+  if (isFocused.value) return 0
+  if (ctx.focusedKey.value === null && ctx.isFirst(props.node.key)) return 0
+  return -1
+})
+
+watch(isFocused, (val) => {
+  if (val) nextTick(() => rowRef.value?.focus())
+})
+
 function onRowClick(): void {
   if (isDisabled.value) return
+  ctx.focusKey(props.node.key)
   if (hasChildren.value) ctx.toggleExpand(props.node.key)
   if (ctx.selectable.value) ctx.toggleSelect(props.node)
 }
@@ -43,17 +58,39 @@ function onCheckClick(e: MouseEvent): void {
 }
 
 function onKeydown(e: KeyboardEvent): void {
-  if (e.key === 'ArrowRight' && hasChildren.value && !isExpanded.value) {
+  const k = props.node.key
+  if (e.key === 'ArrowDown') {
     e.preventDefault()
-    ctx.toggleExpand(props.node.key)
-  } else if (e.key === 'ArrowLeft' && hasChildren.value && isExpanded.value) {
+    ctx.focusRelative(k, 1)
+  } else if (e.key === 'ArrowUp') {
     e.preventDefault()
-    ctx.toggleExpand(props.node.key)
+    ctx.focusRelative(k, -1)
+  } else if (e.key === 'ArrowRight') {
+    e.preventDefault()
+    if (hasChildren.value && !isExpanded.value) ctx.toggleExpand(k)
+    else if (hasChildren.value && isExpanded.value) ctx.focusRelative(k, 1)
+  } else if (e.key === 'ArrowLeft') {
+    e.preventDefault()
+    if (hasChildren.value && isExpanded.value) ctx.toggleExpand(k)
+    else {
+      const parent = ctx.parentKeyOf(k)
+      if (parent !== null) ctx.focusKey(parent)
+    }
+  } else if (e.key === 'Home') {
+    e.preventDefault()
+    ctx.focusEdge('first')
+  } else if (e.key === 'End') {
+    e.preventDefault()
+    ctx.focusEdge('last')
   } else if (e.key === 'Enter' || e.key === ' ') {
     e.preventDefault()
     if (ctx.checkable.value) ctx.toggleCheck(props.node)
     else if (ctx.selectable.value) ctx.toggleSelect(props.node)
   }
+}
+
+function onFocus(): void {
+  if (!isFocused.value) ctx.focusKey(props.node.key)
 }
 </script>
 
@@ -71,11 +108,13 @@ function onKeydown(e: KeyboardEvent): void {
     :aria-disabled="isDisabled || undefined"
   >
     <div
+      ref="rowRef"
       class="uid-tree-item__row"
       :style="{ '--uid-tree-level': level }"
-      :tabindex="isDisabled ? -1 : 0"
+      :tabindex="tabIndex"
       @click="onRowClick"
       @keydown="onKeydown"
+      @focus="onFocus"
     >
       <button
         v-if="hasChildren"

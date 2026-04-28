@@ -169,6 +169,58 @@ function toggleCheck(node: TreeNode): void {
   emit('check', node, !isCurrentlyChecked)
 }
 
+const focusedKey = ref<TreeKey | null>(null)
+
+const visibleKeys = computed<TreeKey[]>(() => {
+  const list: TreeKey[] = []
+  const walk = (items: TreeNode[]) => {
+    for (const n of items) {
+      list.push(n.key)
+      if (n.children && expandedSet.value.has(n.key)) walk(n.children)
+    }
+  }
+  walk(props.nodes)
+  return list
+})
+
+const parentMap = computed<Map<TreeKey, TreeKey | null>>(() => {
+  const map = new Map<TreeKey, TreeKey | null>()
+  const walk = (items: TreeNode[], parent: TreeKey | null) => {
+    for (const n of items) {
+      map.set(n.key, parent)
+      if (n.children) walk(n.children, n.key)
+    }
+  }
+  walk(props.nodes, null)
+  return map
+})
+
+function focusKey(key: TreeKey): void {
+  focusedKey.value = key
+}
+
+function focusRelative(key: TreeKey, delta: number): void {
+  const list = visibleKeys.value
+  const idx = list.indexOf(key)
+  if (idx < 0) return
+  const next = Math.max(0, Math.min(list.length - 1, idx + delta))
+  focusedKey.value = list[next]
+}
+
+function focusEdge(edge: 'first' | 'last'): void {
+  const list = visibleKeys.value
+  if (list.length === 0) return
+  focusedKey.value = edge === 'first' ? list[0] : list[list.length - 1]
+}
+
+function isFirst(key: TreeKey): boolean {
+  return visibleKeys.value[0] === key
+}
+
+function parentKeyOf(key: TreeKey): TreeKey | null {
+  return parentMap.value.get(key) ?? null
+}
+
 provide(treeContextKey, {
   selectable: computed(() => props.selectable),
   checkable: computed(() => props.checkable),
@@ -176,13 +228,19 @@ provide(treeContextKey, {
   expandedKeys: expandedSet,
   selectedKeys: selectedSet,
   checkedKeys: checkedSet,
+  focusedKey,
   isExpanded: (k) => expandedSet.value.has(k),
   isSelected: (k) => selectedSet.value.has(k),
   isChecked: (k) => checkedSet.value.has(k),
   isIndeterminate: (k) => indeterminateSet.value.has(k),
+  isFirst,
   toggleExpand,
   toggleSelect,
   toggleCheck,
+  focusKey,
+  focusRelative,
+  focusEdge,
+  parentKeyOf,
 })
 </script>
 
