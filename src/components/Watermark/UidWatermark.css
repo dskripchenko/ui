@@ -1,0 +1,20 @@
+.uid-watermark {
+  position: relative;
+  isolation: isolate;
+}
+
+.uid-watermark__overlay {
+  position: absolute;
+  inset: 0;
+  background-repeat: repeat;
+  pointer-events: none;
+  z-index: var(--uid-watermark-z, 9);
+  background-position: 0 0;
+  background-size: var(--uid-watermark-size, auto);
+  background-image: var(--uid-watermark-image);
+}
+
+.uid-watermark__content {
+  position: relative;
+  z-index: 1;
+}

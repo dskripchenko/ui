@@ -156,6 +156,27 @@ export type {
 export { UidResult } from './patterns/Result/index.js'
 export type { UidResultProps, ResultStatus } from './patterns/Result/index.js'
 
+export { UidBackTop } from './components/BackTop/index.js'
+export type { UidBackTopProps } from './components/BackTop/index.js'
+
+export { UidAffix } from './components/Affix/index.js'
+export type { UidAffixProps } from './components/Affix/index.js'
+
+export { UidWatermark } from './components/Watermark/index.js'
+export type { UidWatermarkProps } from './components/Watermark/index.js'
+
+export { UidAnchor } from './components/Anchor/index.js'
+export type { UidAnchorProps, AnchorItem } from './components/Anchor/index.js'
+
+export { UidTour } from './components/Tour/index.js'
+export type { UidTourProps, TourStep, TourPlacement } from './components/Tour/index.js'
+
+export { UidMention } from './components/Mention/index.js'
+export type { UidMentionProps, MentionOption } from './components/Mention/index.js'
+
+export { UidTreeSelect } from './components/TreeSelect/index.js'
+export type { UidTreeSelectProps } from './components/TreeSelect/index.js'
+
 export { UidStepper } from './components/Stepper/index.js'
 export type { UidStepperProps, StepperStep } from './components/Stepper/index.js'
 

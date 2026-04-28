@@ -1,0 +1,95 @@
+.uid-mention {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--uid-space-xs);
+}
+
+.uid-mention__label {
+  font-size: var(--uid-font-size-sm);
+  font-weight: var(--uid-font-weight-medium);
+  color: var(--uid-text-primary);
+}
+
+.uid-mention__field {
+  display: block;
+  width: 100%;
+  padding: var(--uid-space-sm) 12px;
+  border: 1px solid var(--uid-color-border);
+  border-radius: var(--uid-radius-md);
+  background: var(--uid-surface-raised);
+  color: var(--uid-color-text);
+  font: inherit;
+  font-size: var(--uid-font-size-md);
+  line-height: 1.5;
+  resize: vertical;
+  transition:
+    border-color var(--uid-duration-fast) var(--uid-ease-out),
+    box-shadow var(--uid-duration-fast) var(--uid-ease-out);
+}
+
+.uid-mention__field:focus {
+  outline: none;
+  border-color: var(--uid-color-primary);
+  box-shadow: 0 0 0 3px var(--uid-color-primary-subtle);
+}
+
+.uid-mention__field::placeholder {
+  color: var(--uid-color-text-tertiary);
+}
+
+.uid-mention--disabled .uid-mention__field {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: var(--uid-surface-base);
+}
+
+.uid-mention__dropdown {
+  position: absolute;
+  z-index: var(--uid-z-dropdown);
+  background: var(--uid-color-bg);
+  border: 1px solid var(--uid-color-border);
+  border-radius: var(--uid-radius-md);
+  box-shadow: var(--uid-shadow-md);
+  max-height: 240px;
+  width: 240px;
+  overflow-y: auto;
+  padding: var(--uid-space-2xs);
+}
+
+.uid-mention__option {
+  display: flex;
+  align-items: center;
+  gap: var(--uid-space-sm);
+  width: 100%;
+  padding: var(--uid-space-sm);
+  border: none;
+  background: none;
+  border-radius: var(--uid-radius-sm);
+  text-align: left;
+  cursor: pointer;
+  font-size: var(--uid-font-size-md);
+  color: var(--uid-color-text);
+}
+
+.uid-mention__option:hover,
+.uid-mention__option--active {
+  background: var(--uid-color-bg-subtle);
+}
+
+.uid-mention__option-label {
+  font-weight: var(--uid-font-weight-medium);
+}
+
+.uid-mention__option-hint {
+  margin-left: auto;
+  font-size: var(--uid-font-size-sm);
+  color: var(--uid-color-text-tertiary);
+}
+
+.uid-mention__empty {
+  padding: var(--uid-space-md);
+  text-align: center;
+  color: var(--uid-color-text-tertiary);
+  font-size: var(--uid-font-size-sm);
+}

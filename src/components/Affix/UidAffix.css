@@ -1,0 +1,28 @@
+.uid-affix {
+  position: relative;
+}
+
+.uid-affix__sentinel {
+  height: 1px;
+  width: 100%;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.uid-affix__content {
+  position: sticky;
+  z-index: var(--uid-z-affix, 90);
+  transition: box-shadow var(--uid-duration-base) var(--uid-ease-out);
+}
+
+.uid-affix--top .uid-affix__content {
+  top: var(--uid-affix-offset, 0px);
+}
+
+.uid-affix--bottom .uid-affix__content {
+  bottom: var(--uid-affix-offset, 0px);
+}
+
+.uid-affix--affixed .uid-affix__content {
+  box-shadow: var(--uid-shadow-sm);
+}
