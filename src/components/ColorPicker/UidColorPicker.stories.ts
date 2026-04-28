@@ -7,10 +7,13 @@ const meta: Meta<typeof UidColorPicker> = {
   component: UidColorPicker,
   tags: ['autodocs'],
   parameters: {
-    layout: 'centered',
-    docs: { story: { height: '400px' } },
+    docs: { story: { height: '460px' } },
   },
-  decorators: [() => ({ template: '<div style="padding-bottom: 320px"><story /></div>' })],
+  decorators: [
+    () => ({
+      template: '<div style="padding: 16px 16px 380px 16px; width: 320px"><story /></div>',
+    }),
+  ],
   argTypes: {
     modelValue: { control: 'text' },
     disabled: { control: 'boolean' },
