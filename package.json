@@ -53,7 +53,9 @@
     "./styles/tokens.css": "./dist/styles/tokens.css",
     "./styles/themes.css": "./dist/styles/themes.css",
     "./styles/reset.css": "./dist/styles/reset.css",
-    "./styles/global.css": "./dist/styles/global.css"
+    "./styles/global.css": "./dist/styles/global.css",
+    "./styles/all.css": "./dist/styles/all.css",
+    "./styles/index.css": "./dist/styles/index.css"
   },
   "sideEffects": [
     "**/*.css"
@@ -64,9 +66,9 @@
   "scripts": {
     "dev": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "build": "vue-tsc --noEmit -p tsconfig.build.json && vite build",
-    "build:lib": "vite build",
-    "build:analyze": "ANALYZE=true vite build",
+    "build": "vue-tsc --noEmit -p tsconfig.build.json && vite build && node scripts/build-styles.mjs",
+    "build:lib": "vite build && node scripts/build-styles.mjs",
+    "build:analyze": "ANALYZE=true vite build && node scripts/build-styles.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "eslint src",

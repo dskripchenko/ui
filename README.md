@@ -39,10 +39,20 @@ npm install @dskripchenko/ui
 import { createApp } from 'vue'
 import App from './App.vue'
 
-import '@dskripchenko/ui/styles/tokens.css'
-import '@dskripchenko/ui/styles/themes.css'
+// Everything in one line: tokens + themes + reset + base typography + components.
+import '@dskripchenko/ui/styles/all.css'
 
 createApp(App).mount('#app')
+```
+
+Prefer granular imports? Use the per-file entries instead — order matters (tokens → themes → component styles):
+
+```ts
+import '@dskripchenko/ui/styles/tokens.css'   // primitives (colors, spacing, radius…)
+import '@dskripchenko/ui/styles/themes.css'   // :root[data-theme="light|dark"] + semantic aliases
+import '@dskripchenko/ui/styles/reset.css'    // optional: minimal HTML reset
+import '@dskripchenko/ui/styles/global.css'   // optional: :root font-family + base typography
+import '@dskripchenko/ui/styles/index.css'    // component styles
 ```
 
 ```vue
