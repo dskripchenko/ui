@@ -36,7 +36,10 @@ async function toggle(): Promise<void> {
   if (open.value) {
     await nextTick()
     update()
-    getItems()[0]?.focus()
+    requestAnimationFrame(() => {
+      update()
+      getItems()[0]?.focus()
+    })
   }
 }
 
