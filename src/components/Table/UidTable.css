@@ -105,3 +105,17 @@
   padding: var(--uid-space-xl) var(--uid-space-md);
   color: var(--uid-color-text-secondary);
 }
+
+/* Selection-column */
+.uid-table__th--select,
+.uid-table__td--select {
+  width: 40px;
+  padding-left: var(--uid-space-md);
+  padding-right: 0;
+  text-align: left;
+}
+
+.uid-table__row--selected {
+  background: var(--uid-table-row-bg-selected, var(--uid-color-surface-hover));
+}
+
