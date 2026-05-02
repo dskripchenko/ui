@@ -5,6 +5,7 @@ import { useId } from 'vue'
 import { Check, ChevronDown, X } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
 import { useLocale } from '../../composables/useLocale.js'
+import { usePopover } from '../../composables/usePopover.js'
 
 export interface SelectOption {
   value: string | number
@@ -43,9 +44,29 @@ const query = ref('')
 const activeIndex = ref(0)
 const containerRef = ref<HTMLElement | null>(null)
 const triggerRef = ref<HTMLElement | null>(null)
+const dropdownRef = ref<HTMLElement | null>(null)
 const listRef = ref<HTMLElement | null>(null)
 const searchRef = ref<HTMLInputElement | null>(null)
 const listboxId = useId()
+
+// Dropdown — Teleport'ируется в body, позиционируется через usePopover.
+// Это решает обрезание popover'а parent-контейнерами с overflow: hidden.
+// Width-binding через CSS (см. .uid-select__dropdown в CSS) на основе triggerRef rect.
+const { floatingStyle, update: updatePopover } = usePopover(triggerRef, dropdownRef, {
+  placement: 'bottom-start',
+  offset: 4,
+})
+
+const triggerWidth = ref<number>(0)
+function syncTriggerWidth(): void {
+  triggerWidth.value = triggerRef.value?.getBoundingClientRect().width ?? 0
+}
+
+const dropdownStyle = computed(() => ({
+  ...floatingStyle.value,
+  // Match dropdown width to trigger width — стандартный select-UX.
+  minWidth: triggerWidth.value > 0 ? `${triggerWidth.value}px` : 'auto',
+}))
 
 const selectedOption = computed(() =>
   props.options.find(o => o.value === model.value) ?? null,
@@ -72,12 +93,20 @@ watch(isOpen, async (val) => {
     query.value = ''
     const idx = filtered.value.findIndex(o => o.value === model.value)
     activeIndex.value = idx >= 0 ? idx : 0
+    syncTriggerWidth()
     await nextTick()
+    // Position popover после mount + reflow (rAF гарантирует layout готов).
+    updatePopover()
+    requestAnimationFrame(() => updatePopover())
     if (props.searchable) searchRef.value?.focus()
     scrollActiveIntoView()
     document.addEventListener('pointerdown', onOutsideClick)
+    window.addEventListener('resize', updatePopover)
+    window.addEventListener('scroll', updatePopover, true)
   } else {
     document.removeEventListener('pointerdown', onOutsideClick)
+    window.removeEventListener('resize', updatePopover)
+    window.removeEventListener('scroll', updatePopover, true)
   }
 })
 
@@ -111,7 +140,10 @@ function clearValue(e: MouseEvent) {
 
 function onOutsideClick(e: PointerEvent) {
   const target = e.target as Node
-  if (!containerRef.value?.contains(target)) close()
+  // Dropdown в body (Teleport), но он "наш" — не закрываем при клике в нём.
+  if (containerRef.value?.contains(target)) return
+  if (dropdownRef.value?.contains(target)) return
+  close()
 }
 
 function onTriggerKeydown(e: KeyboardEvent) {
@@ -158,7 +190,11 @@ function scrollActiveIntoView() {
   })
 }
 
-onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
+onUnmounted(() => {
+  document.removeEventListener('pointerdown', onOutsideClick)
+  window.removeEventListener('resize', updatePopover)
+  window.removeEventListener('scroll', updatePopover, true)
+})
 </script>
 
 <template>
@@ -208,11 +244,14 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
       </div>
     </div>
 
-    <Transition name="uid-select-dropdown">
-      <div
-        v-if="isOpen"
-        class="uid-select__dropdown"
-      >
+    <Teleport to="body">
+      <Transition name="uid-select-dropdown">
+        <div
+          v-if="isOpen"
+          ref="dropdownRef"
+          class="uid-select__dropdown"
+          :style="dropdownStyle"
+        >
         <div
           v-if="searchable"
           class="uid-select__search"
@@ -282,7 +321,8 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
             {{ locale.select.noResults }}
           </div>
         </div>
-      </div>
-    </Transition>
+        </div>
+      </Transition>
+    </Teleport>
   </div>
 </template>
