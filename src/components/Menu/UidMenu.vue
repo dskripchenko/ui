@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import './UidMenu.css'
-import { ref, provide, watch, nextTick, onUnmounted, useId } from 'vue'
+import { ref, computed, provide, watch, nextTick, onUnmounted, useId } from 'vue'
 import { usePopover } from '../../composables/usePopover.js'
 import { MENU_CLOSE_KEY } from './context.js'
 
@@ -14,7 +14,15 @@ const menuRef = ref<HTMLElement | null>(null)
 const open = ref(false)
 const menuId = useId()
 
-const { floatingStyle, update } = usePopover(triggerRef, menuRef, {
+// `.uid-menu-trigger` имеет `display: contents` — это значит сам root-div не
+// занимает места в layout, и его getBoundingClientRect() возвращает (0,0,0,0).
+// usePopover должен видеть реальные размеры — берём их у первого визуального
+// child'а (содержимое slot 'trigger', обычно UidAvatar/UidButton).
+const triggerAnchorRef = computed<HTMLElement | null>(() => {
+  return (triggerRef.value?.firstElementChild as HTMLElement | null) ?? triggerRef.value
+})
+
+const { floatingStyle, update } = usePopover(triggerAnchorRef, menuRef, {
   placement: 'bottom-start',
 })
 
