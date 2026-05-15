@@ -14,7 +14,7 @@ export interface UidStackProps {
 
 const props = withDefaults(defineProps<UidStackProps>(), {
   direction: 'column',
-  gap: 'var(--uid-space-4)',
+  gap: 'var(--uid-space-md)',
   align: undefined,
   justify: undefined,
   wrap: false,

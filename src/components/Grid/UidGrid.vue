@@ -14,7 +14,7 @@ export interface UidGridProps {
 
 const props = withDefaults(defineProps<UidGridProps>(), {
   cols: 12,
-  gap: 'var(--uid-space-4)',
+  gap: 'var(--uid-space-md)',
   rowGap: undefined,
   colGap: undefined,
   align: undefined,
