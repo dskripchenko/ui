@@ -41,7 +41,10 @@ export function useFocusTrap(containerRef: Ref<HTMLElement | null>) {
   function activate(initialFocusRef?: Ref<HTMLElement | null>): void {
     previouslyFocused.value = document.activeElement as HTMLElement
     document.addEventListener('keydown', handleKeydown)
-    const target = initialFocusRef?.value ?? getFocusable()[0] ?? containerRef.value
+    const target = initialFocusRef?.value
+      ?? containerRef.value?.querySelector<HTMLElement>('[autofocus]')
+      ?? getFocusable()[0]
+      ?? containerRef.value
     target?.focus()
   }
 

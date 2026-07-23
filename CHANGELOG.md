@@ -1,5 +1,11 @@
 # @dskripchenko/ui
 
+## 1.1.3
+
+### Patch Changes
+
+- useFocusTrap: activate() предпочитает `[autofocus]`-элемент внутри контейнера первому focusable — модалка фокусирует нужный инпут (например поле поиска), а не кнопку закрытия.
+
 ## 1.0.2
 
 ### Patch Changes
