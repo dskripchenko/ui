@@ -106,6 +106,54 @@ export const Checkable: Story = {
   }),
 }
 
+function stripIcons(nodes: TreeNode[]): TreeNode[] {
+  return nodes.map(({ key, label, children }) => ({
+    key,
+    label,
+    ...(children ? { children: stripIcons(children) } : {}),
+  }))
+}
+
+export const VirtualRoot: Story = {
+  render: () => ({
+    components: { UidTreeView },
+    setup: () => ({
+      nodes: [
+        { key: 'admins', label: 'Администраторы', children: [{ key: 'u1', label: 'ivan@example.com' }] },
+        { key: 'clients', label: 'Клиенты', children: [{ key: 'u2', label: 'anna@example.com' }] },
+      ] satisfies TreeNode[],
+      selected: ref<TreeKey[]>([]),
+    }),
+    template: `
+      <UidTreeView
+        :nodes="nodes"
+        v-model:selectedKeys="selected"
+        virtual-root="Все группы"
+        selectable="single"
+        show-guides
+        style="width:320px"
+      />
+    `,
+  }),
+}
+
+export const DefaultIcons: Story = {
+  render: () => ({
+    components: { UidTreeView },
+    setup: () => ({
+      nodes: stripIcons(fileTree),
+      expanded: ref<TreeKey[]>(['src']),
+    }),
+    template: `
+      <UidTreeView
+        :nodes="nodes"
+        v-model:expandedKeys="expanded"
+        style="width:320px"
+      />
+    `,
+  }),
+}
+
 export const Multiple: Story = {
   render: () => ({
     components: { UidTreeView },

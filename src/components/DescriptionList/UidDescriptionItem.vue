@@ -19,7 +19,7 @@ const props = withDefaults(defineProps<UidDescriptionItemProps>(), {
   copyable: false,
 })
 
-const slots = defineSlots<{
+defineSlots<{
   default?(): unknown
   label?(): unknown
 }>()

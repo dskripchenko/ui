@@ -1,5 +1,18 @@
 # @dskripchenko/ui
 
+## 1.2.0
+
+### Minor Changes
+
+- UidTreeView: проп `virtualRoot` — виртуальный корневой узел, оборачивающий все `nodes` как children. Строка → автогенерируется невыбираемый узел с этим label; TreeNode → используется как есть (children подставляются из `nodes`, если не заданы). Виртуальный корень раскрыт по умолчанию.
+- UidTreeView: дефолтные иконки узлов — Folder/FolderOpen для веток (цвет primary), CornerDownRight для листьев (tertiary); `node.icon` по-прежнему имеет приоритет.
+- UidTreeView: узлы с `selectable: false` не выбираются кликом и клавиатурой.
+
+### Patch Changes
+
+- UidTreeView: сброшен наследуемый `list-style` у корневого `ul` и `li` — маркеры списков больше не проступают в host-проектах без reset.
+- UidDescriptionItem: убрано неиспользуемое присваивание `defineSlots` (lint error).
+
 ## 1.1.3
 
 ### Patch Changes

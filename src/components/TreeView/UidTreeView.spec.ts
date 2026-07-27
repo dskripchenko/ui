@@ -114,4 +114,55 @@ describe('UidTreeView', () => {
     await wrapper.find('.uid-tree-item__row').trigger('click')
     expect(wrapper.emitted('select')).toBeUndefined()
   })
+
+  it('virtualRoot (строка) оборачивает узлы в один корневой', () => {
+    const wrapper = mount(UidTreeView, {
+      props: {
+        nodes: [
+          { key: 'a', label: 'A' },
+          { key: 'b', label: 'B' },
+        ],
+        virtualRoot: 'Все',
+      },
+    })
+    const rows = wrapper.findAll('.uid-tree-item__row')
+    expect(rows[0].text()).toContain('Все')
+    expect(wrapper.findAll('.uid-tree-item')).toHaveLength(3)
+  })
+
+  it('virtualRoot автоматически раскрыт', () => {
+    const wrapper = mount(UidTreeView, {
+      props: {
+        nodes: [{ key: 'a', label: 'A' }, { key: 'b', label: 'B' }],
+        virtualRoot: 'Все',
+      },
+    })
+    const labels = wrapper.findAll('.uid-tree-item__label').map((w) => w.text())
+    expect(labels).toContain('Все')
+    expect(labels).toContain('A')
+    expect(labels).toContain('B')
+  })
+
+  it('virtualRoot не выбирается по клику (selectable=false)', async () => {
+    const wrapper = mount(UidTreeView, {
+      props: {
+        nodes: [{ key: 'a', label: 'A' }],
+        virtualRoot: 'Все',
+        selectable: 'single',
+      },
+    })
+    await wrapper.find('.uid-tree-item__row').trigger('click')
+    expect(wrapper.emitted('select')).toBeUndefined()
+  })
+
+  it('virtualRoot TreeNode используется как корень', () => {
+    const wrapper = mount(UidTreeView, {
+      props: {
+        nodes: [{ key: 'a', label: 'A' }],
+        virtualRoot: { key: 'custom', label: 'Custom Root' },
+      },
+    })
+    const rows = wrapper.findAll('.uid-tree-item__row')
+    expect(rows[0].text()).toContain('Custom Root')
+  })
 })

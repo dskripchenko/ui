@@ -11,6 +11,12 @@ export interface UidTreeViewProps {
   disabled?: boolean
   defaultExpandAll?: boolean
   showGuides?: boolean
+  /**
+   * Виртуальный корневой узел, оборачивающий все `nodes` как children.
+   * Строка → автогенерируется `{key:'__virtual_root__', label, selectable:false}`.
+   * TreeNode → используется как есть; если children не заданы — туда подставляются props.nodes.
+   */
+  virtualRoot?: string | TreeNode | null
 }
 
 const props = withDefaults(defineProps<UidTreeViewProps>(), {
@@ -19,6 +25,18 @@ const props = withDefaults(defineProps<UidTreeViewProps>(), {
   disabled: false,
   defaultExpandAll: false,
   showGuides: false,
+  virtualRoot: null,
+})
+
+const VIRTUAL_ROOT_KEY: TreeKey = '__virtual_root__'
+
+const renderedNodes = computed<TreeNode[]>(() => {
+  if (!props.virtualRoot) return props.nodes
+  const root: TreeNode = typeof props.virtualRoot === 'string'
+    ? { key: VIRTUAL_ROOT_KEY, label: props.virtualRoot, selectable: false }
+    : { ...props.virtualRoot }
+  root.children = root.children ?? props.nodes
+  return [root]
 })
 
 const emit = defineEmits<{
@@ -43,7 +61,10 @@ function collectAllKeys(nodes: TreeNode[]): TreeKey[] {
 }
 
 if (props.defaultExpandAll && expandedKeys.value.length === 0) {
-  expandedKeys.value = collectAllKeys(props.nodes)
+  expandedKeys.value = collectAllKeys(renderedNodes.value)
+} else if (props.virtualRoot && expandedKeys.value.length === 0) {
+  // Виртуальный root всегда развёрнут по умолчанию — иначе он скрывает всё дерево.
+  expandedKeys.value = [renderedNodes.value[0].key]
 }
 
 const expandedSet = computed({
@@ -75,22 +96,6 @@ function descendantKeys(node: TreeNode): TreeKey[] {
   return keys
 }
 
-function findNodeAndAncestors(key: TreeKey): { path: TreeNode[]; node: TreeNode | null } {
-  const path: TreeNode[] = []
-  let found: TreeNode | null = null
-  const walk = (list: TreeNode[]): boolean => {
-    for (const n of list) {
-      path.push(n)
-      if (n.key === key) { found = n; return true }
-      if (n.children && walk(n.children)) return true
-      path.pop()
-    }
-    return false
-  }
-  walk(props.nodes)
-  return { path, node: found }
-}
-
 function recomputeAncestorState(): void {
   const indet = new Set<TreeKey>()
   const checked = new Set(checkedSet.value)
@@ -120,13 +125,13 @@ function recomputeAncestorState(): void {
     return { all, some }
   }
 
-  for (const root of props.nodes) walk(root)
+  for (const root of renderedNodes.value) walk(root)
   checkedSet.value = checked
   indeterminateSet.value = indet
   checkedKeys.value = [...checked]
 }
 
-watch(() => props.nodes, recomputeAncestorState, { immediate: true, deep: true })
+watch(renderedNodes, recomputeAncestorState, { immediate: true, deep: true })
 watch(checkedKeys, () => {
   if ([...checkedSet.value].sort().join(',') !== [...checkedKeys.value].sort().join(',')) {
     checkedSet.value = new Set(checkedKeys.value)
@@ -179,7 +184,7 @@ const visibleKeys = computed<TreeKey[]>(() => {
       if (n.children && expandedSet.value.has(n.key)) walk(n.children)
     }
   }
-  walk(props.nodes)
+  walk(renderedNodes.value)
   return list
 })
 
@@ -191,7 +196,7 @@ const parentMap = computed<Map<TreeKey, TreeKey | null>>(() => {
       if (n.children) walk(n.children, n.key)
     }
   }
-  walk(props.nodes, null)
+  walk(renderedNodes.value, null)
   return map
 })
 
@@ -251,7 +256,7 @@ provide(treeContextKey, {
     role="tree"
   >
     <UidTreeItem
-      v-for="node in nodes"
+      v-for="node in renderedNodes"
       :key="node.key"
       :node="node"
       :level="0"

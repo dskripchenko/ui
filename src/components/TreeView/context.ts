@@ -7,6 +7,7 @@ export interface TreeNode {
   label: string
   children?: TreeNode[]
   disabled?: boolean
+  selectable?: boolean
   icon?: unknown
 }
 

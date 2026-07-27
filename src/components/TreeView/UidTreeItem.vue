@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, inject, nextTick, ref, watch } from 'vue'
-import { ChevronRight, Check } from 'lucide-vue-next'
+import { computed, inject, nextTick, ref, watch, type Component } from 'vue'
+import { ChevronRight, Check, CornerDownRight, Folder, FolderOpen } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
 import { useLocale } from '../../composables/useLocale.js'
 import { treeContextKey, type TreeContext, type TreeNode } from './context.js'
@@ -21,6 +21,11 @@ const rowRef = ref<HTMLElement | null>(null)
 
 const hasChildren = computed(() => !!props.node.children && props.node.children.length > 0)
 const isExpanded = computed(() => ctx.isExpanded(props.node.key))
+const effectiveIcon = computed<Component>(() => {
+  if (props.node.icon) return props.node.icon as Component
+  if (hasChildren.value) return isExpanded.value ? FolderOpen : Folder
+  return CornerDownRight
+})
 const isSelected = computed(() => ctx.isSelected(props.node.key))
 const isChecked = computed(() => ctx.isChecked(props.node.key))
 const isIndeterminate = computed(() => ctx.isIndeterminate(props.node.key))
@@ -42,7 +47,7 @@ function onRowClick(): void {
   if (isDisabled.value) return
   ctx.focusKey(props.node.key)
   if (hasChildren.value) ctx.toggleExpand(props.node.key)
-  if (ctx.selectable.value) ctx.toggleSelect(props.node)
+  if (ctx.selectable.value && props.node.selectable !== false) ctx.toggleSelect(props.node)
 }
 
 function onChevronClick(e: MouseEvent): void {
@@ -85,7 +90,7 @@ function onKeydown(e: KeyboardEvent): void {
   } else if (e.key === 'Enter' || e.key === ' ') {
     e.preventDefault()
     if (ctx.checkable.value) ctx.toggleCheck(props.node)
-    else if (ctx.selectable.value) ctx.toggleSelect(props.node)
+    else if (ctx.selectable.value && props.node.selectable !== false) ctx.toggleSelect(props.node)
   }
 }
 
@@ -155,11 +160,14 @@ function onFocus(): void {
       </span>
 
       <span
-        v-if="node.icon"
         class="uid-tree-item__icon"
+        :class="{
+          'uid-tree-item__icon--branch': hasChildren,
+          'uid-tree-item__icon--leaf': !hasChildren,
+        }"
       >
         <UidIcon
-          :icon="node.icon"
+          :icon="effectiveIcon"
           :size="16"
         />
       </span>
