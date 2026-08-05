@@ -78,3 +78,31 @@ export const Vertical: Story = {
     `,
   }),
 }
+
+export const ManyTabsOnNarrowScreen: Story = {
+  name: 'Много вкладок на узком экране',
+  parameters: {
+    docs: { description: { story: 'Вкладки, которые не помещаются по ширине, прокручиваются полосой, а не обрезаются краем.' } },
+  },
+  render: () => ({
+    components: { UidTabs, UidTab, UidTabPanel },
+    setup: () => ({ tab: ref('main') }),
+    template: `
+      <div style="width:360px;border:1px dashed var(--uid-color-border);padding:8px">
+        <UidTabs v-model="tab">
+          <template #list>
+            <UidTab value="main">Основное</UidTab>
+            <UidTab value="sections">Секции</UidTab>
+            <UidTab value="page">Страница</UidTab>
+            <UidTab value="vars">Переменные</UidTab>
+            <UidTab value="api">API</UidTab>
+            <UidTab value="ai">Ассистент</UidTab>
+            <UidTab value="preview">Превью</UidTab>
+          </template>
+          <UidTabPanel value="main"><p>Первая вкладка.</p></UidTabPanel>
+          <UidTabPanel value="preview"><p>Последняя вкладка — до неё можно долистать.</p></UidTabPanel>
+        </UidTabs>
+      </div>
+    `,
+  }),
+}

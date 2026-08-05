@@ -1,5 +1,14 @@
 # @dskripchenko/ui
 
+## 1.2.1
+
+### Fixed
+- **Tabs that did not fit the width were cut off by the edge instead of
+  scrolling.** On a phone, a form with seven tabs lost the last four
+  altogether — they could not be reached at all. The tab list now scrolls
+  horizontally on its own, and tabs no longer shrink into unreadable stubs.
+  Vertical tabs are unaffected.
+
 ## 1.2.0
 
 ### Minor Changes

@@ -14,6 +14,15 @@
   flex-shrink: 0;
   gap: var(--uid-space-xs);
   border-bottom: 1px solid var(--uid-color-border);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  scroll-snap-type: x proximity;
+}
+
+.uid-tabs__list > .uid-tab {
+  flex: none;
+  scroll-snap-align: start;
 }
 
 .uid-tabs--vertical .uid-tabs__list {
@@ -22,6 +31,8 @@
   border-right: 1px solid var(--uid-color-border);
   padding-right: 0;
   gap: var(--uid-space-2xs);
+  overflow-x: visible;
+  scroll-snap-type: none;
 }
 
 .uid-tabs__panels {
