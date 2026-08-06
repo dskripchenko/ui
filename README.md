@@ -2,7 +2,7 @@
 
 A Vue 3 component, token, and theme library on CSS custom properties.
 
-[**English**](./README.md) · [Русский](./README.ru.md) · [Deutsch](./README.de.md) · [中文](./README.zh.md)
+[**English**](./README.md) · [Русский](docs/ru/README.md) · [Deutsch](docs/de/README.md) · [中文](docs/zh/README.md)
 
 [![npm](https://img.shields.io/npm/v/@dskripchenko/ui.svg)](https://www.npmjs.com/package/@dskripchenko/ui)
 [![bundle](https://img.shields.io/bundlephobia/minzip/@dskripchenko/ui)](https://bundlephobia.com/package/@dskripchenko/ui)

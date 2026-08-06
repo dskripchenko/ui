@@ -2,11 +2,11 @@
 
 Набор Vue 3 компонентов, токенов и тем на CSS custom properties.
 
-[English](./README.md) · [**Русский**](./README.ru.md) · [Deutsch](./README.de.md) · [中文](./README.zh.md)
+[English](../../README.md) · [Deutsch](../de/README.md) · Русский · [中文](../zh/README.md)
 
 [![npm](https://img.shields.io/npm/v/@dskripchenko/ui.svg)](https://www.npmjs.com/package/@dskripchenko/ui)
 [![bundle](https://img.shields.io/bundlephobia/minzip/@dskripchenko/ui)](https://bundlephobia.com/package/@dskripchenko/ui)
-[![license](https://img.shields.io/npm/l/@dskripchenko/ui.svg)](./LICENSE)
+[![license](https://img.shields.io/npm/l/@dskripchenko/ui.svg)](../../LICENSE)
 
 > **Статус:** стабильно. Действуют гарантии SemVer — ломающие изменения только в major-версиях.
 
@@ -95,12 +95,12 @@ import { Check } from '@dskripchenko/ui/icons'
 
 Пользовательская документация переведена на 4 языка — выбери свой:
 
-- 🇬🇧 **English** (default): [docs/en/](./docs/en/)
-- 🇷🇺 **Русский**: [getting-started](./docs/ru/getting-started.md), [тема](./docs/ru/theming.md), [токены](./docs/ru/tokens.md), [иконки](./docs/ru/icons.md), [патерны](./docs/ru/patterns.md), [валидация](./docs/ru/validation.md), [графики](./docs/ru/charts.md), [i18n](./docs/ru/i18n.md)
-- 🇩🇪 **Deutsch**: [docs/de/](./docs/de/)
-- 🇨🇳 **中文**: [docs/zh/](./docs/zh/)
+- 🇬🇧 **English** (default): [docs/en/](../../docs/en/)
+- 🇷🇺 **Русский**: [getting-started](../../docs/ru/getting-started.md), [тема](../../docs/ru/theming.md), [токены](../../docs/ru/tokens.md), [иконки](../../docs/ru/icons.md), [патерны](../../docs/ru/patterns.md), [валидация](../../docs/ru/validation.md), [графики](../../docs/ru/charts.md), [i18n](../../docs/ru/i18n.md)
+- 🇩🇪 **Deutsch**: [docs/de/](../../docs/de/)
+- 🇨🇳 **中文**: [docs/zh/](../../docs/zh/)
 
-Документация для контрибьюторов (только английская): [Architecture](./docs/ARCHITECTURE.md), [Component guidelines](./docs/COMPONENT_GUIDELINES.md), [Contributing](./docs/CONTRIBUTING.md), [Roadmap](./docs/ROADMAP.md).
+Документация для контрибьюторов (только английская): [Architecture](../../docs/ARCHITECTURE.md), [Component guidelines](../../docs/COMPONENT_GUIDELINES.md), [Contributing](../../docs/CONTRIBUTING.md), [Roadmap](../../docs/ROADMAP.md).
 
 ## Темизация
 
@@ -113,7 +113,7 @@ import { Check } from '@dskripchenko/ui/icons'
 }
 ```
 
-Подробнее — [темизация](./docs/ru/theming.md) и [токены](./docs/ru/tokens.md).
+Подробнее — [темизация](../../docs/ru/theming.md) и [токены](../../docs/ru/tokens.md).
 
 ## Иконки
 
@@ -124,7 +124,7 @@ import { UidIcon } from '@dskripchenko/ui'
 import { Heart, Star } from '@dskripchenko/ui/icons'
 ```
 
-Подробнее — [иконки](./docs/ru/icons.md).
+Подробнее — [иконки](../../docs/ru/icons.md).
 
 ## Разработка
 

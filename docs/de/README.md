@@ -2,11 +2,11 @@
 
 Eine Bibliothek aus Vue-3-Komponenten, Tokens und Themes auf Basis von CSS Custom Properties.
 
-[English](./README.md) · [Русский](./README.ru.md) · [**Deutsch**](./README.de.md) · [中文](./README.zh.md)
+[English](../../README.md) · Deutsch · [Русский](../ru/README.md) · [中文](../zh/README.md)
 
 [![npm](https://img.shields.io/npm/v/@dskripchenko/ui.svg)](https://www.npmjs.com/package/@dskripchenko/ui)
 [![bundle](https://img.shields.io/bundlephobia/minzip/@dskripchenko/ui)](https://bundlephobia.com/package/@dskripchenko/ui)
-[![license](https://img.shields.io/npm/l/@dskripchenko/ui.svg)](./LICENSE)
+[![license](https://img.shields.io/npm/l/@dskripchenko/ui.svg)](../../LICENSE)
 
 > **Status:** stabil. SemVer-Garantien gelten — Breaking Changes nur in Major-Versionen.
 
@@ -97,12 +97,12 @@ Kurze Auswahl — vollständiger Katalog im [Storybook](https://dskripchenko.git
 
 Anwender-Dokumentation in vier Sprachen — wähle deine:
 
-- 🇬🇧 **English** (default): [docs/en/](./docs/en/)
-- 🇷🇺 **Русский**: [docs/ru/](./docs/ru/)
-- 🇩🇪 **Deutsch**: [Erste Schritte](./docs/de/getting-started.md), [Theming](./docs/de/theming.md), [Tokens](./docs/de/tokens.md), [Icons](./docs/de/icons.md), [Patterns](./docs/de/patterns.md), [Validation](./docs/de/validation.md), [Charts](./docs/de/charts.md), [i18n](./docs/de/i18n.md)
-- 🇨🇳 **中文**: [docs/zh/](./docs/zh/)
+- 🇬🇧 **English** (default): [docs/en/](../../docs/en/)
+- 🇷🇺 **Русский**: [docs/ru/](../../docs/ru/)
+- 🇩🇪 **Deutsch**: [Erste Schritte](../../docs/de/getting-started.md), [Theming](../../docs/de/theming.md), [Tokens](../../docs/de/tokens.md), [Icons](../../docs/de/icons.md), [Patterns](../../docs/de/patterns.md), [Validation](../../docs/de/validation.md), [Charts](../../docs/de/charts.md), [i18n](../../docs/de/i18n.md)
+- 🇨🇳 **中文**: [docs/zh/](../../docs/zh/)
 
-Mitwirkenden-Dokumentation (nur Englisch): [Architecture](./docs/ARCHITECTURE.md), [Component guidelines](./docs/COMPONENT_GUIDELINES.md), [Contributing](./docs/CONTRIBUTING.md), [Roadmap](./docs/ROADMAP.md).
+Mitwirkenden-Dokumentation (nur Englisch): [Architecture](../../docs/ARCHITECTURE.md), [Component guidelines](../../docs/COMPONENT_GUIDELINES.md), [Contributing](../../docs/CONTRIBUTING.md), [Roadmap](../../docs/ROADMAP.md).
 
 ## Theming
 
@@ -115,7 +115,7 @@ Alle Farben, Abstände und Schriften sind CSS-Variablen. Theme überschreiben �
 }
 ```
 
-Mehr in [Theming](./docs/de/theming.md) und [Tokens](./docs/de/tokens.md).
+Mehr in [Theming](../../docs/de/theming.md) und [Tokens](../../docs/de/tokens.md).
 
 ## Icons
 
@@ -126,7 +126,7 @@ import { UidIcon } from '@dskripchenko/ui'
 import { Heart, Star } from '@dskripchenko/ui/icons'
 ```
 
-Mehr in [Icons](./docs/de/icons.md).
+Mehr in [Icons](../../docs/de/icons.md).
 
 ## Entwicklung
 

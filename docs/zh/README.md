@@ -2,11 +2,11 @@
 
 基于 CSS Custom Properties 的 Vue 3 组件、token 与主题库。
 
-[English](./README.md) · [Русский](./README.ru.md) · [Deutsch](./README.de.md) · [**中文**](./README.zh.md)
+[English](../../README.md) · [Deutsch](../de/README.md) · [Русский](../ru/README.md) · 中文
 
 [![npm](https://img.shields.io/npm/v/@dskripchenko/ui.svg)](https://www.npmjs.com/package/@dskripchenko/ui)
 [![bundle](https://img.shields.io/bundlephobia/minzip/@dskripchenko/ui)](https://bundlephobia.com/package/@dskripchenko/ui)
-[![license](https://img.shields.io/npm/l/@dskripchenko/ui.svg)](./LICENSE)
+[![license](https://img.shields.io/npm/l/@dskripchenko/ui.svg)](../../LICENSE)
 
 > **状态：** 稳定。遵循 SemVer 保障——破坏性变更仅在主版本中发布。
 
@@ -97,12 +97,12 @@ import { Check } from '@dskripchenko/ui/icons'
 
 用户文档已译为四种语言 — 选择你的：
 
-- 🇬🇧 **English**(default)：[docs/en/](./docs/en/)
-- 🇷🇺 **Русский**：[docs/ru/](./docs/ru/)
-- 🇩🇪 **Deutsch**：[docs/de/](./docs/de/)
-- 🇨🇳 **中文**：[快速开始](./docs/zh/getting-started.md)、[主题](./docs/zh/theming.md)、[Tokens](./docs/zh/tokens.md)、[图标](./docs/zh/icons.md)、[Patterns](./docs/zh/patterns.md)、[表单校验](./docs/zh/validation.md)、[图表](./docs/zh/charts.md)、[i18n](./docs/zh/i18n.md)
+- 🇬🇧 **English**(default)：[docs/en/](../../docs/en/)
+- 🇷🇺 **Русский**：[docs/ru/](../../docs/ru/)
+- 🇩🇪 **Deutsch**：[docs/de/](../../docs/de/)
+- 🇨🇳 **中文**：[快速开始](../../docs/zh/getting-started.md)、[主题](../../docs/zh/theming.md)、[Tokens](../../docs/zh/tokens.md)、[图标](../../docs/zh/icons.md)、[Patterns](../../docs/zh/patterns.md)、[表单校验](../../docs/zh/validation.md)、[图表](../../docs/zh/charts.md)、[i18n](../../docs/zh/i18n.md)
 
-贡献者文档(仅英文)：[Architecture](./docs/ARCHITECTURE.md)、[Component guidelines](./docs/COMPONENT_GUIDELINES.md)、[Contributing](./docs/CONTRIBUTING.md)、[Roadmap](./docs/ROADMAP.md)。
+贡献者文档(仅英文)：[Architecture](../../docs/ARCHITECTURE.md)、[Component guidelines](../../docs/COMPONENT_GUIDELINES.md)、[Contributing](../../docs/CONTRIBUTING.md)、[Roadmap](../../docs/ROADMAP.md)。
 
 ## 主题
 
@@ -115,7 +115,7 @@ import { Check } from '@dskripchenko/ui/icons'
 }
 ```
 
-详见 [主题](./docs/zh/theming.md) 与 [Tokens](./docs/zh/tokens.md)。
+详见 [主题](../../docs/zh/theming.md) 与 [Tokens](../../docs/zh/tokens.md)。
 
 ## 图标
 
@@ -126,7 +126,7 @@ import { UidIcon } from '@dskripchenko/ui'
 import { Heart, Star } from '@dskripchenko/ui/icons'
 ```
 
-详见 [图标](./docs/zh/icons.md)。
+详见 [图标](../../docs/zh/icons.md)。
 
 ## 开发
 

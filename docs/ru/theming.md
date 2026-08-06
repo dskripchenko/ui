@@ -119,7 +119,7 @@ const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
 document.documentElement.dataset.theme = prefersDark ? 'dark' : 'light'
 ```
 
-Внутри kit'а есть composable `useTheme()` (см. фазу 0 в [ROADMAP](./ROADMAP.md)), который инкапсулирует чтение/запись атрибута и подписку на системные изменения.
+Внутри kit'а есть composable `useTheme()` (см. фазу 0 в [ROADMAP](../ROADMAP.md)), который инкапсулирует чтение/запись атрибута и подписку на системные изменения.
 
 ## Кастомные темы
 
