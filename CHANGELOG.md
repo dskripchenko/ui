@@ -40,6 +40,36 @@
 
 - useFocusTrap: `activate()` now prefers an `[autofocus]` element inside the container over the first focusable one — a modal focuses the input it should (a search field, say) instead of the close button.
 
+## 1.1.2
+
+### Patch Changes
+
+- Version bump with no code changes: the release line was realigned.
+
+## 1.1.1
+
+### Patch Changes
+
+- UidSelect: the dropdown is teleported to `body`, so the popover is no longer clipped by a parent's `overflow`.
+
+## 1.1.0
+
+### Minor Changes
+
+- UidTable: three-state sorting and a native selection column.
+
+## 1.0.4
+
+### Patch Changes
+
+- UidMenu: the popover anchors to the trigger's first child, which is the element actually rendered.
+
+## 1.0.3
+
+### Patch Changes
+
+- Version bump with no code changes: the release line was realigned.
+
 ## 1.0.2
 
 ### Patch Changes
