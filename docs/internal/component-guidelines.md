@@ -44,7 +44,7 @@ interface ValidatableProps {
 }
 ```
 
-See [validation](./en/validation.md).
+See [validation](../en/validation.md).
 
 ```ts
 export type UidButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger'
@@ -134,7 +134,7 @@ Icons in `lg` stay 20px — bumping to 24px throws off visual balance with the t
 
 - `Component.css` is imported from `<script setup>`: `import './UidButton.css'`.
 - **No `scoped`.** Isolation via `.uid-{component}` prefix + BEM.
-- All knobs go through local CSS variables that fall back to semantic tokens (see [tokens](./en/tokens.md)).
+- All knobs go through local CSS variables that fall back to semantic tokens (see [tokens](../en/tokens.md)).
 - States — via attributes or modifier classes:
   - `:hover`, `:focus-visible`, `:active` — pseudo-classes.
   - `disabled` — `disabled` attribute or `[aria-disabled="true"]`, not a class.

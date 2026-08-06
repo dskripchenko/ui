@@ -100,7 +100,7 @@ import { Check } from '@dskripchenko/ui/icons'
 - 🇩🇪 **Deutsch**: [docs/de/](../../docs/de/)
 - 🇨🇳 **中文**: [docs/zh/](../../docs/zh/)
 
-Документация для контрибьюторов (только английская): [Architecture](../../docs/ARCHITECTURE.md), [Component guidelines](../../docs/COMPONENT_GUIDELINES.md), [Contributing](../../docs/CONTRIBUTING.md), [Roadmap](../../docs/ROADMAP.md).
+Документация для контрибьюторов (только английская): [Architecture](../internal/architecture.md), [Component guidelines](../internal/component-guidelines.md), [Contributing](../../.github/CONTRIBUTING.md), [Roadmap](../internal/roadmap.md).
 
 ## Темизация
 

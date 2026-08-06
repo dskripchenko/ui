@@ -112,7 +112,7 @@ User docs are translated into four languages — pick yours:
 - 🇩🇪 **Deutsch**: [docs/de/](./docs/de/)
 - 🇨🇳 **中文**: [docs/zh/](./docs/zh/)
 
-Contributor docs (English only): [Architecture](./docs/ARCHITECTURE.md), [Component guidelines](./docs/COMPONENT_GUIDELINES.md), [Contributing](./docs/CONTRIBUTING.md), [Roadmap](./docs/ROADMAP.md).
+Contributor docs (English only): [Architecture](./docs/internal/architecture.md), [Component guidelines](./docs/internal/component-guidelines.md), [Contributing](./.github/CONTRIBUTING.md), [Roadmap](./docs/internal/roadmap.md).
 
 ## Theming
 

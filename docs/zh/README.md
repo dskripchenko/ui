@@ -102,7 +102,7 @@ import { Check } from '@dskripchenko/ui/icons'
 - 🇩🇪 **Deutsch**：[docs/de/](../../docs/de/)
 - 🇨🇳 **中文**：[快速开始](../../docs/zh/getting-started.md)、[主题](../../docs/zh/theming.md)、[Tokens](../../docs/zh/tokens.md)、[图标](../../docs/zh/icons.md)、[Patterns](../../docs/zh/patterns.md)、[表单校验](../../docs/zh/validation.md)、[图表](../../docs/zh/charts.md)、[i18n](../../docs/zh/i18n.md)
 
-贡献者文档(仅英文)：[Architecture](../../docs/ARCHITECTURE.md)、[Component guidelines](../../docs/COMPONENT_GUIDELINES.md)、[Contributing](../../docs/CONTRIBUTING.md)、[Roadmap](../../docs/ROADMAP.md)。
+贡献者文档(仅英文)：[Architecture](../internal/architecture.md)、[Component guidelines](../internal/component-guidelines.md)、[Contributing](../../.github/CONTRIBUTING.md)、[Roadmap](../internal/roadmap.md)。
 
 ## 主题
 

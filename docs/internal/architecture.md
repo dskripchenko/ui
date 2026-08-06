@@ -114,7 +114,7 @@ Vite library mode produces two formats:
 - No `scoped`. Isolation comes from the `uid-<component>` class prefix and BEM-style nesting (`uid-button__icon`, `uid-button--primary`).
 - All "knobs" of a component are exposed as local CSS custom properties with a fallback to semantic tokens. This lets users override a component without `!important`.
 
-See [`docs/en/tokens.md`](./en/tokens.md) and [`docs/en/theming.md`](./en/theming.md) for details.
+See [`docs/en/tokens.md`](../en/tokens.md) and [`docs/en/theming.md`](../en/theming.md) for details.
 
 ## API tiers
 

@@ -102,7 +102,7 @@ Anwender-Dokumentation in vier Sprachen — wähle deine:
 - 🇩🇪 **Deutsch**: [Erste Schritte](../../docs/de/getting-started.md), [Theming](../../docs/de/theming.md), [Tokens](../../docs/de/tokens.md), [Icons](../../docs/de/icons.md), [Patterns](../../docs/de/patterns.md), [Validation](../../docs/de/validation.md), [Charts](../../docs/de/charts.md), [i18n](../../docs/de/i18n.md)
 - 🇨🇳 **中文**: [docs/zh/](../../docs/zh/)
 
-Mitwirkenden-Dokumentation (nur Englisch): [Architecture](../../docs/ARCHITECTURE.md), [Component guidelines](../../docs/COMPONENT_GUIDELINES.md), [Contributing](../../docs/CONTRIBUTING.md), [Roadmap](../../docs/ROADMAP.md).
+Mitwirkenden-Dokumentation (nur Englisch): [Architecture](../internal/architecture.md), [Component guidelines](../internal/component-guidelines.md), [Contributing](../../.github/CONTRIBUTING.md), [Roadmap](../internal/roadmap.md).
 
 ## Theming
 

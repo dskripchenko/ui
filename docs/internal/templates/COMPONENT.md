@@ -75,7 +75,7 @@ Local component variables, available for outside override:
 
 ### Definition of Done
 
-- [ ] Folder matches structure from [COMPONENT_GUIDELINES](../COMPONENT_GUIDELINES.md)
+- [ ] Folder matches structure from [COMPONENT_GUIDELINES](../component-guidelines.md)
 - [ ] Props/Events/Slots typed
 - [ ] Styles via tokens / local variables only
 - [ ] Works in light and dark

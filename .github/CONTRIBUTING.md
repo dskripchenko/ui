@@ -22,7 +22,7 @@ pnpm build:analyze     # build with rollup-plugin-visualizer (stats.html)
 ## Adding a component
 
 1. **Branch:** `feat/component-button`, `feat/tokens-shadow`, `fix/input-focus-ring`.
-2. **Folder structure** (see [COMPONENT_GUIDELINES](./COMPONENT_GUIDELINES.md#folder-structure)):
+2. **Folder structure** (see [COMPONENT_GUIDELINES](../docs/internal/component-guidelines.md#folder-structure)):
    ```
    src/components/Foo/
      UidFoo.vue
@@ -42,7 +42,7 @@ pnpm build:analyze     # build with rollup-plugin-visualizer (stats.html)
    export { default as UidFoo } from './components/Foo/UidFoo.vue'
    export type { UidFooProps, UidFooVariant, UidFooSize } from './components/Foo'
    ```
-7. **Pass the Definition of Done** in [COMPONENT_GUIDELINES](./COMPONENT_GUIDELINES.md#definition-of-done).
+7. **Pass the Definition of Done** in [COMPONENT_GUIDELINES](../docs/internal/component-guidelines.md#definition-of-done).
 8. **Changeset:**
    ```bash
    pnpm changeset
