@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import './UidMenu.css'
-import { ref, computed, provide, watch, nextTick, onUnmounted, useId } from 'vue'
+import { ref, computed, provide, watch, nextTick, onMounted, onUnmounted, useId } from 'vue'
 import { usePopover } from '../../composables/usePopover.js'
 import { MENU_CLOSE_KEY } from './context.js'
 
@@ -25,6 +25,27 @@ const triggerAnchorRef = computed<HTMLElement | null>(() => {
 const { floatingStyle, update } = usePopover(triggerAnchorRef, menuRef, {
   placement: 'bottom-start',
 })
+
+// Кнопка внутри кнопки — нарушение доступности: скринридер объявляет два
+// вложенных элемента управления, а клавиатура попадает то на один, то на
+// другой. Слот триггера обычно уже содержит UidButton, поэтому обёртка
+// перестаёт быть кнопкой и отдаёт свою роль ему.
+const INTERACTIVE = 'button, a[href], input, select, textarea, [role="button"], [tabindex]'
+const delegatesToChild = ref(false)
+
+function syncTriggerRole(): void {
+  const child = triggerRef.value?.firstElementChild as HTMLElement | null
+  delegatesToChild.value = child !== null && child.matches(INTERACTIVE)
+
+  if (!delegatesToChild.value) return
+
+  child!.setAttribute('aria-haspopup', 'menu')
+  child!.setAttribute('aria-expanded', String(open.value))
+  child!.setAttribute('aria-controls', menuId)
+}
+
+onMounted(syncTriggerRole)
+watch(open, syncTriggerRole)
 
 function getItems(): HTMLElement[] {
   return Array.from(
@@ -99,11 +120,11 @@ onUnmounted(() => {
   <div
     ref="triggerRef"
     class="uid-menu-trigger"
-    role="button"
-    tabindex="0"
-    aria-haspopup="menu"
-    :aria-expanded="open"
-    :aria-controls="menuId"
+    :role="delegatesToChild ? undefined : 'button'"
+    :tabindex="delegatesToChild ? undefined : 0"
+    :aria-haspopup="delegatesToChild ? undefined : 'menu'"
+    :aria-expanded="delegatesToChild ? undefined : open"
+    :aria-controls="delegatesToChild ? undefined : menuId"
     @click="toggle"
     @keydown="onTriggerKeydown"
   >

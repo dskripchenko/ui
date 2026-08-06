@@ -97,6 +97,48 @@ describe('UidMenuItem', () => {
   })
 })
 
+describe('UidMenu: вложенный интерактив', () => {
+  it('обёртка не становится кнопкой, когда в слоте уже кнопка', async () => {
+    const wrapper = buildMenu()
+    await flushPromises()
+
+    const trigger = wrapper.find('.uid-menu-trigger')
+    expect(trigger.attributes('role')).toBeUndefined()
+    expect(trigger.attributes('tabindex')).toBeUndefined()
+
+    const button = trigger.find('button')
+    expect(button.attributes('aria-haspopup')).toBe('menu')
+    expect(button.attributes('aria-expanded')).toBe('false')
+
+    wrapper.unmount()
+  })
+
+  it('обёртка остаётся кнопкой, когда в слоте не элемент управления', async () => {
+    const wrapper = mount(UidMenu, {
+      slots: { trigger: '<span>Меню</span>', default: '<UidMenuItem>Пункт</UidMenuItem>' },
+      global: { components: { UidMenuItem } },
+      attachTo: document.body,
+    })
+    await flushPromises()
+
+    const trigger = wrapper.find('.uid-menu-trigger')
+    expect(trigger.attributes('role')).toBe('button')
+    expect(trigger.attributes('tabindex')).toBe('0')
+
+    wrapper.unmount()
+  })
+
+  it('состояние раскрытия уезжает на кнопку слота', async () => {
+    const wrapper = buildMenu()
+    await flushPromises()
+    await wrapper.find('.uid-menu-trigger').trigger('click')
+    await flushPromises()
+
+    expect(wrapper.find('button').attributes('aria-expanded')).toBe('true')
+    wrapper.unmount()
+  })
+})
+
 describe('UidMenuSeparator', () => {
   it('рендерит разделитель', () => {
     const wrapper = mount(UidMenuSeparator)

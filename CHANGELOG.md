@@ -1,5 +1,17 @@
 # @dskripchenko/ui
 
+## 1.2.2
+
+### Fixed
+- **A menu trigger nested one button inside another.** The wrapper carried
+  `role="button"` and a tabindex of its own while the trigger slot normally
+  holds a real button — a screen reader announced two nested controls and the
+  keyboard landed on one or the other. The wrapper now steps aside when the
+  slot already holds a control, handing its `aria-haspopup`, `aria-expanded`
+  and `aria-controls` to it; when the slot holds something inert — a plain
+  avatar, say — the wrapper stays the button, so the menu is still reachable
+  from the keyboard.
+
 ## 1.2.1
 
 ### Fixed
