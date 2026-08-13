@@ -25,11 +25,11 @@ export interface UidTableProps {
   emptyText?: string
   striped?: boolean
   bordered?: boolean
-  /** Включить колонку чекбоксов слева (header + per-row). */
+  /** Switch on the checkbox column on the left (the header plus every row). */
   selectable?: boolean
-  /** Set ID-шников выбранных строк. */
+  /** The set of ids of the selected rows. */
   selection?: Set<string | number>
-  /** Поле id-строки. По умолчанию — `id`. */
+  /** The row's id field. `id` by default. */
   rowKey?: string | ((row: Record<string, unknown>) => string | number)
 }
 
@@ -78,8 +78,8 @@ const headerIndeterminate = computed<boolean>(
 )
 
 /**
- * 3-режимная сортировка. Click по same key → asc → desc → off.
- * Click по другому key → asc.
+ * Three-state sorting. A click on the same key goes asc → desc → off.
+ * A click on a different key gives asc.
  */
 function onSort(col: UidTableColumn): void {
   if (!col.sortable) return

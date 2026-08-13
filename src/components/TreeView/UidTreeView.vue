@@ -12,9 +12,10 @@ export interface UidTreeViewProps {
   defaultExpandAll?: boolean
   showGuides?: boolean
   /**
-   * Виртуальный корневой узел, оборачивающий все `nodes` как children.
-   * Строка → автогенерируется `{key:'__virtual_root__', label, selectable:false}`.
-   * TreeNode → используется как есть; если children не заданы — туда подставляются props.nodes.
+   * A virtual root node wrapping all of `nodes` as its children.
+   * A string autogenerates `{key:'__virtual_root__', label, selectable:false}`.
+   * A TreeNode is used as is; when its children are not set, props.nodes goes
+   * there.
    */
   virtualRoot?: string | TreeNode | null
 }
@@ -63,7 +64,7 @@ function collectAllKeys(nodes: TreeNode[]): TreeKey[] {
 if (props.defaultExpandAll && expandedKeys.value.length === 0) {
   expandedKeys.value = collectAllKeys(renderedNodes.value)
 } else if (props.virtualRoot && expandedKeys.value.length === 0) {
-  // Виртуальный root всегда развёрнут по умолчанию — иначе он скрывает всё дерево.
+  // The virtual root is always expanded by default — otherwise it hides the whole tree.
   expandedKeys.value = [renderedNodes.value[0].key]
 }
 

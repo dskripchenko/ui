@@ -77,7 +77,7 @@ describe('UidGauge', () => {
       },
     })
     expect(wrapper.findAll('.uid-gauge__range')).toHaveLength(3)
-    // Без ranges progress arc используется; с ranges — нет
+    // Without ranges the progress arc is used; with ranges it is not
     expect(wrapper.find('.uid-gauge__progress').exists()).toBe(false)
   })
 

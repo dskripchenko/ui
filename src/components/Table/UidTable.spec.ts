@@ -86,7 +86,7 @@ describe('UidTable', () => {
     expect(wrapper.emitted('update:sortKey')?.[0]).toEqual([null])
     expect(wrapper.emitted('update:sortDirection')?.[1]).toEqual([null])
 
-    // none → asc (новый клик при null direction)
+    // none → asc (a fresh click while the direction is null)
     await wrapper.setProps({ sortDirection: null })
     await wrapper.find('.uid-table__th--sortable').trigger('click')
     expect(wrapper.emitted('update:sortDirection')?.[2]).toEqual(['asc'])

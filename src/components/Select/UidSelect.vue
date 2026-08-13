@@ -49,9 +49,10 @@ const listRef = ref<HTMLElement | null>(null)
 const searchRef = ref<HTMLInputElement | null>(null)
 const listboxId = useId()
 
-// Dropdown — Teleport'ируется в body, позиционируется через usePopover.
-// Это решает обрезание popover'а parent-контейнерами с overflow: hidden.
-// Width-binding через CSS (см. .uid-select__dropdown в CSS) на основе triggerRef rect.
+// The dropdown is teleported into the body and positioned through usePopover.
+// That solves the popover being clipped by parent containers with
+// overflow: hidden. The width is bound through CSS (see .uid-select__dropdown)
+// from the triggerRef rect.
 const { floatingStyle, update: updatePopover } = usePopover(triggerRef, dropdownRef, {
   placement: 'bottom-start',
   offset: 4,
@@ -64,7 +65,7 @@ function syncTriggerWidth(): void {
 
 const dropdownStyle = computed(() => ({
   ...floatingStyle.value,
-  // Match dropdown width to trigger width — стандартный select-UX.
+  // Match the dropdown width to the trigger width — the standard select UX.
   minWidth: triggerWidth.value > 0 ? `${triggerWidth.value}px` : 'auto',
 }))
 
@@ -95,7 +96,7 @@ watch(isOpen, async (val) => {
     activeIndex.value = idx >= 0 ? idx : 0
     syncTriggerWidth()
     await nextTick()
-    // Position popover после mount + reflow (rAF гарантирует layout готов).
+    // Position the popover after the mount and the reflow (rAF guarantees the layout is ready).
     updatePopover()
     requestAnimationFrame(() => updatePopover())
     if (props.searchable) searchRef.value?.focus()
@@ -140,7 +141,7 @@ function clearValue(e: MouseEvent) {
 
 function onOutsideClick(e: PointerEvent) {
   const target = e.target as Node
-  // Dropdown в body (Teleport), но он "наш" — не закрываем при клике в нём.
+  // The dropdown lives in the body (a Teleport) but it is "ours" — a click inside it does not close it.
   if (containerRef.value?.contains(target)) return
   if (dropdownRef.value?.contains(target)) return
   close()

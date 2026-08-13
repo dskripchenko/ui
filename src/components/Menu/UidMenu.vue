@@ -14,10 +14,11 @@ const menuRef = ref<HTMLElement | null>(null)
 const open = ref(false)
 const menuId = useId()
 
-// `.uid-menu-trigger` имеет `display: contents` — это значит сам root-div не
-// занимает места в layout, и его getBoundingClientRect() возвращает (0,0,0,0).
-// usePopover должен видеть реальные размеры — берём их у первого визуального
-// child'а (содержимое slot 'trigger', обычно UidAvatar/UidButton).
+// `.uid-menu-trigger` has `display: contents`, which means the root div itself
+// takes no place in the layout and its getBoundingClientRect() returns
+// (0,0,0,0). usePopover must see the real dimensions — we take them from the
+// first visual child (the contents of the 'trigger' slot, usually a UidAvatar or
+// a UidButton).
 const triggerAnchorRef = computed<HTMLElement | null>(() => {
   return (triggerRef.value?.firstElementChild as HTMLElement | null) ?? triggerRef.value
 })
@@ -26,10 +27,10 @@ const { floatingStyle, update } = usePopover(triggerAnchorRef, menuRef, {
   placement: 'bottom-start',
 })
 
-// Кнопка внутри кнопки — нарушение доступности: скринридер объявляет два
-// вложенных элемента управления, а клавиатура попадает то на один, то на
-// другой. Слот триггера обычно уже содержит UidButton, поэтому обёртка
-// перестаёт быть кнопкой и отдаёт свою роль ему.
+// A button inside a button is an accessibility violation: a screen reader
+// announces two nested controls and the keyboard lands now on one, now on the
+// other. The trigger slot usually already holds a UidButton, so the wrapper
+// stops being a button and hands its role over to it.
 const INTERACTIVE = 'button, a[href], input, select, textarea, [role="button"], [tabindex]'
 const delegatesToChild = ref(false)
 

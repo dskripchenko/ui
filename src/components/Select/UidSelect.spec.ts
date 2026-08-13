@@ -11,9 +11,10 @@ const options: SelectOption[] = [
   { value: 'jp', label: 'Япония', disabled: true },
 ]
 
-// Dropdown — Teleport'нут в body. Test-utils не видит его через wrapper'а,
-// поэтому используем document.querySelectorAll. attachTo:document.body тоже
-// не помогает с Teleport, нужны direct DOM-queries для dropdown elements.
+// The dropdown is teleported into the body. Test-utils does not see it through
+// the wrapper, so we use document.querySelectorAll. attachTo:document.body does
+// not help with a Teleport either — direct DOM queries are needed for the
+// dropdown elements.
 function bodyQuery(selector: string): HTMLElement | null {
   return document.body.querySelector(selector)
 }
@@ -22,7 +23,7 @@ function bodyQueryAll(selector: string): HTMLElement[] {
 }
 
 afterEach(() => {
-  // Очистим все Teleport'нутые dropdown'ы между тестами.
+  // Clear every teleported dropdown between the tests.
   for (const el of bodyQueryAll('.uid-select__dropdown')) {
     el.remove()
   }
