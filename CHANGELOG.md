@@ -1,8 +1,15 @@
 # @dskripchenko/ui
 
+## 1.3.0
+
+### Minor Changes
+
+- dd4626e: `UidModal`: `size="full"` (a dialog that fills the viewport) and `closeOnEsc` to keep a dialog that must be answered open on Escape. `UidDrawer`: `side="top"` and `closeOnEsc`. `UidStepper`: `selectable` (`'none'` by default, `'completed'` or `'all'`) renders the selectable steps as buttons and emits `select` with the step index — so a wizard can be navigated by click and by keyboard.
+
 ## 1.2.2
 
 ### Fixed
+
 - **A menu trigger nested one button inside another.** The wrapper carried
   `role="button"` and a tabindex of its own while the trigger slot normally
   holds a real button — a screen reader announced two nested controls and the
@@ -15,6 +22,7 @@
 ## 1.2.1
 
 ### Fixed
+
 - **Tabs that did not fit the width were cut off by the edge instead of
   scrolling.** On a phone, a form with seven tabs lost the last four
   altogether — they could not be reached at all. The tab list now scrolls
