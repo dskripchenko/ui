@@ -106,4 +106,54 @@ describe('UidColorPicker', () => {
     await wrapper.find('.uid-colorpicker__trigger').trigger('click')
     expect(wrapper.find('.uid-colorpicker').classes()).toContain('uid-colorpicker--open')
   })
+
+  it('нормализует rgb()-значение модели для отображения', () => {
+    const wrapper = mount(UidColorPicker, { props: { modelValue: 'rgb(255, 0, 0)' } })
+    expect(wrapper.find('.uid-colorpicker__trigger-label').text()).toBe('#FF0000')
+  })
+
+  it('принимает 3-значный hex в модели и синхронизирует hex-input', async () => {
+    const wrapper = mount(UidColorPicker, { props: { modelValue: '#0f0' } })
+    expect(wrapper.find('.uid-colorpicker__trigger-label').text()).toBe('#00FF00')
+    await wrapper.find('.uid-colorpicker__trigger').trigger('click')
+    expect((wrapper.find('.uid-colorpicker__hex-input').element as HTMLInputElement).value).toBe('#00FF00')
+  })
+
+  it('ввод hsl() в поле эмитит нормализованный hex', async () => {
+    const wrapper = mount(UidColorPicker)
+    await wrapper.find('.uid-colorpicker__trigger').trigger('click')
+    const input = wrapper.find('.uid-colorpicker__hex-input')
+    await input.setValue('hsl(240, 100%, 50%)')
+    await input.trigger('keydown', { key: 'Enter' })
+    const emitted = wrapper.emitted('update:modelValue') as unknown[][]
+    expect(emitted[emitted.length - 1][0]).toBe('#0000ff')
+  })
+
+  it('ввод rgba() с alpha=true сохраняет прозрачность', async () => {
+    const wrapper = mount(UidColorPicker, { props: { alpha: true } })
+    await wrapper.find('.uid-colorpicker__trigger').trigger('click')
+    const input = wrapper.find('.uid-colorpicker__hex-input')
+    await input.setValue('rgba(255, 0, 0, 0.5)')
+    await input.trigger('blur')
+    const emitted = wrapper.emitted('update:modelValue') as unknown[][]
+    expect(emitted[emitted.length - 1][0]).toBe('#ff000080')
+  })
+
+  it('невалидный ввод не меняет значение', async () => {
+    const wrapper = mount(UidColorPicker, { props: { modelValue: '#ff0000' } })
+    await wrapper.find('.uid-colorpicker__trigger').trigger('click')
+    const input = wrapper.find('.uid-colorpicker__hex-input')
+    await input.setValue('rgb(nope)')
+    await input.trigger('blur')
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    expect((input.element as HTMLInputElement).value).toBe('#FF0000')
+  })
+
+  it('preset в формате rgb() подсвечивается как активный для эквивалентного hex', async () => {
+    const wrapper = mount(UidColorPicker, { props: { modelValue: '#ff0000', presets: ['rgb(255, 0, 0)', '#00f'] } })
+    await wrapper.find('.uid-colorpicker__trigger').trigger('click')
+    const buttons = wrapper.findAll('.uid-colorpicker__preset')
+    expect(buttons[0].classes()).toContain('uid-colorpicker__preset--active')
+    expect(buttons[1].classes()).not.toContain('uid-colorpicker__preset--active')
+  })
 })

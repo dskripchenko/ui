@@ -10,6 +10,8 @@ import type { TreeNode, TreeKey } from '../TreeView/context.js'
 export interface UidTreeSelectProps {
   nodes: TreeNode[]
   multiple?: boolean
+  checkable?: boolean
+  checkStrictly?: boolean
   placeholder?: string
   disabled?: boolean
   clearable?: boolean
@@ -24,6 +26,8 @@ export interface UidTreeSelectProps {
 
 const props = withDefaults(defineProps<UidTreeSelectProps>(), {
   multiple: false,
+  checkable: false,
+  checkStrictly: false,
   disabled: false,
   clearable: true,
   defaultExpandAll: false,
@@ -56,6 +60,20 @@ function flatten(items: TreeNode[]): TreeNode[] {
 }
 
 const flatNodes = computed(() => flatten(props.nodes))
+
+const isMulti = computed(() => props.multiple || props.checkable)
+
+const parentMap = computed(() => {
+  const map = new Map<TreeKey, TreeNode | null>()
+  const walk = (items: TreeNode[], parent: TreeNode | null) => {
+    for (const n of items) {
+      map.set(n.key, parent)
+      if (n.children) walk(n.children, n)
+    }
+  }
+  walk(props.nodes, null)
+  return map
+})
 
 const selectedKeys = computed<TreeKey[]>(() => {
   if (model.value === null || model.value === undefined) return []
@@ -91,6 +109,44 @@ function toggle(): void {
   if (isOpen.value) close(); else open()
 }
 
+function sameKeys(a: TreeKey[], b: TreeKey[]): boolean {
+  if (a.length !== b.length) return false
+  const set = new Set(a)
+  return b.every(k => set.has(k))
+}
+
+// In checkable mode the model holds every checked key, parents included.
+const checkedModel = computed<TreeKey[]>({
+  get: () => selectedKeys.value,
+  set: (keys) => {
+    if (sameKeys(keys, selectedKeys.value)) return
+    model.value = [...keys]
+    emit('change', [...keys])
+  },
+})
+
+// Keys to drop with a chip: the node itself and, unless checks are strict,
+// its enabled descendants and its ancestors (which can no longer be fully checked).
+function keysToUncheck(key: TreeKey): Set<TreeKey> {
+  const out = new Set<TreeKey>([key])
+  if (!props.checkable || props.checkStrictly) return out
+  const node = flatNodes.value.find(n => n.key === key)
+  const walk = (n: TreeNode) => {
+    for (const c of n.children ?? []) {
+      if (c.disabled) continue
+      out.add(c.key)
+      walk(c)
+    }
+  }
+  if (node) walk(node)
+  let parent = parentMap.value.get(key) ?? null
+  while (parent) {
+    out.add(parent.key)
+    parent = parentMap.value.get(parent.key) ?? null
+  }
+  return out
+}
+
 function onSelect(node: TreeNode): void {
   if (props.multiple) {
     const arr = Array.isArray(model.value) ? [...model.value] : []
@@ -108,7 +164,7 @@ function onSelect(node: TreeNode): void {
 
 function clearValue(e: MouseEvent): void {
   e.stopPropagation()
-  const next = props.multiple ? [] : null
+  const next = isMulti.value ? [] : null
   model.value = next
   emit('change', next)
 }
@@ -116,7 +172,8 @@ function clearValue(e: MouseEvent): void {
 function removeTag(e: MouseEvent, key: TreeKey): void {
   e.stopPropagation()
   if (!Array.isArray(model.value)) return
-  const next = model.value.filter(k => k !== key)
+  const drop = keysToUncheck(key)
+  const next = model.value.filter(k => !drop.has(k))
   model.value = next
   emit('change', next)
 }
@@ -178,7 +235,7 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
       @keydown="onTriggerKeydown"
     >
       <div class="uid-tree-select__value">
-        <template v-if="multiple">
+        <template v-if="isMulti">
           <span
             v-for="node in visibleTags"
             :key="node.key"
@@ -239,8 +296,20 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
       class="uid-tree-select__dropdown"
     >
       <UidTreeView
-        :nodes="nodes"
+        v-if="checkable"
         v-model:expanded-keys="expandedKeys"
+        v-model:checked-keys="checkedModel"
+        :nodes="nodes"
+        :selectable="false"
+        checkable
+        :check-strictly="checkStrictly"
+        :default-expand-all="defaultExpandAll"
+        :show-guides="showGuides"
+      />
+      <UidTreeView
+        v-else
+        v-model:expanded-keys="expandedKeys"
+        :nodes="nodes"
         :selected-keys="selectedKeys"
         :selectable="multiple ? 'multiple' : 'single'"
         :default-expand-all="defaultExpandAll"

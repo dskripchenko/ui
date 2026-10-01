@@ -87,3 +87,54 @@
   cursor: not-allowed;
   pointer-events: none;
 }
+
+/* Marks: positioned along the thumb travel, which is inset by half a thumb on each side */
+.uid-slider__marks {
+  --_thumb: var(--uid-slider-thumb-size, 18px);
+  position: relative;
+  height: calc(var(--uid-font-size-xs, 12px) * 1.5 + 8px);
+  margin-top: calc(var(--uid-space-sm) * -1 + 2px);
+}
+
+.uid-slider__mark {
+  position: absolute;
+  top: 0;
+  left: calc(var(--_thumb) / 2 + (100% - var(--_thumb)) * var(--_pos, 0));
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 0 2px;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: var(--uid-font-size-xs, 12px);
+  line-height: 1.5;
+  color: var(--uid-slider-mark-color, var(--uid-text-secondary, var(--uid-color-text)));
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.uid-slider__mark-tick {
+  width: 2px;
+  height: 6px;
+  border-radius: 1px;
+  background: var(--uid-slider-track-bg, var(--uid-color-border));
+}
+
+.uid-slider__mark--active .uid-slider__mark-tick {
+  background: var(--uid-slider-fill-color, var(--uid-color-primary));
+}
+
+.uid-slider__mark--active {
+  color: var(--uid-slider-mark-active-color, var(--uid-text-primary, var(--uid-color-text)));
+}
+
+.uid-slider__mark:hover:not([disabled]) {
+  color: var(--uid-slider-fill-color, var(--uid-color-primary));
+}
+
+.uid-slider__mark[disabled] {
+  cursor: not-allowed;
+}

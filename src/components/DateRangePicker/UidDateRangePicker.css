@@ -209,6 +209,7 @@
 
 .uid-daterange__footer {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   gap: var(--uid-space-sm);
   padding: var(--uid-space-sm) 12px;
@@ -228,6 +229,52 @@
 
 .uid-daterange__btn:hover {
   background: var(--uid-color-bg-subtle);
+}
+
+.uid-daterange__btn:focus-visible {
+  outline: 2px solid var(--uid-accent);
+  outline-offset: 2px;
+}
+
+.uid-daterange__times {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--uid-space-md);
+  padding: var(--uid-space-sm) 12px;
+  border-top: 1px solid var(--uid-color-border);
+}
+
+.uid-daterange__time-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--uid-space-xs);
+  flex: 1;
+  min-width: 120px;
+}
+
+.uid-daterange__time-label {
+  font-size: var(--uid-font-size-sm);
+  color: var(--uid-color-text-secondary);
+}
+
+.uid-daterange__time {
+  padding: 6px 8px;
+  border: 1px solid var(--uid-color-border);
+  border-radius: var(--uid-radius-md);
+  background: var(--uid-color-bg);
+  color: var(--uid-color-text);
+  font: inherit;
+  font-size: var(--uid-font-size-sm);
+}
+
+.uid-daterange__time:focus-visible {
+  outline: 2px solid var(--uid-accent);
+  outline-offset: 2px;
+}
+
+.uid-daterange__time:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 @media (max-width: 600px) {

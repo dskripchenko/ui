@@ -79,3 +79,23 @@ export const Disabled: Story = {
     disabled: true,
   },
 }
+
+export const CssColorFormats: Story = {
+  render: args => ({
+    components: { UidColorPicker },
+    setup() {
+      const rgb = ref<string | null>('rgb(59, 130, 246)')
+      const hsl = ref<string | null>('hsl(142 71% 45%)')
+      const short = ref<string | null>('#f0a')
+      return { args, rgb, hsl, short }
+    },
+    template: `
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <p style="margin: 0;">Значение может прийти как rgb(), hsl() или короткий hex — компонент нормализует его в hex. В поле ввода тоже можно вставить любой из этих форматов.</p>
+        <UidColorPicker v-bind="args" v-model="rgb" />
+        <UidColorPicker v-bind="args" v-model="hsl" />
+        <UidColorPicker v-bind="args" v-model="short" :alpha="true" />
+      </div>
+    `,
+  }),
+}

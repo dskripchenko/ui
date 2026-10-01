@@ -104,3 +104,14 @@
   align-items: center;
   flex-shrink: 0;
 }
+
+.uid-button__icon {
+  flex-shrink: 0;
+}
+
+/* Icon-only: square button */
+.uid-button--icon-only {
+  width: var(--uid-button-height);
+  min-width: var(--uid-button-height);
+  padding: 0;
+}

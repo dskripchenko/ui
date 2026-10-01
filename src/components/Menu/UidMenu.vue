@@ -2,7 +2,7 @@
 import './UidMenu.css'
 import { ref, computed, provide, watch, nextTick, onMounted, onUnmounted, useId } from 'vue'
 import { usePopover } from '../../composables/usePopover.js'
-import { MENU_CLOSE_KEY } from './context.js'
+import { MENU_CLOSE_KEY, MENU_LEVEL_KEY, getLevelItems, moveFocus } from './context.js'
 
 defineSlots<{
   trigger(): unknown
@@ -49,9 +49,7 @@ onMounted(syncTriggerRole)
 watch(open, syncTriggerRole)
 
 function getItems(): HTMLElement[] {
-  return Array.from(
-    menuRef.value?.querySelectorAll<HTMLElement>('[role="menuitem"]:not([disabled])') ?? [],
-  )
+  return getLevelItems(menuRef.value)
 }
 
 function close(): void {
@@ -60,6 +58,10 @@ function close(): void {
 }
 
 provide(MENU_CLOSE_KEY, close)
+
+const activeSubmenu = ref<string | null>(null)
+provide(MENU_LEVEL_KEY, { activeSubmenu })
+watch(open, (val) => { if (!val) activeSubmenu.value = null })
 
 async function toggle(): Promise<void> {
   open.value = !open.value
@@ -81,15 +83,8 @@ function onTriggerKeydown(event: KeyboardEvent): void {
 }
 
 function onMenuKeydown(event: KeyboardEvent): void {
-  const items = getItems()
-  const idx = items.indexOf(document.activeElement as HTMLElement)
-
-  if (event.key === 'ArrowDown') {
+  if (moveFocus(menuRef.value, event.key)) {
     event.preventDefault()
-    items[(idx + 1) % items.length]?.focus()
-  } else if (event.key === 'ArrowUp') {
-    event.preventDefault()
-    items[(idx - 1 + items.length) % items.length]?.focus()
   } else if (event.key === 'Escape') {
     event.preventDefault()
     close()

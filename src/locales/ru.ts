@@ -41,6 +41,8 @@ export const ru: UidLocale = {
   dateRangePicker: {
     placeholder: 'Выберите диапазон',
     presetLast: (days) => `${days} дней`,
+    startTime: 'Время начала',
+    endTime: 'Время окончания',
   },
 
   timePicker: {
@@ -107,6 +109,11 @@ export const ru: UidLocale = {
 
   toast: {
     close: 'Закрыть',
+  },
+
+  image: {
+    preview: 'Открыть просмотр',
+    error: 'Не удалось загрузить изображение',
   },
 
   pagination: {

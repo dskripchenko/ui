@@ -11,6 +11,8 @@ const meta: Meta<typeof UidCascader> = {
     expandTrigger: { control: 'select', options: ['click', 'hover'] },
     disabled: { control: 'boolean' },
     clearable: { control: 'boolean' },
+    searchable: { control: 'boolean' },
+    changeOnSelect: { control: 'boolean' },
   },
   decorators: [
     () => ({ template: '<div style="padding-bottom: 360px"><story /></div>' }),
@@ -138,6 +140,43 @@ export const Categories: Story = {
         separator=" › "
         style="width:380px"
       />
+    `,
+  }),
+}
+
+export const Searchable: Story = {
+  render: () => ({
+    components: { UidCascader },
+    setup: () => ({ geo, value: ref<CascaderValue[]>([]) }),
+    template: `
+      <UidCascader
+        v-model="value"
+        :options="geo"
+        searchable
+        label="Адрес"
+        placeholder="Начните вводить «центр» или «нью»"
+        style="width:380px"
+      />
+    `,
+  }),
+}
+
+export const ChangeOnSelect: Story = {
+  render: () => ({
+    components: { UidCascader },
+    setup: () => ({ geo, value: ref<CascaderValue[]>([]) }),
+    template: `
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <UidCascader
+          v-model="value"
+          :options="geo"
+          change-on-select
+          searchable
+          label="Регион (можно выбрать любой уровень)"
+          style="width:380px"
+        />
+        <code>{{ value }}</code>
+      </div>
     `,
   }),
 }

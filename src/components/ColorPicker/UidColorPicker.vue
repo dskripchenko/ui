@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import './UidColorPicker.css'
 import { computed, onUnmounted, ref, watch } from 'vue'
+import { normalizeColor, parseColor } from './colorParse.js'
 
 export interface UidColorPickerProps {
   disabled?: boolean
@@ -82,29 +83,9 @@ function buildHex(): string {
   return `#${hex2(r)}${hex2(g)}${hex2(b)}`
 }
 
-function parseHex(str: string): [number, number, number, number] | null {
-  const h = str.replace('#', '').toLowerCase()
-  if (h.length === 6) {
-    const r = parseInt(h.slice(0, 2), 16)
-    const g = parseInt(h.slice(2, 4), 16)
-    const b = parseInt(h.slice(4, 6), 16)
-    if (Number.isNaN(r) || Number.isNaN(g) || Number.isNaN(b)) return null
-    return [r, g, b, 100]
-  }
-  if (h.length === 8) {
-    const r = parseInt(h.slice(0, 2), 16)
-    const g = parseInt(h.slice(2, 4), 16)
-    const b = parseInt(h.slice(4, 6), 16)
-    const a = parseInt(h.slice(6, 8), 16)
-    if (Number.isNaN(r) || Number.isNaN(g) || Number.isNaN(b) || Number.isNaN(a)) return null
-    return [r, g, b, Math.round(a / 255 * 100)]
-  }
-  return null
-}
-
 function syncFromModel() {
   if (!model.value) return
-  const parsed = parseHex(model.value)
+  const parsed = parseColor(model.value)
   if (!parsed) return
   const [r, g, b, a] = parsed
   const [h, s, v] = rgbToHsv(r, g, b)
@@ -121,6 +102,9 @@ function emitColor() {
   emit('change', hex)
   hexInput.value = hex.toUpperCase()
 }
+
+const normalizedModel = computed(() => normalizeColor(model.value))
+const displayColor = computed(() => normalizedModel.value ?? model.value ?? null)
 
 const pureHue = computed(() => `hsl(${hue.value}, 100%, 50%)`)
 const thumbLeft = computed(() => `${saturation.value}%`)
@@ -207,7 +191,7 @@ function onHexInput(e: Event) {
 }
 
 function applyHexInput() {
-  const parsed = parseHex(hexInput.value)
+  const parsed = parseColor(hexInput.value)
   if (parsed) {
     const [r, g, b, a] = parsed
     const [h, s, v] = rgbToHsv(r, g, b)
@@ -273,7 +257,7 @@ function onAlphaKeydown(e: KeyboardEvent): void {
 }
 
 function selectPreset(color: string) {
-  const parsed = parseHex(color)
+  const parsed = parseColor(color)
   if (!parsed) return
   const [r, g, b, a] = parsed
   const [h, s, v] = rgbToHsv(r, g, b)
@@ -282,6 +266,13 @@ function selectPreset(color: string) {
   brightness.value = v
   if (props.alpha) alphaValue.value = a
   emitColor()
+}
+
+function isPresetActive(preset: string): boolean {
+  if (!model.value) return false
+  if (model.value.toUpperCase() === preset.toUpperCase()) return true
+  const p = normalizeColor(preset)
+  return p !== null && p === normalizedModel.value
 }
 
 function open() {
@@ -324,13 +315,13 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
     >
       <span
         class="uid-colorpicker__swatch"
-        :style="model ? { background: model } : {}"
+        :style="displayColor ? { background: displayColor } : {}"
       />
       <span
         class="uid-colorpicker__trigger-label"
         :class="{ 'uid-colorpicker__trigger-label--empty': !model }"
       >
-        {{ model ? model.toUpperCase() : 'Выберите цвет' }}
+        {{ displayColor ? displayColor.toUpperCase() : 'Выберите цвет' }}
       </span>
     </button>
 
@@ -416,7 +407,8 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
             class="uid-colorpicker__hex-input"
             type="text"
             :value="hexInput"
-            maxlength="9"
+            maxlength="64"
+            aria-label="HEX, rgb() или hsl()"
             spellcheck="false"
             @input="onHexInput"
             @blur="applyHexInput"
@@ -433,7 +425,7 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
             :key="preset"
             type="button"
             class="uid-colorpicker__preset"
-            :class="{ 'uid-colorpicker__preset--active': model === preset || model === preset.toLowerCase() || model?.toUpperCase() === preset.toUpperCase() }"
+            :class="{ 'uid-colorpicker__preset--active': isPresetActive(preset) }"
             :style="{ background: preset }"
             :aria-label="preset"
             @click="selectPreset(preset)"

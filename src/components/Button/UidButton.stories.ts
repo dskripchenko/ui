@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
-import { Search, Plus } from 'lucide-vue-next'
+import { Search, Plus, Trash2, ArrowRight } from 'lucide-vue-next'
 import UidButton from './UidButton.vue'
 import UidIcon from '../../icons/UidIcon.vue'
 
@@ -13,6 +13,7 @@ const meta: Meta<typeof UidButton> = {
     disabled: { control: 'boolean' },
     loading: { control: 'boolean' },
     type: { control: 'select', options: ['button', 'submit', 'reset'] },
+    iconPosition: { control: 'select', options: ['start', 'end'] },
   },
 }
 export default meta
@@ -99,6 +100,37 @@ export const WithIcon: Story = {
           Ещё
           <template #append><UidIcon :icon="Search" :size="16" /></template>
         </UidButton>
+      </div>
+    `,
+  }),
+}
+
+export const IconProp: Story = {
+  name: 'Проп icon',
+  render: () => ({
+    components: { UidButton },
+    setup: () => ({ Plus, ArrowRight }),
+    template: `
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+        <UidButton :icon="Plus" size="sm">Добавить</UidButton>
+        <UidButton :icon="Plus">Добавить</UidButton>
+        <UidButton :icon="ArrowRight" icon-position="end" variant="secondary">Далее</UidButton>
+      </div>
+    `,
+  }),
+}
+
+export const IconOnly: Story = {
+  name: 'Только иконка',
+  render: () => ({
+    components: { UidButton },
+    setup: () => ({ Search, Plus, Trash2 }),
+    template: `
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+        <UidButton :icon="Plus" size="sm" aria-label="Добавить" />
+        <UidButton :icon="Search" variant="secondary" aria-label="Поиск" />
+        <UidButton :icon="Trash2" variant="danger" size="lg" aria-label="Удалить" />
+        <UidButton :icon="Search" variant="ghost" aria-label="Поиск" />
       </div>
     `,
   }),
