@@ -86,4 +86,26 @@ describe('UidModal', () => {
     expect(dialog?.getAttribute('aria-modal')).toBe('true')
     wrapper.unmount()
   })
+
+  it('закрывается по Escape, а при closeOnEsc=false — нет', async () => {
+    const open = mount(UidModal, { props: { modelValue: false }, attachTo: document.body })
+    await open.setProps({ modelValue: true })
+    await flushPromises()
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))
+    expect(open.emitted('close')).toHaveLength(1)
+    open.unmount()
+
+    const locked = mount(UidModal, { props: { modelValue: false, closeOnEsc: false }, attachTo: document.body })
+    await locked.setProps({ modelValue: true })
+    await flushPromises()
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))
+    expect(locked.emitted('close')).toBeUndefined()
+    locked.unmount()
+  })
+
+  it('size=full применяет класс', async () => {
+    const wrapper = mount(UidModal, { props: { modelValue: true, size: 'full' }, attachTo: document.body })
+    expect(document.body.querySelector('.uid-modal--full')).not.toBeNull()
+    wrapper.unmount()
+  })
 })

@@ -120,3 +120,28 @@
   margin-top: 4px;
   text-align: left;
 }
+
+/* The clickable area of a step: a button when the step can be selected. */
+.uid-stepper__target {
+  display: contents;
+}
+
+.uid-stepper__target--selectable {
+  display: flex;
+  flex-direction: inherit;
+  align-items: inherit;
+  gap: inherit;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: inherit;
+  cursor: pointer;
+  border-radius: var(--uid-radius-md);
+}
+
+.uid-stepper__target--selectable:focus-visible {
+  outline: 2px solid var(--uid-color-focus, var(--uid-color-primary));
+  outline-offset: 2px;
+}

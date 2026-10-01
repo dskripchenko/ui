@@ -11,8 +11,10 @@ const locale = useLocale()
 
 export interface UidModalProps {
   title?: string
-  size?: 'sm' | 'md' | 'lg' | 'xl'
+  size?: 'sm' | 'md' | 'lg' | 'xl' | 'full'
   closeOnOverlay?: boolean
+  /** Close on the Escape key (default). Turn off for a dialog that must be answered. */
+  closeOnEsc?: boolean
   hideClose?: boolean
 }
 
@@ -21,6 +23,7 @@ const props = withDefaults(defineProps<UidModalProps>(), {
   title: undefined,
   size: 'md',
   closeOnOverlay: true,
+  closeOnEsc: true,
   hideClose: false,
 })
 
@@ -62,7 +65,7 @@ watch(model, async (open) => {
 })
 
 function onEscape(event: KeyboardEvent): void {
-  if (event.key === 'Escape') close()
+  if (event.key === 'Escape' && props.closeOnEsc) close()
 }
 </script>
 

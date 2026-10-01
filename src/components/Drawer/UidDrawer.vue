@@ -11,8 +11,10 @@ const locale = useLocale()
 
 export interface UidDrawerProps {
   title?: string
-  side?: 'right' | 'left' | 'bottom'
+  side?: 'right' | 'left' | 'top' | 'bottom'
   closeOnOverlay?: boolean
+  /** Close on the Escape key (default). */
+  closeOnEsc?: boolean
   hideClose?: boolean
   width?: string
   height?: string
@@ -23,6 +25,7 @@ const props = withDefaults(defineProps<UidDrawerProps>(), {
   title: undefined,
   side: 'right',
   closeOnOverlay: true,
+  closeOnEsc: true,
   hideClose: false,
   width: undefined,
   height: undefined,
@@ -53,7 +56,7 @@ function onOverlayClick(): void {
 }
 
 function onEscape(event: KeyboardEvent): void {
-  if (event.key === 'Escape') close()
+  if (event.key === 'Escape' && props.closeOnEsc) close()
 }
 
 watch(model, async (open) => {
@@ -83,8 +86,8 @@ watch(model, async (open) => {
           class="uid-drawer"
           :class="`uid-drawer--${side}`"
           :style="{
-            width: side !== 'bottom' ? width : undefined,
-            height: side === 'bottom' ? height : undefined,
+            width: side === 'left' || side === 'right' ? width : undefined,
+            height: side === 'top' || side === 'bottom' ? height : undefined,
           }"
           role="dialog"
           aria-modal="true"
