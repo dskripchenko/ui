@@ -69,4 +69,22 @@ describe('UidStepper', () => {
     expect(indicators[1].text()).toBe('2')
     expect(indicators[2].text()).toBe('3')
   })
+
+  it('по умолчанию шаги не выбираются', () => {
+    const wrapper = mount(UidStepper, { props: { steps, current: 2 } })
+    expect(wrapper.findAll('button.uid-stepper__target')).toHaveLength(0)
+  })
+
+  it('selectable=completed даёт вернуться на пройденный шаг', async () => {
+    const wrapper = mount(UidStepper, { props: { steps, current: 1, selectable: 'completed' } })
+    const buttons = wrapper.findAll('button.uid-stepper__target')
+    expect(buttons).toHaveLength(1)
+    await buttons[0].trigger('click')
+    expect(wrapper.emitted('select')).toEqual([[0]])
+  })
+
+  it('selectable=all делает выбираемыми все шаги, кроме текущего', () => {
+    const wrapper = mount(UidStepper, { props: { steps, current: 1, selectable: 'all' } })
+    expect(wrapper.findAll('button.uid-stepper__target')).toHaveLength(2)
+  })
 })

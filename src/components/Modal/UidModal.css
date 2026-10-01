@@ -27,6 +27,11 @@
 .uid-modal--md { max-width: 560px; }
 .uid-modal--lg { max-width: 768px; }
 .uid-modal--xl { max-width: 1024px; }
+.uid-modal--full {
+  max-width: none;
+  height: calc(100vh - var(--uid-space-xl));
+}
+.uid-modal--full .uid-modal__body { flex: 1; overflow: auto; }
 
 .uid-modal__header {
   display: flex;

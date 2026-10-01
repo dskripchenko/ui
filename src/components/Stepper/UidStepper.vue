@@ -12,12 +12,28 @@ export interface UidStepperProps {
   steps: StepperStep[]
   current?: number
   orientation?: 'horizontal' | 'vertical'
+  /**
+   * Which steps can be chosen by click or keyboard: none (default), the
+   * completed ones (going back), or all of them.
+   */
+  selectable?: 'none' | 'completed' | 'all'
 }
 
-withDefaults(defineProps<UidStepperProps>(), {
+const props = withDefaults(defineProps<UidStepperProps>(), {
   current: 0,
   orientation: 'horizontal',
+  selectable: 'none',
 })
+
+const emit = defineEmits<{
+  select: [index: number]
+}>()
+
+function isSelectable(index: number): boolean {
+  if (index === props.current) return false
+  if (props.selectable === 'all') return true
+  return props.selectable === 'completed' && index < props.current
+}
 
 function getStatus(index: number, current: number): 'completed' | 'current' | 'pending' {
   if (index < current) return 'completed'
@@ -39,25 +55,33 @@ function getStatus(index: number, current: number): 'completed' | 'current' | 'p
       :class="[`uid-stepper__step--${getStatus(index, current)}`]"
       :aria-current="index === current ? 'step' : undefined"
     >
-      <div class="uid-stepper__indicator">
-        <UidIcon
-          v-if="getStatus(index, current) === 'completed'"
-          :icon="Check"
-          :size="16"
-          aria-hidden="true"
-        />
-        <span
-          v-else
-          aria-hidden="true"
-        >{{ index + 1 }}</span>
-      </div>
-      <div class="uid-stepper__content">
-        <span class="uid-stepper__label">{{ step.label }}</span>
-        <span
-          v-if="step.description"
-          class="uid-stepper__description"
-        >{{ step.description }}</span>
-      </div>
+      <component
+        :is="isSelectable(index) ? 'button' : 'div'"
+        :type="isSelectable(index) ? 'button' : undefined"
+        class="uid-stepper__target"
+        :class="{ 'uid-stepper__target--selectable': isSelectable(index) }"
+        @click="isSelectable(index) && emit('select', index)"
+      >
+        <div class="uid-stepper__indicator">
+          <UidIcon
+            v-if="getStatus(index, current) === 'completed'"
+            :icon="Check"
+            :size="16"
+            aria-hidden="true"
+          />
+          <span
+            v-else
+            aria-hidden="true"
+          >{{ index + 1 }}</span>
+        </div>
+        <div class="uid-stepper__content">
+          <span class="uid-stepper__label">{{ step.label }}</span>
+          <span
+            v-if="step.description"
+            class="uid-stepper__description"
+          >{{ step.description }}</span>
+        </div>
+      </component>
     </li>
   </ol>
 </template>
