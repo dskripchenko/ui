@@ -165,4 +165,28 @@ describe('UidTreeView', () => {
     const rows = wrapper.findAll('.uid-tree-item__row')
     expect(rows[0].text()).toContain('Custom Root')
   })
+
+  it('checkStrictly отмечает только сам узел', async () => {
+    const wrapper = mount(UidTreeView, {
+      props: { nodes, checkable: true, checkStrictly: true, defaultExpandAll: true },
+    })
+    await wrapper.find('.uid-tree-item__check').trigger('click')
+    const events = wrapper.emitted('update:checkedKeys') ?? []
+    expect(events[events.length - 1]?.[0]).toEqual(['root'])
+    expect(wrapper.findAll('.uid-tree-item__check')[1].attributes('aria-checked')).toBe('false')
+  })
+
+  it('каскад не трогает disabled-потомков', async () => {
+    const withDisabled: TreeNode[] = [
+      { key: 'p', label: 'P', children: [{ key: 'x', label: 'X' }, { key: 'y', label: 'Y', disabled: true }] },
+    ]
+    const wrapper = mount(UidTreeView, {
+      props: { nodes: withDisabled, checkable: true, defaultExpandAll: true },
+    })
+    await wrapper.find('.uid-tree-item__check').trigger('click')
+    const events = wrapper.emitted('update:checkedKeys') ?? []
+    const keys = events[events.length - 1]?.[0] as string[]
+    expect(keys).toEqual(expect.arrayContaining(['p', 'x']))
+    expect(keys).not.toContain('y')
+  })
 })

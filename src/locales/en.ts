@@ -41,6 +41,8 @@ export const en: UidLocale = {
   dateRangePicker: {
     placeholder: 'Select range',
     presetLast: (days) => `${days} days`,
+    startTime: 'Start time',
+    endTime: 'End time',
   },
 
   timePicker: {
@@ -107,6 +109,11 @@ export const en: UidLocale = {
 
   toast: {
     close: 'Close',
+  },
+
+  image: {
+    preview: 'Open preview',
+    error: 'Image failed to load',
   },
 
   pagination: {

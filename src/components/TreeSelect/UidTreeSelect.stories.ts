@@ -10,6 +10,8 @@ const meta: Meta<typeof UidTreeSelect> = {
   tags: ['autodocs'],
   argTypes: {
     multiple: { control: 'boolean' },
+    checkable: { control: 'boolean' },
+    checkStrictly: { control: 'boolean' },
     disabled: { control: 'boolean' },
     clearable: { control: 'boolean' },
     showGuides: { control: 'boolean' },
@@ -124,6 +126,52 @@ export const MaxTags: Story = {
         :max-tag-count="2"
         label="Не более 2 видимых"
         style="width:340px"
+      />
+    `,
+  }),
+}
+
+export const Checkable: Story = {
+  render: () => ({
+    components: { UidTreeSelect },
+    setup: () => ({
+      tree,
+      value: ref<TreeKey[]>(['vue', 'react', 'svelte']),
+      expanded: ref<TreeKey[]>(['frontend', 'backend']),
+    }),
+    template: `
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <UidTreeSelect
+          v-model="value"
+          v-model:expandedKeys="expanded"
+          :nodes="tree"
+          checkable
+          label="Стек (каскадные чекбоксы)"
+          style="width:380px"
+        />
+        <code>{{ value }}</code>
+      </div>
+    `,
+  }),
+}
+
+export const CheckStrictly: Story = {
+  render: () => ({
+    components: { UidTreeSelect },
+    setup: () => ({
+      tree,
+      value: ref<TreeKey[]>(['frontend']),
+      expanded: ref<TreeKey[]>(['frontend']),
+    }),
+    template: `
+      <UidTreeSelect
+        v-model="value"
+        v-model:expandedKeys="expanded"
+        :nodes="tree"
+        checkable
+        check-strictly
+        label="Независимые чекбоксы"
+        style="width:380px"
       />
     `,
   }),

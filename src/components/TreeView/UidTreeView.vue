@@ -8,6 +8,7 @@ export interface UidTreeViewProps {
   nodes: TreeNode[]
   selectable?: TreeSelectable
   checkable?: boolean
+  checkStrictly?: boolean
   disabled?: boolean
   defaultExpandAll?: boolean
   showGuides?: boolean
@@ -23,6 +24,7 @@ export interface UidTreeViewProps {
 const props = withDefaults(defineProps<UidTreeViewProps>(), {
   selectable: 'single',
   checkable: false,
+  checkStrictly: false,
   disabled: false,
   defaultExpandAll: false,
   showGuides: false,
@@ -83,11 +85,13 @@ watch(checkedKeys, (v) => { checkedSet.value = new Set(v) })
 
 const indeterminateSet = ref<Set<TreeKey>>(new Set())
 
+// Enabled descendants only: a disabled node and its subtree are left as they are.
 function descendantKeys(node: TreeNode): TreeKey[] {
   const keys: TreeKey[] = []
   const walk = (n: TreeNode) => {
     if (n.children) {
       for (const c of n.children) {
+        if (c.disabled) continue
         keys.push(c.key)
         walk(c)
       }
@@ -98,6 +102,10 @@ function descendantKeys(node: TreeNode): TreeKey[] {
 }
 
 function recomputeAncestorState(): void {
+  if (props.checkStrictly) {
+    indeterminateSet.value = new Set()
+    return
+  }
   const indet = new Set<TreeKey>()
   const checked = new Set(checkedSet.value)
 
@@ -106,13 +114,11 @@ function recomputeAncestorState(): void {
       const isChecked = checked.has(node.key)
       return { all: isChecked, some: isChecked }
     }
-    let all = true
-    let some = false
-    for (const c of node.children) {
-      const r = walk(c)
-      if (!r.all) all = false
-      if (r.some || r.all) some = true
-    }
+    const results = node.children.map(c => ({ disabled: !!c.disabled, ...walk(c) }))
+    // Disabled children do not hold their parent back unless every child is disabled.
+    const counted = results.some(r => !r.disabled) ? results.filter(r => !r.disabled) : results
+    const all = counted.every(r => r.all)
+    const some = results.some(r => r.some || r.all)
     if (all) {
       checked.add(node.key)
       indet.delete(node.key)
@@ -132,7 +138,7 @@ function recomputeAncestorState(): void {
   checkedKeys.value = [...checked]
 }
 
-watch(renderedNodes, recomputeAncestorState, { immediate: true, deep: true })
+watch([renderedNodes, () => props.checkStrictly], recomputeAncestorState, { immediate: true, deep: true })
 watch(checkedKeys, () => {
   if ([...checkedSet.value].sort().join(',') !== [...checkedKeys.value].sort().join(',')) {
     checkedSet.value = new Set(checkedKeys.value)
@@ -161,7 +167,7 @@ function toggleSelect(node: TreeNode): void {
 function toggleCheck(node: TreeNode): void {
   const isCurrentlyChecked = checkedSet.value.has(node.key)
   const next = new Set(checkedSet.value)
-  const descendants = descendantKeys(node)
+  const descendants = props.checkStrictly ? [] : descendantKeys(node)
   if (isCurrentlyChecked) {
     next.delete(node.key)
     for (const k of descendants) next.delete(k)

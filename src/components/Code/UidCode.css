@@ -6,6 +6,7 @@
   --uid-code-padding-y: var(--uid-space-md);
   --uid-code-padding-x: var(--uid-space-md);
   --uid-code-font:      var(--uid-font-family-mono, 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace);
+  --uid-code-font-size: var(--uid-font-size-sm);
 
   position: relative;
   background: var(--uid-code-bg);
@@ -13,7 +14,7 @@
   border: 1px solid var(--uid-code-border);
   border-radius: var(--uid-code-radius);
   font-family: var(--uid-code-font);
-  font-size: var(--uid-font-size-sm);
+  font-size: var(--uid-code-font-size);
   line-height: 1.6;
   overflow: hidden;
 }
@@ -80,7 +81,8 @@
 .uid-code__line-number {
   font-variant-numeric: tabular-nums;
   font-size: var(--uid-font-size-xs);
-  line-height: 1.6;
+  /* Smaller digits, but the row height must match the code lines. */
+  line-height: calc(var(--uid-code-font-size) * 1.6);
 }
 
 .uid-code__pre {
@@ -130,3 +132,30 @@
   white-space: pre-wrap;
   word-break: break-word;
 }
+
+/* Syntax highlighting. Semantic tokens already switch with the theme. */
+.uid-code {
+  --uid-code-tok-comment:     var(--uid-text-secondary);
+  --uid-code-tok-string:      var(--uid-success);
+  --uid-code-tok-number:      var(--uid-warning);
+  --uid-code-tok-literal:     var(--uid-warning);
+  --uid-code-tok-keyword:     var(--uid-accent-text);
+  --uid-code-tok-function:    var(--uid-info);
+  --uid-code-tok-variable:    var(--uid-danger);
+  --uid-code-tok-tag:         var(--uid-danger);
+  --uid-code-tok-attr:        var(--uid-warning);
+  --uid-code-tok-property:    var(--uid-info);
+  --uid-code-tok-punctuation: var(--uid-text-secondary);
+}
+
+.uid-code__tok--comment     { color: var(--uid-code-tok-comment); font-style: italic; }
+.uid-code__tok--string      { color: var(--uid-code-tok-string); }
+.uid-code__tok--number      { color: var(--uid-code-tok-number); }
+.uid-code__tok--literal     { color: var(--uid-code-tok-literal); }
+.uid-code__tok--keyword     { color: var(--uid-code-tok-keyword); font-weight: var(--uid-font-weight-medium); }
+.uid-code__tok--function    { color: var(--uid-code-tok-function); }
+.uid-code__tok--variable    { color: var(--uid-code-tok-variable); }
+.uid-code__tok--tag         { color: var(--uid-code-tok-tag); }
+.uid-code__tok--attr        { color: var(--uid-code-tok-attr); }
+.uid-code__tok--property    { color: var(--uid-code-tok-property); }
+.uid-code__tok--punctuation { color: var(--uid-code-tok-punctuation); }

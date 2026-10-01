@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
+import { Plus } from 'lucide-vue-next'
 import UidButton from './UidButton.vue'
 
 describe('UidButton', () => {
@@ -65,5 +66,55 @@ describe('UidButton', () => {
   it('прокидывает prop type на нативный button', () => {
     const wrapper = mount(UidButton, { props: { type: 'submit' } })
     expect(wrapper.attributes('type')).toBe('submit')
+  })
+
+  it('рендерит иконку из пропа icon в начале по умолчанию', () => {
+    const wrapper = mount(UidButton, { props: { icon: Plus }, slots: { default: 'Добавить' } })
+    const icon = wrapper.find('.uid-button__icon')
+    expect(icon.exists()).toBe(true)
+    expect(icon.attributes('width')).toBe('20')
+    expect(wrapper.element.firstElementChild?.classList.contains('uid-button__icon')).toBe(true)
+    expect(wrapper.classes()).not.toContain('uid-button--icon-only')
+  })
+
+  it('iconPosition=end рендерит иконку после текста', () => {
+    const wrapper = mount(UidButton, {
+      props: { icon: Plus, iconPosition: 'end' },
+      slots: { default: 'Далее' },
+    })
+    expect(wrapper.element.lastElementChild?.classList.contains('uid-button__icon')).toBe(true)
+  })
+
+  it('размер иконки 16 для size=sm', () => {
+    const wrapper = mount(UidButton, { props: { icon: Plus, size: 'sm' }, slots: { default: 'OK' } })
+    expect(wrapper.find('.uid-button__icon').attributes('width')).toBe('16')
+  })
+
+  it('icon без слота включает icon-only режим', () => {
+    const wrapper = mount(UidButton, {
+      props: { icon: Plus },
+      attrs: { 'aria-label': 'Добавить' },
+    })
+    expect(wrapper.classes()).toContain('uid-button--icon-only')
+    expect(wrapper.attributes('aria-label')).toBe('Добавить')
+  })
+
+  it('предупреждает об отсутствии aria-label в icon-only режиме', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    mount(UidButton, { props: { icon: Plus } })
+    expect(warn).toHaveBeenCalled()
+    warn.mockClear()
+    mount(UidButton, { props: { icon: Plus }, attrs: { 'aria-label': 'Добавить' } })
+    expect(warn).not.toHaveBeenCalled()
+    warn.mockRestore()
+  })
+
+  it('слот prepend работает вместе с icon', () => {
+    const wrapper = mount(UidButton, {
+      props: { icon: Plus },
+      slots: { default: 'Текст', prepend: '<span class="icon" />' },
+    })
+    expect(wrapper.find('.uid-button__prepend').exists()).toBe(true)
+    expect(wrapper.find('.uid-button__icon').exists()).toBe(true)
   })
 })

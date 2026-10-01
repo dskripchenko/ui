@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/vue3'
 import UidMenu from './UidMenu.vue'
 import UidMenuItem from './UidMenuItem.vue'
 import UidMenuSeparator from './UidMenuSeparator.vue'
+import UidSubMenu from './UidSubMenu.vue'
 
 const meta: Meta<typeof UidMenu> = {
   title: 'Overlays/Menu',
@@ -75,6 +76,49 @@ export const MultipleMenus: Story = {
           <UidMenuSeparator />
           <UidMenuItem>Копировать</UidMenuItem>
           <UidMenuItem>Вставить</UidMenuItem>
+        </UidMenu>
+      </div>
+    `,
+  }),
+}
+
+export const NestedSubmenus: Story = {
+  render: () => ({
+    components: { UidMenu, UidMenuItem, UidMenuSeparator, UidSubMenu },
+    template: `
+      <div style="display:flex;justify-content:space-between;padding:80px">
+        <UidMenu>
+          <template #trigger>
+            <button style="padding:8px 16px;cursor:pointer">Файл ▾</button>
+          </template>
+          <UidMenuItem>Открыть</UidMenuItem>
+          <UidSubMenu label="Экспорт">
+            <UidMenuItem>PDF</UidMenuItem>
+            <UidMenuItem>DOCX</UidMenuItem>
+            <UidSubMenu label="Другие форматы">
+              <UidMenuItem>ODT</UidMenuItem>
+              <UidMenuItem>RTF</UidMenuItem>
+            </UidSubMenu>
+          </UidSubMenu>
+          <UidSubMenu label="Поделиться">
+            <UidMenuItem>Скопировать ссылку</UidMenuItem>
+            <UidMenuItem>По почте</UidMenuItem>
+          </UidSubMenu>
+          <UidSubMenu label="Недоступно" disabled>
+            <UidMenuItem>—</UidMenuItem>
+          </UidSubMenu>
+          <UidMenuSeparator />
+          <UidMenuItem variant="danger">Удалить</UidMenuItem>
+        </UidMenu>
+
+        <UidMenu>
+          <template #trigger>
+            <button style="padding:8px 16px;cursor:pointer">У правого края ▾</button>
+          </template>
+          <UidSubMenu label="Подменю уходит влево">
+            <UidMenuItem>Первый</UidMenuItem>
+            <UidMenuItem>Второй</UidMenuItem>
+          </UidSubMenu>
         </UidMenu>
       </div>
     `,

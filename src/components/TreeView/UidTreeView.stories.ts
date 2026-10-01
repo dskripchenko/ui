@@ -11,6 +11,7 @@ const meta: Meta<typeof UidTreeView> = {
   argTypes: {
     selectable: { control: 'select', options: [false, 'single', 'multiple'] },
     checkable: { control: 'boolean' },
+    checkStrictly: { control: 'boolean' },
     showGuides: { control: 'boolean' },
     defaultExpandAll: { control: 'boolean' },
   },

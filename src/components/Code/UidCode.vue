@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import './UidCode.css'
-import { computed, ref } from 'vue'
+import { computed, h, ref } from 'vue'
 import { Copy, Check } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
 import { useLocale } from '../../composables/useLocale.js'
+import { tokenize, isHighlightable } from './highlight.js'
 
 const locale = useLocale()
 
@@ -15,6 +16,7 @@ export interface UidCodeProps {
   copy?: boolean
   wrap?: boolean
   maxHeight?: string
+  highlight?: boolean
 }
 
 const props = withDefaults(defineProps<UidCodeProps>(), {
@@ -25,6 +27,7 @@ const props = withDefaults(defineProps<UidCodeProps>(), {
   copy: true,
   wrap: false,
   maxHeight: undefined,
+  highlight: true,
 })
 
 defineSlots<{
@@ -34,6 +37,20 @@ defineSlots<{
 const copied = ref(false)
 
 const lines = computed(() => props.code.split('\n'))
+
+const tokens = computed(() =>
+  props.highlight && isHighlightable(props.language)
+    ? tokenize(props.code, props.language)
+    : null,
+)
+
+// Renders tokens as text nodes and spans; no v-html, so content stays escaped.
+const Highlighted = () =>
+  tokens.value?.map((t) =>
+    t.type === 'plain'
+      ? t.text
+      : h('span', { class: `uid-code__tok uid-code__tok--${t.type}` }, t.text),
+  )
 
 const showHeader = computed(() =>
   !props.inline && (props.language !== undefined || props.copy),
@@ -102,7 +119,7 @@ async function onCopy(): Promise<void> {
           class="uid-code__line-number"
         >{{ idx + 1 }}</span>
       </div>
-      <pre class="uid-code__pre"><code><slot>{{ code }}</slot></code></pre>
+      <pre class="uid-code__pre"><code :data-language="language || undefined"><slot><Highlighted v-if="tokens" /><template v-else>{{ code }}</template></slot></code></pre>
     </div>
   </div>
 </template>

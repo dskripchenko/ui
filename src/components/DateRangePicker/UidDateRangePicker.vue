@@ -5,9 +5,15 @@ import { Calendar, ChevronLeft, ChevronRight } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
 import { useLocale } from '../../composables/useLocale.js'
 
+// Dates are 'YYYY-MM-DD'; with `withTime` they are 'YYYY-MM-DDTHH:mm' (local time).
 export interface DateRange {
   start: string | null
   end: string | null
+}
+
+export interface DateRangePreset {
+  label: string
+  range: () => DateRange
 }
 
 export interface UidDateRangePickerProps {
@@ -17,6 +23,10 @@ export interface UidDateRangePickerProps {
   clearable?: boolean
   placeholder?: string
   format?: (date: Date) => string
+  // Adds start/end time inputs; picked days default to 00:00 and 23:59.
+  withTime?: boolean
+  // Omitted: built-in last 7/30/90 days. `false` or `[]` hides the presets.
+  presets?: DateRangePreset[] | false
 }
 
 const props = withDefaults(defineProps<UidDateRangePickerProps>(), {
@@ -25,6 +35,8 @@ const props = withDefaults(defineProps<UidDateRangePickerProps>(), {
   disabled: false,
   clearable: true,
   format: undefined,
+  withTime: false,
+  presets: undefined,
 })
 
 const locale = useLocale()
@@ -52,8 +64,24 @@ const hoverDate = ref<string | null>(null)
 const MONTHS = computed(() => locale.value.datePicker.months)
 const WEEKDAYS = computed(() => locale.value.datePicker.weekdaysShort)
 
+const DEFAULT_START_TIME = '00:00'
+const DEFAULT_END_TIME = '23:59'
+
+function datePart(s: string): string {
+  return s.slice(0, 10)
+}
+
+function timePart(s: string | null): string | null {
+  if (!s || s.length < 16) return null
+  return s.slice(11, 16)
+}
+
+function withTimeOf(date: string, time: string): string {
+  return `${datePart(date)}T${time}`
+}
+
 function parseISO(s: string): Date {
-  return new Date(s + 'T00:00:00')
+  return new Date(`${datePart(s)}T${timePart(s) ?? '00:00'}:00`)
 }
 
 function toISO(d: Date): string {
@@ -66,8 +94,13 @@ function toISO(d: Date): string {
 function formatDisplay(s: string): string {
   if (props.format) return props.format(parseISO(s))
   const d = parseISO(s)
-  return `${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}.${d.getFullYear()}`
+  const date = `${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}.${d.getFullYear()}`
+  const time = props.withTime ? timePart(s) : null
+  return time ? `${date} ${time}` : date
 }
+
+const startDay = computed(() => (model.value.start ? datePart(model.value.start) : null))
+const endDay = computed(() => (model.value.end ? datePart(model.value.end) : null))
 
 const displayValue = computed(() => {
   if (!model.value.start && !model.value.end) return ''
@@ -122,21 +155,21 @@ const rightLabel = computed(() => {
 const todayISO = computed(() => toISO(today))
 
 function isDisabled(iso: string): boolean {
-  if (props.min && iso < props.min) return true
-  if (props.max && iso > props.max) return true
+  if (props.min && iso < datePart(props.min)) return true
+  if (props.max && iso > datePart(props.max)) return true
   return false
 }
 
 function isInRange(iso: string): boolean {
-  const start = draftStart.value ?? model.value.start
-  const end = draftStart.value ? hoverDate.value : model.value.end
+  const start = draftStart.value ?? startDay.value
+  const end = draftStart.value ? hoverDate.value : endDay.value
   if (!start || !end) return false
   const [a, b] = start <= end ? [start, end] : [end, start]
   return iso > a && iso < b
 }
 
 function isStart(iso: string): boolean {
-  const start = draftStart.value ?? model.value.start
+  const start = draftStart.value ?? startDay.value
   if (!start) return false
   if (draftStart.value && hoverDate.value) {
     return iso === (start <= hoverDate.value ? start : hoverDate.value)
@@ -149,7 +182,7 @@ function isEnd(iso: string): boolean {
     const start = draftStart.value
     return iso === (start <= hoverDate.value ? hoverDate.value : start)
   }
-  return iso === model.value.end
+  return iso === endDay.value
 }
 
 function open(): void {
@@ -183,11 +216,30 @@ function selectDay(day: CalendarDay): void {
   const [start, end] = draftStart.value <= day.iso
     ? [draftStart.value, day.iso]
     : [day.iso, draftStart.value]
-  const next: DateRange = { start, end }
-  model.value = next
-  emit('change', next)
+  if (props.withTime) {
+    commit({
+      start: withTimeOf(start, timePart(model.value.start) ?? DEFAULT_START_TIME),
+      end: withTimeOf(end, timePart(model.value.end) ?? DEFAULT_END_TIME),
+    })
+    draftStart.value = null
+    hoverDate.value = null
+    return
+  }
+  commit({ start, end })
   close()
   triggerRef.value?.focus()
+}
+
+function commit(next: DateRange): void {
+  model.value = next
+  emit('change', next)
+}
+
+function onTimeInput(edge: 'start' | 'end', e: Event): void {
+  const value = (e.target as HTMLInputElement).value
+  const current = model.value[edge]
+  if (!current || !/^\d{2}:\d{2}/.test(value)) return
+  commit({ ...model.value, [edge]: withTimeOf(current, value.slice(0, 5)) })
 }
 
 function onDayHover(iso: string): void {
@@ -211,13 +263,31 @@ function clearValue(e: MouseEvent): void {
   emit('change', next)
 }
 
-function selectPreset(days: number): void {
+function lastDays(days: number): DateRange {
   const end = new Date()
   const start = new Date()
   start.setDate(end.getDate() - days + 1)
-  const next: DateRange = { start: toISO(start), end: toISO(end) }
-  model.value = next
-  emit('change', next)
+  return { start: toISO(start), end: toISO(end) }
+}
+
+const presetList = computed<DateRangePreset[]>(() => {
+  if (props.presets === false) return []
+  if (props.presets) return props.presets
+  return [7, 30, 90].map((days) => ({
+    label: locale.value.dateRangePicker.presetLast(days),
+    range: () => lastDays(days),
+  }))
+})
+
+function selectPreset(preset: DateRangePreset): void {
+  const range = preset.range()
+  const next: DateRange = props.withTime
+    ? {
+        start: range.start && !timePart(range.start) ? withTimeOf(range.start, DEFAULT_START_TIME) : range.start,
+        end: range.end && !timePart(range.end) ? withTimeOf(range.end, DEFAULT_END_TIME) : range.end,
+      }
+    : range
+  commit(next)
   close()
 }
 
@@ -397,27 +467,44 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
           </div>
         </div>
 
-        <div class="uid-daterange__footer">
+        <div
+          v-if="withTime"
+          class="uid-daterange__times"
+        >
+          <label class="uid-daterange__time-field">
+            <span class="uid-daterange__time-label">{{ locale.dateRangePicker.startTime ?? 'Start time' }}</span>
+            <input
+              type="time"
+              class="uid-daterange__time uid-daterange__time--start"
+              :value="timePart(model.start) ?? ''"
+              :disabled="!model.start"
+              @change="onTimeInput('start', $event)"
+            >
+          </label>
+          <label class="uid-daterange__time-field">
+            <span class="uid-daterange__time-label">{{ locale.dateRangePicker.endTime ?? 'End time' }}</span>
+            <input
+              type="time"
+              class="uid-daterange__time uid-daterange__time--end"
+              :value="timePart(model.end) ?? ''"
+              :disabled="!model.end"
+              @change="onTimeInput('end', $event)"
+            >
+          </label>
+        </div>
+
+        <div
+          v-if="presetList.length"
+          class="uid-daterange__footer"
+        >
           <button
+            v-for="preset in presetList"
+            :key="preset.label"
             type="button"
             class="uid-daterange__btn"
-            @click="selectPreset(7)"
+            @click="selectPreset(preset)"
           >
-            {{ locale.dateRangePicker.presetLast(7) }}
-          </button>
-          <button
-            type="button"
-            class="uid-daterange__btn"
-            @click="selectPreset(30)"
-          >
-            {{ locale.dateRangePicker.presetLast(30) }}
-          </button>
-          <button
-            type="button"
-            class="uid-daterange__btn"
-            @click="selectPreset(90)"
-          >
-            {{ locale.dateRangePicker.presetLast(90) }}
+            {{ preset.label }}
           </button>
         </div>
       </div>

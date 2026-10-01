@@ -80,3 +80,30 @@ export const Multiple: Story = {
     `,
   }),
 }
+
+export const WithMarks: Story = {
+  render: () => ({
+    components: { UidSlider },
+    setup: () => ({
+      temperature: ref(37),
+      quality: ref(50),
+    }),
+    template: `
+      <div style="display: flex; flex-direction: column; gap: 24px; max-width: 400px;">
+        <UidSlider
+          v-model="temperature"
+          label="Температура"
+          show-value
+          :marks="{ 0: '0°C', 37: '37°C', 100: '100°C' }"
+          :format-value="v => v + '°C'"
+        />
+        <UidSlider
+          v-model="quality"
+          label="Качество (клик по отметке переносит ползунок)"
+          :step="25"
+          :marks="[0, 25, 50, 75, 100]"
+        />
+      </div>
+    `,
+  }),
+}

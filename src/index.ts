@@ -4,7 +4,9 @@ export { default as UidIcon } from './icons/UidIcon.vue'
 export type { UidIconProps } from './icons/UidIcon.vue'
 
 export { UidButton } from './components/Button/index.js'
-export type { UidButtonProps, UidButtonVariant, UidButtonSize } from './components/Button/index.js'
+export type {
+  UidButtonProps, UidButtonVariant, UidButtonSize, UidButtonIconPosition,
+} from './components/Button/index.js'
 
 export { UidInput } from './components/Input/index.js'
 export type { UidInputProps } from './components/Input/index.js'
@@ -54,8 +56,8 @@ export type { UidTooltipProps } from './components/Tooltip/index.js'
 export { UidPopover } from './components/Popover/index.js'
 export type { UidPopoverProps } from './components/Popover/index.js'
 
-export { UidMenu, UidMenuItem, UidMenuSeparator } from './components/Menu/index.js'
-export type { UidMenuItemProps } from './components/Menu/index.js'
+export { UidMenu, UidMenuItem, UidMenuSeparator, UidSubMenu } from './components/Menu/index.js'
+export type { UidMenuItemProps, UidSubMenuProps } from './components/Menu/index.js'
 
 export { UidTabs, UidTab, UidTabPanel } from './components/Tabs/index.js'
 export type { UidTabsProps, UidTabProps, UidTabPanelProps, TabValue } from './components/Tabs/index.js'
@@ -102,10 +104,10 @@ export { UidVirtualList } from './components/VirtualList/index.js'
 export type { UidVirtualListProps } from './components/VirtualList/index.js'
 
 export { UidSlider } from './components/Slider/index.js'
-export type { UidSliderProps } from './components/Slider/index.js'
+export type { UidSliderProps, UidSliderMark, UidSliderMarks } from './components/Slider/index.js'
 
-export { UidColorPicker } from './components/ColorPicker/index.js'
-export type { UidColorPickerProps } from './components/ColorPicker/index.js'
+export { UidColorPicker, parseColor, normalizeColor } from './components/ColorPicker/index.js'
+export type { UidColorPickerProps, RgbaTuple } from './components/ColorPicker/index.js'
 
 export { UidCommand } from './components/Command/index.js'
 export type { UidCommandProps, CommandItem } from './components/Command/index.js'
@@ -117,7 +119,9 @@ export { UidTimePicker } from './components/TimePicker/index.js'
 export type { UidTimePickerProps } from './components/TimePicker/index.js'
 
 export { UidDateRangePicker } from './components/DateRangePicker/index.js'
-export type { UidDateRangePickerProps, DateRange } from './components/DateRangePicker/index.js'
+export type {
+  UidDateRangePickerProps, DateRange, DateRangePreset,
+} from './components/DateRangePicker/index.js'
 
 export { UidTagsInput } from './components/TagsInput/index.js'
 export type { UidTagsInputProps } from './components/TagsInput/index.js'
@@ -136,8 +140,11 @@ export type { UidTimelineProps, UidTimelineItemProps, TimelineTone } from './com
 export { UidFileUpload } from './components/FileUpload/index.js'
 export type { UidFileUploadProps, UploadedFile } from './components/FileUpload/index.js'
 
-export { UidCode } from './components/Code/index.js'
-export type { UidCodeProps } from './components/Code/index.js'
+export { UidCode, tokenize, isHighlightable } from './components/Code/index.js'
+export type { UidCodeProps, UidCodeToken, UidCodeTokenType } from './components/Code/index.js'
+
+export { UidImage } from './components/Image/index.js'
+export type { UidImageProps, UidImageFit } from './components/Image/index.js'
 
 export { UidRating } from './components/Rating/index.js'
 export type { UidRatingProps, RatingTone } from './components/Rating/index.js'

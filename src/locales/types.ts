@@ -36,6 +36,8 @@ export interface UidLocale {
   dateRangePicker: {
     placeholder: string
     presetLast: (days: number) => string
+    startTime?: string
+    endTime?: string
   }
 
   timePicker: {
@@ -102,6 +104,11 @@ export interface UidLocale {
 
   toast: {
     close: string
+  }
+
+  image?: {
+    preview: string
+    error: string
   }
 
   pagination: {

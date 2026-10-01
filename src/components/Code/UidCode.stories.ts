@@ -10,6 +10,7 @@ const meta: Meta<typeof UidCode> = {
     lineNumbers: { control: 'boolean' },
     copy: { control: 'boolean' },
     wrap: { control: 'boolean' },
+    highlight: { control: 'boolean' },
   },
 }
 export default meta
@@ -131,5 +132,74 @@ export const Minimal: Story = {
         style="max-width:400px"
       />
     `,
+  }),
+}
+
+const languageSamples: Record<string, string> = {
+  php: `<?php
+// Контроллер
+final class UserController
+{
+    public function show(int $id): array
+    {
+        $user = User::find($id) ?? null;
+        return ['id' => $id, 'active' => true];
+    }
+}`,
+  typescript: tsExample,
+  json: jsonExample,
+  sql: `-- Активные пользователи
+SELECT u.id, COUNT(o.id) AS orders
+FROM users u
+LEFT JOIN orders o ON o.user_id = u.id
+WHERE u.active = TRUE AND u.name <> 'O''Neil'
+GROUP BY u.id
+LIMIT 10;`,
+  html: `<!-- Карточка -->
+<div class="card" data-id="42" hidden>
+  <a href="/users?page=2&amp;sort=name">Далее</a>
+</div>`,
+  css: `@media (prefers-reduced-motion: reduce) {
+  .uid-button:hover {
+    color: var(--uid-accent);
+    margin: 0 4px;
+    transition: none !important;
+  }
+}`,
+  bash: `#!/usr/bin/env bash
+set -euo pipefail
+# Сборка и публикация
+for pkg in "$@"; do
+  echo "Building \${pkg}..."
+  pnpm --filter "$pkg" build --mode production
+done`,
+}
+
+/** Подсветка синтаксиса для поддерживаемых языков. Для неизвестных языков код выводится как есть. */
+export const SyntaxHighlighting: Story = {
+  render: () => ({
+    components: { UidCode },
+    setup: () => ({ languageSamples }),
+    template: `
+      <div style="display:grid;gap:16px;max-width:640px">
+        <UidCode
+          v-for="(code, lang) in languageSamples"
+          :key="lang"
+          :code="code"
+          :language="lang"
+          line-numbers
+        />
+        <UidCode code="Неизвестный язык — простой текст" language="text" />
+      </div>
+    `,
+  }),
+}
+
+/** \`highlight: false\` отключает подсветку. */
+export const WithoutHighlight: Story = {
+  render: () => ({
+    components: { UidCode },
+    setup: () => ({ tsExample }),
+    template: `<UidCode :code="tsExample" language="typescript" :highlight="false" style="max-width:560px" />`,
   }),
 }

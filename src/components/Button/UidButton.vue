@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import './UidButton.css'
+import { computed, useAttrs, watchEffect, type Component } from 'vue'
+import UidIcon from '../../icons/UidIcon.vue'
 
 export type UidButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger'
 export type UidButtonSize = 'sm' | 'md' | 'lg'
+export type UidButtonIconPosition = 'start' | 'end'
 
 export interface UidButtonProps {
   variant?: UidButtonVariant
@@ -10,6 +13,9 @@ export interface UidButtonProps {
   disabled?: boolean
   loading?: boolean
   type?: 'button' | 'submit' | 'reset'
+  /** Icon component (e.g. from lucide-vue-next). Without default slot content the button becomes icon-only. */
+  icon?: Component
+  iconPosition?: UidButtonIconPosition
 }
 
 const props = withDefaults(defineProps<UidButtonProps>(), {
@@ -18,17 +24,36 @@ const props = withDefaults(defineProps<UidButtonProps>(), {
   disabled: false,
   loading: false,
   type: 'button',
+  icon: undefined,
+  iconPosition: 'start',
 })
 
 const emit = defineEmits<{
   click: [event: MouseEvent]
 }>()
 
-defineSlots<{
-  default(): unknown
+const slots = defineSlots<{
+  default?(): unknown
   prepend?(): unknown
   append?(): unknown
 }>()
+
+const attrs = useAttrs()
+
+const iconSize = computed(() => (props.size === 'sm' ? 16 : 20))
+const iconOnly = computed(() => !!props.icon && !slots.default)
+
+watchEffect(() => {
+  if (
+    import.meta.env.DEV
+    && iconOnly.value
+    && !attrs['aria-label']
+    && !attrs['aria-labelledby']
+    && !attrs.title
+  ) {
+    console.warn('[UidButton] icon-only button requires an aria-label')
+  }
+})
 
 function handleClick(event: MouseEvent) {
   if (!props.disabled && !props.loading) {
@@ -40,7 +65,7 @@ function handleClick(event: MouseEvent) {
 <template>
   <button
     class="uid-button"
-    :class="[`uid-button--${variant}`, `uid-button--${size}`]"
+    :class="[`uid-button--${variant}`, `uid-button--${size}`, { 'uid-button--icon-only': iconOnly }]"
     :type="type"
     :disabled="disabled || loading"
     :aria-disabled="disabled || loading ? 'true' : undefined"
@@ -53,7 +78,19 @@ function handleClick(event: MouseEvent) {
     >
       <slot name="prepend" />
     </span>
+    <UidIcon
+      v-if="icon && iconPosition === 'start'"
+      class="uid-button__icon"
+      :icon="icon"
+      :size="iconSize"
+    />
     <slot />
+    <UidIcon
+      v-if="icon && iconPosition === 'end'"
+      class="uid-button__icon"
+      :icon="icon"
+      :size="iconSize"
+    />
     <span
       v-if="$slots.append"
       class="uid-button__append"

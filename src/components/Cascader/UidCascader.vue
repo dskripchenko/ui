@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import './UidCascader.css'
-import { computed, onUnmounted, ref, watch } from 'vue'
+import { computed, nextTick, onUnmounted, ref, useId, watch } from 'vue'
 import { ChevronDown, ChevronRight, X } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
 import { useLocale } from '../../composables/useLocale.js'
@@ -23,6 +23,20 @@ export interface UidCascaderProps {
   label?: string
   hint?: string
   expandTrigger?: 'click' | 'hover'
+  searchable?: boolean
+  changeOnSelect?: boolean
+  searchPlaceholder?: string
+}
+
+interface CascaderSearchMatch {
+  values: CascaderValue[]
+  path: CascaderOption[]
+  leaf: boolean
+}
+
+interface LabelSegment {
+  text: string
+  match: boolean
 }
 
 const props = withDefaults(defineProps<UidCascaderProps>(), {
@@ -30,6 +44,9 @@ const props = withDefaults(defineProps<UidCascaderProps>(), {
   clearable: true,
   disabled: false,
   expandTrigger: 'click',
+  searchable: false,
+  changeOnSelect: false,
+  searchPlaceholder: undefined,
 })
 
 const emit = defineEmits<{
@@ -45,9 +62,95 @@ const isOpen = ref(false)
 const containerRef = ref<HTMLElement | null>(null)
 const activePath = ref<CascaderValue[]>([])
 
+const searchRef = ref<HTMLInputElement | null>(null)
+const triggerRef = ref<HTMLElement | null>(null)
+const query = ref('')
+const activeMatch = ref(0)
+const listboxId = useId()
+
 watch(isOpen, (val) => {
-  if (val) activePath.value = [...model.value]
+  if (val) {
+    activePath.value = [...model.value]
+    if (props.searchable) nextTick(() => searchRef.value?.focus())
+  } else {
+    query.value = ''
+  }
 })
+
+const trimmedQuery = computed(() => query.value.trim().toLowerCase())
+
+const allPaths = computed<CascaderSearchMatch[]>(() => {
+  const out: CascaderSearchMatch[] = []
+  const walk = (level: CascaderOption[], trail: CascaderOption[]) => {
+    for (const opt of level) {
+      if (opt.disabled) continue
+      const path = [...trail, opt]
+      const leaf = !opt.children || opt.children.length === 0
+      if (leaf || props.changeOnSelect) {
+        out.push({ values: path.map(p => p.value), path, leaf })
+      }
+      if (!leaf) walk(opt.children!, path)
+    }
+  }
+  walk(props.options, [])
+  return out
+})
+
+const searchMatches = computed<CascaderSearchMatch[]>(() => {
+  const q = trimmedQuery.value
+  if (!q) return []
+  return allPaths.value.filter(m => m.path.some(p => p.label.toLowerCase().includes(q)))
+})
+
+const isSearching = computed(() => props.searchable && trimmedQuery.value.length > 0)
+
+watch(searchMatches, () => { activeMatch.value = 0 })
+
+function segments(label: string): LabelSegment[] {
+  const q = trimmedQuery.value
+  if (!q) return [{ text: label, match: false }]
+  const lower = label.toLowerCase()
+  const out: LabelSegment[] = []
+  let from = 0
+  let idx = lower.indexOf(q, from)
+  while (idx !== -1) {
+    if (idx > from) out.push({ text: label.slice(from, idx), match: false })
+    out.push({ text: label.slice(idx, idx + q.length), match: true })
+    from = idx + q.length
+    idx = lower.indexOf(q, from)
+  }
+  if (from < label.length) out.push({ text: label.slice(from), match: false })
+  return out
+}
+
+function matchId(index: number): string {
+  return `${listboxId}-opt-${index}`
+}
+
+function selectMatch(match: CascaderSearchMatch): void {
+  commit([...match.values], match.path)
+  close()
+  triggerRef.value?.focus()
+}
+
+function onSearchKeydown(e: KeyboardEvent): void {
+  const count = searchMatches.value.length
+  if (e.key === 'ArrowDown') {
+    e.preventDefault()
+    if (count) activeMatch.value = (activeMatch.value + 1) % count
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault()
+    if (count) activeMatch.value = (activeMatch.value - 1 + count) % count
+  } else if (e.key === 'Enter') {
+    e.preventDefault()
+    const match = searchMatches.value[activeMatch.value]
+    if (match) selectMatch(match)
+  } else if (e.key === 'Escape') {
+    e.preventDefault()
+    close()
+    triggerRef.value?.focus()
+  }
+}
 
 function findChildren(values: CascaderValue[]): CascaderOption[] {
   let level = props.options
@@ -97,16 +200,30 @@ function toggle(): void {
   if (isOpen.value) close(); else open()
 }
 
+function commit(values: CascaderValue[], path?: CascaderOption[]): void {
+  model.value = values
+  emit('change', values, path ?? pathFromValues(values))
+}
+
+function expandOption(opt: CascaderOption, level: number): void {
+  if (opt.disabled) return
+  activePath.value = [...activePath.value.slice(0, level), opt.value]
+}
+
 function handleOption(opt: CascaderOption, level: number): void {
   if (opt.disabled) return
-  const newPath = [...activePath.value.slice(0, level), opt.value]
-  activePath.value = newPath
+  expandOption(opt, level)
+  const newPath = [...activePath.value]
   if (!opt.children || opt.children.length === 0) {
-    model.value = newPath
-    const path = selectedPath.value.length > 0 ? [...selectedPath.value] : []
-    emit('change', newPath, path.length > 0 ? path : pathFromValues(newPath))
+    commit(newPath)
     close()
+  } else if (props.changeOnSelect) {
+    commit(newPath)
   }
+}
+
+function onOptionHover(opt: CascaderOption, level: number): void {
+  if (props.expandTrigger === 'hover' && opt.children?.length) expandOption(opt, level)
 }
 
 function pathFromValues(values: CascaderValue[]): CascaderOption[] {
@@ -147,6 +264,11 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
 function isActive(opt: CascaderOption, level: number): boolean {
   return activePath.value[level] === opt.value
 }
+
+function isSelected(opt: CascaderOption, level: number): boolean {
+  return model.value.length === level + 1 && model.value[level] === opt.value
+    && activePath.value.slice(0, level).every((v, i) => model.value[i] === v)
+}
 </script>
 
 <template>
@@ -166,6 +288,7 @@ function isActive(opt: CascaderOption, level: number): boolean {
     </label>
 
     <div
+      ref="triggerRef"
       class="uid-cascader__trigger"
       tabindex="0"
       role="combobox"
@@ -222,31 +345,105 @@ function isActive(opt: CascaderOption, level: number): boolean {
       class="uid-cascader__dropdown"
     >
       <div
-        v-for="(col, level) in columns"
-        :key="level"
-        class="uid-cascader__column"
+        v-if="searchable"
+        class="uid-cascader__search"
       >
-        <button
-          v-for="opt in col"
-          :key="opt.value"
-          type="button"
-          class="uid-cascader__option"
-          :class="{
-            'uid-cascader__option--active': isActive(opt, level),
-            'uid-cascader__option--disabled': opt.disabled,
-          }"
-          @click="handleOption(opt, level)"
-          @mouseenter="expandTrigger === 'hover' && opt.children && handleOption(opt, level)"
+        <input
+          ref="searchRef"
+          v-model="query"
+          type="text"
+          class="uid-cascader__search-input"
+          role="combobox"
+          autocomplete="off"
+          aria-autocomplete="list"
+          :aria-expanded="isSearching"
+          :aria-controls="isSearching ? listboxId : undefined"
+          :aria-activedescendant="isSearching && searchMatches.length ? matchId(activeMatch) : undefined"
+          :aria-label="searchPlaceholder ?? locale.common.search"
+          :placeholder="searchPlaceholder ?? locale.common.search"
+          @keydown="onSearchKeydown"
         >
-          <span class="uid-cascader__option-label">{{ opt.label }}</span>
-          <UidIcon
-            v-if="opt.children?.length"
-            :icon="ChevronRight"
-            :size="14"
-            class="uid-cascader__option-arrow"
-            aria-hidden="true"
-          />
-        </button>
+      </div>
+
+      <ul
+        v-if="isSearching"
+        :id="listboxId"
+        class="uid-cascader__results"
+        role="listbox"
+      >
+        <li
+          v-for="(match, idx) in searchMatches"
+          :id="matchId(idx)"
+          :key="match.values.join('\u0000')"
+          class="uid-cascader__result"
+          :class="{ 'uid-cascader__result--active': idx === activeMatch }"
+          role="option"
+          :aria-selected="idx === activeMatch"
+          @mousedown.prevent
+          @mouseenter="activeMatch = idx"
+          @click="selectMatch(match)"
+        >
+          <template
+            v-for="(opt, level) in match.path"
+            :key="level"
+          >
+            <span
+              v-if="level > 0"
+              class="uid-cascader__separator"
+            >{{ separator }}</span>
+            <span><template
+              v-for="(seg, sIdx) in segments(opt.label)"
+              :key="sIdx"
+            ><mark
+              v-if="seg.match"
+              class="uid-cascader__highlight"
+            >{{ seg.text }}</mark><template v-else>{{ seg.text }}</template></template></span>
+          </template>
+        </li>
+        <li
+          v-if="searchMatches.length === 0"
+          class="uid-cascader__empty"
+          role="presentation"
+        >
+          {{ locale.common.noResults }}
+        </li>
+      </ul>
+
+      <div
+        v-else
+        class="uid-cascader__columns"
+      >
+        <div
+          v-for="(col, level) in columns"
+          :key="level"
+          class="uid-cascader__column"
+        >
+          <button
+            v-for="opt in col"
+            :key="opt.value"
+            type="button"
+            class="uid-cascader__option"
+            :class="{
+              'uid-cascader__option--active': isActive(opt, level),
+              'uid-cascader__option--selected': changeOnSelect && isSelected(opt, level),
+              'uid-cascader__option--disabled': opt.disabled,
+            }"
+            :aria-haspopup="opt.children?.length ? 'true' : undefined"
+            :aria-expanded="opt.children?.length ? isActive(opt, level) : undefined"
+            :aria-disabled="opt.disabled ? 'true' : undefined"
+            @click="handleOption(opt, level)"
+            @mouseenter="onOptionHover(opt, level)"
+          >
+            <span class="uid-cascader__option-label">{{ opt.label }}</span>
+            <UidIcon
+              v-if="opt.children?.length"
+              :icon="ChevronRight"
+              :size="14"
+              class="uid-cascader__option-arrow"
+              aria-hidden="true"
+            />
+          </button>
+        </div>
       </div>
     </div>
 

@@ -100,8 +100,74 @@
   border-radius: var(--uid-radius-md);
   box-shadow: var(--uid-shadow-md);
   display: flex;
+  flex-direction: column;
   overflow: hidden;
-  max-height: 320px;
+  max-height: 360px;
+}
+
+.uid-cascader__columns {
+  display: flex;
+  min-height: 0;
+}
+
+.uid-cascader__search {
+  padding: var(--uid-space-2xs);
+  border-bottom: 1px solid var(--uid-color-border);
+}
+
+.uid-cascader__search-input {
+  width: 100%;
+  min-height: var(--uid-size-sm);
+  padding: 0 var(--uid-space-sm);
+  border: 1px solid var(--uid-color-border);
+  border-radius: var(--uid-radius-sm);
+  background: var(--uid-surface-raised);
+  color: var(--uid-color-text);
+  font: inherit;
+  font-size: var(--uid-font-size-sm);
+  outline: none;
+}
+
+.uid-cascader__search-input:focus-visible {
+  border-color: var(--uid-color-primary);
+  box-shadow: 0 0 0 3px var(--uid-color-primary-subtle);
+}
+
+.uid-cascader__results {
+  list-style: none;
+  margin: 0;
+  padding: var(--uid-space-2xs);
+  min-width: 240px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.uid-cascader__result {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2px;
+  padding: var(--uid-space-sm) 12px;
+  border-radius: var(--uid-radius-sm);
+  cursor: pointer;
+  font-size: var(--uid-font-size-md);
+  color: var(--uid-color-text);
+}
+
+.uid-cascader__result--active {
+  background: var(--uid-color-bg-subtle);
+}
+
+.uid-cascader__highlight {
+  background: none;
+  color: var(--uid-color-primary);
+  font-weight: var(--uid-font-weight-medium);
+}
+
+.uid-cascader__empty {
+  padding: var(--uid-space-sm) 12px;
+  font-size: var(--uid-font-size-sm);
+  color: var(--uid-color-text-tertiary);
 }
 
 .uid-cascader__column {
@@ -140,6 +206,15 @@
 .uid-cascader__option--active {
   background: var(--uid-color-primary-subtle);
   color: var(--uid-color-primary);
+}
+
+.uid-cascader__option--selected {
+  font-weight: var(--uid-font-weight-medium);
+}
+
+.uid-cascader__option:focus-visible {
+  outline: 2px solid var(--uid-accent);
+  outline-offset: -2px;
 }
 
 .uid-cascader__option--disabled {
