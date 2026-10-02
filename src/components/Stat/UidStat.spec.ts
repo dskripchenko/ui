@@ -32,6 +32,11 @@ describe('UidStat', () => {
     expect(wrapper.find('.uid-stat__suffix').text()).toBe('/мес')
   })
 
+  it('trendPlacement="below" puts the trend on its own line', () => {
+    expect(mount(UidStat, { props: { value: 1, trend: 2 } }).classes()).not.toContain('uid-stat--trend-below')
+    expect(mount(UidStat, { props: { value: 1, trend: 2, trendPlacement: 'below' } }).classes()).toContain('uid-stat--trend-below')
+  })
+
   it('положительный trend → up', () => {
     const wrapper = mount(UidStat, { props: { value: 100, trend: 12.5 } })
     expect(wrapper.find('.uid-stat__trend').classes()).toContain('uid-stat__trend--up')

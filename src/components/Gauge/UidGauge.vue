@@ -103,7 +103,7 @@ const styleVars = computed(() => ({
 <template>
   <div
     class="uid-gauge"
-    :class="tone !== 'primary' && `uid-gauge--${tone}`"
+    :class="[tone !== 'primary' && `uid-gauge--${tone}`, ranges && ranges.length > 0 && 'uid-gauge--ranged']"
     :style="styleVars"
     role="meter"
     :aria-valuemin="min"

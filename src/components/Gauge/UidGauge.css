@@ -32,6 +32,12 @@
   stroke-linecap: butt;
 }
 
+/* Under zones the track's round caps would peek out past the zones' square
+   ends as faint dots; the zones cover the whole arc, so square the track. */
+.uid-gauge--ranged .uid-gauge__track {
+  stroke-linecap: butt;
+}
+
 .uid-gauge__needle {
   stroke: var(--uid-color-text);
   stroke-width: 2;

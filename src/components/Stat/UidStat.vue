@@ -24,6 +24,12 @@ export interface UidStatProps {
   footer?: string
   /** BCP 47 tag for number formatting; defaults to the active kit locale. */
   locale?: string
+  /**
+   * Where the trend sits: next to the value, wrapping under it when there is
+   * no room (`inline`, default), or always on its own line under the value
+   * (`below`) — which keeps a row of cards uniform whatever the value length.
+   */
+  trendPlacement?: 'inline' | 'below'
 }
 
 const props = withDefaults(defineProps<UidStatProps>(), {
@@ -32,6 +38,7 @@ const props = withDefaults(defineProps<UidStatProps>(), {
   tone: 'primary',
   variant: 'card',
   locale: undefined,
+  trendPlacement: 'inline',
 })
 
 const uidLocale = useLocale()
@@ -83,6 +90,7 @@ const formattedTrend = computed(() => {
     :class="[
       `uid-stat--${tone}`,
       variant === 'ghost' && 'uid-stat--ghost',
+      trendPlacement === 'below' && 'uid-stat--trend-below',
       loading && 'uid-stat--loading',
     ]"
   >
