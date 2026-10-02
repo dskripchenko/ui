@@ -1,5 +1,13 @@
 # @dskripchenko/ui
 
+## 1.8.0
+
+### Minor Changes
+
+- b2fa5d3: UidStat: `trendPlacement` (`inline` | `below`). `below` puts the trend on its own line under the value, so a row of cards stays uniform whatever the length of each value; `inline` (default) keeps the previous behaviour.
+
+  UidGauge: with `ranges`, the track's round caps no longer peek out as faint dots past the zones' square ends.
+
 ## 1.7.0
 
 ### Minor Changes
