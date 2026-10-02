@@ -71,7 +71,7 @@ import { Check } from '@dskripchenko/ui/icons'
 
 精简列表 — 完整目录在 [Storybook](https://dskripchenko.github.io/ui/)。
 
-**表单与输入：** Button、Input、Textarea、NumberInput、Checkbox、Radio、Switch、Label、FormField、Select、Combobox、TagsInput、DatePicker、DateRangePicker、TimePicker、ColorPicker、Slider、Rating、FileUpload、Mention、TreeSelect、Cascader
+**表单与输入：** Button、Input、Textarea、NumberInput、Checkbox、CheckboxGroup、Radio、Switch、Label、FormField、Select、Combobox、TagsInput、DatePicker、DateRangePicker、TimePicker、ColorPicker、Slider、Rating、FileUpload、Mention、TreeSelect、Cascader
 
 **反馈：** Spinner、Skeleton、Badge、Alert、Progress、Toast、Tour
 

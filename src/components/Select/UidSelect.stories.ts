@@ -13,6 +13,7 @@ const meta: Meta<typeof UidSelect> = {
     disabled: { control: 'boolean' },
     searchable: { control: 'boolean' },
     clearable: { control: 'boolean' },
+    multiple: { control: 'boolean' },
   },
 }
 
@@ -81,4 +82,27 @@ export const Disabled: Story = {
     template: `<UidSelect v-bind="args" v-model="value" style="max-width: 280px;" />`,
   }),
   args: { options: countries, disabled: true },
+}
+
+export const Multiple: Story = {
+  render: (args) => ({
+    components: { UidSelect },
+    setup: () => ({ args, value: ref<(string | number)[]>(['ru', 'de']) }),
+    template: `
+      <div style="max-width: 360px;">
+        <UidSelect v-bind="args" v-model="value" />
+        <p style="margin-top:12px;font-size:13px">v-model: {{ value }}</p>
+      </div>
+    `,
+  }),
+  args: { options: countries, multiple: true, searchable: true, clearable: true, placeholder: 'Выберите страны' },
+}
+
+export const MultipleMaxTagCount: Story = {
+  render: (args) => ({
+    components: { UidSelect },
+    setup: () => ({ args, value: ref<(string | number)[]>(['ru', 'us', 'gb', 'de', 'fr']) }),
+    template: `<UidSelect v-bind="args" v-model="value" style="max-width: 360px;" />`,
+  }),
+  args: { options: countries, multiple: true, maxTagCount: 2 },
 }

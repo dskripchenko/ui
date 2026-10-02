@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import './UidTable.css'
-import { computed } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import type { CSSProperties } from 'vue'
 import { ArrowUp, ArrowDown, ArrowUpDown } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
 import UidSpinner from '../Spinner/UidSpinner.vue'
@@ -12,6 +13,11 @@ export interface UidTableColumn {
   sortable?: boolean
   align?: 'left' | 'center' | 'right'
   width?: string
+  /**
+   * Pin the column to the left or right edge while the table scrolls horizontally.
+   * Put left-fixed columns first and right-fixed columns last.
+   */
+  fixed?: 'left' | 'right'
 }
 
 export type SortDirection = 'asc' | 'desc' | null
@@ -134,6 +140,137 @@ function onRowCheckbox(row: Record<string, unknown>, checked: boolean): void {
 }
 
 const isEmpty = computed(() => !props.loading && props.data.length === 0)
+
+// ---- Fixed (sticky) columns -------------------------------------------------
+
+const scrollRef = ref<HTMLElement | null>(null)
+const headRowRef = ref<HTMLTableRowElement | null>(null)
+
+const hasFixedLeft = computed(() => props.columns.some(c => c.fixed === 'left'))
+const hasFixedRight = computed(() => props.columns.some(c => c.fixed === 'right'))
+const hasFixed = computed(() => hasFixedLeft.value || hasFixedRight.value)
+/** The selection column sticks to the left together with left-fixed columns. */
+const selectFixed = computed(() => props.selectable && hasFixedLeft.value)
+
+/** Measured header cell widths, in DOM order (selection column first when present). */
+const cellWidths = ref<number[]>([])
+const pingLeft = ref(false)
+const pingRight = ref(false)
+
+function parsePx(width: string | undefined): number {
+  if (!width) return 0
+  const m = /^\s*(\d+(?:\.\d+)?)px\s*$/.exec(width)
+  return m ? Number(m[1]) : 0
+}
+
+/** Width of the cell at `index` (DOM order): the measured one, else a px `width` from the column. */
+function widthAt(index: number): number {
+  const measured = cellWidths.value[index] ?? 0
+  if (measured > 0) return measured
+  const colIndex = index - (props.selectable ? 1 : 0)
+  return colIndex >= 0 ? parsePx(props.columns[colIndex]?.width) : 40
+}
+
+const fixedOffsets = computed(() => {
+  const left = new Map<string, number>()
+  const right = new Map<string, number>()
+  const shift = props.selectable ? 1 : 0
+  let acc = selectFixed.value ? widthAt(0) : 0
+  props.columns.forEach((col, i) => {
+    if (col.fixed !== 'left') return
+    left.set(col.key, acc)
+    acc += widthAt(i + shift)
+  })
+  acc = 0
+  for (let i = props.columns.length - 1; i >= 0; i--) {
+    const col = props.columns[i]
+    if (col.fixed !== 'right') continue
+    right.set(col.key, acc)
+    acc += widthAt(i + shift)
+  }
+  return { left, right }
+})
+
+const lastFixedLeftKey = computed(() => {
+  const cols = props.columns.filter(c => c.fixed === 'left')
+  return cols.length > 0 ? cols[cols.length - 1].key : null
+})
+const firstFixedRightKey = computed(() => props.columns.find(c => c.fixed === 'right')?.key ?? null)
+
+function fixedClass(col: UidTableColumn): Record<string, boolean> {
+  return {
+    'uid-table__cell--fixed': !!col.fixed,
+    'uid-table__cell--fixed-left': col.fixed === 'left',
+    'uid-table__cell--fixed-right': col.fixed === 'right',
+    'uid-table__cell--fixed-left-last': col.fixed === 'left' && col.key === lastFixedLeftKey.value,
+    'uid-table__cell--fixed-right-first': col.fixed === 'right' && col.key === firstFixedRightKey.value,
+  }
+}
+
+function fixedStyle(col: UidTableColumn): CSSProperties | undefined {
+  if (col.fixed === 'left') return { left: `${fixedOffsets.value.left.get(col.key) ?? 0}px` }
+  if (col.fixed === 'right') return { right: `${fixedOffsets.value.right.get(col.key) ?? 0}px` }
+  return undefined
+}
+
+function thStyle(col: UidTableColumn): CSSProperties | undefined {
+  const style: CSSProperties = { ...fixedStyle(col) }
+  if (col.width) style.width = col.width
+  return Object.keys(style).length > 0 ? style : undefined
+}
+
+const selectCellClass = computed(() => ({
+  'uid-table__cell--fixed': selectFixed.value,
+  'uid-table__cell--fixed-left': selectFixed.value,
+  'uid-table__cell--fixed-left-last': selectFixed.value && lastFixedLeftKey.value === null,
+}))
+const selectCellStyle = computed<CSSProperties | undefined>(() => (selectFixed.value ? { left: '0px' } : undefined))
+
+function measure(): void {
+  if (!hasFixed.value) return
+  const row = headRowRef.value
+  if (row) cellWidths.value = Array.from(row.cells).map(c => c.offsetWidth)
+  updatePing()
+}
+
+function updatePing(): void {
+  const el = scrollRef.value
+  if (!el || !hasFixed.value) {
+    pingLeft.value = false
+    pingRight.value = false
+    return
+  }
+  pingLeft.value = el.scrollLeft > 0
+  pingRight.value = el.scrollLeft + el.clientWidth < el.scrollWidth - 1
+}
+
+let resizeObserver: ResizeObserver | null = null
+
+function observe(): void {
+  resizeObserver?.disconnect()
+  resizeObserver = null
+  if (!hasFixed.value || typeof ResizeObserver === 'undefined') return
+  resizeObserver = new ResizeObserver(() => measure())
+  if (scrollRef.value) resizeObserver.observe(scrollRef.value)
+  const table = scrollRef.value?.querySelector('table')
+  if (table) resizeObserver.observe(table)
+}
+
+onMounted(() => {
+  measure()
+  observe()
+})
+
+watch(
+  () => [props.columns, props.data, props.selectable, props.loading],
+  () => nextTick(() => {
+    measure()
+    observe()
+  }),
+  { deep: false },
+)
+
+onBeforeUnmount(() => resizeObserver?.disconnect())
 </script>
 
 <template>
@@ -141,16 +278,26 @@ const isEmpty = computed(() => !props.loading && props.data.length === 0)
     class="uid-table-wrap"
     :class="{ 'uid-table-wrap--bordered': bordered }"
   >
-    <div class="uid-table-scroll">
+    <div
+      ref="scrollRef"
+      class="uid-table-scroll"
+      :class="{
+        'uid-table-scroll--ping-left': pingLeft,
+        'uid-table-scroll--ping-right': pingRight,
+      }"
+      @scroll.passive="updatePing"
+    >
       <table
         class="uid-table"
-        :class="{ 'uid-table--striped': striped }"
+        :class="{ 'uid-table--striped': striped, 'uid-table--has-fixed': hasFixed }"
       >
         <thead class="uid-table__head">
-          <tr>
+          <tr ref="headRowRef">
             <th
               v-if="selectable"
               class="uid-table__th uid-table__th--select"
+              :class="selectCellClass"
+              :style="selectCellStyle"
               scope="col"
             >
               <UidCheckbox
@@ -168,8 +315,9 @@ const isEmpty = computed(() => !props.loading && props.data.length === 0)
                 `uid-table__th--${col.align ?? 'left'}`,
                 { 'uid-table__th--sortable': col.sortable },
                 { 'uid-table__th--active': sortKey === col.key && sortDirection !== null },
+                fixedClass(col),
               ]"
-              :style="col.width ? { width: col.width } : undefined"
+              :style="thStyle(col)"
               :tabindex="col.sortable ? 0 : undefined"
               :role="col.sortable ? 'button' : undefined"
               :aria-sort="ariaSort(col)"
@@ -226,6 +374,8 @@ const isEmpty = computed(() => !props.loading && props.data.length === 0)
               <td
                 v-if="selectable"
                 class="uid-table__td uid-table__td--select"
+                :class="selectCellClass"
+                :style="selectCellStyle"
                 @click.stop
               >
                 <UidCheckbox
@@ -238,7 +388,8 @@ const isEmpty = computed(() => !props.loading && props.data.length === 0)
                 v-for="col in columns"
                 :key="col.key"
                 class="uid-table__td"
-                :class="`uid-table__td--${col.align ?? 'left'}`"
+                :class="[`uid-table__td--${col.align ?? 'left'}`, fixedClass(col)]"
+                :style="fixedStyle(col)"
               >
                 <slot
                   :name="col.key"

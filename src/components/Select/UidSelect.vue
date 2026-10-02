@@ -14,6 +14,8 @@ export interface SelectOption {
   group?: string
 }
 
+export type SelectValue = string | number
+
 export interface UidSelectProps {
   options: SelectOption[]
   placeholder?: string
@@ -21,6 +23,13 @@ export interface UidSelectProps {
   searchable?: boolean
   clearable?: boolean
   size?: 'sm' | 'md' | 'lg'
+  /**
+   * Multi-value mode: v-model is an array, the selected options are shown as
+   * removable chips, and picking an option toggles it without closing the dropdown.
+   */
+  multiple?: boolean
+  /** Multiple mode: show at most this many chips and collapse the rest into "+N". */
+  maxTagCount?: number
 }
 
 const props = withDefaults(defineProps<UidSelectProps>(), {
@@ -28,16 +37,18 @@ const props = withDefaults(defineProps<UidSelectProps>(), {
   searchable: false,
   clearable: false,
   size: 'md',
+  multiple: false,
+  maxTagCount: undefined,
 })
 
 const locale = useLocale()
 const placeholderText = computed(() => props.placeholder ?? locale.value.select.placeholder)
 
 const emit = defineEmits<{
-  change: [value: string | number | null]
+  change: [value: SelectValue | SelectValue[] | null]
 }>()
 
-const model = defineModel<string | number | null>({ default: null })
+const model = defineModel<SelectValue | SelectValue[] | null>({ default: null })
 
 const isOpen = ref(false)
 const query = ref('')
@@ -70,8 +81,37 @@ const dropdownStyle = computed(() => ({
 }))
 
 const selectedOption = computed(() =>
-  props.options.find(o => o.value === model.value) ?? null,
+  props.multiple ? null : (props.options.find(o => o.value === model.value) ?? null),
 )
+
+/** Selected values as an array in both modes (multiple tolerates a scalar or null model). */
+const selectedValues = computed<SelectValue[]>(() => {
+  const v = model.value
+  if (Array.isArray(v)) return v
+  return v === null || v === undefined ? [] : [v]
+})
+
+/** Multiple mode: the selected options in the order they were picked. */
+const selectedOptions = computed<SelectOption[]>(() =>
+  selectedValues.value
+    .map(v => props.options.find(o => o.value === v))
+    .filter((o): o is SelectOption => !!o),
+)
+
+const visibleTags = computed(() =>
+  props.maxTagCount !== undefined && props.maxTagCount >= 0
+    ? selectedOptions.value.slice(0, props.maxTagCount)
+    : selectedOptions.value,
+)
+const hiddenTagCount = computed(() => selectedOptions.value.length - visibleTags.value.length)
+
+const hasValue = computed(() =>
+  props.multiple ? selectedValues.value.length > 0 : model.value !== null && model.value !== undefined,
+)
+
+function isSelected(opt: SelectOption): boolean {
+  return props.multiple ? selectedValues.value.includes(opt.value) : opt.value === model.value
+}
 
 const filtered = computed(() => {
   if (!props.searchable || !query.value.trim()) return props.options
@@ -92,7 +132,7 @@ const groups = computed(() => {
 watch(isOpen, async (val) => {
   if (val) {
     query.value = ''
-    const idx = filtered.value.findIndex(o => o.value === model.value)
+    const idx = filtered.value.findIndex(o => isSelected(o))
     activeIndex.value = idx >= 0 ? idx : 0
     syncTriggerWidth()
     await nextTick()
@@ -125,16 +165,43 @@ function toggle() {
   if (isOpen.value) close(); else open()
 }
 
+function setMultiple(values: SelectValue[]) {
+  model.value = values
+  emit('change', values)
+}
+
 function selectOption(opt: SelectOption) {
   if (opt.disabled) return
+  if (props.multiple) {
+    const current = selectedValues.value
+    setMultiple(
+      current.includes(opt.value)
+        ? current.filter(v => v !== opt.value)
+        : [...current, opt.value],
+    )
+    // Keep the dropdown open so several options can be picked in a row.
+    nextTick(() => updatePopover())
+    return
+  }
   model.value = opt.value
   emit('change', opt.value)
   close()
   triggerRef.value?.focus()
 }
 
+function removeValue(value: SelectValue, e?: Event) {
+  e?.stopPropagation()
+  if (props.disabled) return
+  setMultiple(selectedValues.value.filter(v => v !== value))
+  nextTick(() => updatePopover())
+}
+
 function clearValue(e: MouseEvent) {
   e.stopPropagation()
+  if (props.multiple) {
+    setMultiple([])
+    return
+  }
   model.value = null
   emit('change', null)
 }
@@ -159,6 +226,9 @@ function onTriggerKeydown(e: KeyboardEvent) {
     if (isOpen.value) selectActive(); else open()
   } else if (e.key === 'Escape') {
     close()
+  } else if (e.key === 'Backspace' && props.multiple && selectedValues.value.length > 0) {
+    e.preventDefault()
+    removeValue(selectedValues.value[selectedValues.value.length - 1])
   }
 }
 
@@ -202,7 +272,11 @@ onUnmounted(() => {
   <div
     ref="containerRef"
     class="uid-select"
-    :class="[`uid-select--${size}`, { 'uid-select--open': isOpen, 'uid-select--disabled': disabled }]"
+    :class="[`uid-select--${size}`, {
+      'uid-select--open': isOpen,
+      'uid-select--disabled': disabled,
+      'uid-select--multiple': multiple,
+    }]"
   >
     <div
       ref="triggerRef"
@@ -217,6 +291,36 @@ onUnmounted(() => {
       @keydown="onTriggerKeydown"
     >
       <span
+        v-if="multiple && selectedOptions.length > 0"
+        class="uid-select__tags"
+      >
+        <span
+          v-for="opt in visibleTags"
+          :key="opt.value"
+          class="uid-select__tag"
+        >
+          <span class="uid-select__tag-label">{{ opt.label }}</span>
+          <button
+            v-if="!disabled"
+            type="button"
+            class="uid-select__tag-remove"
+            tabindex="-1"
+            :aria-label="locale.tagsInput.remove(opt.label)"
+            @click="removeValue(opt.value, $event)"
+          >
+            <UidIcon
+              :icon="X"
+              :size="12"
+            />
+          </button>
+        </span>
+        <span
+          v-if="hiddenTagCount > 0"
+          class="uid-select__tag uid-select__tag--more"
+        >+{{ hiddenTagCount }}</span>
+      </span>
+      <span
+        v-else
         class="uid-select__value"
         :class="{ 'uid-select__value--placeholder': !selectedOption }"
       >
@@ -224,7 +328,7 @@ onUnmounted(() => {
       </span>
       <div class="uid-select__suffix">
         <button
-          v-if="clearable && model !== null"
+          v-if="clearable && hasValue"
           type="button"
           class="uid-select__clear"
           :aria-label="locale.common.clear"
@@ -273,6 +377,7 @@ onUnmounted(() => {
           ref="listRef"
           class="uid-select__list"
           role="listbox"
+          :aria-multiselectable="multiple ? 'true' : undefined"
           @keydown="onListKeydown"
         >
           <template v-if="filtered.length > 0">
@@ -292,20 +397,20 @@ onUnmounted(() => {
                 type="button"
                 class="uid-select__option"
                 :class="{
-                  'uid-select__option--selected': opt.value === model,
+                  'uid-select__option--selected': isSelected(opt),
                   'uid-select__option--active': filtered.indexOf(opt) === activeIndex,
                   'uid-select__option--disabled': opt.disabled,
                 }"
                 :data-active="filtered.indexOf(opt) === activeIndex ? 'true' : undefined"
                 role="option"
-                :aria-selected="opt.value === model"
+                :aria-selected="isSelected(opt)"
                 :aria-disabled="opt.disabled"
                 @click="selectOption(opt)"
                 @mouseenter="!opt.disabled && (activeIndex = filtered.indexOf(opt))"
               >
                 <span>{{ opt.label }}</span>
                 <UidIcon
-                  v-if="opt.value === model"
+                  v-if="isSelected(opt)"
                   :icon="Check"
                   :size="14"
                   aria-hidden="true"

@@ -39,6 +39,19 @@
   border-radius: var(--uid-radius-sm);
 }
 
+.uid-breadcrumb__link--button {
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  cursor: pointer;
+}
+
+/* A crumb without a link that is not the current page. */
+.uid-breadcrumb__text {
+  color: var(--uid-breadcrumb-text-color, var(--uid-color-text-secondary));
+}
+
 .uid-breadcrumb__current {
   color: var(--uid-breadcrumb-current-color, var(--uid-color-text-primary));
   font-weight: 500;

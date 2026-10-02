@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
+import { nextTick } from 'vue'
 import UidTable from './UidTable.vue'
 
 const columns = [
@@ -158,5 +159,93 @@ describe('UidTable', () => {
     })
     await wrapper.find('.uid-table__row').trigger('click')
     expect(wrapper.emitted('row-click')?.[0]).toEqual([{ id: 1, name: 'A' }])
+  })
+
+  describe('fixed-колонки', () => {
+    const fixedColumns = [
+      { key: 'id', label: 'ID', width: '60px', fixed: 'left' as const },
+      { key: 'name', label: 'Имя', width: '120px', fixed: 'left' as const },
+      { key: 'role', label: 'Роль' },
+      { key: 'email', label: 'Email' },
+      { key: 'actions', label: '', width: '80px', fixed: 'right' as const },
+      { key: 'status', label: 'Статус', width: '90px', fixed: 'right' as const },
+    ]
+    const fixedData = [
+      { id: 1, name: 'A', role: 'r', email: 'a@x', actions: '…', status: 'ok' },
+      { id: 2, name: 'B', role: 'r', email: 'b@x', actions: '…', status: 'ok' },
+    ]
+
+    it('без fixed колонок sticky-классов нет', () => {
+      const wrapper = mount(UidTable, { props: { columns, data } })
+      expect(wrapper.find('.uid-table__cell--fixed').exists()).toBe(false)
+      expect(wrapper.find('.uid-table').classes()).not.toContain('uid-table--has-fixed')
+    })
+
+    it('вешает sticky-классы и накопительные смещения на th и td', () => {
+      const wrapper = mount(UidTable, { props: { columns: fixedColumns, data: fixedData } })
+      expect(wrapper.find('.uid-table').classes()).toContain('uid-table--has-fixed')
+      const ths = wrapper.findAll('.uid-table__th')
+      expect(ths[0].classes()).toContain('uid-table__cell--fixed-left')
+      expect(ths[0].attributes('style')).toContain('left: 0px')
+      expect(ths[1].attributes('style')).toContain('left: 60px')
+      expect(ths[1].classes()).toContain('uid-table__cell--fixed-left-last')
+      expect(ths[0].classes()).not.toContain('uid-table__cell--fixed-left-last')
+      expect(ths[2].classes()).not.toContain('uid-table__cell--fixed')
+      expect(ths[5].attributes('style')).toContain('right: 0px')
+      expect(ths[4].attributes('style')).toContain('right: 90px')
+      expect(ths[4].classes()).toContain('uid-table__cell--fixed-right-first')
+      // width is kept alongside the offset
+      expect(ths[1].attributes('style')).toContain('width: 120px')
+
+      const tds = wrapper.findAll('.uid-table__row')[1].findAll('.uid-table__td')
+      expect(tds[1].classes()).toContain('uid-table__cell--fixed-left')
+      expect(tds[1].attributes('style')).toContain('left: 60px')
+      expect(tds[4].classes()).toContain('uid-table__cell--fixed-right')
+      expect(tds[4].attributes('style')).toContain('right: 90px')
+      expect(tds[2].attributes('style')).toBeUndefined()
+    })
+
+    it('selectable: колонка выбора закрепляется слева и сдвигает остальные', () => {
+      const wrapper = mount(UidTable, {
+        props: { columns: fixedColumns, data: fixedData, selectable: true, selection: new Set([1]) },
+      })
+      const selectTh = wrapper.find('.uid-table__th--select')
+      expect(selectTh.classes()).toContain('uid-table__cell--fixed-left')
+      expect(selectTh.attributes('style')).toContain('left: 0px')
+      const ths = wrapper.findAll('.uid-table__th')
+      expect(ths[1].attributes('style')).toContain('left: 40px')
+      expect(ths[2].attributes('style')).toContain('left: 100px')
+      const selectedRow = wrapper.findAll('.uid-table__row')[0]
+      expect(selectedRow.classes()).toContain('uid-table__row--selected')
+      expect(selectedRow.find('.uid-table__td--select').classes()).toContain('uid-table__cell--fixed')
+    })
+
+    it('использует измеренную ширину ячеек заголовка', async () => {
+      const spy = vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockReturnValue(150)
+      try {
+        const wrapper = mount(UidTable, { props: { columns: fixedColumns, data: fixedData } })
+        await nextTick()
+        const ths = wrapper.findAll('.uid-table__th')
+        expect(ths[1].attributes('style')).toContain('left: 150px')
+        expect(ths[4].attributes('style')).toContain('right: 150px')
+      } finally {
+        spy.mockRestore()
+      }
+    })
+
+    it('ping-классы отражают горизонтальную прокрутку', async () => {
+      const wrapper = mount(UidTable, { props: { columns: fixedColumns, data: fixedData } })
+      const scroll = wrapper.find('.uid-table-scroll')
+      const el = scroll.element as HTMLElement
+      Object.defineProperty(el, 'clientWidth', { configurable: true, value: 300 })
+      Object.defineProperty(el, 'scrollWidth', { configurable: true, value: 900 })
+      el.scrollLeft = 100
+      await scroll.trigger('scroll')
+      expect(scroll.classes()).toContain('uid-table-scroll--ping-left')
+      expect(scroll.classes()).toContain('uid-table-scroll--ping-right')
+      el.scrollLeft = 600
+      await scroll.trigger('scroll')
+      expect(scroll.classes()).not.toContain('uid-table-scroll--ping-right')
+    })
   })
 })

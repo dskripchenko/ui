@@ -116,4 +116,37 @@ describe('UidSlider', () => {
     await wrapper.findAll('.uid-slider__mark')[1].trigger('click')
     expect(wrapper.emitted('update:modelValue')).toBeUndefined()
   })
+
+  describe('доступное имя', () => {
+    it('по умолчанию aria-label берётся из label, а label связан с input', () => {
+      const wrapper = mount(UidSlider, { props: { label: 'Громкость' } })
+      const input = wrapper.find('input')
+      expect(input.attributes('aria-label')).toBe('Громкость')
+      expect(wrapper.find('label').attributes('for')).toBe(input.attributes('id'))
+    })
+
+    it('ariaLabel задаёт имя ручки отдельно от видимого label', () => {
+      const wrapper = mount(UidSlider, { props: { label: 'Звук', ariaLabel: 'Громкость уведомлений' } })
+      expect(wrapper.find('input').attributes('aria-label')).toBe('Громкость уведомлений')
+      expect(wrapper.find('.uid-slider__label').text()).toBe('Звук')
+    })
+
+    it('ariaLabel работает без видимого label', () => {
+      const wrapper = mount(UidSlider, { props: { ariaLabel: 'Прозрачность' } })
+      expect(wrapper.find('.uid-slider__header').exists()).toBe(false)
+      expect(wrapper.find('input').attributes('aria-label')).toBe('Прозрачность')
+    })
+
+    it('ariaLabelledby передаётся в ручку и отменяет aria-label', () => {
+      const wrapper = mount(UidSlider, { props: { label: 'Звук', ariaLabel: 'X', ariaLabelledby: 'ext-caption' } })
+      const input = wrapper.find('input')
+      expect(input.attributes('aria-labelledby')).toBe('ext-caption')
+      expect(input.attributes('aria-label')).toBeUndefined()
+    })
+
+    it('formatValue попадает в aria-valuetext', () => {
+      const wrapper = mount(UidSlider, { props: { modelValue: 40, formatValue: (v: number) => `${v}%` } })
+      expect(wrapper.find('input').attributes('aria-valuetext')).toBe('40%')
+    })
+  })
 })

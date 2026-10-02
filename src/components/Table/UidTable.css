@@ -68,13 +68,17 @@
   opacity: 1;
 }
 
-/* Body */
+/* Body.
+   The row background goes through --_uid-table-row-bg so fixed (sticky) cells can
+   paint exactly the same color on top of an opaque base. */
 .uid-table__row {
+  --_uid-table-row-bg: transparent;
+  background: var(--_uid-table-row-bg);
   transition: background var(--uid-duration-fast) var(--uid-ease-out);
 }
 
 .uid-table__row:hover {
-  background: var(--uid-table-row-bg-hover, var(--uid-color-surface-hover));
+  --_uid-table-row-bg: var(--uid-table-row-bg-hover, var(--uid-color-surface-hover));
 }
 
 .uid-table__row + .uid-table__row {
@@ -82,11 +86,11 @@
 }
 
 .uid-table--striped .uid-table__row:nth-child(even) {
-  background: var(--uid-table-row-bg-stripe, var(--uid-color-surface-raised));
+  --_uid-table-row-bg: var(--uid-table-row-bg-stripe, var(--uid-color-surface-raised));
 }
 
 .uid-table--striped .uid-table__row:nth-child(even):hover {
-  background: var(--uid-table-row-bg-hover, var(--uid-color-surface-hover));
+  --_uid-table-row-bg: var(--uid-table-row-bg-hover, var(--uid-color-surface-hover));
 }
 
 .uid-table__td {
@@ -115,7 +119,84 @@
   text-align: left;
 }
 
-.uid-table__row--selected {
-  background: var(--uid-table-row-bg-selected, var(--uid-color-surface-hover));
+.uid-table__row.uid-table__row--selected,
+.uid-table--striped .uid-table__row.uid-table__row--selected {
+  --_uid-table-row-bg: var(--uid-table-row-bg-selected, var(--uid-color-surface-hover));
+}
+
+.uid-table__row.uid-table__row--selected:hover,
+.uid-table--striped .uid-table__row.uid-table__row--selected:hover {
+  --_uid-table-row-bg: var(
+    --uid-table-row-bg-selected-hover,
+    var(--uid-table-row-bg-selected, var(--uid-color-surface-hover))
+  );
+}
+
+/* Fixed (sticky) columns */
+
+/* With fixed columns the table is meant to scroll horizontally: let columns keep
+   their preferred widths (column `width` or content) instead of squeezing into
+   the container, while still filling it when there is room. */
+.uid-table--has-fixed {
+  width: max-content;
+  min-width: 100%;
+}
+
+.uid-table__cell--fixed {
+  position: sticky;
+  z-index: 1;
+}
+
+/* Body cells: an opaque table background with the current row color layered on top,
+   so hover/selected/striped rows look the same in fixed and scrolling cells,
+   and in both themes (all colors come from theme tokens). */
+.uid-table__td.uid-table__cell--fixed {
+  background-color: var(--uid-table-fixed-bg, var(--uid-table-bg, var(--uid-color-surface)));
+  background-image: linear-gradient(var(--_uid-table-row-bg), var(--_uid-table-row-bg));
+}
+
+.uid-table__th.uid-table__cell--fixed {
+  z-index: 2;
+  background-color: var(--uid-table-head-bg, var(--uid-color-surface-raised));
+}
+
+.uid-table__th--sortable.uid-table__cell--fixed:hover {
+  background-color: var(--uid-color-surface-hover);
+}
+
+/* Edge shadows appear only while there is content scrolled under the fixed columns. */
+.uid-table__cell--fixed-left-last::after,
+.uid-table__cell--fixed-right-first::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: -1px;
+  width: 12px;
+  pointer-events: none;
+  transition: box-shadow var(--uid-duration-fast) var(--uid-ease-out);
+}
+
+.uid-table__cell--fixed-left-last::after {
+  right: -12px;
+}
+
+.uid-table__cell--fixed-right-first::after {
+  left: -12px;
+}
+
+.uid-table-scroll--ping-left .uid-table__cell--fixed-left-last::after {
+  box-shadow: inset 10px 0 8px -8px var(--uid-table-fixed-shadow, var(--_uid-table-fixed-shadow));
+}
+
+.uid-table-scroll--ping-right .uid-table__cell--fixed-right-first::after {
+  box-shadow: inset -10px 0 8px -8px var(--uid-table-fixed-shadow, var(--_uid-table-fixed-shadow));
+}
+
+.uid-table {
+  --_uid-table-fixed-shadow: rgb(0 0 0 / 0.15);
+}
+
+:root[data-theme='dark'] .uid-table {
+  --_uid-table-fixed-shadow: rgb(0 0 0 / 0.5);
 }
 

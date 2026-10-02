@@ -5,7 +5,7 @@
   --uid-code-radius:    var(--uid-radius-md);
   --uid-code-padding-y: var(--uid-space-md);
   --uid-code-padding-x: var(--uid-space-md);
-  --uid-code-font:      var(--uid-font-family-mono, 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace);
+  --uid-code-font:      var(--uid-font-family-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace);
   --uid-code-font-size: var(--uid-font-size-sm);
 
   position: relative;

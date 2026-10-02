@@ -200,6 +200,7 @@ defineExpose({ open: show, close: hide })
     >
       <UidIcon
         v-if="icon"
+        class="uid-menu-item__icon"
         :icon="icon"
         :size="16"
       />

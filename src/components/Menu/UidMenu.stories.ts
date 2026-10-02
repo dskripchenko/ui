@@ -3,6 +3,7 @@ import UidMenu from './UidMenu.vue'
 import UidMenuItem from './UidMenuItem.vue'
 import UidMenuSeparator from './UidMenuSeparator.vue'
 import UidSubMenu from './UidSubMenu.vue'
+import { Copy, Eye, Pencil, Trash2 } from 'lucide-vue-next'
 
 const meta: Meta<typeof UidMenu> = {
   title: 'Overlays/Menu',
@@ -27,6 +28,27 @@ export const Default: Story = {
           <UidMenuItem>Дублировать</UidMenuItem>
           <UidMenuSeparator />
           <UidMenuItem variant="danger">Удалить</UidMenuItem>
+        </UidMenu>
+      </div>
+    `,
+  }),
+}
+
+export const WithIcons: Story = {
+  render: () => ({
+    components: { UidMenu, UidMenuItem, UidMenuSeparator },
+    setup: () => ({ Copy, Eye, Pencil, Trash2 }),
+    template: `
+      <div style="display:flex;justify-content:center;padding:80px">
+        <UidMenu>
+          <template #trigger>
+            <button style="padding:8px 16px;cursor:pointer">Действия ▾</button>
+          </template>
+          <UidMenuItem :icon="Eye">Открыть</UidMenuItem>
+          <UidMenuItem :icon="Pencil">Редактировать</UidMenuItem>
+          <UidMenuItem :icon="Copy">Дублировать</UidMenuItem>
+          <UidMenuSeparator />
+          <UidMenuItem :icon="Trash2" variant="danger">Удалить</UidMenuItem>
         </UidMenu>
       </div>
     `,

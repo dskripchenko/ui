@@ -69,7 +69,7 @@ import { Check } from '@dskripchenko/ui/icons'
 
 Краткий список — полный каталог в [Storybook](https://dskripchenko.github.io/ui/).
 
-**Формы и ввод:** Button, Input, Textarea, NumberInput, Checkbox, Radio, Switch, Label, FormField, Select, Combobox, TagsInput, DatePicker, DateRangePicker, TimePicker, ColorPicker, Slider, Rating, FileUpload, Mention, TreeSelect, Cascader
+**Формы и ввод:** Button, Input, Textarea, NumberInput, Checkbox, CheckboxGroup, Radio, Switch, Label, FormField, Select, Combobox, TagsInput, DatePicker, DateRangePicker, TimePicker, ColorPicker, Slider, Rating, FileUpload, Mention, TreeSelect, Cascader
 
 **Обратная связь:** Spinner, Skeleton, Badge, Alert, Progress, Toast, Tour
 

@@ -130,3 +130,96 @@ describe('UidSelect', () => {
     expect(wrapper.classes()).toContain('uid-select--sm')
   })
 })
+
+describe('UidSelect multiple', () => {
+  const mountMulti = (props: Record<string, unknown> = {}) =>
+    mount(UidSelect, { props: { options, multiple: true, modelValue: [], ...props }, attachTo: document.body })
+
+  it('показывает placeholder при пустом массиве', () => {
+    const wrapper = mountMulti()
+    expect(wrapper.classes()).toContain('uid-select--multiple')
+    expect(wrapper.find('.uid-select__value--placeholder').text()).toBe('Выберите...')
+    expect(wrapper.find('.uid-select__tags').exists()).toBe(false)
+  })
+
+  it('рендерит выбранные значения чипами', () => {
+    const wrapper = mountMulti({ modelValue: ['us', 'ru'] })
+    expect(wrapper.findAll('.uid-select__tag-label').map(t => t.text())).toEqual(['США', 'Россия'])
+  })
+
+  it('клик по опции добавляет значение и не закрывает dropdown', async () => {
+    const wrapper = mountMulti({ modelValue: ['ru'] })
+    await wrapper.find('.uid-select__trigger').trigger('click')
+    expect(bodyQuery('.uid-select__list')?.getAttribute('aria-multiselectable')).toBe('true')
+    bodyQueryAll('.uid-select__option')[1].click()
+    await wrapper.vm.$nextTick()
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([['ru', 'us']])
+    expect(wrapper.emitted('change')?.[0]).toEqual([['ru', 'us']])
+    expect(bodyQuery('.uid-select__dropdown')).not.toBeNull()
+  })
+
+  it('повторный клик по выбранной опции снимает её', async () => {
+    const wrapper = mountMulti({ modelValue: ['ru', 'us'] })
+    await wrapper.find('.uid-select__trigger').trigger('click')
+    const first = bodyQueryAll('.uid-select__option')[0]
+    expect(first.getAttribute('aria-selected')).toBe('true')
+    expect(first.classList.contains('uid-select__option--selected')).toBe(true)
+    first.click()
+    await wrapper.vm.$nextTick()
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([['us']])
+  })
+
+  it('крестик на чипе удаляет значение без открытия dropdown', async () => {
+    const wrapper = mountMulti({ modelValue: ['ru', 'us'] })
+    const remove = wrapper.findAll('.uid-select__tag-remove')[0]
+    expect(remove.attributes('aria-label')).toBe('Удалить Россия')
+    await remove.trigger('click')
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([['us']])
+    expect(bodyQuery('.uid-select__dropdown')).toBeNull()
+  })
+
+  it('Backspace на триггере удаляет последний чип', async () => {
+    const wrapper = mountMulti({ modelValue: ['ru', 'us'] })
+    await wrapper.find('.uid-select__trigger').trigger('keydown', { key: 'Backspace' })
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([['ru']])
+  })
+
+  it('Enter в списке переключает активную опцию и оставляет список открытым', async () => {
+    const wrapper = mountMulti({ modelValue: [] })
+    await wrapper.find('.uid-select__trigger').trigger('click')
+    bodyQuery('.uid-select__list')!.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }))
+    await wrapper.vm.$nextTick()
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([['ru']])
+    expect(bodyQuery('.uid-select__dropdown')).not.toBeNull()
+  })
+
+  it('clearable очищает до пустого массива', async () => {
+    const wrapper = mountMulti({ modelValue: ['ru'], clearable: true })
+    await wrapper.find('.uid-select__clear').trigger('click')
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([[]])
+  })
+
+  it('clear не показывается при пустом массиве', () => {
+    const wrapper = mountMulti({ modelValue: [], clearable: true })
+    expect(wrapper.find('.uid-select__clear').exists()).toBe(false)
+  })
+
+  it('maxTagCount сворачивает лишние чипы в +N', () => {
+    const wrapper = mountMulti({ modelValue: ['ru', 'us', 'de', 'fr'], maxTagCount: 2 })
+    expect(wrapper.findAll('.uid-select__tag-label')).toHaveLength(2)
+    expect(wrapper.find('.uid-select__tag--more').text()).toBe('+2')
+  })
+
+  it('disabled прячет крестики на чипах', () => {
+    const wrapper = mountMulti({ modelValue: ['ru'], disabled: true })
+    expect(wrapper.find('.uid-select__tag-remove').exists()).toBe(false)
+  })
+
+  it('без multiple поведение одиночного выбора не меняется', async () => {
+    const wrapper = mount(UidSelect, { props: { options, modelValue: 'ru' }, attachTo: document.body })
+    expect(wrapper.find('.uid-select__tags').exists()).toBe(false)
+    await wrapper.find('.uid-select__trigger').trigger('click')
+    expect(bodyQuery('.uid-select__list')?.getAttribute('aria-multiselectable')).toBeNull()
+  })
+})
+

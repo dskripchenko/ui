@@ -4,6 +4,7 @@ import UidMenu from './UidMenu.vue'
 import UidMenuItem from './UidMenuItem.vue'
 import UidMenuSeparator from './UidMenuSeparator.vue'
 import UidSubMenu from './UidSubMenu.vue'
+import { Pencil } from 'lucide-vue-next'
 
 const buildMenu = () => mount(UidMenu, {
   slots: {
@@ -96,6 +97,23 @@ describe('UidMenuItem', () => {
     })
     expect(wrapper.attributes('disabled')).toBeDefined()
   })
+
+  it('рендерит icon перед текстом', () => {
+    const wrapper = mount(UidMenuItem, {
+      props: { icon: Pencil },
+      slots: { default: 'Редактировать' },
+    })
+    const icon = wrapper.find('.uid-menu-item__icon')
+    expect(icon.exists()).toBe(true)
+    expect(icon.attributes('aria-hidden')).toBe('true')
+    expect(wrapper.element.firstElementChild).toBe(icon.element)
+    expect(wrapper.text()).toBe('Редактировать')
+  })
+
+  it('без icon иконка не рендерится', () => {
+    const wrapper = mount(UidMenuItem, { slots: { default: 'Пункт' } })
+    expect(wrapper.find('.uid-menu-item__icon').exists()).toBe(false)
+  })
 })
 
 describe('UidMenu: вложенный интерактив', () => {
@@ -173,6 +191,10 @@ const buildNested = () => mount(UidMenu, {
 async function openRoot(wrapper: ReturnType<typeof buildNested>) {
   await wrapper.find('.uid-menu-trigger').trigger('click')
   await flushPromises()
+  // UidMenu focuses its first item in a requestAnimationFrame; wait for it so it
+  // cannot steal focus from a submenu later in the test (flaky under load).
+  if (vi.isFakeTimers()) vi.advanceTimersToNextFrame()
+  else await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()))
 }
 
 const subTriggers = () => Array.from(document.querySelectorAll<HTMLElement>('.uid-submenu__trigger'))

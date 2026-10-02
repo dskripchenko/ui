@@ -34,6 +34,27 @@ export const WithLabel: Story = {
   }),
 }
 
+export const AccessibleName: Story = {
+  render: () => ({
+    components: { UidSlider },
+    setup: () => ({ volume: ref(40), opacity: ref(70) }),
+    template: `
+      <div style="display:flex;flex-direction:column;gap:24px;max-width:400px">
+        <UidSlider v-model="volume" aria-label="Громкость уведомлений" show-value />
+        <div>
+          <p id="opacity-caption" style="margin:0 0 8px">Прозрачность водяного знака</p>
+          <UidSlider
+            v-model="opacity"
+            aria-labelledby="opacity-caption"
+            :format-value="(v) => v + '%'"
+            show-value
+          />
+        </div>
+      </div>
+    `,
+  }),
+}
+
 export const CustomRange: Story = {
   render: () => ({
     components: { UidSlider },

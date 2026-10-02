@@ -121,7 +121,7 @@
   min-width: 20px;
   padding: 2px 5px;
   font-size: var(--uid-font-size-xs, 12px);
-  font-family: var(--uid-font-mono, monospace);
+  font-family: var(--uid-font-family-mono, monospace);
   background: var(--uid-color-bg-subtle);
   border: 1px solid var(--uid-color-border);
   border-radius: var(--uid-radius-sm, 4px);

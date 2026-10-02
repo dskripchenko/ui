@@ -40,6 +40,11 @@
   background: var(--uid-menu-item-bg-hover, var(--uid-color-surface-hover));
 }
 
+.uid-menu-item__icon {
+  flex-shrink: 0;
+  color: var(--uid-menu-item-icon-color, currentColor);
+}
+
 .uid-menu-item--danger {
   color: var(--uid-menu-item-color-danger, var(--uid-color-danger));
 }
