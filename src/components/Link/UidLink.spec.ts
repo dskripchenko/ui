@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils'
+import { defineComponent } from 'vue'
 import { describe, expect, it } from 'vitest'
 import UidLink from './UidLink.vue'
 
@@ -51,5 +52,37 @@ describe('UidLink', () => {
       slots: { default: 'Кнопка-ссылка' },
     })
     expect(wrapper.element.tagName).toBe('BUTTON')
+  })
+})
+
+describe('UidLink to / RouterLink', () => {
+  const RouterLink = defineComponent({
+    name: 'RouterLink',
+    props: { to: { type: [String, Object], required: true } },
+    template: '<a class="rl" :data-to="JSON.stringify(to)"><slot /></a>',
+  })
+
+  it('без vue-router строковый to откатывается на <a href>', () => {
+    const wrapper = mount(UidLink, { props: { to: '/about' }, slots: { default: 'О нас' } })
+    expect(wrapper.element.tagName).toBe('A')
+    expect(wrapper.attributes('href')).toBe('/about')
+    expect(wrapper.attributes('to')).toBeUndefined()
+  })
+
+  it('без vue-router объектный to с href использует href', () => {
+    const wrapper = mount(UidLink, { props: { to: { name: 'x' }, href: '/x' }, slots: { default: 'x' } })
+    expect(wrapper.element.tagName).toBe('A')
+    expect(wrapper.attributes('href')).toBe('/x')
+  })
+
+  it('с глобальным RouterLink рендерит его', () => {
+    const wrapper = mount(UidLink, {
+      props: { to: { name: 'about' } },
+      slots: { default: 'О нас' },
+      global: { components: { RouterLink } },
+    })
+    expect(wrapper.classes()).toContain('rl')
+    expect(wrapper.classes()).toContain('uid-link')
+    expect(wrapper.attributes('data-to')).toBe('{"name":"about"}')
   })
 })
