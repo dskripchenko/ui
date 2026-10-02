@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed, resolveComponent, type Component } from 'vue'
+import { computed, type Component } from 'vue'
+import { useRouterLink } from '../../composables/useRouterLink.js'
 
 export interface UidSidebarItemProps {
   href?: string
@@ -24,17 +25,13 @@ defineSlots<{
   icon?(): unknown
 }>()
 
-const tag = computed<string | Component>(() => {
-  if (props.as) return props.as
-  if (props.to !== undefined) {
-    try { return resolveComponent('RouterLink') } catch { return 'a' }
-  }
-  return 'a'
-})
+const { routerLink, fallbackHref } = useRouterLink(props)
+
+const tag = computed<string | Component>(() => props.as ?? routerLink.value ?? 'a')
 
 const attrs = computed(() => {
-  if (props.to !== undefined) return { to: props.to }
-  return { href: props.disabled ? undefined : props.href }
+  if (props.as === undefined && routerLink.value) return { to: props.to }
+  return { href: props.disabled ? undefined : fallbackHref.value }
 })
 </script>
 

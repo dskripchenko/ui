@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils'
+import { defineComponent } from 'vue'
 import { describe, expect, it } from 'vitest'
 import UidSidebar from './UidSidebar.vue'
 import UidSidebarItem from './UidSidebarItem.vue'
@@ -98,5 +99,36 @@ describe('UidSidebarDivider', () => {
     const wrapper = mount(UidSidebarDivider)
     expect(wrapper.find('.uid-sidebar-divider').exists()).toBe(true)
     expect(wrapper.attributes('role')).toBe('separator')
+  })
+})
+
+describe('UidSidebarItem to / RouterLink', () => {
+  const RouterLink = defineComponent({
+    name: 'RouterLink',
+    props: { to: { type: [String, Object], required: true } },
+    template: '<a class="rl" :data-to="JSON.stringify(to)"><slot /></a>',
+  })
+
+  it('без vue-router строковый to откатывается на <a href>', () => {
+    const wrapper = mount(UidSidebarItem, { props: { to: '/users' }, slots: { default: 'Users' } })
+    expect(wrapper.element.tagName).toBe('A')
+    expect(wrapper.attributes('href')).toBe('/users')
+    expect(wrapper.attributes('to')).toBeUndefined()
+  })
+
+  it('disabled убирает href в фолбэке', () => {
+    const wrapper = mount(UidSidebarItem, { props: { to: '/users', disabled: true }, slots: { default: 'Users' } })
+    expect(wrapper.attributes('href')).toBeUndefined()
+  })
+
+  it('с глобальным RouterLink рендерит его', () => {
+    const wrapper = mount(UidSidebarItem, {
+      props: { to: { name: 'users' } },
+      slots: { default: 'Users' },
+      global: { components: { RouterLink } },
+    })
+    expect(wrapper.classes()).toContain('rl')
+    expect(wrapper.classes()).toContain('uid-sidebar-item')
+    expect(wrapper.attributes('data-to')).toBe('{"name":"users"}')
   })
 })

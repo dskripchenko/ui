@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed, getCurrentInstance, inject, onMounted, onUpdated, ref, watch, type Component } from 'vue'
+import { computed, getCurrentInstance, inject, onMounted, onUpdated, ref, watch } from 'vue'
+import { useRouterLink } from '../../composables/useRouterLink.js'
 import { BREADCRUMB_KEY } from './context.js'
 
 export interface UidBreadcrumbItemProps {
@@ -45,13 +46,7 @@ if (ctx) watch(ctx.tick, syncLast, { flush: 'post' })
 
 const isCurrent = computed(() => props.current ?? isLast.value)
 
-const routerLink = computed<Component | null>(() => {
-  if (props.to === undefined) return null
-  const registered = instance?.appContext.components.RouterLink
-  return (registered as Component | undefined) ?? null
-})
-
-const fallbackHref = computed(() => props.href ?? (typeof props.to === 'string' ? props.to : undefined))
+const { routerLink, fallbackHref } = useRouterLink(props)
 
 /** A crumb without a link but with a click listener becomes a button so it stays keyboard-accessible. */
 function hasClickListener(): boolean {
