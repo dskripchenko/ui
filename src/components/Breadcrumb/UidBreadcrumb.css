@@ -73,10 +73,18 @@
   white-space: nowrap;
 }
 
+/*
+ * Parent crumbs give way first; the current (last) one keeps its name longest.
+ * The min-width keeps a squeezed crumb from vanishing (at least "X…" stays).
+ */
 .uid-breadcrumb--nowrap .uid-breadcrumb__item {
-  flex: 0 1 auto;
-  min-width: 0;
+  flex: 0 8 auto;
+  min-width: var(--uid-breadcrumb-item-min-width, 3em);
   max-width: var(--uid-breadcrumb-item-max-width, none);
+}
+
+.uid-breadcrumb--nowrap .uid-breadcrumb__item:last-child {
+  flex-shrink: 1;
 }
 
 .uid-breadcrumb--nowrap .uid-breadcrumb__separator {
@@ -91,7 +99,7 @@
 }
 
 /* While collapse measures the natural widths nothing shrinks. */
-.uid-breadcrumb--measuring .uid-breadcrumb__item {
+.uid-breadcrumb--measuring .uid-breadcrumb__list > .uid-breadcrumb__item {
   flex-shrink: 0;
 }
 
