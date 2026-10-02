@@ -130,3 +130,9 @@
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
 }
+
+.uid-stat--trend-below .uid-stat__value-row {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}

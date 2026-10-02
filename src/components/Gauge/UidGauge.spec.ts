@@ -112,4 +112,10 @@ describe('UidGauge', () => {
     const transform = wrapper.find('.uid-gauge__needle').attributes('transform')
     expect(transform).toContain('rotate(-90')
   })
+  it('marks a gauge with zones so its track caps are squared', () => {
+    const plain = mount(UidGauge, { props: { value: 10 } })
+    expect(plain.classes()).not.toContain('uid-gauge--ranged')
+    const zoned = mount(UidGauge, { props: { value: 10, ranges: [{ from: 0, to: 100, color: 'red' }] } })
+    expect(zoned.classes()).toContain('uid-gauge--ranged')
+  })
 })
