@@ -3,6 +3,7 @@ import './UidStat.css'
 import { computed, type Component } from 'vue'
 import { ArrowUp, ArrowDown } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
+import { useLocale } from '../../composables/useLocale.js'
 
 export type StatTone = 'primary' | 'success' | 'warning' | 'danger' | 'info'
 export type StatVariant = 'card' | 'ghost'
@@ -21,6 +22,8 @@ export interface UidStatProps {
   icon?: Component
   loading?: boolean
   footer?: string
+  /** BCP 47 tag for number formatting; defaults to the active kit locale. */
+  locale?: string
 }
 
 const props = withDefaults(defineProps<UidStatProps>(), {
@@ -29,6 +32,9 @@ const props = withDefaults(defineProps<UidStatProps>(), {
   tone: 'primary',
   variant: 'card',
 })
+
+const uidLocale = useLocale()
+const numberLocale = computed(() => props.locale ?? uidLocale.value.code ?? 'ru-RU')
 
 defineSlots<{
   default?(): unknown
@@ -42,7 +48,7 @@ const formattedValue = computed(() => {
   if (props.value === undefined) return ''
   if (props.formatter) return props.formatter(props.value)
   if (typeof props.value === 'number') {
-    return props.value.toLocaleString('ru-RU', {
+    return props.value.toLocaleString(numberLocale.value, {
       minimumFractionDigits: props.precision,
       maximumFractionDigits: props.precision,
     })
@@ -66,7 +72,7 @@ const trendIcon = computed(() => {
 const formattedTrend = computed(() => {
   if (props.trend === undefined) return ''
   const abs = Math.abs(props.trend)
-  return `${abs.toLocaleString('ru-RU', { maximumFractionDigits: 2 })}${props.trendSuffix}`
+  return `${abs.toLocaleString(numberLocale.value, { maximumFractionDigits: 2 })}${props.trendSuffix}`
 })
 </script>
 
