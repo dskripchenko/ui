@@ -100,7 +100,7 @@ export { UidTable } from './components/Table/index.js'
 export type { UidTableProps, UidTableColumn } from './components/Table/index.js'
 
 export { UidSelect } from './components/Select/index.js'
-export type { UidSelectProps, SelectOption, SelectValue } from './components/Select/index.js'
+export type { UidSelectProps, SelectOption, SelectValue, SelectModelValue } from './components/Select/index.js'
 
 export { UidDatePicker } from './components/DatePicker/index.js'
 export type { UidDatePickerProps } from './components/DatePicker/index.js'

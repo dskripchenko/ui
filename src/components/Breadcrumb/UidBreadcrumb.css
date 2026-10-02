@@ -14,12 +14,16 @@
   align-items: center;
 }
 
-.uid-breadcrumb__item + .uid-breadcrumb__item::before {
+/* The separator is a real element (aria-hidden in the template) so screen readers skip it. */
+.uid-breadcrumb__separator::before {
   content: var(--uid-breadcrumb-sep, '/');
   padding: 0 var(--uid-space-sm);
   color: var(--uid-breadcrumb-sep-color, var(--uid-color-text-disabled));
   user-select: none;
-  aria-hidden: true;
+}
+
+.uid-breadcrumb__item:first-child > .uid-breadcrumb__separator {
+  display: none;
 }
 
 .uid-breadcrumb__link {
@@ -55,4 +59,135 @@
 .uid-breadcrumb__current {
   color: var(--uid-breadcrumb-current-color, var(--uid-color-text-primary));
   font-weight: 500;
+}
+
+/* ---- nowrap / collapse ------------------------------------------------------ */
+
+.uid-breadcrumb--nowrap {
+  min-width: 0;
+}
+
+.uid-breadcrumb--nowrap .uid-breadcrumb__list {
+  flex-wrap: nowrap;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+/*
+ * Parent crumbs give way first; the current (last) one keeps its name longest.
+ * The min-width keeps a squeezed crumb from vanishing (at least "X…" stays).
+ */
+.uid-breadcrumb--nowrap .uid-breadcrumb__item {
+  flex: 0 8 auto;
+  min-width: var(--uid-breadcrumb-item-min-width, 3em);
+  max-width: var(--uid-breadcrumb-item-max-width, none);
+}
+
+.uid-breadcrumb--nowrap .uid-breadcrumb__item:last-child {
+  flex-shrink: 1;
+}
+
+.uid-breadcrumb--nowrap .uid-breadcrumb__separator {
+  flex-shrink: 0;
+}
+
+.uid-breadcrumb--nowrap .uid-breadcrumb__item > :not(.uid-breadcrumb__separator) {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* While collapse measures the natural widths nothing shrinks. */
+.uid-breadcrumb--measuring .uid-breadcrumb__list > .uid-breadcrumb__item {
+  flex-shrink: 0;
+}
+
+.uid-breadcrumb__item--collapsed {
+  display: none;
+}
+
+.uid-breadcrumb--collapse .uid-breadcrumb__item--ellipsis {
+  flex-shrink: 0;
+}
+
+.uid-breadcrumb__item--ellipsis > :not(.uid-breadcrumb__separator):not(.uid-breadcrumb__ellipsis) {
+  display: none;
+}
+
+.uid-breadcrumb__ellipsis {
+  color: var(--uid-breadcrumb-link-color, var(--uid-color-text-secondary));
+}
+
+.uid-breadcrumb__ellipsis--button {
+  padding: 0 var(--uid-space-xs, 4px);
+  border: none;
+  border-radius: var(--uid-radius-sm);
+  background: none;
+  font: inherit;
+  line-height: inherit;
+  cursor: pointer;
+}
+
+.uid-breadcrumb__ellipsis--button:hover,
+.uid-breadcrumb__ellipsis--button[aria-expanded='true'] {
+  color: var(--uid-breadcrumb-link-color-hover, var(--uid-color-text-primary));
+  background: var(--uid-color-bg-subtle);
+}
+
+.uid-breadcrumb__ellipsis--button:focus-visible {
+  outline: 2px solid var(--uid-color-focus-ring);
+  outline-offset: 2px;
+}
+
+/* Off-screen copy of the "…" crumb, measured by collapse. */
+.uid-breadcrumb__probe {
+  position: absolute;
+  visibility: hidden;
+  pointer-events: none;
+  white-space: nowrap;
+  font-size: var(--uid-breadcrumb-font-size, var(--uid-font-size-sm));
+}
+
+.uid-breadcrumb__menu {
+  z-index: var(--uid-z-dropdown, 100);
+  display: flex;
+  flex-direction: column;
+  min-width: 160px;
+  max-width: min(320px, calc(100vw - 16px));
+  max-height: 280px;
+  overflow-y: auto;
+  padding: var(--uid-space-xs, 4px);
+  background: var(--uid-color-bg);
+  border: 1px solid var(--uid-color-border);
+  border-radius: var(--uid-radius-md, 8px);
+  box-shadow: var(--uid-shadow-md);
+}
+
+.uid-breadcrumb__menu-item {
+  display: block;
+  width: 100%;
+  padding: var(--uid-space-sm) 12px;
+  overflow: hidden;
+  border: none;
+  border-radius: var(--uid-radius-sm, 4px);
+  background: transparent;
+  color: var(--uid-color-text);
+  font: inherit;
+  font-size: var(--uid-breadcrumb-font-size, var(--uid-font-size-sm));
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.uid-breadcrumb__menu-item:hover,
+.uid-breadcrumb__menu-item:focus-visible {
+  background: var(--uid-color-bg-subtle);
+  outline: none;
+}
+
+.uid-breadcrumb__menu-item[aria-disabled='true'] {
+  color: var(--uid-color-text-secondary);
+  cursor: default;
 }

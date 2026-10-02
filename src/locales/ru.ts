@@ -116,6 +116,10 @@ export const ru: UidLocale = {
     error: 'Не удалось загрузить изображение',
   },
 
+  breadcrumb: {
+    showHidden: 'Показать скрытые разделы',
+  },
+
   pagination: {
     first: 'Первая страница',
     prev: 'Предыдущая страница',

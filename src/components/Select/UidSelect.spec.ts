@@ -1,7 +1,8 @@
 import { mount } from '@vue/test-utils'
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, expectTypeOf, it } from 'vitest'
+import { defineComponent, ref } from 'vue'
 import UidSelect from './UidSelect.vue'
-import type { SelectOption } from './UidSelect.vue'
+import type { SelectOption, SelectValue } from './UidSelect.vue'
 
 const options: SelectOption[] = [
   { value: 'ru', label: 'Россия' },
@@ -223,3 +224,52 @@ describe('UidSelect multiple', () => {
   })
 })
 
+
+describe('UidSelect v-model', () => {
+  it('без привязанного modelValue хранит значение сам', async () => {
+    const wrapper = mount(UidSelect, { props: { options }, attachTo: document.body })
+    await wrapper.find('.uid-select__trigger').trigger('click')
+    bodyQueryAll('.uid-select__option')[1].click()
+    await wrapper.vm.$nextTick()
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['us'])
+    expect(wrapper.find('.uid-select__value').text()).toBe('США')
+  })
+
+  it('controlled: отображает пришедший modelValue, а не локальный', async () => {
+    const wrapper = mount(UidSelect, { props: { options, modelValue: 'ru' }, attachTo: document.body })
+    await wrapper.find('.uid-select__trigger').trigger('click')
+    bodyQueryAll('.uid-select__option')[1].click()
+    await wrapper.vm.$nextTick()
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['us'])
+    // The parent did not apply the update, so the trigger keeps showing its value.
+    expect(wrapper.find('.uid-select__value').text()).toBe('Россия')
+  })
+
+  it('атрибут multiple без значения включает режим массива', async () => {
+    const wrapper = mount(defineComponent({
+      components: { UidSelect },
+      setup: () => ({ options, value: ref<SelectValue[]>(['ru']) }),
+      template: '<UidSelect v-model="value" multiple :options="options" />',
+    }), { attachTo: document.body })
+    expect(wrapper.find('.uid-select').classes()).toContain('uid-select--multiple')
+    expect(wrapper.findAll('.uid-select__tag').length).toBe(1)
+    wrapper.unmount()
+  })
+
+  it('тип v-model зависит от multiple', () => {
+    // Checked by vue-tsc; the runtime assertions are no-ops.
+    type Props<M extends boolean> = Parameters<typeof UidSelect<M>>[0]
+    type Update<M extends boolean> = NonNullable<Props<M>['onUpdate:modelValue']>
+    type Change<M extends boolean> = NonNullable<Props<M>['onChange']>
+
+    expectTypeOf<Update<false>>().parameter(0).toEqualTypeOf<SelectValue | null>()
+    expectTypeOf<Change<false>>().parameter(0).toEqualTypeOf<SelectValue | null>()
+    expectTypeOf<Props<false>['modelValue']>().toEqualTypeOf<SelectValue | null | undefined>()
+
+    expectTypeOf<Update<true>>().parameter(0).toEqualTypeOf<SelectValue[]>()
+    expectTypeOf<Change<true>>().parameter(0).toEqualTypeOf<SelectValue[]>()
+    expectTypeOf<Props<true>['modelValue']>().toEqualTypeOf<SelectValue[] | undefined>()
+
+    expectTypeOf<Update<boolean>>().parameter(0).toEqualTypeOf<SelectValue | SelectValue[] | null>()
+  })
+})

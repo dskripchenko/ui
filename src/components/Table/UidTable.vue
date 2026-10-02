@@ -33,6 +33,12 @@ export interface UidTableProps {
   bordered?: boolean
   /** Switch on the checkbox column on the left (the header plus every row). */
   selectable?: boolean
+  /**
+   * Pin the selection column to the left edge while the table scrolls horizontally.
+   * By default it is pinned only together with `fixed: 'left'` columns;
+   * `true` pins it on its own, `false` never pins it.
+   */
+  selectionFixed?: boolean
   /** The set of ids of the selected rows. */
   selection?: Set<string | number>
   /** The row's id field. `id` by default. */
@@ -47,6 +53,7 @@ const props = withDefaults(defineProps<UidTableProps>(), {
   striped: false,
   bordered: false,
   selectable: false,
+  selectionFixed: undefined,
   selection: () => new Set(),
   rowKey: 'id',
 })
@@ -148,9 +155,12 @@ const headRowRef = ref<HTMLTableRowElement | null>(null)
 
 const hasFixedLeft = computed(() => props.columns.some(c => c.fixed === 'left'))
 const hasFixedRight = computed(() => props.columns.some(c => c.fixed === 'right'))
-const hasFixed = computed(() => hasFixedLeft.value || hasFixedRight.value)
-/** The selection column sticks to the left together with left-fixed columns. */
-const selectFixed = computed(() => props.selectable && hasFixedLeft.value)
+/**
+ * The selection column sticks to the left together with left-fixed columns,
+ * or on its own with `selectionFixed`.
+ */
+const selectFixed = computed(() => props.selectable && (props.selectionFixed ?? hasFixedLeft.value))
+const hasFixed = computed(() => hasFixedLeft.value || hasFixedRight.value || selectFixed.value)
 
 /** Measured header cell widths, in DOM order (selection column first when present). */
 const cellWidths = ref<number[]>([])
@@ -262,7 +272,7 @@ onMounted(() => {
 })
 
 watch(
-  () => [props.columns, props.data, props.selectable, props.loading],
+  () => [props.columns, props.data, props.selectable, props.selectionFixed, props.loading],
   () => nextTick(() => {
     measure()
     observe()

@@ -116,6 +116,10 @@ export const en: UidLocale = {
     error: 'Image failed to load',
   },
 
+  breadcrumb: {
+    showHidden: 'Show hidden breadcrumbs',
+  },
+
   pagination: {
     first: 'First page',
     prev: 'Previous page',

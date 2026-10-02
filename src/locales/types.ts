@@ -111,6 +111,11 @@ export interface UidLocale {
     error: string
   }
 
+  breadcrumb?: {
+    /** Accessible name of the "…" button that lists the collapsed crumbs. */
+    showHidden: string
+  }
+
   pagination: {
     first: string
     prev: string

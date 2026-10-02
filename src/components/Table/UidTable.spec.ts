@@ -220,6 +220,44 @@ describe('UidTable', () => {
       expect(selectedRow.find('.uid-table__td--select').classes()).toContain('uid-table__cell--fixed')
     })
 
+    it('selectionFixed: колонка выбора закрепляется без fixed-колонок', () => {
+      const plain = [
+        { key: 'id', label: 'ID' },
+        { key: 'name', label: 'Имя' },
+      ]
+      const wrapper = mount(UidTable, {
+        props: { columns: plain, data: fixedData, selectable: true, selectionFixed: true },
+      })
+      expect(wrapper.find('.uid-table').classes()).toContain('uid-table--has-fixed')
+      const selectTh = wrapper.find('.uid-table__th--select')
+      expect(selectTh.classes()).toContain('uid-table__cell--fixed-left')
+      expect(selectTh.classes()).toContain('uid-table__cell--fixed-left-last')
+      expect(selectTh.attributes('style')).toContain('left: 0px')
+      const selectTd = wrapper.find('.uid-table__td--select')
+      expect(selectTd.classes()).toContain('uid-table__cell--fixed-left')
+      const ths = wrapper.findAll('.uid-table__th')
+      expect(ths[1].classes()).not.toContain('uid-table__cell--fixed')
+    })
+
+    it('selectable без selectionFixed и fixed-колонок колонку выбора не закрепляет', () => {
+      const wrapper = mount(UidTable, {
+        props: { columns: [{ key: 'id', label: 'ID' }], data: fixedData, selectable: true },
+      })
+      expect(wrapper.find('.uid-table__th--select').classes()).not.toContain('uid-table__cell--fixed')
+      expect(wrapper.find('.uid-table').classes()).not.toContain('uid-table--has-fixed')
+    })
+
+    it('selectionFixed: false не закрепляет колонку выбора даже с fixed-колонками', () => {
+      const wrapper = mount(UidTable, {
+        props: { columns: fixedColumns, data: fixedData, selectable: true, selectionFixed: false },
+      })
+      const selectTh = wrapper.find('.uid-table__th--select')
+      expect(selectTh.classes()).not.toContain('uid-table__cell--fixed')
+      expect(selectTh.attributes('style')).toBeUndefined()
+      const ths = wrapper.findAll('.uid-table__th')
+      expect(ths[1].attributes('style')).toContain('left: 0px')
+    })
+
     it('использует измеренную ширину ячеек заголовка', async () => {
       const spy = vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockReturnValue(150)
       try {

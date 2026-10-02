@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="ts" generic="M extends boolean = false">
 import './UidSelect.css'
 import { computed, nextTick, onUnmounted, ref, watch } from 'vue'
 import { useId } from 'vue'
@@ -16,7 +16,18 @@ export interface SelectOption {
 
 export type SelectValue = string | number
 
-export interface UidSelectProps {
+/**
+ * The v-model type for a given `multiple` flag: `SelectValue | null` in single
+ * mode, `SelectValue[]` with `multiple: true`. A non-literal `boolean` (for
+ * example `:multiple="isMulti"`) gives the union of both.
+ */
+export type SelectModelValue<M extends boolean = false> = M extends true
+  ? SelectValue[]
+  : SelectValue | null
+
+export interface UidSelectProps<M extends boolean = boolean> {
+  /** v-model value: `SelectValue | null` in single mode, `SelectValue[]` with `multiple`. */
+  modelValue?: SelectModelValue<M>
   options: SelectOption[]
   placeholder?: string
   disabled?: boolean
@@ -26,29 +37,53 @@ export interface UidSelectProps {
   /**
    * Multi-value mode: v-model is an array, the selected options are shown as
    * removable chips, and picking an option toggles it without closing the dropdown.
+   * The type parameter `M` follows this flag, so `v-model` and the
+   * `update:modelValue` / `change` payloads are typed per mode.
+   * (`boolean & M` keeps the runtime prop a Boolean, so a bare `multiple` attribute works.)
    */
-  multiple?: boolean
+  multiple?: boolean & M
   /** Multiple mode: show at most this many chips and collapse the rest into "+N". */
   maxTagCount?: number
 }
 
-const props = withDefaults(defineProps<UidSelectProps>(), {
+// `multiple` defaults to undefined rather than false: a generic prop cannot
+// take a literal default, and an absent flag is falsy (single mode) anyway.
+const props = withDefaults(defineProps<UidSelectProps<M>>(), {
   disabled: false,
   searchable: false,
   clearable: false,
   size: 'md',
-  multiple: false,
+  modelValue: undefined,
+  multiple: undefined,
   maxTagCount: undefined,
 })
 
 const locale = useLocale()
 const placeholderText = computed(() => props.placeholder ?? locale.value.select.placeholder)
 
+// The model is declared by hand instead of with defineModel so that
+// `update:modelValue` carries exactly `SelectModelValue<M>` (defineModel adds
+// `undefined` to an optional model's emit type).
 const emit = defineEmits<{
-  change: [value: SelectValue | SelectValue[] | null]
+  'update:modelValue': [value: SelectModelValue<M>]
+  change: [value: SelectModelValue<M>]
 }>()
 
-const model = defineModel<SelectValue | SelectValue[] | null>({ default: null })
+/** Used while the parent does not bind `modelValue` (uncontrolled use). */
+const localValue = ref<SelectValue | SelectValue[] | null>(null)
+
+/** Mode-agnostic view of the model for the implementation (the public type depends on `M`). */
+const rawModel = computed<SelectValue | SelectValue[] | null>(() =>
+  props.modelValue === undefined
+    ? localValue.value
+    : (props.modelValue as SelectValue | SelectValue[] | null),
+)
+
+function commit(value: SelectValue | SelectValue[] | null): void {
+  localValue.value = value
+  emit('update:modelValue', value as SelectModelValue<M>)
+  emit('change', value as SelectModelValue<M>)
+}
 
 const isOpen = ref(false)
 const query = ref('')
@@ -81,14 +116,14 @@ const dropdownStyle = computed(() => ({
 }))
 
 const selectedOption = computed(() =>
-  props.multiple ? null : (props.options.find(o => o.value === model.value) ?? null),
+  props.multiple ? null : (props.options.find(o => o.value === rawModel.value) ?? null),
 )
 
 /** Selected values as an array in both modes (multiple tolerates a scalar or null model). */
 const selectedValues = computed<SelectValue[]>(() => {
-  const v = model.value
+  const v = rawModel.value
   if (Array.isArray(v)) return v
-  return v === null || v === undefined ? [] : [v]
+  return v === null ? [] : [v]
 })
 
 /** Multiple mode: the selected options in the order they were picked. */
@@ -106,11 +141,11 @@ const visibleTags = computed(() =>
 const hiddenTagCount = computed(() => selectedOptions.value.length - visibleTags.value.length)
 
 const hasValue = computed(() =>
-  props.multiple ? selectedValues.value.length > 0 : model.value !== null && model.value !== undefined,
+  props.multiple ? selectedValues.value.length > 0 : rawModel.value !== null,
 )
 
 function isSelected(opt: SelectOption): boolean {
-  return props.multiple ? selectedValues.value.includes(opt.value) : opt.value === model.value
+  return props.multiple ? selectedValues.value.includes(opt.value) : opt.value === rawModel.value
 }
 
 const filtered = computed(() => {
@@ -166,8 +201,7 @@ function toggle() {
 }
 
 function setMultiple(values: SelectValue[]) {
-  model.value = values
-  emit('change', values)
+  commit(values)
 }
 
 function selectOption(opt: SelectOption) {
@@ -183,8 +217,7 @@ function selectOption(opt: SelectOption) {
     nextTick(() => updatePopover())
     return
   }
-  model.value = opt.value
-  emit('change', opt.value)
+  commit(opt.value)
   close()
   triggerRef.value?.focus()
 }
@@ -202,8 +235,7 @@ function clearValue(e: MouseEvent) {
     setMultiple([])
     return
   }
-  model.value = null
-  emit('change', null)
+  commit(null)
 }
 
 function onOutsideClick(e: PointerEvent) {
