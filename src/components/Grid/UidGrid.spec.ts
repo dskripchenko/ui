@@ -28,7 +28,22 @@ describe('UidGrid', () => {
 
   it('устанавливает gap', () => {
     const wrapper = mount(UidGrid, { props: { gap: '16px' }, slots: { default: 'x' } })
-    expect(wrapper.element.style.gap).toBe('16px')
+    expect(wrapper.element.style.rowGap).toBe('16px')
+    expect(wrapper.element.style.columnGap).toBe('16px')
+  })
+
+  it('keeps the default var() gap: no unset gap keys reach the style', () => {
+    const wrapper = mount(UidGrid, { slots: { default: 'x' } })
+    const style = wrapper.attributes('style') ?? ''
+    expect(style).toContain('row-gap: var(--uid-space-md)')
+    expect(style).toContain('column-gap: var(--uid-space-md)')
+    expect(style).not.toMatch(/(^|;)\s*gap:/)
+  })
+
+  it('a row or column gap replaces the shared gap on both axes', () => {
+    const wrapper = mount(UidGrid, { props: { gap: '16px', colGap: '8px' }, slots: { default: 'x' } })
+    expect(wrapper.element.style.columnGap).toBe('8px')
+    expect(wrapper.element.style.rowGap).toBe('')
   })
 
   it('рендерит slot-контент', () => {
