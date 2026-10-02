@@ -105,12 +105,8 @@
 
 /* Dropdown */
 .uid-combobox__dropdown {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  z-index: var(--uid-z-dropdown);
-  margin-top: 4px;
+  /* Teleported to the body; position and coordinates come from useFloatingPanel. */
+  z-index: var(--uid-z-popover, 450);
   background: var(--uid-color-bg);
   border: 1px solid var(--uid-color-border);
   border-radius: var(--uid-radius-md);

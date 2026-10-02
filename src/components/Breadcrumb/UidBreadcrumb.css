@@ -150,7 +150,7 @@
 }
 
 .uid-breadcrumb__menu {
-  z-index: var(--uid-z-dropdown, 100);
+  z-index: var(--uid-z-popover, 450);
   display: flex;
   flex-direction: column;
   min-width: 160px;

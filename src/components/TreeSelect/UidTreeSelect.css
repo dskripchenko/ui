@@ -142,9 +142,8 @@
 
 /* Dropdown */
 .uid-tree-select__dropdown {
-  position: absolute;
-  z-index: var(--uid-z-dropdown);
-  margin-top: 4px;
+  /* Teleported to the body; position and coordinates come from useFloatingPanel. */
+  z-index: var(--uid-z-popover, 450);
   background: var(--uid-color-bg);
   border: 1px solid var(--uid-color-border);
   border-radius: var(--uid-radius-md);
@@ -152,6 +151,5 @@
   max-height: 320px;
   overflow-y: auto;
   padding: var(--uid-space-xs) 0;
-  width: 100%;
   left: 0;
 }

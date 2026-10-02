@@ -147,7 +147,7 @@
 .uid-select__dropdown {
   /* Position управляется inline-style из usePopover (fixed + computed top/left).
      Teleport-нут в body — больше не обрезается parent overflow. */
-  z-index: var(--uid-z-dropdown, 100);
+  z-index: var(--uid-z-popover, 450);
   background: var(--uid-color-bg);
   border: 1px solid var(--uid-color-border);
   border-radius: var(--uid-radius-md, 8px);

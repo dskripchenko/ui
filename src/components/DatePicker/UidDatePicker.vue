@@ -4,6 +4,7 @@ import { computed, nextTick, onUnmounted, ref, watch } from 'vue'
 import { ChevronDown, ChevronLeft, ChevronRight } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
 import { useLocale } from '../../composables/useLocale.js'
+import { useFloatingPanel } from '../../composables/useFloatingPanel.js'
 
 export interface UidDatePickerProps {
   min?: string
@@ -31,6 +32,8 @@ const isOpen = ref(false)
 const containerRef = ref<HTMLElement | null>(null)
 const triggerRef = ref<HTMLElement | null>(null)
 const gridRef = ref<HTMLElement | null>(null)
+const panelRef = ref<HTMLElement | null>(null)
+const { panelStyle, containsTarget } = useFloatingPanel(triggerRef, panelRef, isOpen)
 const focusedISO = ref<string | null>(null)
 
 const today = new Date()
@@ -151,6 +154,8 @@ function onGridKeydown(e: KeyboardEvent): void {
       }
       break
     case 'Escape':
+      // Ours to handle: an enclosing modal must not close with the picker.
+      e.stopPropagation()
       e.preventDefault()
       close()
       triggerRef.value?.focus()
@@ -190,7 +195,7 @@ function clearValue(e: MouseEvent) {
 
 function onOutsideClick(e: PointerEvent) {
   const target = e.target as Node
-  if (!containerRef.value?.contains(target)) close()
+  if (!containerRef.value?.contains(target) && !containsTarget(target)) close()
 }
 
 watch(isOpen, (val) => {
@@ -200,7 +205,7 @@ watch(isOpen, (val) => {
 
 function onTriggerKeydown(e: KeyboardEvent) {
   if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle() }
-  else if (e.key === 'Escape') close()
+  else if (e.key === 'Escape' && isOpen.value) { e.stopPropagation(); close() }
 }
 
 onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
@@ -250,74 +255,78 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
       </div>
     </div>
 
-    <Transition name="uid-datepicker-panel">
-      <div
-        v-if="isOpen"
-        class="uid-datepicker__panel"
-        role="dialog"
-        aria-label="Выбор даты"
-      >
-        <div class="uid-datepicker__nav">
-          <button
-            type="button"
-            class="uid-datepicker__nav-btn"
-            :aria-label="locale.datePicker.prevMonth"
-            @click="prevMonth"
-          >
-            <UidIcon
-              :icon="ChevronLeft"
-              :size="16"
-            />
-          </button>
-          <span class="uid-datepicker__month-label">
-            {{ months[viewMonth] }} {{ viewYear }}
-          </span>
-          <button
-            type="button"
-            class="uid-datepicker__nav-btn"
-            :aria-label="locale.datePicker.nextMonth"
-            @click="nextMonth"
-          >
-            <UidIcon
-              :icon="ChevronRight"
-              :size="16"
-            />
-          </button>
-        </div>
-
+    <Teleport to="body">
+      <Transition name="uid-datepicker-panel">
         <div
-          ref="gridRef"
-          class="uid-datepicker__grid"
-          @keydown="onGridKeydown"
+          v-if="isOpen"
+          ref="panelRef"
+          class="uid-datepicker__panel"
+          :style="panelStyle"
+          role="dialog"
+          aria-label="Выбор даты"
         >
-          <span
-            v-for="wd in weekdays"
-            :key="wd"
-            class="uid-datepicker__weekday"
-          >{{ wd }}</span>
+          <div class="uid-datepicker__nav">
+            <button
+              type="button"
+              class="uid-datepicker__nav-btn"
+              :aria-label="locale.datePicker.prevMonth"
+              @click="prevMonth"
+            >
+              <UidIcon
+                :icon="ChevronLeft"
+                :size="16"
+              />
+            </button>
+            <span class="uid-datepicker__month-label">
+              {{ months[viewMonth] }} {{ viewYear }}
+            </span>
+            <button
+              type="button"
+              class="uid-datepicker__nav-btn"
+              :aria-label="locale.datePicker.nextMonth"
+              @click="nextMonth"
+            >
+              <UidIcon
+                :icon="ChevronRight"
+                :size="16"
+              />
+            </button>
+          </div>
 
-          <button
-            v-for="day in calendarDays"
-            :key="day.iso"
-            type="button"
-            class="uid-datepicker__day"
-            :class="{
-              'uid-datepicker__day--other': !day.current,
-              'uid-datepicker__day--today': day.iso === todayISO,
-              'uid-datepicker__day--selected': day.iso === model,
-              'uid-datepicker__day--disabled': isDisabled(day.iso),
-            }"
-            :data-iso="day.iso"
-            :tabindex="day.iso === focusedISO ? 0 : -1"
-            :disabled="isDisabled(day.iso)"
-            :aria-current="day.iso === todayISO ? 'date' : undefined"
-            :aria-selected="day.iso === model"
-            @click="selectDay(day)"
+          <div
+            ref="gridRef"
+            class="uid-datepicker__grid"
+            @keydown="onGridKeydown"
           >
-            {{ day.date.getDate() }}
-          </button>
+            <span
+              v-for="wd in weekdays"
+              :key="wd"
+              class="uid-datepicker__weekday"
+            >{{ wd }}</span>
+
+            <button
+              v-for="day in calendarDays"
+              :key="day.iso"
+              type="button"
+              class="uid-datepicker__day"
+              :class="{
+                'uid-datepicker__day--other': !day.current,
+                'uid-datepicker__day--today': day.iso === todayISO,
+                'uid-datepicker__day--selected': day.iso === model,
+                'uid-datepicker__day--disabled': isDisabled(day.iso),
+              }"
+              :data-iso="day.iso"
+              :tabindex="day.iso === focusedISO ? 0 : -1"
+              :disabled="isDisabled(day.iso)"
+              :aria-current="day.iso === todayISO ? 'date' : undefined"
+              :aria-selected="day.iso === model"
+              @click="selectDay(day)"
+            >
+              {{ day.date.getDate() }}
+            </button>
+          </div>
         </div>
-      </div>
-    </Transition>
+      </Transition>
+    </Teleport>
   </div>
 </template>

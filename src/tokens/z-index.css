@@ -1,10 +1,20 @@
+/*
+ * The stacking scale, low to high:
+ *   base < sticky < dropdown < overlay < drawer = modal < popover < toast < tooltip
+ *
+ * Every floating layer (select, menu, pickers, popover) is teleported to the
+ * body and stacks at --uid-z-popover, so it opens above a modal or a drawer —
+ * and above their footers — rather than under them. Tooltips sit above all.
+ */
 :root {
   --uid-z-base:      0;
   --uid-z-raised:    1;
-  --uid-z-dropdown:  100;
-  --uid-z-sticky:    200;
+  --uid-z-sticky:    100;
+  --uid-z-dropdown:  200;
   --uid-z-overlay:   300;
+  --uid-z-drawer:    400;
   --uid-z-modal:     400;
+  --uid-z-popover:   450;
   --uid-z-toast:     500;
   --uid-z-tooltip:   600;
 }

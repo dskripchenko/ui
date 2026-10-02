@@ -1,6 +1,10 @@
-import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { mount, config } from '@vue/test-utils'
+import { describe, expect, it, beforeAll, afterAll } from 'vitest'
 import UidDatePicker from './UidDatePicker.vue'
+
+// The panel is teleported to the body; render it in place so the wrapper finds it.
+beforeAll(() => { config.global.stubs.teleport = true })
+afterAll(() => { delete config.global.stubs.teleport })
 
 describe('UidDatePicker', () => {
   it('рендерит placeholder по умолчанию', () => {

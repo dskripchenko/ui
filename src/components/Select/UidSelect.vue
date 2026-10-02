@@ -257,6 +257,7 @@ function onTriggerKeydown(e: KeyboardEvent) {
     e.preventDefault()
     if (isOpen.value) selectActive(); else open()
   } else if (e.key === 'Escape') {
+    if (isOpen.value) { e.preventDefault(); e.stopPropagation() }
     close()
   } else if (e.key === 'Backspace' && props.multiple && selectedValues.value.length > 0) {
     e.preventDefault()
@@ -268,7 +269,7 @@ function onListKeydown(e: KeyboardEvent) {
   if (e.key === 'ArrowDown') { e.preventDefault(); moveDown() }
   else if (e.key === 'ArrowUp') { e.preventDefault(); moveUp() }
   else if (e.key === 'Enter') { e.preventDefault(); selectActive() }
-  else if (e.key === 'Escape') { close(); triggerRef.value?.focus() }
+  else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); close(); triggerRef.value?.focus() }
 }
 
 function moveDown() {
@@ -389,76 +390,76 @@ onUnmounted(() => {
           class="uid-select__dropdown"
           :style="dropdownStyle"
         >
-        <div
-          v-if="searchable"
-          class="uid-select__search"
-        >
-          <input
-            ref="searchRef"
-            v-model="query"
-            class="uid-select__search-input"
-            type="text"
-            :placeholder="locale.common.search"
-            autocomplete="off"
-            @keydown="onListKeydown"
+          <div
+            v-if="searchable"
+            class="uid-select__search"
           >
-        </div>
-
-        <div
-          :id="listboxId"
-          ref="listRef"
-          class="uid-select__list"
-          role="listbox"
-          :aria-multiselectable="multiple ? 'true' : undefined"
-          @keydown="onListKeydown"
-        >
-          <template v-if="filtered.length > 0">
-            <template
-              v-for="[groupName, opts] in groups"
-              :key="groupName"
+            <input
+              ref="searchRef"
+              v-model="query"
+              class="uid-select__search-input"
+              type="text"
+              :placeholder="locale.common.search"
+              autocomplete="off"
+              @keydown="onListKeydown"
             >
-              <div
-                v-if="groupName"
-                class="uid-select__group-label"
-              >
-                {{ groupName }}
-              </div>
-              <button
-                v-for="opt in opts"
-                :key="opt.value"
-                type="button"
-                class="uid-select__option"
-                :class="{
-                  'uid-select__option--selected': isSelected(opt),
-                  'uid-select__option--active': filtered.indexOf(opt) === activeIndex,
-                  'uid-select__option--disabled': opt.disabled,
-                }"
-                :data-active="filtered.indexOf(opt) === activeIndex ? 'true' : undefined"
-                role="option"
-                :aria-selected="isSelected(opt)"
-                :aria-disabled="opt.disabled"
-                @click="selectOption(opt)"
-                @mouseenter="!opt.disabled && (activeIndex = filtered.indexOf(opt))"
-              >
-                <span>{{ opt.label }}</span>
-                <UidIcon
-                  v-if="isSelected(opt)"
-                  :icon="Check"
-                  :size="14"
-                  aria-hidden="true"
-                  class="uid-select__check"
-                />
-              </button>
-            </template>
-          </template>
+          </div>
 
           <div
-            v-else
-            class="uid-select__empty"
+            :id="listboxId"
+            ref="listRef"
+            class="uid-select__list"
+            role="listbox"
+            :aria-multiselectable="multiple ? 'true' : undefined"
+            @keydown="onListKeydown"
           >
-            {{ locale.select.noResults }}
+            <template v-if="filtered.length > 0">
+              <template
+                v-for="[groupName, opts] in groups"
+                :key="groupName"
+              >
+                <div
+                  v-if="groupName"
+                  class="uid-select__group-label"
+                >
+                  {{ groupName }}
+                </div>
+                <button
+                  v-for="opt in opts"
+                  :key="opt.value"
+                  type="button"
+                  class="uid-select__option"
+                  :class="{
+                    'uid-select__option--selected': isSelected(opt),
+                    'uid-select__option--active': filtered.indexOf(opt) === activeIndex,
+                    'uid-select__option--disabled': opt.disabled,
+                  }"
+                  :data-active="filtered.indexOf(opt) === activeIndex ? 'true' : undefined"
+                  role="option"
+                  :aria-selected="isSelected(opt)"
+                  :aria-disabled="opt.disabled"
+                  @click="selectOption(opt)"
+                  @mouseenter="!opt.disabled && (activeIndex = filtered.indexOf(opt))"
+                >
+                  <span>{{ opt.label }}</span>
+                  <UidIcon
+                    v-if="isSelected(opt)"
+                    :icon="Check"
+                    :size="14"
+                    aria-hidden="true"
+                    class="uid-select__check"
+                  />
+                </button>
+              </template>
+            </template>
+
+            <div
+              v-else
+              class="uid-select__empty"
+            >
+              {{ locale.select.noResults }}
+            </div>
           </div>
-        </div>
         </div>
       </Transition>
     </Teleport>

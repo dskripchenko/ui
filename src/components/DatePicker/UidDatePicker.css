@@ -83,10 +83,8 @@
 }
 
 .uid-datepicker__panel {
-  position: absolute;
-  top: calc(100% + 4px);
-  left: 0;
-  z-index: var(--uid-z-dropdown, 100);
+  /* Teleported to the body; position and coordinates come from useFloatingPanel. */
+  z-index: var(--uid-z-popover, 450);
   background: var(--uid-color-bg);
   border: 1px solid var(--uid-color-border);
   border-radius: var(--uid-radius-md, 8px);

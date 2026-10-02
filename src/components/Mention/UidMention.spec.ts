@@ -1,7 +1,11 @@
-import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { mount, config } from '@vue/test-utils'
+import { describe, expect, it, beforeAll, afterAll } from 'vitest'
 import { nextTick } from 'vue'
 import UidMention from './UidMention.vue'
+
+// The panel is teleported to the body; render it in place so the wrapper finds it.
+beforeAll(() => { config.global.stubs.teleport = true })
+afterAll(() => { delete config.global.stubs.teleport })
 
 const options = [
   { value: 'alice', label: 'Alice', hint: 'Designer' },

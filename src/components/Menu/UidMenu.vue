@@ -87,6 +87,7 @@ function onMenuKeydown(event: KeyboardEvent): void {
     event.preventDefault()
   } else if (event.key === 'Escape') {
     event.preventDefault()
+    event.stopPropagation()
     close()
   } else if (event.key === 'Tab') {
     close()

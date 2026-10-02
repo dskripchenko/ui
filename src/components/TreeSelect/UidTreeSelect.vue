@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import './UidTreeSelect.css'
 import { computed, onUnmounted, ref, useId, watch } from 'vue'
+import { useFloatingPanel } from '../../composables/useFloatingPanel.js'
 import { ChevronDown, X } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
 import UidTreeView from '../TreeView/UidTreeView.vue'
@@ -49,6 +50,8 @@ const expandedKeys = defineModel<TreeKey[]>('expandedKeys', { default: () => [] 
 const isOpen = ref(false)
 const containerRef = ref<HTMLElement | null>(null)
 const triggerRef = ref<HTMLElement | null>(null)
+const panelRef = ref<HTMLElement | null>(null)
+const { panelStyle, containsTarget } = useFloatingPanel(triggerRef, panelRef, isOpen, { matchWidth: 'exact' })
 const inputId = useId()
 const dropdownId = useId()
 
@@ -180,12 +183,12 @@ function removeTag(e: MouseEvent, key: TreeKey): void {
 
 function onTriggerKeydown(e: KeyboardEvent): void {
   if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle() }
-  else if (e.key === 'Escape') close()
+  else if (e.key === 'Escape' && isOpen.value) { e.stopPropagation(); close() }
 }
 
 function onOutsideClick(e: PointerEvent): void {
   const target = e.target as Node
-  if (!containerRef.value?.contains(target)) close()
+  if (!containerRef.value?.contains(target) && !containsTarget(target)) close()
 }
 
 watch(isOpen, (val) => {
@@ -290,33 +293,37 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
       </div>
     </div>
 
-    <div
-      v-if="isOpen"
-      :id="dropdownId"
-      class="uid-tree-select__dropdown"
-    >
-      <UidTreeView
-        v-if="checkable"
-        v-model:expanded-keys="expandedKeys"
-        v-model:checked-keys="checkedModel"
-        :nodes="nodes"
-        :selectable="false"
-        checkable
-        :check-strictly="checkStrictly"
-        :default-expand-all="defaultExpandAll"
-        :show-guides="showGuides"
-      />
-      <UidTreeView
-        v-else
-        v-model:expanded-keys="expandedKeys"
-        :nodes="nodes"
-        :selected-keys="selectedKeys"
-        :selectable="multiple ? 'multiple' : 'single'"
-        :default-expand-all="defaultExpandAll"
-        :show-guides="showGuides"
-        @select="onSelect"
-      />
-    </div>
+    <Teleport to="body">
+      <div
+        v-if="isOpen"
+        :id="dropdownId"
+        ref="panelRef"
+        class="uid-tree-select__dropdown"
+        :style="panelStyle"
+      >
+        <UidTreeView
+          v-if="checkable"
+          v-model:expanded-keys="expandedKeys"
+          v-model:checked-keys="checkedModel"
+          :nodes="nodes"
+          :selectable="false"
+          checkable
+          :check-strictly="checkStrictly"
+          :default-expand-all="defaultExpandAll"
+          :show-guides="showGuides"
+        />
+        <UidTreeView
+          v-else
+          v-model:expanded-keys="expandedKeys"
+          :nodes="nodes"
+          :selected-keys="selectedKeys"
+          :selectable="multiple ? 'multiple' : 'single'"
+          :default-expand-all="defaultExpandAll"
+          :show-guides="showGuides"
+          @select="onSelect"
+        />
+      </div>
+    </Teleport>
 
     <p
       v-if="hintText"

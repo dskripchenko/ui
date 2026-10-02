@@ -1,19 +1,26 @@
 <script setup lang="ts">
 import './UidColorPicker.css'
 import { computed, onUnmounted, ref, watch } from 'vue'
+import { useFloatingPanel } from '../../composables/useFloatingPanel.js'
+import { useLocale } from '../../composables/useLocale.js'
 import { normalizeColor, parseColor } from './colorParse.js'
 
 export interface UidColorPickerProps {
   disabled?: boolean
   presets?: string[]
   alpha?: boolean
+  placeholder?: string
 }
 
 const props = withDefaults(defineProps<UidColorPickerProps>(), {
   disabled: false,
   presets: undefined,
   alpha: false,
+  placeholder: undefined,
 })
+
+const locale = useLocale()
+const placeholderText = computed(() => props.placeholder ?? locale.value.colorPicker.placeholder)
 
 const emit = defineEmits<{
   change: [value: string | null]
@@ -28,6 +35,9 @@ const alphaValue = ref(100)
 
 const isOpen = ref(false)
 const containerRef = ref<HTMLElement | null>(null)
+const triggerRef = ref<HTMLElement | null>(null)
+const panelRef = ref<HTMLElement | null>(null)
+const { panelStyle, containsTarget } = useFloatingPanel(triggerRef, panelRef, isOpen)
 const gradientRef = ref<HTMLElement | null>(null)
 const hueSliderRef = ref<HTMLElement | null>(null)
 const alphaSliderRef = ref<HTMLElement | null>(null)
@@ -289,7 +299,7 @@ function toggle() {
 }
 
 function onOutsideClick(e: PointerEvent) {
-  if (!containerRef.value?.contains(e.target as Node)) close()
+  if (!containerRef.value?.contains(e.target as Node) && !containsTarget(e.target)) close()
 }
 
 watch(isOpen, (val) => {
@@ -307,6 +317,7 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
     :class="{ 'uid-colorpicker--open': isOpen, 'uid-colorpicker--disabled': disabled }"
   >
     <button
+      ref="triggerRef"
       type="button"
       class="uid-colorpicker__trigger"
       :aria-expanded="isOpen"
@@ -321,117 +332,121 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
         class="uid-colorpicker__trigger-label"
         :class="{ 'uid-colorpicker__trigger-label--empty': !model }"
       >
-        {{ displayColor ? displayColor.toUpperCase() : 'Выберите цвет' }}
+        {{ displayColor ? displayColor.toUpperCase() : placeholderText }}
       </span>
     </button>
 
-    <Transition name="uid-colorpicker-panel">
-      <div
-        v-if="isOpen"
-        class="uid-colorpicker__panel"
-        role="dialog"
-        aria-label="Выбор цвета"
-      >
+    <Teleport to="body">
+      <Transition name="uid-colorpicker-panel">
         <div
-          ref="gradientRef"
-          class="uid-colorpicker__gradient"
-          :style="{ '--_hue': pureHue }"
-          tabindex="0"
-          role="application"
-          aria-label="Насыщенность и яркость"
-          @pointerdown="onGradientPointerDown"
-          @pointermove="onGradientPointerMove"
-          @pointerup="onGradientPointerUp"
-          @keydown="onGradientKeydown"
+          v-if="isOpen"
+          ref="panelRef"
+          class="uid-colorpicker__panel"
+          :style="panelStyle"
+          role="dialog"
+          aria-label="Выбор цвета"
         >
           <div
-            class="uid-colorpicker__gradient-thumb"
-            :style="{ left: thumbLeft, top: thumbTop }"
-          />
-        </div>
-
-        <div class="uid-colorpicker__controls">
-          <div class="uid-colorpicker__sliders">
+            ref="gradientRef"
+            class="uid-colorpicker__gradient"
+            :style="{ '--_hue': pureHue }"
+            tabindex="0"
+            role="application"
+            aria-label="Насыщенность и яркость"
+            @pointerdown="onGradientPointerDown"
+            @pointermove="onGradientPointerMove"
+            @pointerup="onGradientPointerUp"
+            @keydown="onGradientKeydown"
+          >
             <div
-              ref="hueSliderRef"
-              class="uid-colorpicker__hue-track"
-              role="slider"
-              tabindex="0"
-              aria-label="Оттенок"
-              :aria-valuemin="0"
-              :aria-valuemax="360"
-              :aria-valuenow="hue"
-              @pointerdown="onHuePointerDown"
-              @pointermove="onHuePointerMove"
-              @pointerup="onHuePointerUp"
-              @keydown="onHueKeydown"
-            >
-              <div
-                class="uid-colorpicker__track-thumb"
-                :style="{ left: huePercent }"
-              />
-            </div>
-
-            <div
-              v-if="alpha"
-              ref="alphaSliderRef"
-              class="uid-colorpicker__alpha-track"
-              :style="{ '--_color': currentRgb }"
-              role="slider"
-              tabindex="0"
-              aria-label="Прозрачность"
-              :aria-valuemin="0"
-              :aria-valuemax="100"
-              :aria-valuenow="alphaValue"
-              @pointerdown="onAlphaPointerDown"
-              @pointermove="onAlphaPointerMove"
-              @pointerup="onAlphaPointerUp"
-              @keydown="onAlphaKeydown"
-            >
-              <div
-                class="uid-colorpicker__track-thumb"
-                :style="{ left: alphaPercent }"
-              />
-            </div>
+              class="uid-colorpicker__gradient-thumb"
+              :style="{ left: thumbLeft, top: thumbTop }"
+            />
           </div>
 
-          <span
-            class="uid-colorpicker__preview"
-            :style="{ background: currentRgb }"
-          />
-        </div>
+          <div class="uid-colorpicker__controls">
+            <div class="uid-colorpicker__sliders">
+              <div
+                ref="hueSliderRef"
+                class="uid-colorpicker__hue-track"
+                role="slider"
+                tabindex="0"
+                aria-label="Оттенок"
+                :aria-valuemin="0"
+                :aria-valuemax="360"
+                :aria-valuenow="hue"
+                @pointerdown="onHuePointerDown"
+                @pointermove="onHuePointerMove"
+                @pointerup="onHuePointerUp"
+                @keydown="onHueKeydown"
+              >
+                <div
+                  class="uid-colorpicker__track-thumb"
+                  :style="{ left: huePercent }"
+                />
+              </div>
 
-        <div class="uid-colorpicker__inputs">
-          <label class="uid-colorpicker__input-label">HEX</label>
-          <input
-            class="uid-colorpicker__hex-input"
-            type="text"
-            :value="hexInput"
-            maxlength="64"
-            aria-label="HEX, rgb() или hsl()"
-            spellcheck="false"
-            @input="onHexInput"
-            @blur="applyHexInput"
-            @keydown="onHexKeydown"
-          />
-        </div>
+              <div
+                v-if="alpha"
+                ref="alphaSliderRef"
+                class="uid-colorpicker__alpha-track"
+                :style="{ '--_color': currentRgb }"
+                role="slider"
+                tabindex="0"
+                aria-label="Прозрачность"
+                :aria-valuemin="0"
+                :aria-valuemax="100"
+                :aria-valuenow="alphaValue"
+                @pointerdown="onAlphaPointerDown"
+                @pointermove="onAlphaPointerMove"
+                @pointerup="onAlphaPointerUp"
+                @keydown="onAlphaKeydown"
+              >
+                <div
+                  class="uid-colorpicker__track-thumb"
+                  :style="{ left: alphaPercent }"
+                />
+              </div>
+            </div>
 
-        <div
-          v-if="presets && presets.length"
-          class="uid-colorpicker__presets"
-        >
-          <button
-            v-for="preset in presets"
-            :key="preset"
-            type="button"
-            class="uid-colorpicker__preset"
-            :class="{ 'uid-colorpicker__preset--active': isPresetActive(preset) }"
-            :style="{ background: preset }"
-            :aria-label="preset"
-            @click="selectPreset(preset)"
-          />
+            <span
+              class="uid-colorpicker__preview"
+              :style="{ background: currentRgb }"
+            />
+          </div>
+
+          <div class="uid-colorpicker__inputs">
+            <label class="uid-colorpicker__input-label">HEX</label>
+            <input
+              class="uid-colorpicker__hex-input"
+              type="text"
+              :value="hexInput"
+              maxlength="64"
+              aria-label="HEX, rgb() или hsl()"
+              spellcheck="false"
+              @input="onHexInput"
+              @blur="applyHexInput"
+              @keydown="onHexKeydown"
+            >
+          </div>
+
+          <div
+            v-if="presets && presets.length"
+            class="uid-colorpicker__presets"
+          >
+            <button
+              v-for="preset in presets"
+              :key="preset"
+              type="button"
+              class="uid-colorpicker__preset"
+              :class="{ 'uid-colorpicker__preset--active': isPresetActive(preset) }"
+              :style="{ background: preset }"
+              :aria-label="preset"
+              @click="selectPreset(preset)"
+            />
+          </div>
         </div>
-      </div>
-    </Transition>
+      </Transition>
+    </Teleport>
   </div>
 </template>

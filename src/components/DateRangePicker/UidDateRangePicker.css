@@ -80,10 +80,8 @@
 }
 
 .uid-daterange__panel {
-  position: absolute;
-  top: calc(100% + 4px);
-  left: 0;
-  z-index: var(--uid-z-dropdown);
+  /* Teleported to the body; position and coordinates come from useFloatingPanel. */
+  z-index: var(--uid-z-popover, 450);
   background: var(--uid-color-bg);
   border: 1px solid var(--uid-color-border);
   border-radius: var(--uid-radius-md);
@@ -232,7 +230,7 @@
 }
 
 .uid-daterange__btn:focus-visible {
-  outline: 2px solid var(--uid-accent);
+  outline: 2px solid var(--uid-color-focus-ring);
   outline-offset: 2px;
 }
 
@@ -268,7 +266,7 @@
 }
 
 .uid-daterange__time:focus-visible {
-  outline: 2px solid var(--uid-accent);
+  outline: 2px solid var(--uid-color-focus-ring);
   outline-offset: 2px;
 }
 

@@ -231,6 +231,7 @@ function onMenuKeydown(e: KeyboardEvent): void {
     items[items.length - 1]?.focus()
   } else if (e.key === 'Escape') {
     e.preventDefault()
+    e.stopPropagation()
     closeMenu(true)
   } else if (e.key === 'Tab') {
     closeMenu()
