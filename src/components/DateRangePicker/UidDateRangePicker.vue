@@ -51,9 +51,13 @@ const emit = defineEmits<{
   change: [value: DateRange]
 }>()
 
-const model = defineModel<DateRange>({
+const model = defineModel<DateRange | null>({
   default: () => ({ start: null, end: null }),
 })
+
+// A null or undefined v-model (a form field with no value yet) reads as an
+// empty range instead of crashing on `.start`.
+const range = computed<DateRange>(() => model.value ?? { start: null, end: null })
 
 const isOpen = ref(false)
 const containerRef = ref<HTMLElement | null>(null)
@@ -106,13 +110,13 @@ function formatDisplay(s: string): string {
   return time ? `${date} ${time}` : date
 }
 
-const startDay = computed(() => (model.value.start ? datePart(model.value.start) : null))
-const endDay = computed(() => (model.value.end ? datePart(model.value.end) : null))
+const startDay = computed(() => (range.value.start ? datePart(range.value.start) : null))
+const endDay = computed(() => (range.value.end ? datePart(range.value.end) : null))
 
 const displayValue = computed(() => {
-  if (!model.value.start && !model.value.end) return ''
-  const s = model.value.start ? formatDisplay(model.value.start) : '...'
-  const e = model.value.end ? formatDisplay(model.value.end) : '...'
+  if (!range.value.start && !range.value.end) return ''
+  const s = range.value.start ? formatDisplay(range.value.start) : '...'
+  const e = range.value.end ? formatDisplay(range.value.end) : '...'
   return `${s} — ${e}`
 })
 
@@ -196,8 +200,8 @@ function open(): void {
   if (props.disabled) return
   draftStart.value = null
   hoverDate.value = null
-  if (model.value.start) {
-    const d = parseISO(model.value.start)
+  if (range.value.start) {
+    const d = parseISO(range.value.start)
     viewYear.value = d.getFullYear()
     viewMonth.value = d.getMonth()
   }
@@ -225,8 +229,8 @@ function selectDay(day: CalendarDay): void {
     : [day.iso, draftStart.value]
   if (props.withTime) {
     commit({
-      start: withTimeOf(start, timePart(model.value.start) ?? DEFAULT_START_TIME),
-      end: withTimeOf(end, timePart(model.value.end) ?? DEFAULT_END_TIME),
+      start: withTimeOf(start, timePart(range.value.start) ?? DEFAULT_START_TIME),
+      end: withTimeOf(end, timePart(range.value.end) ?? DEFAULT_END_TIME),
     })
     draftStart.value = null
     hoverDate.value = null
@@ -244,9 +248,9 @@ function commit(next: DateRange): void {
 
 function onTimeInput(edge: 'start' | 'end', e: Event): void {
   const value = (e.target as HTMLInputElement).value
-  const current = model.value[edge]
+  const current = range.value[edge]
   if (!current || !/^\d{2}:\d{2}/.test(value)) return
-  commit({ ...model.value, [edge]: withTimeOf(current, value.slice(0, 5)) })
+  commit({ ...range.value, [edge]: withTimeOf(current, value.slice(0, 5)) })
 }
 
 function onDayHover(iso: string): void {
@@ -342,12 +346,12 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
       />
       <span
         class="uid-daterange__value"
-        :class="{ 'uid-daterange__value--placeholder': !model.start && !model.end }"
+        :class="{ 'uid-daterange__value--placeholder': !range.start && !range.end }"
       >
         {{ displayValue || placeholderText }}
       </span>
       <button
-        v-if="clearable && (model.start || model.end)"
+        v-if="clearable && (range.start || range.end)"
         type="button"
         class="uid-daterange__clear"
         :aria-label="locale.common.clear"
@@ -486,8 +490,8 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
               <input
                 type="time"
                 class="uid-daterange__time uid-daterange__time--start"
-                :value="timePart(model.start) ?? ''"
-                :disabled="!model.start"
+                :value="timePart(range.start) ?? ''"
+                :disabled="!range.start"
                 @change="onTimeInput('start', $event)"
               >
             </label>
@@ -496,8 +500,8 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
               <input
                 type="time"
                 class="uid-daterange__time uid-daterange__time--end"
-                :value="timePart(model.end) ?? ''"
-                :disabled="!model.end"
+                :value="timePart(range.end) ?? ''"
+                :disabled="!range.end"
                 @change="onTimeInput('end', $event)"
               >
             </label>

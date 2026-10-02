@@ -133,3 +133,8 @@
   min-height: var(--uid-size-lg);
   font-size: var(--uid-font-size-lg);
 }
+
+/* The text follows the size, as in UidInput: sm 14px, md 16px, lg 18px. */
+.uid-tags-input--sm .uid-tags-input__field { font-size: var(--uid-font-size-sm); }
+.uid-tags-input--md .uid-tags-input__field { font-size: var(--uid-font-size-md); }
+.uid-tags-input--lg .uid-tags-input__field { font-size: var(--uid-font-size-lg); }

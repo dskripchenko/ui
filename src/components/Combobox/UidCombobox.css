@@ -194,3 +194,8 @@
 .uid-combobox--sm .uid-combobox__control { min-height: var(--uid-size-sm); }
 .uid-combobox--sm .uid-combobox__field { padding-block: 0; font-size: var(--uid-font-size-sm); }
 .uid-combobox--lg .uid-combobox__control { min-height: var(--uid-size-lg); }
+
+/* The text follows the size, as in UidInput: sm 14px, md 16px, lg 18px. */
+.uid-combobox--sm .uid-combobox__field { font-size: var(--uid-font-size-sm); }
+.uid-combobox--md .uid-combobox__field { font-size: var(--uid-font-size-md); }
+.uid-combobox--lg .uid-combobox__field { font-size: var(--uid-font-size-lg); }

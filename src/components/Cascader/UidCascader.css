@@ -247,3 +247,8 @@
   min-height: var(--uid-size-lg);
   padding-inline: var(--uid-space-md);
 }
+
+/* The text follows the size, as in UidInput: sm 14px, md 16px, lg 18px. */
+.uid-cascader--sm .uid-cascader__value { font-size: var(--uid-font-size-sm); }
+.uid-cascader--md .uid-cascader__value { font-size: var(--uid-font-size-md); }
+.uid-cascader--lg .uid-cascader__value { font-size: var(--uid-font-size-lg); }

@@ -190,4 +190,11 @@ describe('UidDateRangePicker', () => {
     await wrapper.find('.uid-daterange__btn').trigger('click')
     expect(wrapper.emitted('change')?.[0]).toEqual([{ start: '2026-01-01T00:00', end: '2026-01-31T23:59' }])
   })
+
+  it.each([null, undefined])('treats a %s model as an empty range', async (value) => {
+    const wrapper = mount(UidDateRangePicker, { props: { modelValue: value as never } })
+    expect(wrapper.find('.uid-daterange__value').classes()).toContain('uid-daterange__value--placeholder')
+    await wrapper.find('.uid-daterange__trigger').trigger('click')
+    expect(wrapper.find('.uid-daterange__panel').exists()).toBe(true)
+  })
 })
