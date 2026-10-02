@@ -31,6 +31,7 @@ const props = withDefaults(defineProps<UidStatProps>(), {
   trendSuffix: '%',
   tone: 'primary',
   variant: 'card',
+  locale: undefined,
 })
 
 const uidLocale = useLocale()
