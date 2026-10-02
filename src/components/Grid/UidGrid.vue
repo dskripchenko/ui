@@ -33,16 +33,23 @@ const PLACE_MAP: Record<string, string> = {
   stretch: 'stretch',
 }
 
-const style = computed(() => ({
-  gridTemplateColumns: typeof props.cols === 'number'
-    ? `repeat(${props.cols}, minmax(0, 1fr))`
-    : props.cols,
-  gap: props.rowGap || props.colGap ? undefined : props.gap,
-  rowGap: props.rowGap,
-  columnGap: props.colGap,
-  alignItems: props.align ? PLACE_MAP[props.align] : undefined,
-  justifyItems: props.justify ? PLACE_MAP[props.justify] : undefined,
-}))
+// The gaps are always written as the row-gap/column-gap longhands, and unset
+// keys are left out. Vue writes an undefined style key as '' — and clearing a
+// longhand of a `gap` shorthand that holds a var() drops the whole shorthand
+// in the browser, so the grid used to lose its default gap.
+const style = computed(() => {
+  const split = Boolean(props.rowGap || props.colGap)
+  const entries: Record<string, string | undefined> = {
+    gridTemplateColumns: typeof props.cols === 'number'
+      ? `repeat(${props.cols}, minmax(0, 1fr))`
+      : props.cols,
+    rowGap: split ? props.rowGap : props.gap,
+    columnGap: split ? props.colGap : props.gap,
+    alignItems: props.align ? PLACE_MAP[props.align] : undefined,
+    justifyItems: props.justify ? PLACE_MAP[props.justify] : undefined,
+  }
+  return Object.fromEntries(Object.entries(entries).filter(([, v]) => v !== undefined && v !== ''))
+})
 </script>
 
 <template>
