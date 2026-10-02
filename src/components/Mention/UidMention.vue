@@ -3,6 +3,7 @@ import './UidMention.css'
 import { computed, nextTick, ref, useId } from 'vue'
 import { useLocale } from '../../composables/useLocale.js'
 import { useFloatingPanel } from '../../composables/useFloatingPanel.js'
+import { useControlAttrs } from '../../composables/useControlAttrs.js'
 
 export interface MentionOption {
   value: string
@@ -20,6 +21,9 @@ export interface UidMentionProps {
   emptyText?: string
   filter?: (option: MentionOption, query: string) => boolean
 }
+
+defineOptions({ inheritAttrs: false })
+const { rootAttrs, controlAttrs } = useControlAttrs()
 
 const props = withDefaults(defineProps<UidMentionProps>(), {
   prefix: '@',
@@ -147,6 +151,7 @@ function onKeydown(e: KeyboardEvent): void {
 
 <template>
   <div
+    v-bind="rootAttrs()"
     class="uid-mention"
     :class="{ 'uid-mention--disabled': disabled }"
   >
@@ -159,6 +164,7 @@ function onKeydown(e: KeyboardEvent): void {
     </label>
 
     <textarea
+      v-bind="controlAttrs()"
       :id="fieldId"
       ref="fieldRef"
       class="uid-mention__field"

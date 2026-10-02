@@ -2,6 +2,7 @@
 import './UidRadio.css'
 import { computed, inject, useId } from 'vue'
 import { RADIO_GROUP_KEY, type RadioValue } from './context.js'
+import { useControlAttrs } from '../../composables/useControlAttrs.js'
 
 export interface UidRadioProps {
   value: RadioValue
@@ -10,6 +11,9 @@ export interface UidRadioProps {
   name?: string
   id?: string
 }
+
+defineOptions({ inheritAttrs: false })
+const { rootAttrs, controlAttrs } = useControlAttrs()
 
 const props = withDefaults(defineProps<UidRadioProps>(), {
   label: undefined,
@@ -38,10 +42,12 @@ function handleChange(): void {
 
 <template>
   <label
+    v-bind="rootAttrs()"
     class="uid-radio"
     :class="isDisabled && 'uid-radio--disabled'"
   >
     <input
+      v-bind="controlAttrs()"
       :id="inputId"
       type="radio"
       class="uid-radio__input"

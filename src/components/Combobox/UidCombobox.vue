@@ -6,6 +6,7 @@ import { Check, ChevronDown, X } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
 import { useLocale } from '../../composables/useLocale.js'
 import type { Size } from '../../types/index.js'
+import { useControlAttrs } from '../../composables/useControlAttrs.js'
 
 export interface ComboboxOption {
   value: string | number
@@ -29,6 +30,9 @@ export interface UidComboboxProps {
   emptyText?: string
   id?: string
 }
+
+defineOptions({ inheritAttrs: false })
+const { rootAttrs, controlAttrs } = useControlAttrs()
 
 const props = withDefaults(defineProps<UidComboboxProps>(), {
   disabled: false,
@@ -197,6 +201,7 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
 
 <template>
   <div
+    v-bind="rootAttrs()"
     ref="containerRef"
     class="uid-combobox"
     :class="[
@@ -224,6 +229,7 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
       class="uid-combobox__control"
     >
       <input
+        v-bind="controlAttrs()"
         :id="inputId"
         ref="inputRef"
         class="uid-combobox__field"

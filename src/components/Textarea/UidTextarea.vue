@@ -4,6 +4,7 @@ import { computed, nextTick, onMounted, ref, useId, watch } from 'vue'
 import { useField } from '../../composables/useField.js'
 import type { Size } from '../../types/index.js'
 import type { RuleInput } from '../../utils/validation/types.js'
+import { useControlAttrs } from '../../composables/useControlAttrs.js'
 
 export interface UidTextareaProps {
   placeholder?: string
@@ -22,6 +23,9 @@ export interface UidTextareaProps {
   maxRows?: number
   resize?: 'none' | 'vertical' | 'horizontal' | 'both'
 }
+
+defineOptions({ inheritAttrs: false })
+const { rootAttrs, controlAttrs } = useControlAttrs()
 
 const props = withDefaults(defineProps<UidTextareaProps>(), {
   placeholder: undefined,
@@ -95,6 +99,7 @@ defineExpose({ validate })
 
 <template>
   <div
+    v-bind="rootAttrs()"
     class="uid-textarea-field"
     :class="[
       `uid-textarea-field--${size}`,
@@ -117,6 +122,7 @@ defineExpose({ validate })
     </label>
 
     <textarea
+      v-bind="controlAttrs()"
       :id="inputId"
       ref="textareaRef"
       v-model="model"

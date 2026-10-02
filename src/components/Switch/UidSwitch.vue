@@ -2,6 +2,7 @@
 import './UidSwitch.css'
 import { computed, useId } from 'vue'
 import type { Size } from '../../types/index.js'
+import { useControlAttrs } from '../../composables/useControlAttrs.js'
 
 export interface UidSwitchProps {
   label?: string
@@ -13,6 +14,9 @@ export interface UidSwitchProps {
   id?: string
   size?: Size
 }
+
+defineOptions({ inheritAttrs: false })
+const { rootAttrs, controlAttrs } = useControlAttrs()
 
 const props = withDefaults(defineProps<UidSwitchProps>(), {
   label: undefined,
@@ -46,6 +50,7 @@ function handleChange(event: Event): void {
 
 <template>
   <div
+    v-bind="rootAttrs()"
     class="uid-switch"
     :class="[
       `uid-switch--${size}`,
@@ -55,6 +60,7 @@ function handleChange(event: Event): void {
   >
     <label class="uid-switch__label">
       <input
+        v-bind="controlAttrs()"
         :id="inputId"
         type="checkbox"
         role="switch"
