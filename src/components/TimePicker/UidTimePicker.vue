@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import './UidTimePicker.css'
 import { computed, nextTick, onUnmounted, ref, watch } from 'vue'
+import type { Size } from '../../types/index.js'
 import { Clock } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
 import { useLocale } from '../../composables/useLocale.js'
 import { useFloatingPanel } from '../../composables/useFloatingPanel.js'
 
 export interface UidTimePickerProps {
+  /** Control height of the shared size scale (`--uid-size-sm|md|lg`). */
+  size?: Size
   step?: number
   withSeconds?: boolean
   hour12?: boolean
@@ -16,6 +19,7 @@ export interface UidTimePickerProps {
 }
 
 const props = withDefaults(defineProps<UidTimePickerProps>(), {
+  size: 'md',
   step: 5,
   withSeconds: false,
   hour12: false,
@@ -232,7 +236,7 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
   <div
     ref="containerRef"
     class="uid-timepicker"
-    :class="{ 'uid-timepicker--open': isOpen, 'uid-timepicker--disabled': disabled }"
+    :class="[`uid-timepicker--${size}`, { 'uid-timepicker--open': isOpen, 'uid-timepicker--disabled': disabled }]"
   >
     <div
       ref="triggerRef"

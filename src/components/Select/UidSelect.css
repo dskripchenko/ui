@@ -8,7 +8,8 @@
   align-items: center;
   gap: var(--uid-space-sm);
   width: 100%;
-  padding: var(--uid-space-sm) 12px;
+  /* The control height of the size scale, shared with UidInput and the rest. */
+  padding: var(--uid-space-2xs) 12px;
   border: 1px solid var(--uid-color-border);
   border-radius: var(--uid-radius-md, 8px);
   background: var(--uid-color-bg);
@@ -16,7 +17,7 @@
   user-select: none;
   transition: border-color var(--uid-duration-fast), box-shadow var(--uid-duration-fast);
   outline: none;
-  min-height: 38px;
+  min-height: var(--uid-size-md);
 }
 
 .uid-select__trigger:hover {
@@ -238,8 +239,8 @@
 
 /* Sizes */
 .uid-select--sm .uid-select__trigger {
-  padding: var(--uid-space-xs) var(--uid-space-sm);
-  min-height: 30px;
+  padding: 0 var(--uid-space-sm);
+  min-height: var(--uid-size-sm);
 }
 
 .uid-select--sm .uid-select__value {
@@ -247,8 +248,8 @@
 }
 
 .uid-select--lg .uid-select__trigger {
-  padding: 12px var(--uid-space-md);
-  min-height: 46px;
+  padding: var(--uid-space-2xs) var(--uid-space-md);
+  min-height: var(--uid-size-lg);
 }
 
 /* Transitions */

@@ -234,3 +234,16 @@
   font-size: var(--uid-font-size-sm);
   color: var(--uid-color-text-secondary);
 }
+
+/* Sizes: one control height per size, shared with UidInput and UidSelect. */
+.uid-cascader--sm .uid-cascader__trigger {
+  min-height: var(--uid-size-sm);
+  padding-block: 0;
+  padding-inline: var(--uid-space-sm);
+  font-size: var(--uid-font-size-sm);
+}
+
+.uid-cascader--lg .uid-cascader__trigger {
+  min-height: var(--uid-size-lg);
+  padding-inline: var(--uid-space-md);
+}

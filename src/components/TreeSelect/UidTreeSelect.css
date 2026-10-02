@@ -153,3 +153,15 @@
   padding: var(--uid-space-xs) 0;
   left: 0;
 }
+
+/* Sizes: one control height per size, shared with UidInput and UidSelect. */
+.uid-tree-select--sm .uid-tree-select__trigger {
+  min-height: var(--uid-size-sm);
+  padding-inline: var(--uid-space-sm);
+  font-size: var(--uid-font-size-sm);
+}
+
+.uid-tree-select--lg .uid-tree-select__trigger {
+  min-height: var(--uid-size-lg);
+  padding-inline: var(--uid-space-md);
+}

@@ -192,4 +192,5 @@
 
 /* Sizes */
 .uid-combobox--sm .uid-combobox__control { min-height: var(--uid-size-sm); }
+.uid-combobox--sm .uid-combobox__field { padding-block: 0; font-size: var(--uid-font-size-sm); }
 .uid-combobox--lg .uid-combobox__control { min-height: var(--uid-size-lg); }

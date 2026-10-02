@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import './UidTreeSelect.css'
 import { computed, onUnmounted, ref, useId, watch } from 'vue'
+import type { Size } from '../../types/index.js'
 import { useFloatingPanel } from '../../composables/useFloatingPanel.js'
 import { ChevronDown, X } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
@@ -9,6 +10,8 @@ import { useLocale } from '../../composables/useLocale.js'
 import type { TreeNode, TreeKey } from '../TreeView/context.js'
 
 export interface UidTreeSelectProps {
+  /** Control height of the shared size scale (`--uid-size-sm|md|lg`). */
+  size?: Size
   nodes: TreeNode[]
   multiple?: boolean
   checkable?: boolean
@@ -26,6 +29,7 @@ export interface UidTreeSelectProps {
 }
 
 const props = withDefaults(defineProps<UidTreeSelectProps>(), {
+  size: 'md',
   multiple: false,
   checkable: false,
   checkStrictly: false,
@@ -203,11 +207,11 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
   <div
     ref="containerRef"
     class="uid-tree-select"
-    :class="{
+    :class="[`uid-tree-select--${size}`, {
       'uid-tree-select--open': isOpen,
       'uid-tree-select--disabled': disabled,
       'uid-tree-select--error': hasError,
-    }"
+    }]"
   >
     <label
       v-if="label"

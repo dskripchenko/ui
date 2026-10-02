@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import './UidDateRangePicker.css'
 import { computed, onUnmounted, ref, watch } from 'vue'
+import type { Size } from '../../types/index.js'
 import { Calendar, ChevronLeft, ChevronRight } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
 import { useLocale } from '../../composables/useLocale.js'
@@ -18,6 +19,8 @@ export interface DateRangePreset {
 }
 
 export interface UidDateRangePickerProps {
+  /** Control height of the shared size scale (`--uid-size-sm|md|lg`). */
+  size?: Size
   min?: string
   max?: string
   disabled?: boolean
@@ -31,6 +34,7 @@ export interface UidDateRangePickerProps {
 }
 
 const props = withDefaults(defineProps<UidDateRangePickerProps>(), {
+  size: 'md',
   min: undefined,
   max: undefined,
   disabled: false,
@@ -316,7 +320,7 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
   <div
     ref="containerRef"
     class="uid-daterange"
-    :class="{ 'uid-daterange--open': isOpen, 'uid-daterange--disabled': disabled }"
+    :class="[`uid-daterange--${size}`, { 'uid-daterange--open': isOpen, 'uid-daterange--disabled': disabled }]"
   >
     <div
       ref="triggerRef"

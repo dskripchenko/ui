@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import './UidCascader.css'
 import { computed, nextTick, onUnmounted, ref, useId, watch } from 'vue'
+import type { Size } from '../../types/index.js'
 import { useFloatingPanel } from '../../composables/useFloatingPanel.js'
 import { ChevronDown, ChevronRight, X } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
@@ -16,6 +17,8 @@ export interface CascaderOption {
 }
 
 export interface UidCascaderProps {
+  /** Control height of the shared size scale (`--uid-size-sm|md|lg`). */
+  size?: Size
   options: CascaderOption[]
   placeholder?: string
   separator?: string
@@ -41,6 +44,7 @@ interface LabelSegment {
 }
 
 const props = withDefaults(defineProps<UidCascaderProps>(), {
+  size: 'md',
   separator: ' / ',
   clearable: true,
   disabled: false,
@@ -280,10 +284,10 @@ function isSelected(opt: CascaderOption, level: number): boolean {
   <div
     ref="containerRef"
     class="uid-cascader"
-    :class="{
+    :class="[`uid-cascader--${size}`, {
       'uid-cascader--open': isOpen,
       'uid-cascader--disabled': disabled,
-    }"
+    }]"
   >
     <label
       v-if="label"

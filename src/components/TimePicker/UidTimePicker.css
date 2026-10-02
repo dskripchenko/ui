@@ -8,7 +8,7 @@
   align-items: center;
   gap: var(--uid-space-sm);
   width: 100%;
-  padding: var(--uid-space-sm) 12px;
+  padding: 0 12px;
   border: 1px solid var(--uid-color-border);
   border-radius: var(--uid-radius-md);
   background: var(--uid-color-bg);
@@ -16,7 +16,7 @@
   user-select: none;
   transition: border-color var(--uid-duration-fast), box-shadow var(--uid-duration-fast);
   outline: none;
-  min-height: 38px;
+  min-height: var(--uid-size-md);
 }
 
 .uid-timepicker__trigger:hover {
@@ -182,4 +182,16 @@
 .uid-timepicker-panel-leave-to {
   opacity: 0;
   transform: translateY(-4px);
+}
+
+/* Sizes: one control height per size, shared with UidInput and UidSelect. */
+.uid-timepicker--sm .uid-timepicker__trigger {
+  min-height: var(--uid-size-sm);
+  padding-inline: var(--uid-space-sm);
+  font-size: var(--uid-font-size-sm);
+}
+.uid-timepicker--sm .uid-timepicker__value { font-size: var(--uid-font-size-sm); }
+.uid-timepicker--lg .uid-timepicker__trigger {
+  min-height: var(--uid-size-lg);
+  padding-inline: var(--uid-space-md);
 }

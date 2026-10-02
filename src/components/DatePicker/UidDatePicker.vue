@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import './UidDatePicker.css'
 import { computed, nextTick, onUnmounted, ref, watch } from 'vue'
+import type { Size } from '../../types/index.js'
 import { ChevronDown, ChevronLeft, ChevronRight } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
 import { useLocale } from '../../composables/useLocale.js'
 import { useFloatingPanel } from '../../composables/useFloatingPanel.js'
 
 export interface UidDatePickerProps {
+  /** Control height of the shared size scale (`--uid-size-sm|md|lg`). */
+  size?: Size
   min?: string
   max?: string
   disabled?: boolean
@@ -15,6 +18,7 @@ export interface UidDatePickerProps {
 }
 
 const props = withDefaults(defineProps<UidDatePickerProps>(), {
+  size: 'md',
   min: undefined,
   max: undefined,
   disabled: false,
@@ -215,7 +219,7 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
   <div
     ref="containerRef"
     class="uid-datepicker"
-    :class="{ 'uid-datepicker--open': isOpen, 'uid-datepicker--disabled': disabled }"
+    :class="[`uid-datepicker--${size}`, { 'uid-datepicker--open': isOpen, 'uid-datepicker--disabled': disabled }]"
   >
     <div
       ref="triggerRef"

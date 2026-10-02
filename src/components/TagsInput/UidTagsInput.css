@@ -120,6 +120,12 @@
 /* Sizes */
 .uid-tags-input--sm .uid-tags-input__control {
   min-height: var(--uid-size-sm);
+  padding-block: 0;
+  font-size: var(--uid-font-size-sm);
+}
+
+.uid-tags-input--sm .uid-tags-input__field {
+  padding-block: 0;
   font-size: var(--uid-font-size-sm);
 }
 

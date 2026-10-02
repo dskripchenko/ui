@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import './UidColorPicker.css'
 import { computed, onUnmounted, ref, watch } from 'vue'
+import type { Size } from '../../types/index.js'
 import { useFloatingPanel } from '../../composables/useFloatingPanel.js'
 import { useLocale } from '../../composables/useLocale.js'
 import { normalizeColor, parseColor } from './colorParse.js'
 
 export interface UidColorPickerProps {
+  /** Control height of the shared size scale (`--uid-size-sm|md|lg`). */
+  size?: Size
   disabled?: boolean
   presets?: string[]
   alpha?: boolean
@@ -13,6 +16,7 @@ export interface UidColorPickerProps {
 }
 
 const props = withDefaults(defineProps<UidColorPickerProps>(), {
+  size: 'md',
   disabled: false,
   presets: undefined,
   alpha: false,
@@ -314,7 +318,7 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
   <div
     ref="containerRef"
     class="uid-colorpicker"
-    :class="{ 'uid-colorpicker--open': isOpen, 'uid-colorpicker--disabled': disabled }"
+    :class="[`uid-colorpicker--${size}`, { 'uid-colorpicker--open': isOpen, 'uid-colorpicker--disabled': disabled }]"
   >
     <button
       ref="triggerRef"
