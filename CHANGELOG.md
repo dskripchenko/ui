@@ -1,5 +1,41 @@
 # @dskripchenko/ui
 
+## 1.7.0
+
+### Minor Changes
+
+- fa72557: Form controls of one size share one height, so a select next to an input lines up in a form row. Every control box takes its height from `--uid-size-sm|md|lg` (32/40/48px): UidSelect's trigger was 31/42/50px, the date, date-range and time picker triggers 42px, UidColorPicker 39px, UidTagsInput sm 38px, UidCombobox sm 34px. UidDatePicker, UidDateRangePicker, UidTimePicker, UidTreeSelect, UidCascader and UidColorPicker gain a `size` prop (`sm` | `md` | `lg`, default `md`). A guard spec keeps literal heights out of the control boxes.
+- b3c0e3e: Floating layers work inside modals and drawers.
+  - `UidDatePicker`, `UidDateRangePicker`, `UidTimePicker`, `UidTreeSelect`, `UidCascader`, `UidCombobox`, `UidColorPicker` and `UidMention` rendered their panel in place, so inside a `UidModal`/`UidDrawer` it was clipped by the body's overflow and sat under the footer. Their panels are now teleported to the body and positioned `fixed` (new internal `useFloatingPanel`): they follow the anchor on scroll and resize, flip above it when there is no room below, and cap their height (scrolling) when there is room on neither side.
+  - One stacking scale: `base < sticky < dropdown < overlay < drawer = modal < popover < toast < tooltip`. New tokens `--uid-z-popover` (450) and `--uid-z-drawer` (400); `--uid-z-sticky` and `--uid-z-dropdown` swap places (100 / 200). Every teleported layer — select, menu, popover, breadcrumb overflow and the pickers — stacks at `--uid-z-popover`, above modals, drawers and the command palette.
+  - Escape closes only the top layer: a picker or menu inside a modal closes alone, and a drawer opened from a modal closes without the modal (`UidModal`, `UidDrawer`, `UidCommand` keep an overlay stack and ignore an Escape already handled).
+  - Focus rings use `--uid-color-focus-ring` everywhere: a zero-specificity `:focus-visible` rule in `global.css` replaces the browser's default blue ring (e.g. the date picker's day cells), and component rings that used `--uid-color-primary`/`--uid-accent` now use the focus-ring token.
+  - `UidTable` emits `row-click` with the `MouseEvent` as the second argument, and no longer emits it for clicks on interactive elements inside a cell (links, buttons, inputs, `role="checkbox|switch|button|…"`, `[contenteditable]`, `[data-row-click-ignore]`) or at the end of a text selection.
+  - `UidColorPicker` takes its placeholder from the locale (new `placeholder` prop) instead of a hard-coded Russian string.
+
+- 8297b3f: Every caption follows the kit locale, and number inputs keep their value readable.
+  - Hard-coded Russian captions, aria-labels and defaults moved into the locale bags (`ru`/`en`, typed in `UidLocale`) and read through `useLocale()`; the props stay as overrides. New sections: `sidebar`, `header`, `pageHeader`, `emptyState`, `errorState`, `wizard`, `calendar`, `carousel`, `stepper`, `transfer`, `sparkline`, `table`, `avatarGroup`, `command`, `anchor`, `heatmap`, `validation`; new keys in `datePicker`, `dateRangePicker`, `timePicker`, `colorPicker`, `rating`, `pagination`, `breadcrumb`. Affected: UidTable (empty text, select-all and row labels), UidPagination/UidPaginationCursor/UidPageSize/UidLoadMore, UidEmptyState, UidErrorState presets, UidCalendar "today", UidSpinner, UidCommand, UidBreadcrumb, UidSidebar, UidHeader, UidPageHeader, UidWizardStep, UidCarousel, UidStepper, UidTransfer, UidSparkline, UidHeatmap, UidAvatarGroup, UidAnchor, UidRating, and the picker dialogs' labels. Props whose defaults were Russian strings now default to `undefined` and fall back to the locale.
+  - Default validation messages follow the locale too: `provideLocale()` switches them; `setValidationLocale()` is exported for use outside Vue. `setMessages()` overrides still win.
+  - A guard spec fails on any Cyrillic outside `src/locales` in components, patterns, layouts, composables and utils (comments, stories and specs excepted).
+  - `UidNumberInput` drops its steppers when disabled or readonly, and hides them through a container query when the control is too narrow for the steppers and the value (a 95px column showed "82" for 82.99).
+
+### Patch Changes
+
+- ca02c99: - `UidDateRangePicker` no longer crashes on a `null` or `undefined` v-model (a form field with no value yet): it reads as an empty range. Clearing still emits `{ start: null, end: null }`.
+  - Control text follows the control's size like `UidInput` (sm 14px, md 16px, lg 18px) in UidSelect, UidCombobox, UidTagsInput, the date, date-range and time pickers, UidTreeSelect, UidCascader and UidColorPicker. TreeSelect and Cascader stayed 16px at sm, the lg sizes stayed 16px, and UidColorPicker was 14px at every size.
+- 5f31385: Fix real-browser defects found while reviewing the admin showcase:
+  - `UidSidebar` and `UidDrawer` set `border-style: solid` without a `border-width`, so every side got the browser default `medium` (3px) — a grey strip on the sidebar's left, top and bottom. The base rules now reset `border-width: 0` and only the side modifiers draw a border.
+  - `UidGauge` and `UidRating` printed their value with `toFixed`, ignoring the kit locale ("83.0" in a Russian panel). They now format through `Intl` in the active kit locale, and accept a `locale` prop like `UidStat`.
+  - `UidFileUpload` printed file sizes with hard-coded Russian units ("1.5 КБ") in every locale. Sizes now use `Intl` unit formatting in the kit locale ("1.5 kB", "1,5 КБ").
+
+- e217c55: Tokens the components used but no token file defined now exist, so their declarations no longer silently fall back:
+  - `--uid-font-size-base` (= `--uid-font-size-md`, 16px): UidPageHeader, UidEmptyState, UidErrorState and UidAccordion used it with no fallback; Select, DatePicker and Command already fell back to 16px, so sizes are unchanged.
+  - `--uid-shadow-xl` (light `0 20px 60px rgb(0 0 0 / 0.3)`, dark `… / 0.6`): UidCommand had no shadow; Modal and Drawer keep their former fallback value in light.
+  - `--uid-focus-ring` (the 3px primary-subtle halo the fallbacks already drew).
+  - `--uid-z-affix` (100) and `--uid-z-fixed` (150) join the stacking scale: UidBackTop no longer floats above modals and toasts at 1000.
+  - UidTooltip referenced the non-existent `--uid-color-neutral-900/50`, so a tooltip had a transparent background; it now uses the zinc scale.
+  - A guard spec fails on any `var(--uid-…)` without a fallback that neither `src/tokens`, `src/styles` nor the component's own stylesheet defines.
+
 ## 1.6.2
 
 ### Patch Changes
