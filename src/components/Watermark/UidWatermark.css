@@ -11,7 +11,7 @@
   z-index: var(--uid-watermark-z, 9);
   background-position: 0 0;
   background-size: var(--uid-watermark-size, auto);
-  background-image: var(--uid-watermark-image);
+  background-image: var(--uid-watermark-image, none);
 }
 
 .uid-watermark__content {
