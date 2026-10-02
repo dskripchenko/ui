@@ -28,6 +28,29 @@ export const Default: Story = {
   }),
 }
 
+export const NonLinkCrumbs: Story = {
+  render: () => ({
+    components: { UidBreadcrumb, UidBreadcrumbItem },
+    setup: () => ({ onSection: () => alert('Раздел') }),
+    template: `
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <!-- A middle crumb without a link is plain text; only the last crumb is current -->
+        <UidBreadcrumb>
+          <UidBreadcrumbItem href="/">Главная</UidBreadcrumbItem>
+          <UidBreadcrumbItem>Настройки</UidBreadcrumbItem>
+          <UidBreadcrumbItem>Профиль</UidBreadcrumbItem>
+        </UidBreadcrumb>
+        <!-- Router location (RouterLink when vue-router is installed) and a click-only crumb -->
+        <UidBreadcrumb>
+          <UidBreadcrumbItem to="/">Главная</UidBreadcrumbItem>
+          <UidBreadcrumbItem @click="onSection">Раздел (click)</UidBreadcrumbItem>
+          <UidBreadcrumbItem :current="false">Без текущей страницы</UidBreadcrumbItem>
+        </UidBreadcrumb>
+      </div>
+    `,
+  }),
+}
+
 export const CustomSeparator: Story = {
   render: () => ({
     components: { UidBreadcrumb, UidBreadcrumbItem },

@@ -59,6 +59,43 @@ export const Default: Story = {
   }),
 }
 
+export const FixedColumns: Story = {
+  render: () => ({
+    components: { UidTable },
+    setup: () => {
+      const wideColumns: UidTableColumn[] = [
+        { key: 'id', label: 'ID', width: '64px', fixed: 'left' },
+        { key: 'name', label: 'Имя', width: '180px', fixed: 'left' },
+        { key: 'role', label: 'Роль', width: '200px' },
+        { key: 'email', label: 'Email', width: '260px' },
+        { key: 'city', label: 'Город', width: '200px' },
+        { key: 'phone', label: 'Телефон', width: '200px' },
+        { key: 'status', label: 'Статус', width: '120px', align: 'center', fixed: 'right' },
+      ]
+      const rows = rawData.map((r, i) => ({
+        ...r,
+        id: i + 1,
+        city: 'Москва',
+        phone: `+7 900 000-00-0${i}`,
+      }))
+      const selection = ref(new Set<string | number>([2]))
+      return { wideColumns, rows, selection }
+    },
+    template: `
+      <div style="max-width: 640px">
+        <UidTable
+          :columns="wideColumns"
+          :data="rows"
+          striped
+          bordered
+          selectable
+          v-model:selection="selection"
+        />
+      </div>
+    `,
+  }),
+}
+
 export const Striped: Story = {
   render: () => ({
     components: { UidTable },

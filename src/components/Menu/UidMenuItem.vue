@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { inject } from 'vue'
 import { MENU_CLOSE_KEY } from './context.js'
+import UidIcon from '../../icons/UidIcon.vue'
 import type { Component } from 'vue'
 
 export interface UidMenuItemProps {
+  /** Icon component (e.g. from lucide-vue-next) rendered before the label. */
   icon?: Component
   disabled?: boolean
   variant?: 'default' | 'danger'
@@ -44,6 +46,12 @@ function handleClick(event: MouseEvent): void {
     :disabled="disabled"
     @click="handleClick"
   >
+    <UidIcon
+      v-if="icon"
+      class="uid-menu-item__icon"
+      :icon="icon"
+      :size="16"
+    />
     <slot />
   </button>
 </template>

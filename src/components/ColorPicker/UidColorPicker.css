@@ -51,7 +51,7 @@
 }
 
 .uid-colorpicker__trigger-label {
-  font-family: var(--uid-font-mono, monospace);
+  font-family: var(--uid-font-family-mono, monospace);
   font-size: var(--uid-font-size-sm, 14px);
 }
 
@@ -201,7 +201,7 @@
   border: 1px solid var(--uid-color-border);
   border-radius: var(--uid-radius-sm, 4px);
   background: var(--uid-color-bg-subtle);
-  font-family: var(--uid-font-mono, monospace);
+  font-family: var(--uid-font-family-mono, monospace);
   font-size: var(--uid-font-size-sm, 14px);
   color: var(--uid-color-text);
   outline: none;

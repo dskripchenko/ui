@@ -71,7 +71,7 @@ Theme über Attribut auf `<html>` umschalten:
 
 Kurze Auswahl — vollständiger Katalog im [Storybook](https://dskripchenko.github.io/ui/).
 
-**Formulare & Eingabe:** Button, Input, Textarea, NumberInput, Checkbox, Radio, Switch, Label, FormField, Select, Combobox, TagsInput, DatePicker, DateRangePicker, TimePicker, ColorPicker, Slider, Rating, FileUpload, Mention, TreeSelect, Cascader
+**Formulare & Eingabe:** Button, Input, Textarea, NumberInput, Checkbox, CheckboxGroup, Radio, Switch, Label, FormField, Select, Combobox, TagsInput, DatePicker, DateRangePicker, TimePicker, ColorPicker, Slider, Rating, FileUpload, Mention, TreeSelect, Cascader
 
 **Feedback:** Spinner, Skeleton, Badge, Alert, Progress, Toast, Tour
 

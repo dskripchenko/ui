@@ -81,7 +81,7 @@ Switch theme by attribute on `<html>`:
 
 A short selection — the full catalog is in [Storybook](https://dskripchenko.github.io/ui/).
 
-**Forms & input:** Button, Input, Textarea, NumberInput, Checkbox, Radio, Switch, Label, FormField, Select, Combobox, TagsInput, DatePicker, DateRangePicker, TimePicker, ColorPicker, Slider, Rating, FileUpload, Mention, TreeSelect, Cascader
+**Forms & input:** Button, Input, Textarea, NumberInput, Checkbox, CheckboxGroup, Radio, Switch, Label, FormField, Select, Combobox, TagsInput, DatePicker, DateRangePicker, TimePicker, ColorPicker, Slider, Rating, FileUpload, Mention, TreeSelect, Cascader
 
 **Feedback:** Spinner, Skeleton, Badge, Alert, Progress, Toast, Tour
 

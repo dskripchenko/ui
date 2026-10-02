@@ -191,7 +191,7 @@ Default font — **Inter**. Picked for neutrality, screen readability, and excel
 ```css
 :root {
   --uid-font-family-sans: 'Inter', system-ui, -apple-system, sans-serif;
-  --uid-font-family-mono: 'IBM Plex Mono', 'Fira Code', ui-monospace, monospace;
+  --uid-font-family-mono: 'IBM Plex Mono', 'Fira Code', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Monaco, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', 'Courier New', monospace;
 
   --uid-font-size-xs:   12px;
   --uid-font-size-sm:   14px;

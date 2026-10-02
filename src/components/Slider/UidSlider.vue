@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import './UidSlider.css'
-import { computed } from 'vue'
+import { computed, useId } from 'vue'
 
 export interface UidSliderMark {
   value: number
@@ -18,6 +18,13 @@ export interface UidSliderProps {
   showValue?: boolean
   formatValue?: (val: number) => string
   marks?: UidSliderMarks
+  /**
+   * Accessible name for the slider handle, independent of the visible `label`
+   * (e.g. when the visible caption lives elsewhere or is not descriptive enough).
+   */
+  ariaLabel?: string
+  /** Id(s) of the element(s) that label the slider handle. Takes precedence over `ariaLabel`/`label`. */
+  ariaLabelledby?: string
 }
 
 const props = withDefaults(defineProps<UidSliderProps>(), {
@@ -29,7 +36,15 @@ const props = withDefaults(defineProps<UidSliderProps>(), {
   showValue: false,
   formatValue: undefined,
   marks: undefined,
+  ariaLabel: undefined,
+  ariaLabelledby: undefined,
 })
+
+const inputId = useId()
+
+const handleAriaLabel = computed(() =>
+  props.ariaLabelledby ? undefined : (props.ariaLabel ?? props.label),
+)
 
 const model = defineModel<number>({ default: 0 })
 
@@ -77,6 +92,7 @@ const displayValue = computed(() =>
       <label
         v-if="label"
         class="uid-slider__label"
+        :for="inputId"
       >{{ label }}</label>
       <span
         v-if="showValue"
@@ -86,6 +102,7 @@ const displayValue = computed(() =>
     </div>
 
     <input
+      :id="inputId"
       v-model.number="model"
       class="uid-slider__input"
       type="range"
@@ -93,7 +110,9 @@ const displayValue = computed(() =>
       :max="max"
       :step="step"
       :disabled="disabled"
-      :aria-label="label"
+      :aria-label="handleAriaLabel"
+      :aria-labelledby="ariaLabelledby"
+      :aria-valuetext="formatValue ? displayValue : undefined"
       :aria-valuemin="min"
       :aria-valuemax="max"
       :aria-valuenow="model"

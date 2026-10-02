@@ -369,7 +369,7 @@ CSS custom properties нельзя использовать в `@media`, поэ�
 :root {
   /* семейства */
   --uid-font-family-sans: 'Inter', system-ui, -apple-system, sans-serif;
-  --uid-font-family-mono: 'IBM Plex Mono', 'Fira Code', ui-monospace, monospace;
+  --uid-font-family-mono: 'IBM Plex Mono', 'Fira Code', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Monaco, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', 'Courier New', monospace;
 
   /* размеры */
   --uid-font-size-xs:   12px;

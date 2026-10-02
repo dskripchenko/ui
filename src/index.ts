@@ -14,8 +14,13 @@ export type { UidInputProps } from './components/Input/index.js'
 export { UidTextarea } from './components/Textarea/index.js'
 export type { UidTextareaProps } from './components/Textarea/index.js'
 
-export { UidCheckbox } from './components/Checkbox/index.js'
-export type { UidCheckboxProps } from './components/Checkbox/index.js'
+export { UidCheckbox, UidCheckboxGroup } from './components/Checkbox/index.js'
+export type {
+  UidCheckboxProps,
+  UidCheckboxGroupProps,
+  CheckboxGroupOption,
+  CheckboxGroupValue,
+} from './components/Checkbox/index.js'
 
 export { UidRadio, UidRadioGroup } from './components/Radio/index.js'
 export type { UidRadioProps, UidRadioGroupProps, RadioValue } from './components/Radio/index.js'
@@ -95,7 +100,7 @@ export { UidTable } from './components/Table/index.js'
 export type { UidTableProps, UidTableColumn } from './components/Table/index.js'
 
 export { UidSelect } from './components/Select/index.js'
-export type { UidSelectProps, SelectOption } from './components/Select/index.js'
+export type { UidSelectProps, SelectOption, SelectValue } from './components/Select/index.js'
 
 export { UidDatePicker } from './components/DatePicker/index.js'
 export type { UidDatePickerProps } from './components/DatePicker/index.js'
