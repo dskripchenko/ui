@@ -1,6 +1,7 @@
-import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { flushPromises, mount } from '@vue/test-utils'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { defineComponent, h, nextTick, ref } from 'vue'
+import breadcrumbCss from './UidBreadcrumb.css?raw'
 import UidBreadcrumb from './UidBreadcrumb.vue'
 import UidBreadcrumbItem from './UidBreadcrumbItem.vue'
 
@@ -170,3 +171,175 @@ describe('UidBreadcrumbItem', () => {
   })
 })
 
+
+describe('UidBreadcrumb разделитель', () => {
+  it('разделитель — отдельный элемент с aria-hidden', () => {
+    const wrapper = buildCrumb()
+    const seps = wrapper.findAll('.uid-breadcrumb__item > .uid-breadcrumb__separator')
+    expect(seps.length).toBe(3)
+    for (const sep of seps) expect(sep.attributes('aria-hidden')).toBe('true')
+  })
+
+  it('в CSS нет невалидного свойства aria-hidden', () => {
+    expect(breadcrumbCss).not.toMatch(/aria-hidden\s*:/)
+  })
+})
+
+describe('UidBreadcrumb nowrap / collapse', () => {
+  const ITEM_WIDTH = 100
+  const PROBE_WIDTH = 20
+  let listWidth = 260
+
+  beforeEach(() => {
+    listWidth = 260
+    vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (this: HTMLElement) {
+      const width = this.classList.contains('uid-breadcrumb__probe')
+        ? PROBE_WIDTH
+        : this.classList.contains('uid-breadcrumb__item') ? ITEM_WIDTH : 0
+      return { width, height: 20, top: 0, left: 0, right: width, bottom: 20, x: 0, y: 0, toJSON: () => ({}) } as DOMRect
+    })
+    vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(function (this: HTMLElement) {
+      return this.classList.contains('uid-breadcrumb__list') ? listWidth : 0
+    })
+  })
+
+  afterEach(() => {
+    vi.restoreAllMocks()
+    for (const el of Array.from(document.body.querySelectorAll('.uid-breadcrumb__menu'))) el.remove()
+  })
+
+  const mountTrail = (props: Record<string, unknown>, onSection = vi.fn()) => mount(UidBreadcrumb, {
+    props,
+    slots: {
+      default: () => [
+        h(UidBreadcrumbItem, { href: '/' }, () => 'Главная'),
+        h(UidBreadcrumbItem, { href: '/a' }, () => 'Раздел A'),
+        h(UidBreadcrumbItem, { onClick: onSection }, () => 'Раздел B'),
+        h(UidBreadcrumbItem, null, () => 'Раздел C'),
+        h(UidBreadcrumbItem, null, () => 'Страница'),
+      ],
+    },
+    attachTo: document.body,
+  })
+
+  it('nowrap ставит модификатор, но ничего не сворачивает', async () => {
+    const wrapper = mountTrail({ nowrap: true })
+    await flushPromises()
+    expect(wrapper.find('nav').classes()).toContain('uid-breadcrumb--nowrap')
+    expect(wrapper.find('nav').classes()).not.toContain('uid-breadcrumb--collapse')
+    expect(wrapper.find('.uid-breadcrumb__ellipsis').exists()).toBe(false)
+    wrapper.unmount()
+  })
+
+  it('collapse подразумевает nowrap', async () => {
+    const wrapper = mountTrail({ collapse: true })
+    await flushPromises()
+    expect(wrapper.find('nav').classes()).toEqual(expect.arrayContaining(['uid-breadcrumb--nowrap', 'uid-breadcrumb--collapse']))
+    wrapper.unmount()
+  })
+
+  it('collapse: средние крошки сворачиваются в «…», первая и последняя остаются', async () => {
+    const wrapper = mountTrail({ collapse: true })
+    await flushPromises()
+    const items = wrapper.findAll('.uid-breadcrumb__list > .uid-breadcrumb__item')
+    // 5 × 100 = 500 > 260: hide the 2nd, 3rd, 4th → 200 + 20 ("…") fits.
+    expect(items[0].classes()).not.toContain('uid-breadcrumb__item--collapsed')
+    expect(items[1].classes()).toContain('uid-breadcrumb__item--ellipsis')
+    expect(items[2].classes()).toContain('uid-breadcrumb__item--collapsed')
+    expect(items[3].classes()).toContain('uid-breadcrumb__item--collapsed')
+    expect(items[4].classes()).not.toContain('uid-breadcrumb__item--collapsed')
+    expect(wrapper.find('nav').classes()).not.toContain('uid-breadcrumb--measuring')
+    const button = items[1].find('button.uid-breadcrumb__ellipsis')
+    expect(button.exists()).toBe(true)
+    expect(button.attributes('aria-label')).toBe('Показать скрытые разделы')
+    expect(button.attributes('aria-haspopup')).toBe('menu')
+    expect(button.attributes('aria-expanded')).toBe('false')
+    wrapper.unmount()
+  })
+
+  it('collapse сворачивает только сколько нужно', async () => {
+    listWidth = 420
+    const wrapper = mountTrail({ collapse: true })
+    await flushPromises()
+    const items = wrapper.findAll('.uid-breadcrumb__list > .uid-breadcrumb__item')
+    // 500 → hide the 2nd: 400 + 20 = 420 fits.
+    expect(items[1].classes()).toContain('uid-breadcrumb__item--ellipsis')
+    expect(items[2].classes()).not.toContain('uid-breadcrumb__item--collapsed')
+    expect(wrapper.findAll('.uid-breadcrumb__item--collapsed').length).toBe(0)
+    wrapper.unmount()
+  })
+
+  it('collapse: если всё помещается, «…» нет', async () => {
+    listWidth = 600
+    const wrapper = mountTrail({ collapse: true })
+    await flushPromises()
+    expect(wrapper.find('.uid-breadcrumb__item--ellipsis').exists()).toBe(false)
+    wrapper.unmount()
+  })
+
+  it('«…» открывает меню скрытых крошек и активирует выбранную', async () => {
+    const onSection = vi.fn()
+    const wrapper = mountTrail({ collapse: true }, onSection)
+    await flushPromises()
+    const button = wrapper.find('button.uid-breadcrumb__ellipsis')
+    await button.trigger('click')
+    await flushPromises()
+    const menu = document.body.querySelector('.uid-breadcrumb__menu')!
+    expect(menu.getAttribute('role')).toBe('menu')
+    expect(button.attributes('aria-expanded')).toBe('true')
+    expect(button.attributes('aria-controls')).toBe(menu.id)
+    const entries = Array.from(menu.querySelectorAll<HTMLElement>('[role="menuitem"]'))
+    expect(entries.map(e => e.textContent?.trim())).toEqual(['Раздел A', 'Раздел B', 'Раздел C'])
+    expect(document.activeElement).toBe(entries[0])
+    // A plain-text crumb has nothing to activate.
+    expect(entries[2].getAttribute('aria-disabled')).toBe('true')
+    expect(entries[0].getAttribute('aria-disabled')).toBeNull()
+
+    entries[1].click()
+    await flushPromises()
+    expect(onSection).toHaveBeenCalledTimes(1)
+    expect(document.body.querySelector('.uid-breadcrumb__menu')).toBeNull()
+    wrapper.unmount()
+  })
+
+  it('меню: стрелки двигают фокус, Escape закрывает и возвращает фокус', async () => {
+    const wrapper = mountTrail({ collapse: true })
+    await flushPromises()
+    const button = wrapper.find('button.uid-breadcrumb__ellipsis')
+    await button.trigger('click')
+    await flushPromises()
+    const menu = document.body.querySelector<HTMLElement>('.uid-breadcrumb__menu')!
+    const entries = Array.from(menu.querySelectorAll<HTMLElement>('[role="menuitem"]'))
+    menu.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }))
+    expect(document.activeElement).toBe(entries[1])
+    menu.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp', bubbles: true }))
+    menu.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp', bubbles: true }))
+    expect(document.activeElement).toBe(entries[2])
+    menu.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
+    await flushPromises()
+    expect(document.body.querySelector('.uid-breadcrumb__menu')).toBeNull()
+    expect(document.activeElement).toBe(button.element)
+    wrapper.unmount()
+  })
+
+  it('collapseMenu: false рендерит «…» текстом без меню', async () => {
+    const wrapper = mountTrail({ collapse: true, collapseMenu: false })
+    await flushPromises()
+    const ellipsis = wrapper.find('.uid-breadcrumb__item--ellipsis .uid-breadcrumb__ellipsis')
+    expect(ellipsis.element.tagName).toBe('SPAN')
+    expect(ellipsis.attributes('aria-hidden')).toBe('true')
+    expect(wrapper.find('button.uid-breadcrumb__ellipsis').exists()).toBe(false)
+    wrapper.unmount()
+  })
+
+  it('выключение collapse разворачивает крошки', async () => {
+    const wrapper = mountTrail({ collapse: true })
+    await flushPromises()
+    expect(wrapper.find('.uid-breadcrumb__item--ellipsis').exists()).toBe(true)
+    await wrapper.setProps({ collapse: false })
+    await flushPromises()
+    expect(wrapper.find('.uid-breadcrumb__item--ellipsis').exists()).toBe(false)
+    expect(wrapper.find('.uid-breadcrumb__item--collapsed').exists()).toBe(false)
+    wrapper.unmount()
+  })
+})

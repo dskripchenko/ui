@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, getCurrentInstance, inject, onMounted, onUpdated, ref, watch } from 'vue'
+import { useLocale } from '../../composables/useLocale.js'
 import { useRouterLink } from '../../composables/useRouterLink.js'
 import { BREADCRUMB_KEY } from './context.js'
 
@@ -46,6 +47,17 @@ if (ctx) watch(ctx.tick, syncLast, { flush: 'post' })
 
 const isCurrent = computed(() => props.current ?? isLast.value)
 
+const locale = useLocale()
+
+/** `collapse` mode: this crumb is collapsed into "…". */
+const isCollapsed = computed(() => !!ctx && !!itemRef.value && ctx.hidden.value.includes(itemRef.value))
+/** The first collapsed crumb keeps its place and shows the "…" (its own content stays hidden). */
+const isEllipsis = computed(() => isCollapsed.value && ctx!.hidden.value[0] === itemRef.value)
+
+function onEllipsisClick(event: MouseEvent): void {
+  ctx?.toggleMenu(event.currentTarget as HTMLElement)
+}
+
 const { routerLink, fallbackHref } = useRouterLink(props)
 
 /** A crumb without a link but with a click listener becomes a button so it stays keyboard-accessible. */
@@ -62,7 +74,34 @@ function onClick(event: MouseEvent): void {
   <li
     ref="itemRef"
     class="uid-breadcrumb__item"
+    :class="{
+      'uid-breadcrumb__item--collapsed': isCollapsed && !isEllipsis,
+      'uid-breadcrumb__item--ellipsis': isEllipsis,
+    }"
   >
+    <span
+      class="uid-breadcrumb__separator"
+      aria-hidden="true"
+    />
+    <template v-if="isEllipsis">
+      <button
+        v-if="ctx?.menu.value"
+        type="button"
+        class="uid-breadcrumb__ellipsis uid-breadcrumb__ellipsis--button"
+        :aria-label="locale.breadcrumb?.showHidden"
+        aria-haspopup="menu"
+        :aria-expanded="ctx.menuOpen.value"
+        :aria-controls="ctx.menuOpen.value ? ctx.menuId : undefined"
+        @click="onEllipsisClick"
+      >
+        …
+      </button>
+      <span
+        v-else
+        class="uid-breadcrumb__ellipsis"
+        aria-hidden="true"
+      >…</span>
+    </template>
     <span
       v-if="isCurrent"
       class="uid-breadcrumb__current"

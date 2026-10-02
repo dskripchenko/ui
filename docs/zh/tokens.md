@@ -177,7 +177,7 @@ CSS 自定义属性**不能在 `@media` 中使用**——值作为文档常量�
 ```css
 :root {
   --uid-font-family-sans: 'Inter', system-ui, -apple-system, sans-serif;
-  --uid-font-family-mono: 'IBM Plex Mono', 'Fira Code', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Monaco, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', 'Courier New', monospace;
+  --uid-font-family-mono: 'IBM Plex Mono', 'Fira Code', 'Cascadia Mono', 'Roboto Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Monaco, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', 'Courier New', monospace;
 
   --uid-font-size-xs:   12px;
   --uid-font-size-sm:   14px;

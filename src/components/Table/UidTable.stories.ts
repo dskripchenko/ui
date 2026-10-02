@@ -96,6 +96,37 @@ export const FixedColumns: Story = {
   }),
 }
 
+/** `selectionFixed` pins the checkbox column alone, without any `fixed` data columns. */
+export const SelectionFixed: Story = {
+  render: () => ({
+    components: { UidTable },
+    setup: () => {
+      const wideColumns: UidTableColumn[] = [
+        { key: 'name', label: 'Имя', width: '180px' },
+        { key: 'role', label: 'Роль', width: '200px' },
+        { key: 'email', label: 'Email', width: '260px' },
+        { key: 'city', label: 'Город', width: '200px' },
+        { key: 'status', label: 'Статус', width: '120px', align: 'center' },
+      ]
+      const rows = rawData.map((r, i) => ({ ...r, id: i + 1, city: 'Москва' }))
+      const selection = ref(new Set<string | number>([1]))
+      return { wideColumns, rows, selection }
+    },
+    template: `
+      <div style="max-width: 520px">
+        <UidTable
+          :columns="wideColumns"
+          :data="rows"
+          bordered
+          selectable
+          selection-fixed
+          v-model:selection="selection"
+        />
+      </div>
+    `,
+  }),
+}
+
 export const Striped: Story = {
   render: () => ({
     components: { UidTable },
