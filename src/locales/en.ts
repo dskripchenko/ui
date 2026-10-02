@@ -1,6 +1,7 @@
 import type { UidLocale } from './types.js'
 
 export const en: UidLocale = {
+  code: 'en-US',
   common: {
     clear: 'Clear',
     close: 'Close',

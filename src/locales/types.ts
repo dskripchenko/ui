@@ -1,4 +1,7 @@
 export interface UidLocale {
+  /** BCP 47 tag used for Intl / toLocaleString number and date formatting. */
+  code?: string
+
   common: {
     clear: string
     close: string

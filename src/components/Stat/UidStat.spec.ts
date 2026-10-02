@@ -1,6 +1,8 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import UidStat from './UidStat.vue'
+import UidLocaleProvider from '../LocaleProvider/UidLocaleProvider.vue'
+import { en } from '../../locales/en.js'
 
 describe('UidStat', () => {
   it('рендерит title и value', () => {
@@ -96,5 +98,32 @@ describe('UidStat', () => {
       slots: { icon: '<span class="my-icon">!</span>' },
     })
     expect(wrapper.find('.my-icon').exists()).toBe(true)
+  })
+
+  describe('локаль чисел', () => {
+    const mountIn = (locale: typeof en | undefined, props: Record<string, unknown>) =>
+      mount({
+        components: { UidLocaleProvider, UidStat },
+        setup: () => ({ locale, props }),
+        template: '<UidLocaleProvider :locale="locale"><UidStat v-bind="props" /></UidLocaleProvider>',
+      })
+
+    it('по умолчанию использует ru-RU (запятая)', () => {
+      const w = mount(UidStat, { props: { value: 1234.5, precision: 1, trend: 2.9 } })
+      expect(w.find('.uid-stat__value').text()).toMatch(/1\s234,5/)
+      expect(w.find('.uid-stat__trend').text()).toContain('2,9%')
+    })
+
+    it('следует локали UidLocaleProvider (en -> точка)', () => {
+      const w = mountIn(en, { value: 1234.5, precision: 1, trend: 2.9 })
+      expect(w.find('.uid-stat__value').text()).toBe('1,234.5')
+      expect(w.find('.uid-stat__trend').text()).toContain('2.9%')
+    })
+
+    it('prop locale перекрывает локаль провайдера', () => {
+      const w = mountIn(en, { value: 1234.5, precision: 1, trend: 2.9, locale: 'de-DE' })
+      expect(w.find('.uid-stat__value').text()).toBe('1.234,5')
+      expect(w.find('.uid-stat__trend').text()).toContain('2,9%')
+    })
   })
 })

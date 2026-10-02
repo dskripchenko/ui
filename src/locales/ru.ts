@@ -1,6 +1,7 @@
 import type { UidLocale } from './types.js'
 
 export const ru: UidLocale = {
+  code: 'ru-RU',
   common: {
     clear: 'Очистить',
     close: 'Закрыть',
