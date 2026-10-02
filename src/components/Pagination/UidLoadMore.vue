@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import './UidPagination.css'
 import UidSpinner from '../Spinner/UidSpinner.vue'
+import { useLocale } from '../../composables/useLocale.js'
+
 
 export interface UidLoadMoreProps {
   loading?: boolean
@@ -11,8 +13,10 @@ export interface UidLoadMoreProps {
 withDefaults(defineProps<UidLoadMoreProps>(), {
   loading: false,
   disabled: false,
-  label: 'Показать ещё',
+  label: undefined,
 })
+
+const uidLocale = useLocale()
 
 const emit = defineEmits<{
   load: []
@@ -31,7 +35,7 @@ const emit = defineEmits<{
         v-if="loading"
         :size="'sm'"
       />
-      <span>{{ label }}</span>
+      <span>{{ label ?? uidLocale.pagination.loadMore }}</span>
     </button>
   </div>
 </template>

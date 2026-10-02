@@ -27,6 +27,8 @@
 }
 
 .uid-number-input__control {
+  /* A size container: narrower than two steppers and ~6 digits, the steppers go. */
+  container: uid-number-input / inline-size;
   display: flex;
   align-items: stretch;
   min-height: var(--uid-number-input-height);
@@ -96,7 +98,7 @@
 }
 
 .uid-number-input__btn:focus-visible {
-  outline: 2px solid var(--uid-accent);
+  outline: 2px solid var(--uid-color-focus-ring);
   outline-offset: -2px;
 }
 
@@ -156,4 +158,11 @@
 /* Centered text variant */
 .uid-number-input--centered {
   --uid-number-input-text-align: center;
+}
+
+/* Too narrow for the steppers and a readable value: keep the value. */
+@container uid-number-input (max-width: 8.5rem) {
+  .uid-number-input__btn {
+    display: none;
+  }
 }

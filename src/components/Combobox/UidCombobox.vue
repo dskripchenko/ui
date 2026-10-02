@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import './UidCombobox.css'
 import { computed, nextTick, onUnmounted, ref, useId, watch } from 'vue'
+import { useFloatingPanel } from '../../composables/useFloatingPanel.js'
 import { Check, ChevronDown, X } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
 import { useLocale } from '../../composables/useLocale.js'
@@ -55,6 +56,8 @@ const activeIndex = ref(0)
 const containerRef = ref<HTMLElement | null>(null)
 const inputRef = ref<HTMLInputElement | null>(null)
 const listRef = ref<HTMLElement | null>(null)
+const controlRef = ref<HTMLElement | null>(null)
+const { panelStyle, containsTarget } = useFloatingPanel(controlRef, listRef, isOpen, { matchWidth: 'exact' })
 const inputId = props.id ?? useId()
 const listboxId = useId()
 
@@ -140,7 +143,8 @@ function onKeydown(e: KeyboardEvent): void {
     if (!isOpen.value) { open(); return }
     selectActive()
   } else if (e.key === 'Escape') {
-    if (isOpen.value) close(); else inputRef.value?.blur()
+    // An open list is ours to close: an enclosing modal stays open.
+    if (isOpen.value) { e.stopPropagation(); close() } else inputRef.value?.blur()
   } else if (e.key === 'Tab') {
     close()
   }
@@ -176,7 +180,7 @@ function scrollActive(): void {
 
 function onOutsideClick(e: PointerEvent): void {
   const target = e.target as Node
-  if (!containerRef.value?.contains(target)) close()
+  if (!containerRef.value?.contains(target) && !containsTarget(target)) close()
 }
 
 watch(isOpen, (val) => {
@@ -215,7 +219,10 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
       >*</span>
     </label>
 
-    <div class="uid-combobox__control">
+    <div
+      ref="controlRef"
+      class="uid-combobox__control"
+    >
       <input
         :id="inputId"
         ref="inputRef"
@@ -261,68 +268,71 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
       </div>
     </div>
 
-    <div
-      v-if="isOpen"
-      :id="listboxId"
-      ref="listRef"
-      class="uid-combobox__dropdown"
-      role="listbox"
-    >
-      <template v-if="filtered.length > 0">
+    <Teleport to="body">
+      <div
+        v-if="isOpen"
+        :id="listboxId"
+        ref="listRef"
+        class="uid-combobox__dropdown"
+        :style="panelStyle"
+        role="listbox"
+      >
+        <template v-if="filtered.length > 0">
+          <button
+            v-for="(opt, idx) in filtered"
+            :id="`${listboxId}-${idx}`"
+            :key="opt.value"
+            type="button"
+            role="option"
+            class="uid-combobox__option"
+            :class="{
+              'uid-combobox__option--active': idx === activeIndex,
+              'uid-combobox__option--selected': opt.value === model,
+              'uid-combobox__option--disabled': opt.disabled,
+            }"
+            :data-active="idx === activeIndex ? 'true' : undefined"
+            :aria-selected="opt.value === model"
+            :aria-disabled="opt.disabled"
+            @click="selectOption(opt)"
+            @mouseenter="!opt.disabled && (activeIndex = idx)"
+          >
+            <span class="uid-combobox__option-label">{{ opt.label }}</span>
+            <span
+              v-if="opt.hint"
+              class="uid-combobox__option-hint"
+            >{{ opt.hint }}</span>
+            <UidIcon
+              v-if="opt.value === model"
+              :icon="Check"
+              :size="14"
+              class="uid-combobox__check"
+              aria-hidden="true"
+            />
+          </button>
+        </template>
+
         <button
-          v-for="(opt, idx) in filtered"
-          :id="`${listboxId}-${idx}`"
-          :key="opt.value"
+          v-if="showCreate"
+          :id="`${listboxId}-${filtered.length}`"
           type="button"
           role="option"
-          class="uid-combobox__option"
-          :class="{
-            'uid-combobox__option--active': idx === activeIndex,
-            'uid-combobox__option--selected': opt.value === model,
-            'uid-combobox__option--disabled': opt.disabled,
-          }"
-          :data-active="idx === activeIndex ? 'true' : undefined"
-          :aria-selected="opt.value === model"
-          :aria-disabled="opt.disabled"
-          @click="selectOption(opt)"
-          @mouseenter="!opt.disabled && (activeIndex = idx)"
+          class="uid-combobox__option uid-combobox__create"
+          :class="{ 'uid-combobox__option--active': activeIndex === filtered.length }"
+          :data-active="activeIndex === filtered.length ? 'true' : undefined"
+          @click="createOption"
+          @mouseenter="activeIndex = filtered.length"
         >
-          <span class="uid-combobox__option-label">{{ opt.label }}</span>
-          <span
-            v-if="opt.hint"
-            class="uid-combobox__option-hint"
-          >{{ opt.hint }}</span>
-          <UidIcon
-            v-if="opt.value === model"
-            :icon="Check"
-            :size="14"
-            class="uid-combobox__check"
-            aria-hidden="true"
-          />
+          <span class="uid-combobox__option-label">{{ locale.combobox.create(query) }}</span>
         </button>
-      </template>
 
-      <button
-        v-if="showCreate"
-        :id="`${listboxId}-${filtered.length}`"
-        type="button"
-        role="option"
-        class="uid-combobox__option uid-combobox__create"
-        :class="{ 'uid-combobox__option--active': activeIndex === filtered.length }"
-        :data-active="activeIndex === filtered.length ? 'true' : undefined"
-        @click="createOption"
-        @mouseenter="activeIndex = filtered.length"
-      >
-        <span class="uid-combobox__option-label">{{ locale.combobox.create(query) }}</span>
-      </button>
-
-      <div
-        v-if="filtered.length === 0 && !showCreate"
-        class="uid-combobox__empty"
-      >
-        {{ emptyMessage }}
+        <div
+          v-if="filtered.length === 0 && !showCreate"
+          class="uid-combobox__empty"
+        >
+          {{ emptyMessage }}
+        </div>
       </div>
-    </div>
+    </Teleport>
 
     <p
       v-if="hintText"

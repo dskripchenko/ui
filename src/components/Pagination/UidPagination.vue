@@ -57,7 +57,7 @@ function goTo(page: number): void {
 <template>
   <nav
     class="uid-pagination"
-    aria-label="Пагинация"
+    :aria-label="locale.pagination.label"
   >
     <button
       type="button"

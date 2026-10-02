@@ -3,7 +3,7 @@
 }
 
 .uid-popover {
-  z-index: var(--uid-z-dropdown);
+  z-index: var(--uid-z-popover, 450);
   min-width: var(--uid-popover-min-width, 200px);
   padding: var(--uid-popover-padding, 12px);
   background: var(--uid-popover-bg, var(--uid-color-surface));

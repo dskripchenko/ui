@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed, inject, onUnmounted, watch } from 'vue'
 import { WIZARD_KEY } from './context.js'
+import { useLocale } from '../../composables/useLocale.js'
+
 
 export interface UidWizardStepProps {
   index: number
@@ -10,6 +12,8 @@ export interface UidWizardStepProps {
 const props = withDefaults(defineProps<UidWizardStepProps>(), {
   validate: undefined,
 })
+
+const uidLocale = useLocale()
 
 const wizard = inject(WIZARD_KEY)
 if (!wizard) throw new Error('UidWizardStep must be inside UidWizard')
@@ -33,7 +37,7 @@ const isActive = computed(() => wizard.current.value === props.index)
     v-if="isActive"
     class="uid-wizard-step"
     role="tabpanel"
-    :aria-label="`Шаг ${index + 1}`"
+    :aria-label="uidLocale.wizard.step(index + 1)"
   >
     <slot />
   </div>

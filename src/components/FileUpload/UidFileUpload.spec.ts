@@ -109,4 +109,13 @@ describe('UidFileUpload', () => {
     await wrapper.find('input[type=file]').trigger('change')
     expect(wrapper.emitted('reject')?.[0]?.[1]).toBe('limit')
   })
+
+  it('formats file sizes in the kit locale', async () => {
+    const wrapper = mount(UidFileUpload, {
+      props: { modelValue: [{ file: makeFile('a.txt', 1536), id: '1' }] },
+    })
+    const text = wrapper.text()
+    expect(text).toContain('1,5')
+    expect(text).not.toContain('1.5')
+  })
 })

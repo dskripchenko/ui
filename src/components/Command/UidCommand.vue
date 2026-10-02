@@ -5,6 +5,9 @@ import { Search } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
 import { useFocusTrap } from '../../composables/useFocusTrap.js'
 import { useScrollLock } from '../../composables/useScrollLock.js'
+import { useOverlayStack } from '../../composables/useOverlayStack.js'
+import { useLocale } from '../../composables/useLocale.js'
+
 
 export interface CommandItem {
   id: string
@@ -22,9 +25,11 @@ export interface UidCommandProps {
 }
 
 const props = withDefaults(defineProps<UidCommandProps>(), {
-  placeholder: 'Поиск команд...',
-  emptyText: 'Ничего не найдено',
+  placeholder: undefined,
+  emptyText: undefined,
 })
+
+const uidLocale = useLocale()
 
 const model = defineModel<boolean>({ default: false })
 
@@ -35,6 +40,7 @@ const inputRef = ref<HTMLInputElement | null>(null)
 const listRef = ref<HTMLElement | null>(null)
 
 const { activate, deactivate } = useFocusTrap(panelRef)
+const layer = useOverlayStack()
 const { lock, unlock } = useScrollLock()
 
 const filtered = computed(() => {
@@ -60,12 +66,14 @@ watch(model, async (val) => {
   if (val) {
     query.value = ''
     activeIndex.value = 0
+    layer.push()
     lock()
     await nextTick()
     activate()
     inputRef.value?.focus()
     document.addEventListener('keydown', onGlobalEsc)
   } else {
+    layer.pop()
     unlock()
     deactivate()
     document.removeEventListener('keydown', onGlobalEsc)
@@ -104,7 +112,10 @@ function onKeydown(e: KeyboardEvent) {
 }
 
 function onGlobalEsc(e: KeyboardEvent) {
-  if (e.key === 'Escape') close()
+  // A popover opened from the palette closes first; the palette stays.
+  if (e.key !== 'Escape' || e.defaultPrevented || !layer.isTop()) return
+  e.preventDefault()
+  close()
 }
 
 function scrollActiveIntoView() {
@@ -125,6 +136,7 @@ onMounted(() => document.addEventListener('keydown', onShortcut))
 onUnmounted(() => {
   document.removeEventListener('keydown', onShortcut)
   document.removeEventListener('keydown', onGlobalEsc)
+  layer.pop()
   unlock()
   deactivate()
 })
@@ -143,7 +155,7 @@ onUnmounted(() => {
           class="uid-command"
           role="dialog"
           aria-modal="true"
-          aria-label="Палитра команд"
+          :aria-label="uidLocale.command.label"
           @keydown="onKeydown"
         >
           <div class="uid-command__search">
@@ -158,7 +170,7 @@ onUnmounted(() => {
               v-model="query"
               class="uid-command__input"
               type="text"
-              :placeholder="placeholder"
+              :placeholder="placeholder ?? uidLocale.command.placeholder"
               autocomplete="off"
               spellcheck="false"
               aria-autocomplete="list"
@@ -218,7 +230,7 @@ onUnmounted(() => {
               v-else
               class="uid-command__empty"
             >
-              {{ emptyText }}
+              {{ emptyText ?? uidLocale.command.empty }}
             </div>
           </div>
         </div>

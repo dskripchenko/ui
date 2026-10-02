@@ -1,6 +1,10 @@
-import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { mount, config } from '@vue/test-utils'
+import { describe, expect, it, beforeAll, afterAll } from 'vitest'
 import UidDateRangePicker from './UidDateRangePicker.vue'
+
+// The panel is teleported to the body; render it in place so the wrapper finds it.
+beforeAll(() => { config.global.stubs.teleport = true })
+afterAll(() => { delete config.global.stubs.teleport })
 
 describe('UidDateRangePicker', () => {
   it('показывает плейсхолдер без значения', () => {
@@ -185,5 +189,12 @@ describe('UidDateRangePicker', () => {
     await wrapper.find('.uid-daterange__trigger').trigger('click')
     await wrapper.find('.uid-daterange__btn').trigger('click')
     expect(wrapper.emitted('change')?.[0]).toEqual([{ start: '2026-01-01T00:00', end: '2026-01-31T23:59' }])
+  })
+
+  it.each([null, undefined])('treats a %s model as an empty range', async (value) => {
+    const wrapper = mount(UidDateRangePicker, { props: { modelValue: value as never } })
+    expect(wrapper.find('.uid-daterange__value').classes()).toContain('uid-daterange__value--placeholder')
+    await wrapper.find('.uid-daterange__trigger').trigger('click')
+    expect(wrapper.find('.uid-daterange__panel').exists()).toBe(true)
   })
 })

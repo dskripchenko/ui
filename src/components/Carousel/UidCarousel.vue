@@ -3,6 +3,8 @@ import './UidCarousel.css'
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { ChevronLeft, ChevronRight, ChevronUp, ChevronDown } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
+import { useLocale } from '../../composables/useLocale.js'
+
 
 export interface UidCarouselProps<T> {
   items: T[]
@@ -22,6 +24,8 @@ const props = withDefaults(defineProps<UidCarouselProps<T>>(), {
   showIndicators: true,
   pauseOnHover: true,
 })
+
+const uidLocale = useLocale()
 
 const emit = defineEmits<{
   change: [index: number]
@@ -133,7 +137,7 @@ defineExpose({ next, prev, goTo })
         class="uid-carousel__slide"
         :aria-hidden="idx !== model"
         :aria-roledescription="'slide'"
-        :aria-label="`${idx + 1} из ${total}`"
+        :aria-label="uidLocale.carousel.position(idx + 1, total)"
       >
         <slot
           :item="item"
@@ -147,7 +151,7 @@ defineExpose({ next, prev, goTo })
       type="button"
       class="uid-carousel__arrow uid-carousel__arrow--prev"
       :disabled="!loop && model === 0"
-      aria-label="Предыдущий"
+      :aria-label="uidLocale.carousel.prev"
       @click="prev"
     >
       <UidIcon
@@ -161,7 +165,7 @@ defineExpose({ next, prev, goTo })
       type="button"
       class="uid-carousel__arrow uid-carousel__arrow--next"
       :disabled="!loop && model === total - 1"
-      aria-label="Следующий"
+      :aria-label="uidLocale.carousel.next"
       @click="next"
     >
       <UidIcon
@@ -183,7 +187,7 @@ defineExpose({ next, prev, goTo })
         :class="{ 'uid-carousel__indicator--active': idx === model }"
         role="tab"
         :aria-selected="idx === model"
-        :aria-label="`Слайд ${idx + 1}`"
+        :aria-label="uidLocale.carousel.slide(idx + 1)"
         @click="goTo(idx)"
       />
     </div>

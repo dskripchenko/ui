@@ -117,6 +117,9 @@ function onKeydown(e: KeyboardEvent): void {
 }
 
 const displayValue = computed(() => model.value === null ? '' : String(model.value))
+
+// Steppers that cannot be used only take width from the value.
+const showControls = computed(() => props.controls && !props.disabled && !props.readonly)
 </script>
 
 <template>
@@ -145,7 +148,7 @@ const displayValue = computed(() => model.value === null ? '' : String(model.val
 
     <div class="uid-number-input__control">
       <button
-        v-if="controls"
+        v-if="showControls"
         type="button"
         class="uid-number-input__btn uid-number-input__btn--prefix"
         :disabled="disabled || readonly || isMinReached"
@@ -182,7 +185,7 @@ const displayValue = computed(() => model.value === null ? '' : String(model.val
       >
 
       <button
-        v-if="controls"
+        v-if="showControls"
         type="button"
         class="uid-number-input__btn"
         :disabled="disabled || readonly || isMaxReached"

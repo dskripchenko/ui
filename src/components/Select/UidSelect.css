@@ -8,7 +8,8 @@
   align-items: center;
   gap: var(--uid-space-sm);
   width: 100%;
-  padding: var(--uid-space-sm) 12px;
+  /* The control height of the size scale, shared with UidInput and the rest. */
+  padding: var(--uid-space-2xs) 12px;
   border: 1px solid var(--uid-color-border);
   border-radius: var(--uid-radius-md, 8px);
   background: var(--uid-color-bg);
@@ -16,7 +17,7 @@
   user-select: none;
   transition: border-color var(--uid-duration-fast), box-shadow var(--uid-duration-fast);
   outline: none;
-  min-height: 38px;
+  min-height: var(--uid-size-md);
 }
 
 .uid-select__trigger:hover {
@@ -147,7 +148,7 @@
 .uid-select__dropdown {
   /* Position управляется inline-style из usePopover (fixed + computed top/left).
      Teleport-нут в body — больше не обрезается parent overflow. */
-  z-index: var(--uid-z-dropdown, 100);
+  z-index: var(--uid-z-popover, 450);
   background: var(--uid-color-bg);
   border: 1px solid var(--uid-color-border);
   border-radius: var(--uid-radius-md, 8px);
@@ -238,8 +239,8 @@
 
 /* Sizes */
 .uid-select--sm .uid-select__trigger {
-  padding: var(--uid-space-xs) var(--uid-space-sm);
-  min-height: 30px;
+  padding: 0 var(--uid-space-sm);
+  min-height: var(--uid-size-sm);
 }
 
 .uid-select--sm .uid-select__value {
@@ -247,8 +248,8 @@
 }
 
 .uid-select--lg .uid-select__trigger {
-  padding: 12px var(--uid-space-md);
-  min-height: 46px;
+  padding: var(--uid-space-2xs) var(--uid-space-md);
+  min-height: var(--uid-size-lg);
 }
 
 /* Transitions */
@@ -262,3 +263,8 @@
   opacity: 0;
   transform: translateY(-4px);
 }
+
+/* The text follows the size, as in UidInput: sm 14px, md 16px, lg 18px. */
+.uid-select--sm .uid-select__value { font-size: var(--uid-font-size-sm); }
+.uid-select--md .uid-select__value { font-size: var(--uid-font-size-md); }
+.uid-select--lg .uid-select__value { font-size: var(--uid-font-size-lg); }

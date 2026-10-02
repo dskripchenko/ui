@@ -6,6 +6,8 @@ import { ArrowUp, ArrowDown, ArrowUpDown } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
 import UidSpinner from '../Spinner/UidSpinner.vue'
 import UidCheckbox from '../Checkbox/UidCheckbox.vue'
+import { useLocale } from '../../composables/useLocale.js'
+
 
 export interface UidTableColumn {
   key: string
@@ -49,7 +51,7 @@ const props = withDefaults(defineProps<UidTableProps>(), {
   sortKey: undefined,
   sortDirection: null,
   loading: false,
-  emptyText: 'Нет данных',
+  emptyText: undefined,
   striped: false,
   bordered: false,
   selectable: false,
@@ -58,11 +60,14 @@ const props = withDefaults(defineProps<UidTableProps>(), {
   rowKey: 'id',
 })
 
+const uidLocale = useLocale()
+
 const emit = defineEmits<{
   'update:sortKey': [key: string | null]
   'update:sortDirection': [dir: SortDirection]
   'update:selection': [selection: Set<string | number>]
-  'row-click': [row: Record<string, unknown>]
+  /** The click event comes second, for hosts that need the target or modifiers. */
+  'row-click': [row: Record<string, unknown>, event: MouseEvent]
 }>()
 
 defineSlots<{
@@ -136,6 +141,32 @@ function onHeaderCheckbox(checked: boolean): void {
     for (const r of props.data) next.delete(rowId(r))
   }
   emit('update:selection', next)
+}
+
+/**
+ * What a click on a control inside a cell is meant for: the control. Such a
+ * click — on a link, a button, an input, a switch, a cell editor, anything
+ * marked `data-row-click-ignore` — is not a row click; neither is the end of
+ * a text selection made inside the row.
+ */
+const ROW_CLICK_IGNORE = [
+  'a[href]', 'button', 'input', 'select', 'textarea', 'label', 'summary',
+  '[role="button"]', '[role="checkbox"]', '[role="switch"]', '[role="link"]',
+  '[role="menuitem"]', '[role="option"]', '[role="combobox"]', '[role="textbox"]',
+  '[contenteditable=""]', '[contenteditable="true"]', '[data-row-click-ignore]',
+].join(', ')
+
+function onRowClick(row: Record<string, unknown>, event: MouseEvent): void {
+  const tr = event.currentTarget instanceof Element ? event.currentTarget : null
+  const target = event.target instanceof Element ? event.target : null
+  const hit = target?.closest(ROW_CLICK_IGNORE)
+  if (hit && hit !== tr && (!tr || tr.contains(hit))) return
+  const selection = typeof window !== 'undefined' ? window.getSelection?.() : null
+  if (
+    selection && !selection.isCollapsed && selection.toString().trim() !== ''
+    && tr && selection.anchorNode && tr.contains(selection.anchorNode)
+  ) return
+  emit('row-click', row, event)
 }
 
 function onRowCheckbox(row: Record<string, unknown>, checked: boolean): void {
@@ -313,7 +344,7 @@ onBeforeUnmount(() => resizeObserver?.disconnect())
               <UidCheckbox
                 :model-value="allSelected"
                 :indeterminate="headerIndeterminate"
-                aria-label="Выделить всё"
+                :aria-label="uidLocale.table.selectAll"
                 @update:model-value="onHeaderCheckbox"
               />
             </th>
@@ -367,7 +398,7 @@ onBeforeUnmount(() => resizeObserver?.disconnect())
                 class="uid-table__td uid-table__td--empty"
               >
                 <slot name="empty">
-                  {{ emptyText }}
+                  {{ emptyText ?? uidLocale.table.empty }}
                 </slot>
               </td>
             </tr>
@@ -379,7 +410,7 @@ onBeforeUnmount(() => resizeObserver?.disconnect())
               :key="idx"
               class="uid-table__row"
               :class="{ 'uid-table__row--selected': selectable && selection.has(rowId(row)) }"
-              @click="emit('row-click', row)"
+              @click="onRowClick(row, $event)"
             >
               <td
                 v-if="selectable"
@@ -390,7 +421,7 @@ onBeforeUnmount(() => resizeObserver?.disconnect())
               >
                 <UidCheckbox
                   :model-value="selection.has(rowId(row))"
-                  :aria-label="`Строка ${rowId(row)}`"
+                  :aria-label="uidLocale.table.row(rowId(row))"
                   @update:model-value="(v) => onRowCheckbox(row, v)"
                 />
               </td>

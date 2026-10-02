@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import './UidModal.css'
-import { ref, watch, nextTick, useId } from 'vue'
+import { onBeforeUnmount, ref, watch, nextTick, useId } from 'vue'
 import { X } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
 import { useFocusTrap } from '../../composables/useFocusTrap.js'
 import { useScrollLock } from '../../composables/useScrollLock.js'
+import { useOverlayStack } from '../../composables/useOverlayStack.js'
 import { useLocale } from '../../composables/useLocale.js'
 
 const locale = useLocale()
@@ -40,6 +41,7 @@ defineSlots<{
 const titleId = useId()
 const dialogRef = ref<HTMLElement | null>(null)
 const { activate, deactivate } = useFocusTrap(dialogRef)
+const layer = useOverlayStack()
 const { lock, unlock } = useScrollLock()
 
 function close(): void {
@@ -53,19 +55,35 @@ function onOverlayClick(): void {
 
 watch(model, async (open) => {
   if (open) {
+    layer.push()
     lock()
     await nextTick()
     activate()
     document.addEventListener('keydown', onEscape)
   } else {
+    layer.pop()
     unlock()
     deactivate()
     document.removeEventListener('keydown', onEscape)
   }
 })
 
+onBeforeUnmount(() => {
+  if (!model.value) return
+  layer.pop()
+  unlock()
+  deactivate()
+  document.removeEventListener('keydown', onEscape)
+})
+
 function onEscape(event: KeyboardEvent): void {
-  if (event.key === 'Escape' && props.closeOnEsc) close()
+  // Only the top layer answers, and not to an Escape a picker, a menu or a
+  // nested layer inside it has already handled.
+  if (event.key !== 'Escape' || event.defaultPrevented || !layer.isTop()) return
+  if (props.closeOnEsc) {
+    event.preventDefault()
+    close()
+  }
 }
 </script>
 

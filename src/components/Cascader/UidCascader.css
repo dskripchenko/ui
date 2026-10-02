@@ -90,11 +90,8 @@
 .uid-cascader__chevron--open { transform: rotate(180deg); }
 
 .uid-cascader__dropdown {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  z-index: var(--uid-z-dropdown);
-  margin-top: 4px;
+  /* Teleported to the body; position and coordinates come from useFloatingPanel. */
+  z-index: var(--uid-z-popover, 450);
   background: var(--uid-color-bg);
   border: 1px solid var(--uid-color-border);
   border-radius: var(--uid-radius-md);
@@ -213,7 +210,7 @@
 }
 
 .uid-cascader__option:focus-visible {
-  outline: 2px solid var(--uid-accent);
+  outline: 2px solid var(--uid-color-focus-ring);
   outline-offset: -2px;
 }
 
@@ -237,3 +234,21 @@
   font-size: var(--uid-font-size-sm);
   color: var(--uid-color-text-secondary);
 }
+
+/* Sizes: one control height per size, shared with UidInput and UidSelect. */
+.uid-cascader--sm .uid-cascader__trigger {
+  min-height: var(--uid-size-sm);
+  padding-block: 0;
+  padding-inline: var(--uid-space-sm);
+  font-size: var(--uid-font-size-sm);
+}
+
+.uid-cascader--lg .uid-cascader__trigger {
+  min-height: var(--uid-size-lg);
+  padding-inline: var(--uid-space-md);
+}
+
+/* The text follows the size, as in UidInput: sm 14px, md 16px, lg 18px. */
+.uid-cascader--sm .uid-cascader__value { font-size: var(--uid-font-size-sm); }
+.uid-cascader--md .uid-cascader__value { font-size: var(--uid-font-size-md); }
+.uid-cascader--lg .uid-cascader__value { font-size: var(--uid-font-size-lg); }

@@ -1,7 +1,11 @@
-import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { mount, config } from '@vue/test-utils'
+import { describe, expect, it, beforeAll, afterAll } from 'vitest'
 import UidCascader from './UidCascader.vue'
 import type { CascaderOption } from './UidCascader.vue'
+
+// The panel is teleported to the body; render it in place so the wrapper finds it.
+beforeAll(() => { config.global.stubs.teleport = true })
+afterAll(() => { delete config.global.stubs.teleport })
 
 const options: CascaderOption[] = [
   {
@@ -167,7 +171,7 @@ describe('UidCascader', () => {
       await input.setValue('моск')
       await input.trigger('keydown', { key: 'ArrowDown' })
       expect(wrapper.findAll('.uid-cascader__result')[1].classes()).toContain('uid-cascader__result--active')
-      expect(input.attributes('aria-activedescendant')).toBe(wrapper.findAll('.uid-cascader__result')[1].attributes('id'))
+      expect(wrapper.find('.uid-cascader__search-input').attributes('aria-activedescendant')).toBe(wrapper.findAll('.uid-cascader__result')[1].attributes('id'))
       await input.trigger('keydown', { key: 'Enter' })
       expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([['ru', 'msk', 'arbat']])
     })

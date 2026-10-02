@@ -20,7 +20,7 @@ export interface UidBreadcrumbProps {
 }
 
 const props = withDefaults(defineProps<UidBreadcrumbProps>(), {
-  label: 'Навигация',
+  label: undefined,
   separator: '/',
   nowrap: false,
   collapse: false,
@@ -231,6 +231,7 @@ function onMenuKeydown(e: KeyboardEvent): void {
     items[items.length - 1]?.focus()
   } else if (e.key === 'Escape') {
     e.preventDefault()
+    e.stopPropagation()
     closeMenu(true)
   } else if (e.key === 'Tab') {
     closeMenu()
@@ -262,7 +263,7 @@ defineExpose({ recompute })
       'uid-breadcrumb--collapse': collapse,
       'uid-breadcrumb--measuring': measuring,
     }"
-    :aria-label="label"
+    :aria-label="label ?? locale.breadcrumb?.label"
   >
     <ol
       ref="listRef"

@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import './UidTimePicker.css'
 import { computed, nextTick, onUnmounted, ref, watch } from 'vue'
+import type { Size } from '../../types/index.js'
 import { Clock } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
 import { useLocale } from '../../composables/useLocale.js'
+import { useFloatingPanel } from '../../composables/useFloatingPanel.js'
 
 export interface UidTimePickerProps {
+  /** Control height of the shared size scale (`--uid-size-sm|md|lg`). */
+  size?: Size
   step?: number
   withSeconds?: boolean
   hour12?: boolean
@@ -15,6 +19,7 @@ export interface UidTimePickerProps {
 }
 
 const props = withDefaults(defineProps<UidTimePickerProps>(), {
+  size: 'md',
   step: 5,
   withSeconds: false,
   hour12: false,
@@ -34,6 +39,8 @@ const model = defineModel<string | null>({ default: null })
 const isOpen = ref(false)
 const containerRef = ref<HTMLElement | null>(null)
 const triggerRef = ref<HTMLElement | null>(null)
+const panelRef = ref<HTMLElement | null>(null)
+const { panelStyle, containsTarget } = useFloatingPanel(triggerRef, panelRef, isOpen)
 const hourColRef = ref<HTMLElement | null>(null)
 const minuteColRef = ref<HTMLElement | null>(null)
 const secondColRef = ref<HTMLElement | null>(null)
@@ -140,12 +147,12 @@ function clearValue(e: MouseEvent): void {
 
 function onOutsideClick(e: PointerEvent): void {
   const target = e.target as Node
-  if (!containerRef.value?.contains(target)) close()
+  if (!containerRef.value?.contains(target) && !containsTarget(target)) close()
 }
 
 function onTriggerKeydown(e: KeyboardEvent): void {
   if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle() }
-  else if (e.key === 'Escape') close()
+  else if (e.key === 'Escape' && isOpen.value) { e.stopPropagation(); close() }
 }
 
 function onColumnKeydown(e: KeyboardEvent, field: 'h' | 'm' | 's', list: number[]): void {
@@ -175,6 +182,8 @@ function onColumnKeydown(e: KeyboardEvent, field: 'h' | 'm' | 's', list: number[
     commit()
   } else if (e.key === 'Escape') {
     e.preventDefault()
+    // Ours to handle: an enclosing modal must not close with the picker.
+    e.stopPropagation()
     close()
     triggerRef.value?.focus()
   }
@@ -227,7 +236,7 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
   <div
     ref="containerRef"
     class="uid-timepicker"
-    :class="{ 'uid-timepicker--open': isOpen, 'uid-timepicker--disabled': disabled }"
+    :class="[`uid-timepicker--${size}`, { 'uid-timepicker--open': isOpen, 'uid-timepicker--disabled': disabled }]"
   >
     <div
       ref="triggerRef"
@@ -264,97 +273,101 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
       </button>
     </div>
 
-    <Transition name="uid-timepicker-panel">
-      <div
-        v-if="isOpen"
-        class="uid-timepicker__panel"
-        role="dialog"
-        aria-label="Выбор времени"
-      >
-        <div class="uid-timepicker__columns">
-          <div
-            ref="hourColRef"
-            class="uid-timepicker__column"
-            role="listbox"
-            aria-label="Часы"
-            @keydown="onColumnKeydown($event, 'h', hours)"
-          >
-            <button
-              v-for="h in hours"
-              :key="h"
-              type="button"
-              class="uid-timepicker__cell"
-              :class="{ 'uid-timepicker__cell--selected': draft.h === h }"
-              role="option"
-              :aria-selected="draft.h === h"
-              :tabindex="draft.h === h ? 0 : -1"
-              @click="selectHour(h)"
+    <Teleport to="body">
+      <Transition name="uid-timepicker-panel">
+        <div
+          v-if="isOpen"
+          ref="panelRef"
+          class="uid-timepicker__panel"
+          :style="panelStyle"
+          role="dialog"
+          :aria-label="locale.timePicker.dialog"
+        >
+          <div class="uid-timepicker__columns">
+            <div
+              ref="hourColRef"
+              class="uid-timepicker__column"
+              role="listbox"
+              :aria-label="locale.timePicker.hours"
+              @keydown="onColumnKeydown($event, 'h', hours)"
             >
-              {{ pad(h) }}
-            </button>
-          </div>
-          <div
-            ref="minuteColRef"
-            class="uid-timepicker__column"
-            role="listbox"
-            aria-label="Минуты"
-            @keydown="onColumnKeydown($event, 'm', minutes)"
-          >
-            <button
-              v-for="m in minutes"
-              :key="m"
-              type="button"
-              class="uid-timepicker__cell"
-              :class="{ 'uid-timepicker__cell--selected': draft.m === m }"
-              role="option"
-              :aria-selected="draft.m === m"
-              :tabindex="draft.m === m ? 0 : -1"
-              @click="selectMinute(m)"
+              <button
+                v-for="h in hours"
+                :key="h"
+                type="button"
+                class="uid-timepicker__cell"
+                :class="{ 'uid-timepicker__cell--selected': draft.h === h }"
+                role="option"
+                :aria-selected="draft.h === h"
+                :tabindex="draft.h === h ? 0 : -1"
+                @click="selectHour(h)"
+              >
+                {{ pad(h) }}
+              </button>
+            </div>
+            <div
+              ref="minuteColRef"
+              class="uid-timepicker__column"
+              role="listbox"
+              :aria-label="locale.timePicker.minutes"
+              @keydown="onColumnKeydown($event, 'm', minutes)"
             >
-              {{ pad(m) }}
-            </button>
-          </div>
-          <div
-            v-if="withSeconds"
-            ref="secondColRef"
-            class="uid-timepicker__column"
-            role="listbox"
-            aria-label="Секунды"
-            @keydown="onColumnKeydown($event, 's', seconds)"
-          >
-            <button
-              v-for="s in seconds"
-              :key="s"
-              type="button"
-              class="uid-timepicker__cell"
-              :class="{ 'uid-timepicker__cell--selected': draft.s === s }"
-              role="option"
-              :aria-selected="draft.s === s"
-              :tabindex="draft.s === s ? 0 : -1"
-              @click="selectSecond(s)"
+              <button
+                v-for="m in minutes"
+                :key="m"
+                type="button"
+                class="uid-timepicker__cell"
+                :class="{ 'uid-timepicker__cell--selected': draft.m === m }"
+                role="option"
+                :aria-selected="draft.m === m"
+                :tabindex="draft.m === m ? 0 : -1"
+                @click="selectMinute(m)"
+              >
+                {{ pad(m) }}
+              </button>
+            </div>
+            <div
+              v-if="withSeconds"
+              ref="secondColRef"
+              class="uid-timepicker__column"
+              role="listbox"
+              :aria-label="locale.timePicker.seconds"
+              @keydown="onColumnKeydown($event, 's', seconds)"
             >
-              {{ pad(s) }}
-            </button>
+              <button
+                v-for="s in seconds"
+                :key="s"
+                type="button"
+                class="uid-timepicker__cell"
+                :class="{ 'uid-timepicker__cell--selected': draft.s === s }"
+                role="option"
+                :aria-selected="draft.s === s"
+                :tabindex="draft.s === s ? 0 : -1"
+                @click="selectSecond(s)"
+              >
+                {{ pad(s) }}
+              </button>
+            </div>
           </div>
-        </div>
 
-        <div class="uid-timepicker__footer">
-          <button
-            type="button"
-            class="uid-timepicker__btn"
-            @click="setNow"
-          >
-            {{ locale.timePicker.now }}
-          </button>
-          <button
-            type="button"
-            class="uid-timepicker__btn uid-timepicker__btn--primary"
-            @click="commit"
-          >
-            {{ locale.timePicker.confirm }}
-          </button>
+          <div class="uid-timepicker__footer">
+            <button
+              type="button"
+              class="uid-timepicker__btn"
+              @click="setNow"
+            >
+              {{ locale.timePicker.now }}
+            </button>
+            <button
+              type="button"
+              class="uid-timepicker__btn uid-timepicker__btn--primary"
+              @click="commit"
+            >
+              {{ locale.timePicker.confirm }}
+            </button>
+          </div>
         </div>
-      </div>
-    </Transition>
+      </Transition>
+    </Teleport>
   </div>
 </template>

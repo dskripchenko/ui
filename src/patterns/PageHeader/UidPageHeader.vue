@@ -2,6 +2,8 @@
 import './UidPageHeader.css'
 import { ArrowLeft } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
+import { useLocale } from '../../composables/useLocale.js'
+
 
 export interface UidPageHeaderProps {
   title?: string
@@ -14,6 +16,8 @@ withDefaults(defineProps<UidPageHeaderProps>(), {
   description: undefined,
   back: false,
 })
+
+const uidLocale = useLocale()
 
 const emit = defineEmits<{
   back: []
@@ -43,7 +47,7 @@ defineSlots<{
           v-if="back"
           type="button"
           class="uid-pattern-page-header__back"
-          aria-label="Назад"
+          :aria-label="uidLocale.pageHeader.back"
           @click="emit('back')"
         >
           <UidIcon

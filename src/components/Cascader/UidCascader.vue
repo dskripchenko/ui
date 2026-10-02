@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import './UidCascader.css'
 import { computed, nextTick, onUnmounted, ref, useId, watch } from 'vue'
+import type { Size } from '../../types/index.js'
+import { useFloatingPanel } from '../../composables/useFloatingPanel.js'
 import { ChevronDown, ChevronRight, X } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
 import { useLocale } from '../../composables/useLocale.js'
@@ -15,6 +17,8 @@ export interface CascaderOption {
 }
 
 export interface UidCascaderProps {
+  /** Control height of the shared size scale (`--uid-size-sm|md|lg`). */
+  size?: Size
   options: CascaderOption[]
   placeholder?: string
   separator?: string
@@ -40,6 +44,7 @@ interface LabelSegment {
 }
 
 const props = withDefaults(defineProps<UidCascaderProps>(), {
+  size: 'md',
   separator: ' / ',
   clearable: true,
   disabled: false,
@@ -64,6 +69,8 @@ const activePath = ref<CascaderValue[]>([])
 
 const searchRef = ref<HTMLInputElement | null>(null)
 const triggerRef = ref<HTMLElement | null>(null)
+const panelRef = ref<HTMLElement | null>(null)
+const { panelStyle, containsTarget } = useFloatingPanel(triggerRef, panelRef, isOpen)
 const query = ref('')
 const activeMatch = ref(0)
 const listboxId = useId()
@@ -147,6 +154,8 @@ function onSearchKeydown(e: KeyboardEvent): void {
     if (match) selectMatch(match)
   } else if (e.key === 'Escape') {
     e.preventDefault()
+    // Ours to handle: an enclosing modal must not close with the cascader.
+    e.stopPropagation()
     close()
     triggerRef.value?.focus()
   }
@@ -246,12 +255,12 @@ function clearValue(e: MouseEvent): void {
 
 function onTriggerKeydown(e: KeyboardEvent): void {
   if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle() }
-  else if (e.key === 'Escape') close()
+  else if (e.key === 'Escape' && isOpen.value) { e.stopPropagation(); close() }
 }
 
 function onOutsideClick(e: PointerEvent): void {
   const target = e.target as Node
-  if (!containerRef.value?.contains(target)) close()
+  if (!containerRef.value?.contains(target) && !containsTarget(target)) close()
 }
 
 watch(isOpen, (val) => {
@@ -275,10 +284,10 @@ function isSelected(opt: CascaderOption, level: number): boolean {
   <div
     ref="containerRef"
     class="uid-cascader"
-    :class="{
+    :class="[`uid-cascader--${size}`, {
       'uid-cascader--open': isOpen,
       'uid-cascader--disabled': disabled,
-    }"
+    }]"
   >
     <label
       v-if="label"
@@ -340,116 +349,122 @@ function isSelected(opt: CascaderOption, level: number): boolean {
       </div>
     </div>
 
-    <div
-      v-if="isOpen"
-      class="uid-cascader__dropdown"
-    >
+    <Teleport to="body">
       <div
-        v-if="searchable"
-        class="uid-cascader__search"
-      >
-        <input
-          ref="searchRef"
-          v-model="query"
-          type="text"
-          class="uid-cascader__search-input"
-          role="combobox"
-          autocomplete="off"
-          aria-autocomplete="list"
-          :aria-expanded="isSearching"
-          :aria-controls="isSearching ? listboxId : undefined"
-          :aria-activedescendant="isSearching && searchMatches.length ? matchId(activeMatch) : undefined"
-          :aria-label="searchPlaceholder ?? locale.common.search"
-          :placeholder="searchPlaceholder ?? locale.common.search"
-          @keydown="onSearchKeydown"
-        >
-      </div>
-
-      <ul
-        v-if="isSearching"
-        :id="listboxId"
-        class="uid-cascader__results"
-        role="listbox"
-      >
-        <li
-          v-for="(match, idx) in searchMatches"
-          :id="matchId(idx)"
-          :key="match.values.join('\u0000')"
-          class="uid-cascader__result"
-          :class="{ 'uid-cascader__result--active': idx === activeMatch }"
-          role="option"
-          :aria-selected="idx === activeMatch"
-          @mousedown.prevent
-          @mouseenter="activeMatch = idx"
-          @click="selectMatch(match)"
-        >
-          <template
-            v-for="(opt, level) in match.path"
-            :key="level"
-          >
-            <span
-              v-if="level > 0"
-              class="uid-cascader__separator"
-            >{{ separator }}</span>
-            <span><template
-              v-for="(seg, sIdx) in segments(opt.label)"
-              :key="sIdx"
-            ><mark
-              v-if="seg.match"
-              class="uid-cascader__highlight"
-            >{{ seg.text }}</mark><template v-else>{{ seg.text }}</template></template></span>
-          </template>
-        </li>
-        <li
-          v-if="searchMatches.length === 0"
-          class="uid-cascader__empty"
-          role="presentation"
-        >
-          {{ locale.common.noResults }}
-        </li>
-      </ul>
-
-      <div
-        v-else
-        class="uid-cascader__columns"
+        v-if="isOpen"
+        ref="panelRef"
+        class="uid-cascader__dropdown"
+        :style="panelStyle"
       >
         <div
-          v-for="(col, level) in columns"
-          :key="level"
-          class="uid-cascader__column"
+          v-if="searchable"
+          class="uid-cascader__search"
         >
-          <button
-            v-for="opt in col"
-            :key="opt.value"
-            type="button"
-            class="uid-cascader__option"
-            :class="{
-              'uid-cascader__option--active': isActive(opt, level),
-              'uid-cascader__option--selected': changeOnSelect && isSelected(opt, level),
-              'uid-cascader__option--disabled': opt.disabled,
-            }"
-            :aria-haspopup="opt.children?.length ? 'true' : undefined"
-            :aria-expanded="opt.children?.length ? isActive(opt, level) : undefined"
-            :aria-disabled="opt.disabled ? 'true' : undefined"
-            @click="handleOption(opt, level)"
-            @mouseenter="onOptionHover(opt, level)"
+          <input
+            ref="searchRef"
+            v-model="query"
+            type="text"
+            class="uid-cascader__search-input"
+            role="combobox"
+            autocomplete="off"
+            aria-autocomplete="list"
+            :aria-expanded="isSearching"
+            :aria-controls="isSearching ? listboxId : undefined"
+            :aria-activedescendant="isSearching && searchMatches.length ? matchId(activeMatch) : undefined"
+            :aria-label="searchPlaceholder ?? locale.common.search"
+            :placeholder="searchPlaceholder ?? locale.common.search"
+            @keydown="onSearchKeydown"
           >
-            <span class="uid-cascader__option-label">{{ opt.label }}</span>
-            <UidIcon
-              v-if="opt.children?.length"
-              :icon="ChevronRight"
-              :size="14"
-              class="uid-cascader__option-arrow"
-              aria-hidden="true"
-            />
-          </button>
+        </div>
+
+        <ul
+          v-if="isSearching"
+          :id="listboxId"
+          class="uid-cascader__results"
+          role="listbox"
+        >
+          <li
+            v-for="(match, idx) in searchMatches"
+            :id="matchId(idx)"
+            :key="match.values.join('\u0000')"
+            class="uid-cascader__result"
+            :class="{ 'uid-cascader__result--active': idx === activeMatch }"
+            role="option"
+            :aria-selected="idx === activeMatch"
+            @mousedown.prevent
+            @mouseenter="activeMatch = idx"
+            @click="selectMatch(match)"
+          >
+            <template
+              v-for="(opt, level) in match.path"
+              :key="level"
+            >
+              <span
+                v-if="level > 0"
+                class="uid-cascader__separator"
+              >{{ separator }}</span>
+              <span><template
+                v-for="(seg, sIdx) in segments(opt.label)"
+                :key="sIdx"
+              ><mark
+                v-if="seg.match"
+                class="uid-cascader__highlight"
+              >{{ seg.text }}</mark><template v-else>{{ seg.text }}</template></template></span>
+            </template>
+          </li>
+          <li
+            v-if="searchMatches.length === 0"
+            class="uid-cascader__empty"
+            role="presentation"
+          >
+            {{ locale.common.noResults }}
+          </li>
+        </ul>
+
+        <div
+          v-else
+          class="uid-cascader__columns"
+        >
+          <div
+            v-for="(col, level) in columns"
+            :key="level"
+            class="uid-cascader__column"
+          >
+            <button
+              v-for="opt in col"
+              :key="opt.value"
+              type="button"
+              class="uid-cascader__option"
+              :class="{
+                'uid-cascader__option--active': isActive(opt, level),
+                'uid-cascader__option--selected': changeOnSelect && isSelected(opt, level),
+                'uid-cascader__option--disabled': opt.disabled,
+              }"
+              :aria-haspopup="opt.children?.length ? 'true' : undefined"
+              :aria-expanded="opt.children?.length ? isActive(opt, level) : undefined"
+              :aria-disabled="opt.disabled ? 'true' : undefined"
+              @click="handleOption(opt, level)"
+              @mouseenter="onOptionHover(opt, level)"
+            >
+              <span class="uid-cascader__option-label">{{ opt.label }}</span>
+              <UidIcon
+                v-if="opt.children?.length"
+                :icon="ChevronRight"
+                :size="14"
+                class="uid-cascader__option-arrow"
+                aria-hidden="true"
+              />
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </Teleport>
 
     <p
       v-if="hint"
       class="uid-cascader__hint"
-    >{{ hint }}</p>
+    >
+      {{ hint }}
+    </p>
   </div>
 </template>

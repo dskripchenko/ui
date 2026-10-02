@@ -3,7 +3,7 @@
 }
 
 .uid-menu {
-  z-index: var(--uid-z-dropdown);
+  z-index: var(--uid-z-popover, 450);
   min-width: var(--uid-menu-min-width, 180px);
   padding: var(--uid-menu-padding-y, var(--uid-space-xs)) 0;
   background: var(--uid-menu-bg, var(--uid-color-surface));

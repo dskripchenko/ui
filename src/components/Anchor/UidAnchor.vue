@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import './UidAnchor.css'
 import { onMounted, onUnmounted, ref, watch } from 'vue'
+import { useLocale } from '../../composables/useLocale.js'
+
 
 export interface AnchorItem {
   key: string
@@ -21,6 +23,8 @@ const props = withDefaults(defineProps<UidAnchorProps>(), {
   target: undefined,
   smooth: true,
 })
+
+const uidLocale = useLocale()
 
 const emit = defineEmits<{
   click: [item: AnchorItem, event: MouseEvent]
@@ -97,7 +101,7 @@ function onClick(e: MouseEvent, item: AnchorItem): void {
 <template>
   <nav
     class="uid-anchor"
-    aria-label="Содержание"
+    :aria-label="uidLocale.anchor.label"
   >
     <ul class="uid-anchor__list">
       <li

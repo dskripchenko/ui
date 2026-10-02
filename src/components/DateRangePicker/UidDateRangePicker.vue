@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import './UidDateRangePicker.css'
 import { computed, onUnmounted, ref, watch } from 'vue'
+import type { Size } from '../../types/index.js'
 import { Calendar, ChevronLeft, ChevronRight } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
 import { useLocale } from '../../composables/useLocale.js'
+import { useFloatingPanel } from '../../composables/useFloatingPanel.js'
 
 // Dates are 'YYYY-MM-DD'; with `withTime` they are 'YYYY-MM-DDTHH:mm' (local time).
 export interface DateRange {
@@ -17,6 +19,8 @@ export interface DateRangePreset {
 }
 
 export interface UidDateRangePickerProps {
+  /** Control height of the shared size scale (`--uid-size-sm|md|lg`). */
+  size?: Size
   min?: string
   max?: string
   disabled?: boolean
@@ -30,6 +34,7 @@ export interface UidDateRangePickerProps {
 }
 
 const props = withDefaults(defineProps<UidDateRangePickerProps>(), {
+  size: 'md',
   min: undefined,
   max: undefined,
   disabled: false,
@@ -46,13 +51,19 @@ const emit = defineEmits<{
   change: [value: DateRange]
 }>()
 
-const model = defineModel<DateRange>({
+const model = defineModel<DateRange | null>({
   default: () => ({ start: null, end: null }),
 })
+
+// A null or undefined v-model (a form field with no value yet) reads as an
+// empty range instead of crashing on `.start`.
+const range = computed<DateRange>(() => model.value ?? { start: null, end: null })
 
 const isOpen = ref(false)
 const containerRef = ref<HTMLElement | null>(null)
 const triggerRef = ref<HTMLElement | null>(null)
+const panelRef = ref<HTMLElement | null>(null)
+const { panelStyle, containsTarget } = useFloatingPanel(triggerRef, panelRef, isOpen)
 
 const today = new Date()
 const viewYear = ref(today.getFullYear())
@@ -99,13 +110,13 @@ function formatDisplay(s: string): string {
   return time ? `${date} ${time}` : date
 }
 
-const startDay = computed(() => (model.value.start ? datePart(model.value.start) : null))
-const endDay = computed(() => (model.value.end ? datePart(model.value.end) : null))
+const startDay = computed(() => (range.value.start ? datePart(range.value.start) : null))
+const endDay = computed(() => (range.value.end ? datePart(range.value.end) : null))
 
 const displayValue = computed(() => {
-  if (!model.value.start && !model.value.end) return ''
-  const s = model.value.start ? formatDisplay(model.value.start) : '...'
-  const e = model.value.end ? formatDisplay(model.value.end) : '...'
+  if (!range.value.start && !range.value.end) return ''
+  const s = range.value.start ? formatDisplay(range.value.start) : '...'
+  const e = range.value.end ? formatDisplay(range.value.end) : '...'
   return `${s} — ${e}`
 })
 
@@ -189,8 +200,8 @@ function open(): void {
   if (props.disabled) return
   draftStart.value = null
   hoverDate.value = null
-  if (model.value.start) {
-    const d = parseISO(model.value.start)
+  if (range.value.start) {
+    const d = parseISO(range.value.start)
     viewYear.value = d.getFullYear()
     viewMonth.value = d.getMonth()
   }
@@ -218,8 +229,8 @@ function selectDay(day: CalendarDay): void {
     : [day.iso, draftStart.value]
   if (props.withTime) {
     commit({
-      start: withTimeOf(start, timePart(model.value.start) ?? DEFAULT_START_TIME),
-      end: withTimeOf(end, timePart(model.value.end) ?? DEFAULT_END_TIME),
+      start: withTimeOf(start, timePart(range.value.start) ?? DEFAULT_START_TIME),
+      end: withTimeOf(end, timePart(range.value.end) ?? DEFAULT_END_TIME),
     })
     draftStart.value = null
     hoverDate.value = null
@@ -237,9 +248,9 @@ function commit(next: DateRange): void {
 
 function onTimeInput(edge: 'start' | 'end', e: Event): void {
   const value = (e.target as HTMLInputElement).value
-  const current = model.value[edge]
+  const current = range.value[edge]
   if (!current || !/^\d{2}:\d{2}/.test(value)) return
-  commit({ ...model.value, [edge]: withTimeOf(current, value.slice(0, 5)) })
+  commit({ ...range.value, [edge]: withTimeOf(current, value.slice(0, 5)) })
 }
 
 function onDayHover(iso: string): void {
@@ -293,7 +304,7 @@ function selectPreset(preset: DateRangePreset): void {
 
 function onOutsideClick(e: PointerEvent): void {
   const target = e.target as Node
-  if (!containerRef.value?.contains(target)) close()
+  if (!containerRef.value?.contains(target) && !containsTarget(target)) close()
 }
 
 watch(isOpen, (val) => {
@@ -303,7 +314,7 @@ watch(isOpen, (val) => {
 
 function onTriggerKeydown(e: KeyboardEvent): void {
   if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle() }
-  else if (e.key === 'Escape') close()
+  else if (e.key === 'Escape' && isOpen.value) { e.stopPropagation(); close() }
 }
 
 onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
@@ -313,7 +324,7 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
   <div
     ref="containerRef"
     class="uid-daterange"
-    :class="{ 'uid-daterange--open': isOpen, 'uid-daterange--disabled': disabled }"
+    :class="[`uid-daterange--${size}`, { 'uid-daterange--open': isOpen, 'uid-daterange--disabled': disabled }]"
   >
     <div
       ref="triggerRef"
@@ -335,12 +346,12 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
       />
       <span
         class="uid-daterange__value"
-        :class="{ 'uid-daterange__value--placeholder': !model.start && !model.end }"
+        :class="{ 'uid-daterange__value--placeholder': !range.start && !range.end }"
       >
         {{ displayValue || placeholderText }}
       </span>
       <button
-        v-if="clearable && (model.start || model.end)"
+        v-if="clearable && (range.start || range.end)"
         type="button"
         class="uid-daterange__clear"
         :aria-label="locale.common.clear"
@@ -350,164 +361,168 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
       </button>
     </div>
 
-    <Transition name="uid-daterange-panel">
-      <div
-        v-if="isOpen"
-        class="uid-daterange__panel"
-        role="dialog"
-        aria-label="Выбор диапазона дат"
-      >
-        <div class="uid-daterange__months">
-          <div class="uid-daterange__month">
-            <div class="uid-daterange__nav">
-              <button
-                type="button"
-                class="uid-daterange__nav-btn uid-daterange__nav-btn--prev"
-                :aria-label="locale.datePicker.prevMonth"
-                @click="prevMonth"
-              >
-                <UidIcon
-                  :icon="ChevronLeft"
-                  :size="16"
-                />
-              </button>
-              <span class="uid-daterange__month-label">{{ leftLabel }}</span>
-              <button
-                type="button"
-                class="uid-daterange__nav-btn uid-daterange__nav-btn--next"
-                :aria-label="locale.datePicker.nextMonth"
-                @click="nextMonth"
-              >
-                <UidIcon
-                  :icon="ChevronRight"
-                  :size="16"
-                />
-              </button>
+    <Teleport to="body">
+      <Transition name="uid-daterange-panel">
+        <div
+          v-if="isOpen"
+          ref="panelRef"
+          class="uid-daterange__panel"
+          :style="panelStyle"
+          role="dialog"
+          :aria-label="locale.dateRangePicker.dialog"
+        >
+          <div class="uid-daterange__months">
+            <div class="uid-daterange__month">
+              <div class="uid-daterange__nav">
+                <button
+                  type="button"
+                  class="uid-daterange__nav-btn uid-daterange__nav-btn--prev"
+                  :aria-label="locale.datePicker.prevMonth"
+                  @click="prevMonth"
+                >
+                  <UidIcon
+                    :icon="ChevronLeft"
+                    :size="16"
+                  />
+                </button>
+                <span class="uid-daterange__month-label">{{ leftLabel }}</span>
+                <button
+                  type="button"
+                  class="uid-daterange__nav-btn uid-daterange__nav-btn--next"
+                  :aria-label="locale.datePicker.nextMonth"
+                  @click="nextMonth"
+                >
+                  <UidIcon
+                    :icon="ChevronRight"
+                    :size="16"
+                  />
+                </button>
+              </div>
+              <div class="uid-daterange__grid">
+                <span
+                  v-for="wd in WEEKDAYS"
+                  :key="wd"
+                  class="uid-daterange__weekday"
+                >{{ wd }}</span>
+                <button
+                  v-for="day in leftMonth"
+                  :key="day.iso"
+                  type="button"
+                  class="uid-daterange__day"
+                  :class="{
+                    'uid-daterange__day--other': !day.current,
+                    'uid-daterange__day--today': day.iso === todayISO,
+                    'uid-daterange__day--start': isStart(day.iso),
+                    'uid-daterange__day--end': isEnd(day.iso),
+                    'uid-daterange__day--in-range': isInRange(day.iso),
+                    'uid-daterange__day--disabled': isDisabled(day.iso),
+                  }"
+                  :disabled="isDisabled(day.iso) || !day.current"
+                  @click="selectDay(day)"
+                  @mouseenter="onDayHover(day.iso)"
+                >
+                  {{ day.date.getDate() }}
+                </button>
+              </div>
             </div>
-            <div class="uid-daterange__grid">
-              <span
-                v-for="wd in WEEKDAYS"
-                :key="wd"
-                class="uid-daterange__weekday"
-              >{{ wd }}</span>
-              <button
-                v-for="day in leftMonth"
-                :key="day.iso"
-                type="button"
-                class="uid-daterange__day"
-                :class="{
-                  'uid-daterange__day--other': !day.current,
-                  'uid-daterange__day--today': day.iso === todayISO,
-                  'uid-daterange__day--start': isStart(day.iso),
-                  'uid-daterange__day--end': isEnd(day.iso),
-                  'uid-daterange__day--in-range': isInRange(day.iso),
-                  'uid-daterange__day--disabled': isDisabled(day.iso),
-                }"
-                :disabled="isDisabled(day.iso) || !day.current"
-                @click="selectDay(day)"
-                @mouseenter="onDayHover(day.iso)"
-              >
-                {{ day.date.getDate() }}
-              </button>
+
+            <div class="uid-daterange__month">
+              <div class="uid-daterange__nav">
+                <button
+                  type="button"
+                  class="uid-daterange__nav-btn uid-daterange__nav-btn--prev"
+                  :aria-label="locale.datePicker.prevMonth"
+                  @click="prevMonth"
+                >
+                  <UidIcon
+                    :icon="ChevronLeft"
+                    :size="16"
+                  />
+                </button>
+                <span class="uid-daterange__month-label">{{ rightLabel }}</span>
+                <button
+                  type="button"
+                  class="uid-daterange__nav-btn uid-daterange__nav-btn--next"
+                  :aria-label="locale.datePicker.nextMonth"
+                  @click="nextMonth"
+                >
+                  <UidIcon
+                    :icon="ChevronRight"
+                    :size="16"
+                  />
+                </button>
+              </div>
+              <div class="uid-daterange__grid">
+                <span
+                  v-for="wd in WEEKDAYS"
+                  :key="wd"
+                  class="uid-daterange__weekday"
+                >{{ wd }}</span>
+                <button
+                  v-for="day in rightMonth"
+                  :key="day.iso"
+                  type="button"
+                  class="uid-daterange__day"
+                  :class="{
+                    'uid-daterange__day--other': !day.current,
+                    'uid-daterange__day--today': day.iso === todayISO,
+                    'uid-daterange__day--start': isStart(day.iso),
+                    'uid-daterange__day--end': isEnd(day.iso),
+                    'uid-daterange__day--in-range': isInRange(day.iso),
+                    'uid-daterange__day--disabled': isDisabled(day.iso),
+                  }"
+                  :disabled="isDisabled(day.iso) || !day.current"
+                  @click="selectDay(day)"
+                  @mouseenter="onDayHover(day.iso)"
+                >
+                  {{ day.date.getDate() }}
+                </button>
+              </div>
             </div>
           </div>
 
-          <div class="uid-daterange__month">
-            <div class="uid-daterange__nav">
-              <button
-                type="button"
-                class="uid-daterange__nav-btn uid-daterange__nav-btn--prev"
-                :aria-label="locale.datePicker.prevMonth"
-                @click="prevMonth"
-              >
-                <UidIcon
-                  :icon="ChevronLeft"
-                  :size="16"
-                />
-              </button>
-              <span class="uid-daterange__month-label">{{ rightLabel }}</span>
-              <button
-                type="button"
-                class="uid-daterange__nav-btn uid-daterange__nav-btn--next"
-                :aria-label="locale.datePicker.nextMonth"
-                @click="nextMonth"
-              >
-                <UidIcon
-                  :icon="ChevronRight"
-                  :size="16"
-                />
-              </button>
-            </div>
-            <div class="uid-daterange__grid">
-              <span
-                v-for="wd in WEEKDAYS"
-                :key="wd"
-                class="uid-daterange__weekday"
-              >{{ wd }}</span>
-              <button
-                v-for="day in rightMonth"
-                :key="day.iso"
-                type="button"
-                class="uid-daterange__day"
-                :class="{
-                  'uid-daterange__day--other': !day.current,
-                  'uid-daterange__day--today': day.iso === todayISO,
-                  'uid-daterange__day--start': isStart(day.iso),
-                  'uid-daterange__day--end': isEnd(day.iso),
-                  'uid-daterange__day--in-range': isInRange(day.iso),
-                  'uid-daterange__day--disabled': isDisabled(day.iso),
-                }"
-                :disabled="isDisabled(day.iso) || !day.current"
-                @click="selectDay(day)"
-                @mouseenter="onDayHover(day.iso)"
-              >
-                {{ day.date.getDate() }}
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div
-          v-if="withTime"
-          class="uid-daterange__times"
-        >
-          <label class="uid-daterange__time-field">
-            <span class="uid-daterange__time-label">{{ locale.dateRangePicker.startTime ?? 'Start time' }}</span>
-            <input
-              type="time"
-              class="uid-daterange__time uid-daterange__time--start"
-              :value="timePart(model.start) ?? ''"
-              :disabled="!model.start"
-              @change="onTimeInput('start', $event)"
-            >
-          </label>
-          <label class="uid-daterange__time-field">
-            <span class="uid-daterange__time-label">{{ locale.dateRangePicker.endTime ?? 'End time' }}</span>
-            <input
-              type="time"
-              class="uid-daterange__time uid-daterange__time--end"
-              :value="timePart(model.end) ?? ''"
-              :disabled="!model.end"
-              @change="onTimeInput('end', $event)"
-            >
-          </label>
-        </div>
-
-        <div
-          v-if="presetList.length"
-          class="uid-daterange__footer"
-        >
-          <button
-            v-for="preset in presetList"
-            :key="preset.label"
-            type="button"
-            class="uid-daterange__btn"
-            @click="selectPreset(preset)"
+          <div
+            v-if="withTime"
+            class="uid-daterange__times"
           >
-            {{ preset.label }}
-          </button>
+            <label class="uid-daterange__time-field">
+              <span class="uid-daterange__time-label">{{ locale.dateRangePicker.startTime ?? 'Start time' }}</span>
+              <input
+                type="time"
+                class="uid-daterange__time uid-daterange__time--start"
+                :value="timePart(range.start) ?? ''"
+                :disabled="!range.start"
+                @change="onTimeInput('start', $event)"
+              >
+            </label>
+            <label class="uid-daterange__time-field">
+              <span class="uid-daterange__time-label">{{ locale.dateRangePicker.endTime ?? 'End time' }}</span>
+              <input
+                type="time"
+                class="uid-daterange__time uid-daterange__time--end"
+                :value="timePart(range.end) ?? ''"
+                :disabled="!range.end"
+                @change="onTimeInput('end', $event)"
+              >
+            </label>
+          </div>
+
+          <div
+            v-if="presetList.length"
+            class="uid-daterange__footer"
+          >
+            <button
+              v-for="preset in presetList"
+              :key="preset.label"
+              type="button"
+              class="uid-daterange__btn"
+              @click="selectPreset(preset)"
+            >
+              {{ preset.label }}
+            </button>
+          </div>
         </div>
-      </div>
-    </Transition>
+      </Transition>
+    </Teleport>
   </div>
 </template>

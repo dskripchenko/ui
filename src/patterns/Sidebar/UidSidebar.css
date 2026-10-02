@@ -8,6 +8,9 @@
   background: var(--uid-sidebar-bg, var(--uid-color-bg-subtle));
   border-color: var(--uid-color-border);
   border-style: solid;
+  /* Without an explicit width every side gets the UA default `medium` (3px);
+     only the side modifiers below draw a border. */
+  border-width: 0;
   transition: width var(--uid-duration-base) var(--uid-ease-in-out);
   overflow: hidden;
 }

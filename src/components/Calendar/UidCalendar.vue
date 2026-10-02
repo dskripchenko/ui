@@ -51,7 +51,7 @@ function computeISO(d: Date): string {
 }
 
 const monthLabel = computed(() => `${locale.value.datePicker.months[viewMonth.value]} ${viewYear.value}`)
-const todayBtnLabel = computed(() => props.todayLabel ?? 'Сегодня')
+const todayBtnLabel = computed(() => props.todayLabel ?? locale.value.calendar.today)
 
 interface Day {
   date: Date

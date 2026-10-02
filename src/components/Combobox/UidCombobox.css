@@ -105,12 +105,8 @@
 
 /* Dropdown */
 .uid-combobox__dropdown {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  z-index: var(--uid-z-dropdown);
-  margin-top: 4px;
+  /* Teleported to the body; position and coordinates come from useFloatingPanel. */
+  z-index: var(--uid-z-popover, 450);
   background: var(--uid-color-bg);
   border: 1px solid var(--uid-color-border);
   border-radius: var(--uid-radius-md);
@@ -196,4 +192,10 @@
 
 /* Sizes */
 .uid-combobox--sm .uid-combobox__control { min-height: var(--uid-size-sm); }
+.uid-combobox--sm .uid-combobox__field { padding-block: 0; font-size: var(--uid-font-size-sm); }
 .uid-combobox--lg .uid-combobox__control { min-height: var(--uid-size-lg); }
+
+/* The text follows the size, as in UidInput: sm 14px, md 16px, lg 18px. */
+.uid-combobox--sm .uid-combobox__field { font-size: var(--uid-font-size-sm); }
+.uid-combobox--md .uid-combobox__field { font-size: var(--uid-font-size-md); }
+.uid-combobox--lg .uid-combobox__field { font-size: var(--uid-font-size-lg); }

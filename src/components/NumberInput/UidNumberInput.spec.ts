@@ -92,4 +92,10 @@ describe('UidNumberInput', () => {
     expect(wrapper.find('input').attributes('disabled')).toBeDefined()
     expect(wrapper.classes()).toContain('uid-number-input--disabled')
   })
+
+  it('has no steppers when disabled or readonly, so the value keeps the width', () => {
+    expect(mount(UidNumberInput, { props: { modelValue: 82.99 } }).findAll('.uid-number-input__btn')).toHaveLength(2)
+    expect(mount(UidNumberInput, { props: { modelValue: 82.99, disabled: true } }).findAll('.uid-number-input__btn')).toHaveLength(0)
+    expect(mount(UidNumberInput, { props: { modelValue: 82.99, readonly: true } }).findAll('.uid-number-input__btn')).toHaveLength(0)
+  })
 })

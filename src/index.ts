@@ -296,6 +296,6 @@ export {
   required, nullable, email, url, numeric, integer,
   min, max, minValue, maxValue, regex, inList, sameAs,
   requiredIf, requiredUnless,
-  parseRules, runRules, setMessages, getMessage,
+  parseRules, runRules, setMessages, getMessage, setValidationLocale,
 } from './utils/validation/index.js'
 export type { RuleFn, RuleInput, FieldContext, ValidationMessages } from './utils/validation/index.js'

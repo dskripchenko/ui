@@ -165,7 +165,7 @@ const totalContributions = computed(() => {
 
 const accessibleLabel = computed(() => {
   if (props.ariaLabel) return props.ariaLabel
-  return `Тепловая карта активности: ${totalContributions.value} событий`
+  return locale.value.heatmap.summary(totalContributions.value)
 })
 </script>
 
@@ -234,14 +234,14 @@ const accessibleLabel = computed(() => {
       v-if="showLegend"
       class="uid-heatmap__legend"
     >
-      <span>Меньше</span>
+      <span>{{ locale.heatmap.less }}</span>
       <span
         v-for="level in legendLevels"
         :key="level"
         class="uid-heatmap__legend-cell"
         :style="level === 0 ? undefined : { background: colorForLevel(level) }"
       />
-      <span>Больше</span>
+      <span>{{ locale.heatmap.more }}</span>
     </div>
   </div>
 </template>

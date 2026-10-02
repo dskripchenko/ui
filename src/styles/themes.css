@@ -33,6 +33,7 @@
   --uid-shadow-sm:  0 1px 2px rgb(0 0 0 / 0.05);
   --uid-shadow-md:  0 4px 12px rgb(0 0 0 / 0.08);
   --uid-shadow-lg:  0 8px 24px rgb(0 0 0 / 0.12);
+  --uid-shadow-xl:  0 20px 60px rgb(0 0 0 / 0.3);
 }
 
 :root[data-theme='dark'] {
@@ -70,6 +71,7 @@
   --uid-shadow-sm:  0 1px 2px rgb(0 0 0 / 0.2);
   --uid-shadow-md:  0 4px 12px rgb(0 0 0 / 0.4);
   --uid-shadow-lg:  0 8px 24px rgb(0 0 0 / 0.6);
+  --uid-shadow-xl:  0 20px 60px rgb(0 0 0 / 0.6);
 }
 
 /* Aliases: компоненты используют --uid-color-* → маппинг на семантические токены */
@@ -94,6 +96,8 @@
   --uid-color-primary:         var(--uid-accent);
   --uid-color-primary-hover:   var(--uid-accent-hover);
   --uid-color-primary-subtle:  var(--uid-accent-subtle);
+  /* The halo of a focused field (box-shadow). */
+  --uid-focus-ring:            0 0 0 3px var(--uid-color-primary-subtle);
   --uid-color-focus-ring:      var(--uid-accent);
 
   --uid-color-danger:          var(--uid-danger);

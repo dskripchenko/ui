@@ -47,7 +47,11 @@ function onOutsideClick(event: MouseEvent): void {
 }
 
 function onEscape(event: KeyboardEvent): void {
-  if (event.key === 'Escape' && open.value) close()
+  if (event.key === 'Escape' && open.value) {
+    // Marks the Escape as handled: an enclosing modal does not close with it.
+    event.preventDefault()
+    close()
+  }
 }
 
 onMounted(() => {

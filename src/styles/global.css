@@ -5,3 +5,13 @@
   color: var(--uid-text-primary);
   background: var(--uid-surface-base);
 }
+
+/*
+ * Keyboard focus: one ring for every kit control, in the theme's accent —
+ * never the browser's default blue. Zero specificity, so a component's own
+ * focus style still wins.
+ */
+:where([class^='uid-'], [class*=' uid-']):focus-visible {
+  outline: 2px solid var(--uid-color-focus-ring);
+  outline-offset: 2px;
+}

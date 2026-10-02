@@ -142,9 +142,8 @@
 
 /* Dropdown */
 .uid-tree-select__dropdown {
-  position: absolute;
-  z-index: var(--uid-z-dropdown);
-  margin-top: 4px;
+  /* Teleported to the body; position and coordinates come from useFloatingPanel. */
+  z-index: var(--uid-z-popover, 450);
   background: var(--uid-color-bg);
   border: 1px solid var(--uid-color-border);
   border-radius: var(--uid-radius-md);
@@ -152,6 +151,22 @@
   max-height: 320px;
   overflow-y: auto;
   padding: var(--uid-space-xs) 0;
-  width: 100%;
   left: 0;
 }
+
+/* Sizes: one control height per size, shared with UidInput and UidSelect. */
+.uid-tree-select--sm .uid-tree-select__trigger {
+  min-height: var(--uid-size-sm);
+  padding-inline: var(--uid-space-sm);
+  font-size: var(--uid-font-size-sm);
+}
+
+.uid-tree-select--lg .uid-tree-select__trigger {
+  min-height: var(--uid-size-lg);
+  padding-inline: var(--uid-space-md);
+}
+
+/* The text follows the size, as in UidInput: sm 14px, md 16px, lg 18px. */
+.uid-tree-select--sm .uid-tree-select__value { font-size: var(--uid-font-size-sm); }
+.uid-tree-select--md .uid-tree-select__value { font-size: var(--uid-font-size-md); }
+.uid-tree-select--lg .uid-tree-select__value { font-size: var(--uid-font-size-lg); }

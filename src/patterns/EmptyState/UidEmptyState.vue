@@ -2,6 +2,8 @@
 import './UidEmptyState.css'
 import { FolderOpen } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
+import { useLocale } from '../../composables/useLocale.js'
+
 
 export interface UidEmptyStateProps {
   title?: string
@@ -9,9 +11,11 @@ export interface UidEmptyStateProps {
 }
 
 withDefaults(defineProps<UidEmptyStateProps>(), {
-  title: 'Ничего не найдено',
+  title: undefined,
   description: undefined,
 })
+
+const uidLocale = useLocale()
 
 defineSlots<{
   illustration?(): unknown
@@ -35,7 +39,7 @@ defineSlots<{
     <div class="uid-pattern-empty-state__content">
       <h2 class="uid-pattern-empty-state__title">
         <slot name="title">
-          {{ title }}
+          {{ title ?? uidLocale.emptyState.title }}
         </slot>
       </h2>
       <p

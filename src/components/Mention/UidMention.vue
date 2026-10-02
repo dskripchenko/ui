@@ -2,6 +2,7 @@
 import './UidMention.css'
 import { computed, nextTick, ref, useId } from 'vue'
 import { useLocale } from '../../composables/useLocale.js'
+import { useFloatingPanel } from '../../composables/useFloatingPanel.js'
 
 export interface MentionOption {
   value: string
@@ -42,7 +43,9 @@ const query = ref('')
 const activeIndex = ref(0)
 const triggerStart = ref(-1)
 const currentPrefix = ref('')
-const dropdownPos = ref<{ top: number; left: number }>({ top: 0, left: 0 })
+const panelRef = ref<HTMLElement | null>(null)
+// Anchored under the textarea, teleported out of any clipping container.
+const { panelStyle } = useFloatingPanel(fieldRef, panelRef, isOpen)
 
 const prefixes = computed(() => Array.isArray(props.prefix) ? props.prefix : [props.prefix])
 
@@ -82,10 +85,7 @@ function detectTrigger(): void {
     currentPrefix.value = foundPrefix
     query.value = text.slice(foundStart + foundPrefix.length)
     activeIndex.value = 0
-    if (!isOpen.value) {
-      isOpen.value = true
-      void nextTick(updateDropdownPos)
-    }
+    if (!isOpen.value) isOpen.value = true
   } else {
     isOpen.value = false
     query.value = ''
@@ -93,12 +93,6 @@ function detectTrigger(): void {
   }
 }
 
-function updateDropdownPos(): void {
-  const field = fieldRef.value
-  if (!field) return
-  const r = field.getBoundingClientRect()
-  dropdownPos.value = { top: r.height + 4, left: 0 }
-}
 
 function selectOption(opt: MentionOption): void {
   if (triggerStart.value < 0) return
@@ -142,15 +136,13 @@ function onKeydown(e: KeyboardEvent): void {
       e.preventDefault()
       selectOption(filtered.value[activeIndex.value])
     }
-  } else if (e.key === 'Escape') {
+  } else if (e.key === 'Escape' && isOpen.value) {
+    // Ours to handle: an enclosing modal must not close with the list.
+    e.stopPropagation()
     isOpen.value = false
   }
 }
 
-const dropdownStyle = computed(() => ({
-  top: `${dropdownPos.value.top}px`,
-  left: `${dropdownPos.value.left}px`,
-}))
 </script>
 
 <template>
@@ -181,32 +173,35 @@ const dropdownStyle = computed(() => ({
       @blur="isOpen = false"
     />
 
-    <div
-      v-if="isOpen"
-      class="uid-mention__dropdown"
-      :style="dropdownStyle"
-    >
-      <button
-        v-for="(opt, idx) in filtered"
-        :key="opt.value"
-        type="button"
-        class="uid-mention__option"
-        :class="{ 'uid-mention__option--active': idx === activeIndex }"
-        @mousedown.prevent="selectOption(opt)"
-        @mouseenter="activeIndex = idx"
-      >
-        <span class="uid-mention__option-label">{{ opt.label }}</span>
-        <span
-          v-if="opt.hint"
-          class="uid-mention__option-hint"
-        >{{ opt.hint }}</span>
-      </button>
+    <Teleport to="body">
       <div
-        v-if="filtered.length === 0"
-        class="uid-mention__empty"
+        v-if="isOpen"
+        ref="panelRef"
+        class="uid-mention__dropdown"
+        :style="panelStyle"
       >
-        {{ emptyMessage }}
+        <button
+          v-for="(opt, idx) in filtered"
+          :key="opt.value"
+          type="button"
+          class="uid-mention__option"
+          :class="{ 'uid-mention__option--active': idx === activeIndex }"
+          @mousedown.prevent="selectOption(opt)"
+          @mouseenter="activeIndex = idx"
+        >
+          <span class="uid-mention__option-label">{{ opt.label }}</span>
+          <span
+            v-if="opt.hint"
+            class="uid-mention__option-hint"
+          >{{ opt.hint }}</span>
+        </button>
+        <div
+          v-if="filtered.length === 0"
+          class="uid-mention__empty"
+        >
+          {{ emptyMessage }}
+        </div>
       </div>
-    </div>
+    </Teleport>
   </div>
 </template>

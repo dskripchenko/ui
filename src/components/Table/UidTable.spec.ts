@@ -158,7 +158,29 @@ describe('UidTable', () => {
       props: { columns, data: [{ id: 1, name: 'A' }] },
     })
     await wrapper.find('.uid-table__row').trigger('click')
-    expect(wrapper.emitted('row-click')?.[0]).toEqual([{ id: 1, name: 'A' }])
+    const emitted = wrapper.emitted('row-click')?.[0]
+    expect(emitted?.[0]).toEqual({ id: 1, name: 'A' })
+    expect(emitted?.[1]).toBeInstanceOf(MouseEvent)
+  })
+
+  it('a click on a control inside a cell is not a row click', async () => {
+    const wrapper = mount(UidTable, {
+      props: { columns: [{ key: 'name', label: 'Name' }], data: [{ id: 1, name: 'A' }] },
+      slots: {
+        name: `<span class="plain">text</span>
+          <button class="btn">edit</button>
+          <a class="lnk" href="#x">open</a>
+          <input class="inp" />
+          <span class="sw" role="switch">sw</span>
+          <span class="ignored" data-row-click-ignore><i class="inner">x</i></span>`,
+      },
+    })
+    for (const sel of ['.btn', '.lnk', '.inp', '.sw', '.inner']) {
+      await wrapper.find(sel).trigger('click')
+    }
+    expect(wrapper.emitted('row-click')).toBeUndefined()
+    await wrapper.find('.plain').trigger('click')
+    expect(wrapper.emitted('row-click')).toHaveLength(1)
   })
 
   describe('fixed-колонки', () => {

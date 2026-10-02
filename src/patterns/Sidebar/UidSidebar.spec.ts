@@ -5,6 +5,10 @@ import UidSidebar from './UidSidebar.vue'
 import UidSidebarItem from './UidSidebarItem.vue'
 import UidSidebarGroup from './UidSidebarGroup.vue'
 import UidSidebarDivider from './UidSidebarDivider.vue'
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
+
+const sidebarCss = readFileSync(resolve(process.cwd(), 'src/patterns/Sidebar/UidSidebar.css'), 'utf8')
 
 describe('UidSidebar', () => {
   it('рендерит <aside>', () => {
@@ -130,5 +134,13 @@ describe('UidSidebarItem to / RouterLink', () => {
     expect(wrapper.classes()).toContain('rl')
     expect(wrapper.classes()).toContain('uid-sidebar-item')
     expect(wrapper.attributes('data-to')).toBe('{"name":"users"}')
+  })
+
+  // jsdom computes no styles: a border-style with no width falls back to the
+  // UA `medium` (3px) on every side in a real browser, so pin the width.
+  it('the base rule resets border-width, so only the side modifier draws', () => {
+    const base = /\.uid-pattern-sidebar \{([^}]*)\}/.exec(sidebarCss)?.[1] ?? ''
+    expect(base).toContain('border-style: solid')
+    expect(base).toMatch(/border-width:\s*0/)
   })
 })

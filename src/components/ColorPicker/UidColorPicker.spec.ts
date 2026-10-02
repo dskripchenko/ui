@@ -1,6 +1,10 @@
-import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { mount, config } from '@vue/test-utils'
+import { describe, expect, it, beforeAll, afterAll } from 'vitest'
 import UidColorPicker from './UidColorPicker.vue'
+
+// The panel is teleported to the body; render it in place so the wrapper finds it.
+beforeAll(() => { config.global.stubs.teleport = true })
+afterAll(() => { delete config.global.stubs.teleport })
 
 describe('UidColorPicker', () => {
   it('рендерит триггер с placeholder при пустом значении', () => {
