@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import './UidCheckbox.css'
 import { computed, onMounted, ref, useId, watch } from 'vue'
+import { useControlAttrs } from '../../composables/useControlAttrs.js'
 
 export interface UidCheckboxProps {
   label?: string
@@ -12,6 +13,9 @@ export interface UidCheckboxProps {
   id?: string
   indeterminate?: boolean
 }
+
+defineOptions({ inheritAttrs: false })
+const { rootAttrs, controlAttrs } = useControlAttrs()
 
 const props = withDefaults(defineProps<UidCheckboxProps>(), {
   label: undefined,
@@ -53,6 +57,7 @@ function handleChange(event: Event): void {
 
 <template>
   <div
+    v-bind="rootAttrs()"
     class="uid-checkbox"
     :class="[
       hasError && 'uid-checkbox--error',
@@ -61,6 +66,7 @@ function handleChange(event: Event): void {
   >
     <label class="uid-checkbox__label">
       <input
+        v-bind="controlAttrs()"
         :id="inputId"
         ref="inputRef"
         type="checkbox"

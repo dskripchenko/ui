@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import './UidSlider.css'
 import { computed, useId } from 'vue'
+import { useControlAttrs } from '../../composables/useControlAttrs.js'
 
 export interface UidSliderMark {
   value: number
@@ -26,6 +27,9 @@ export interface UidSliderProps {
   /** Id(s) of the element(s) that label the slider handle. Takes precedence over `ariaLabel`/`label`. */
   ariaLabelledby?: string
 }
+
+defineOptions({ inheritAttrs: false })
+const { rootAttrs, controlAttrs } = useControlAttrs()
 
 const props = withDefaults(defineProps<UidSliderProps>(), {
   min: 0,
@@ -82,6 +86,7 @@ const displayValue = computed(() =>
 
 <template>
   <div
+    v-bind="rootAttrs()"
     class="uid-slider"
     :class="{ 'uid-slider--disabled': disabled, 'uid-slider--marked': normalizedMarks.length > 0 }"
   >
@@ -102,6 +107,7 @@ const displayValue = computed(() =>
     </div>
 
     <input
+      v-bind="controlAttrs()"
       :id="inputId"
       v-model.number="model"
       class="uid-slider__input"

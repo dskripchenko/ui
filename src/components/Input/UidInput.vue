@@ -4,6 +4,7 @@ import { computed, useId } from 'vue'
 import { useField } from '../../composables/useField'
 import type { Size } from '../../types/index.js'
 import type { RuleInput } from '../../utils/validation/types.js'
+import { useControlAttrs } from '../../composables/useControlAttrs.js'
 
 export interface UidInputProps {
   type?: string
@@ -20,6 +21,9 @@ export interface UidInputProps {
   id?: string
   autocomplete?: string
 }
+
+defineOptions({ inheritAttrs: false })
+const { rootAttrs, controlAttrs } = useControlAttrs()
 
 const props = withDefaults(defineProps<UidInputProps>(), {
   type: 'text',
@@ -62,6 +66,7 @@ defineExpose({ validate })
 
 <template>
   <div
+    v-bind="rootAttrs()"
     class="uid-input-field"
     :class="[
       `uid-input-field--${size}`,
@@ -92,6 +97,7 @@ defineExpose({ validate })
       </span>
 
       <input
+        v-bind="controlAttrs()"
         :id="inputId"
         v-model="model"
         class="uid-input-field__input"

@@ -5,6 +5,7 @@ import { Minus, Plus } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
 import { useLocale } from '../../composables/useLocale.js'
 import type { Size } from '../../types/index.js'
+import { useControlAttrs } from '../../composables/useControlAttrs.js'
 
 export interface UidNumberInputProps {
   min?: number
@@ -24,6 +25,9 @@ export interface UidNumberInputProps {
   controls?: boolean
   centered?: boolean
 }
+
+defineOptions({ inheritAttrs: false })
+const { rootAttrs, controlAttrs } = useControlAttrs()
 
 const props = withDefaults(defineProps<UidNumberInputProps>(), {
   min: undefined,
@@ -124,6 +128,7 @@ const showControls = computed(() => props.controls && !props.disabled && !props.
 
 <template>
   <div
+    v-bind="rootAttrs()"
     class="uid-number-input"
     :class="[
       `uid-number-input--${size}`,
@@ -167,6 +172,7 @@ const showControls = computed(() => props.controls && !props.disabled && !props.
         class="uid-number-input__input"
         type="number"
         inputmode="decimal"
+        v-bind="controlAttrs()"
         :name="name"
         :placeholder="placeholder"
         :disabled="disabled"

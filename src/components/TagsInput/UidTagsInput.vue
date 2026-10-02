@@ -3,6 +3,7 @@ import './UidTagsInput.css'
 import { computed, ref, useId } from 'vue'
 import { useLocale } from '../../composables/useLocale.js'
 import type { Size } from '../../types/index.js'
+import { useControlAttrs } from '../../composables/useControlAttrs.js'
 
 export interface UidTagsInputProps {
   separators?: string[]
@@ -18,6 +19,9 @@ export interface UidTagsInputProps {
   size?: Size
   id?: string
 }
+
+defineOptions({ inheritAttrs: false })
+const { rootAttrs, controlAttrs } = useControlAttrs()
 
 const props = withDefaults(defineProps<UidTagsInputProps>(), {
   separators: () => [',', 'Enter'],
@@ -128,6 +132,7 @@ function focusInput(): void {
 
 <template>
   <div
+    v-bind="rootAttrs()"
     class="uid-tags-input"
     :class="[
       `uid-tags-input--${size}`,
@@ -171,6 +176,7 @@ function focusInput(): void {
       </span>
 
       <input
+        v-bind="controlAttrs()"
         :id="inputId"
         ref="inputRef"
         class="uid-tags-input__field"
