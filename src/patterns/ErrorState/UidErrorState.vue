@@ -4,6 +4,8 @@ import { computed } from 'vue'
 import { AlertCircle, WifiOff, ServerCrash } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
 import type { Component } from 'vue'
+import { useLocale } from '../../composables/useLocale.js'
+
 
 export interface UidErrorStateProps {
   code?: '404' | '500' | 'network' | string
@@ -16,6 +18,8 @@ const props = withDefaults(defineProps<UidErrorStateProps>(), {
   title: undefined,
   description: undefined,
 })
+
+const uidLocale = useLocale()
 
 defineSlots<{
   illustration?(): unknown
@@ -30,30 +34,30 @@ interface ErrorPreset {
   description: string
 }
 
-const PRESETS: Record<string, ErrorPreset> = {
+const PRESETS = computed<Record<string, ErrorPreset>>(() => ({
   '404': {
     icon: AlertCircle,
-    title: 'Страница не найдена',
-    description: 'Запрашиваемая страница не существует или была перемещена.',
+    title: uidLocale.value.errorState.notFoundTitle,
+    description: uidLocale.value.errorState.notFoundDescription,
   },
   '500': {
     icon: ServerCrash,
-    title: 'Ошибка сервера',
-    description: 'На сервере произошла ошибка. Мы уже работаем над исправлением.',
+    title: uidLocale.value.errorState.serverTitle,
+    description: uidLocale.value.errorState.serverDescription,
   },
   network: {
     icon: WifiOff,
-    title: 'Нет соединения',
-    description: 'Проверьте подключение к интернету и попробуйте снова.',
+    title: uidLocale.value.errorState.offlineTitle,
+    description: uidLocale.value.errorState.offlineDescription,
   },
-}
+}))
 
 const preset = computed<ErrorPreset | null>(() =>
-  props.code ? (PRESETS[props.code] ?? null) : null,
+  props.code ? (PRESETS.value[props.code] ?? null) : null,
 )
 
 const resolvedIcon = computed(() => preset.value?.icon ?? AlertCircle)
-const resolvedTitle = computed(() => props.title ?? preset.value?.title ?? 'Что-то пошло не так')
+const resolvedTitle = computed(() => props.title ?? preset.value?.title ?? uidLocale.value.errorState.title)
 const resolvedDescription = computed(() => props.description ?? preset.value?.description)
 </script>
 

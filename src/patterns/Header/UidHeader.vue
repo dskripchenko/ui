@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import './UidHeader.css'
+import { useLocale } from '../../composables/useLocale.js'
+
 
 export interface UidHeaderProps {
   sticky?: boolean
@@ -12,6 +14,8 @@ withDefaults(defineProps<UidHeaderProps>(), {
   bordered: true,
   transparent: false,
 })
+
+const uidLocale = useLocale()
 
 defineSlots<{
   logo?(): unknown
@@ -41,7 +45,7 @@ defineSlots<{
       <nav
         v-if="$slots.nav"
         class="uid-pattern-header__nav"
-        aria-label="Основная навигация"
+        :aria-label="uidLocale.header.nav"
       >
         <slot name="nav" />
       </nav>

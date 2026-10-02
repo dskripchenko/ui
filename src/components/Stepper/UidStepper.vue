@@ -2,6 +2,8 @@
 import './UidStepper.css'
 import { Check } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
+import { useLocale } from '../../composables/useLocale.js'
+
 
 export interface StepperStep {
   label: string
@@ -25,6 +27,8 @@ const props = withDefaults(defineProps<UidStepperProps>(), {
   selectable: 'none',
 })
 
+const uidLocale = useLocale()
+
 const emit = defineEmits<{
   select: [index: number]
 }>()
@@ -46,7 +50,7 @@ function getStatus(index: number, current: number): 'completed' | 'current' | 'p
   <ol
     class="uid-stepper"
     :class="[`uid-stepper--${orientation}`]"
-    :aria-label="`Шаги (текущий: ${current + 1} из ${steps.length})`"
+    :aria-label="uidLocale.stepper.label(current + 1, steps.length)"
   >
     <li
       v-for="(step, index) in steps"

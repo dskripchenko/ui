@@ -361,7 +361,7 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
           class="uid-daterange__panel"
           :style="panelStyle"
           role="dialog"
-          aria-label="Выбор диапазона дат"
+          :aria-label="locale.dateRangePicker.dialog"
         >
           <div class="uid-daterange__months">
             <div class="uid-daterange__month">

@@ -20,7 +20,7 @@ export interface UidBreadcrumbProps {
 }
 
 const props = withDefaults(defineProps<UidBreadcrumbProps>(), {
-  label: 'Навигация',
+  label: undefined,
   separator: '/',
   nowrap: false,
   collapse: false,
@@ -263,7 +263,7 @@ defineExpose({ recompute })
       'uid-breadcrumb--collapse': collapse,
       'uid-breadcrumb--measuring': measuring,
     }"
-    :aria-label="label"
+    :aria-label="label ?? locale.breadcrumb?.label"
   >
     <ol
       ref="listRef"

@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import './UidSparkline.css'
 import { computed } from 'vue'
+import { useLocale } from '../../composables/useLocale.js'
+
 
 export type SparklineType = 'line' | 'area' | 'bar'
 
@@ -28,6 +30,8 @@ const props = withDefaults(defineProps<UidSparklineProps>(), {
   showZero: false,
   strokeWidth: 1.5,
 })
+
+const uidLocale = useLocale()
 
 const padding = 2
 
@@ -115,7 +119,7 @@ const accessibleLabel = computed(() => {
   if (props.data.length === 0) return ''
   const first = props.data[0]
   const lastV = props.data[props.data.length - 1]
-  return `Тренд: с ${first} до ${lastV}, ${props.data.length} точек`
+  return uidLocale.value.sparkline.summary(String(first), String(lastV), props.data.length)
 })
 </script>
 

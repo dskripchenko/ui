@@ -2,6 +2,8 @@
 import './UidPagination.css'
 import { ChevronLeft, ChevronRight } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
+import { useLocale } from '../../composables/useLocale.js'
+
 
 export interface UidPaginationCursorProps {
   hasPrev?: boolean
@@ -13,9 +15,11 @@ export interface UidPaginationCursorProps {
 withDefaults(defineProps<UidPaginationCursorProps>(), {
   hasPrev: false,
   hasNext: false,
-  prevLabel: 'Назад',
-  nextLabel: 'Вперёд',
+  prevLabel: undefined,
+  nextLabel: undefined,
 })
+
+const uidLocale = useLocale()
 
 const emit = defineEmits<{
   prev: []
@@ -26,30 +30,30 @@ const emit = defineEmits<{
 <template>
   <nav
     class="uid-pagination uid-pagination--cursor"
-    aria-label="Навигация по страницам"
+    :aria-label="uidLocale.pagination.cursorNav"
   >
     <button
       type="button"
       class="uid-pagination__btn uid-pagination__btn--nav uid-pagination__btn--labeled"
       :disabled="!hasPrev"
-      :aria-label="prevLabel"
+      :aria-label="prevLabel ?? uidLocale.pagination.back"
       @click="emit('prev')"
     >
       <UidIcon
         :icon="ChevronLeft"
         :size="16"
       />
-      {{ prevLabel }}
+      {{ prevLabel ?? uidLocale.pagination.back }}
     </button>
 
     <button
       type="button"
       class="uid-pagination__btn uid-pagination__btn--nav uid-pagination__btn--labeled"
       :disabled="!hasNext"
-      :aria-label="nextLabel"
+      :aria-label="nextLabel ?? uidLocale.pagination.forward"
       @click="emit('next')"
     >
-      {{ nextLabel }}
+      {{ nextLabel ?? uidLocale.pagination.forward }}
       <UidIcon
         :icon="ChevronRight"
         :size="16"

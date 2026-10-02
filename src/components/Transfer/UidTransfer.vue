@@ -38,7 +38,7 @@ const rightChecked = ref<Set<TransferKey>>(new Set())
 const leftQuery = ref('')
 const rightQuery = ref('')
 
-const titles = computed(() => props.titles ?? ['Доступно', 'Выбрано'])
+const titles = computed(() => props.titles ?? [locale.value.transfer.available, locale.value.transfer.selected])
 
 const selectedSet = computed(() => new Set(model.value))
 
@@ -185,7 +185,7 @@ function moveLeft(): void {
         type="button"
         class="uid-transfer__op"
         :disabled="leftChecked.size === 0 || disabled"
-        aria-label="Перенести вправо"
+        :aria-label="locale.transfer.moveRight"
         @click="moveRight"
       >
         <UidIcon
@@ -197,7 +197,7 @@ function moveLeft(): void {
         type="button"
         class="uid-transfer__op"
         :disabled="rightChecked.size === 0 || disabled"
-        aria-label="Перенести влево"
+        :aria-label="locale.transfer.moveLeft"
         @click="moveLeft"
       >
         <UidIcon

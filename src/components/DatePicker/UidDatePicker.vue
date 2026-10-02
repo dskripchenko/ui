@@ -263,7 +263,7 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
           class="uid-datepicker__panel"
           :style="panelStyle"
           role="dialog"
-          aria-label="Выбор даты"
+          :aria-label="locale.datePicker.dialog"
         >
           <div class="uid-datepicker__nav">
             <button

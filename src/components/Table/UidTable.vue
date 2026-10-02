@@ -6,6 +6,8 @@ import { ArrowUp, ArrowDown, ArrowUpDown } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
 import UidSpinner from '../Spinner/UidSpinner.vue'
 import UidCheckbox from '../Checkbox/UidCheckbox.vue'
+import { useLocale } from '../../composables/useLocale.js'
+
 
 export interface UidTableColumn {
   key: string
@@ -49,7 +51,7 @@ const props = withDefaults(defineProps<UidTableProps>(), {
   sortKey: undefined,
   sortDirection: null,
   loading: false,
-  emptyText: 'Нет данных',
+  emptyText: undefined,
   striped: false,
   bordered: false,
   selectable: false,
@@ -57,6 +59,8 @@ const props = withDefaults(defineProps<UidTableProps>(), {
   selection: () => new Set(),
   rowKey: 'id',
 })
+
+const uidLocale = useLocale()
 
 const emit = defineEmits<{
   'update:sortKey': [key: string | null]
@@ -340,7 +344,7 @@ onBeforeUnmount(() => resizeObserver?.disconnect())
               <UidCheckbox
                 :model-value="allSelected"
                 :indeterminate="headerIndeterminate"
-                aria-label="Выделить всё"
+                :aria-label="uidLocale.table.selectAll"
                 @update:model-value="onHeaderCheckbox"
               />
             </th>
@@ -394,7 +398,7 @@ onBeforeUnmount(() => resizeObserver?.disconnect())
                 class="uid-table__td uid-table__td--empty"
               >
                 <slot name="empty">
-                  {{ emptyText }}
+                  {{ emptyText ?? uidLocale.table.empty }}
                 </slot>
               </td>
             </tr>
@@ -417,7 +421,7 @@ onBeforeUnmount(() => resizeObserver?.disconnect())
               >
                 <UidCheckbox
                   :model-value="selection.has(rowId(row))"
-                  :aria-label="`Строка ${rowId(row)}`"
+                  :aria-label="uidLocale.table.row(rowId(row))"
                   @update:model-value="(v) => onRowCheckbox(row, v)"
                 />
               </td>

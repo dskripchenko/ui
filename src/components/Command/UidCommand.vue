@@ -6,6 +6,8 @@ import UidIcon from '../../icons/UidIcon.vue'
 import { useFocusTrap } from '../../composables/useFocusTrap.js'
 import { useScrollLock } from '../../composables/useScrollLock.js'
 import { useOverlayStack } from '../../composables/useOverlayStack.js'
+import { useLocale } from '../../composables/useLocale.js'
+
 
 export interface CommandItem {
   id: string
@@ -23,9 +25,11 @@ export interface UidCommandProps {
 }
 
 const props = withDefaults(defineProps<UidCommandProps>(), {
-  placeholder: 'Поиск команд...',
-  emptyText: 'Ничего не найдено',
+  placeholder: undefined,
+  emptyText: undefined,
 })
+
+const uidLocale = useLocale()
 
 const model = defineModel<boolean>({ default: false })
 
@@ -151,7 +155,7 @@ onUnmounted(() => {
           class="uid-command"
           role="dialog"
           aria-modal="true"
-          aria-label="Палитра команд"
+          :aria-label="uidLocale.command.label"
           @keydown="onKeydown"
         >
           <div class="uid-command__search">
@@ -166,7 +170,7 @@ onUnmounted(() => {
               v-model="query"
               class="uid-command__input"
               type="text"
-              :placeholder="placeholder"
+              :placeholder="placeholder ?? uidLocale.command.placeholder"
               autocomplete="off"
               spellcheck="false"
               aria-autocomplete="list"
@@ -226,7 +230,7 @@ onUnmounted(() => {
               v-else
               class="uid-command__empty"
             >
-              {{ emptyText }}
+              {{ emptyText ?? uidLocale.command.empty }}
             </div>
           </div>
         </div>

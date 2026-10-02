@@ -277,14 +277,14 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
           class="uid-timepicker__panel"
           :style="panelStyle"
           role="dialog"
-          aria-label="Выбор времени"
+          :aria-label="locale.timePicker.dialog"
         >
           <div class="uid-timepicker__columns">
             <div
               ref="hourColRef"
               class="uid-timepicker__column"
               role="listbox"
-              aria-label="Часы"
+              :aria-label="locale.timePicker.hours"
               @keydown="onColumnKeydown($event, 'h', hours)"
             >
               <button
@@ -305,7 +305,7 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
               ref="minuteColRef"
               class="uid-timepicker__column"
               role="listbox"
-              aria-label="Минуты"
+              :aria-label="locale.timePicker.minutes"
               @keydown="onColumnKeydown($event, 'm', minutes)"
             >
               <button
@@ -327,7 +327,7 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
               ref="secondColRef"
               class="uid-timepicker__column"
               role="listbox"
-              aria-label="Секунды"
+              :aria-label="locale.timePicker.seconds"
               @keydown="onColumnKeydown($event, 's', seconds)"
             >
               <button

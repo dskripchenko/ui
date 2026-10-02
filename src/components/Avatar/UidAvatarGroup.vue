@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { computed, type VNode } from 'vue'
+import { useLocale } from '../../composables/useLocale.js'
+
 
 export interface UidAvatarGroupProps {
   max?: number
@@ -8,6 +10,8 @@ export interface UidAvatarGroupProps {
 const props = withDefaults(defineProps<UidAvatarGroupProps>(), {
   max: undefined,
 })
+
+const uidLocale = useLocale()
 
 const slots = defineSlots<{ default?(): VNode[] }>()
 
@@ -36,7 +40,7 @@ const overflow = computed<number>(() =>
     <span
       v-if="overflow > 0"
       class="uid-avatar uid-avatar--md uid-avatar--circle uid-avatar-group__overflow"
-      :aria-label="`Ещё ${overflow}`"
+      :aria-label="uidLocale.avatarGroup.more(overflow)"
       role="img"
     >
       +{{ overflow }}

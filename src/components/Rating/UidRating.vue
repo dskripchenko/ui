@@ -126,7 +126,7 @@ function onKeydown(e: KeyboardEvent, index: number): void {
     :aria-valuenow="model"
     :aria-readonly="readonly"
     :aria-disabled="disabled"
-    :aria-label="label || `Оценка ${model} из ${max}`"
+    :aria-label="label || uidLocale.rating.label(model, max)"
     @mouseleave="onLeave"
   >
     <button
@@ -135,7 +135,7 @@ function onKeydown(e: KeyboardEvent, index: number): void {
       type="button"
       class="uid-rating__star"
       :tabindex="readonly || disabled ? -1 : 0"
-      :aria-label="`${i} ${i === 1 ? 'звезда' : 'звёзды'}`"
+      :aria-label="uidLocale.rating.star(i)"
       @click="onClick($event, i)"
       @mousemove="onHover($event, i)"
       @keydown="onKeydown($event, i)"

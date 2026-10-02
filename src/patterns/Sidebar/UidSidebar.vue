@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import './UidSidebar.css'
+import { useLocale } from '../../composables/useLocale.js'
+
 
 export interface UidSidebarProps {
   collapsed?: boolean
@@ -12,6 +14,8 @@ withDefaults(defineProps<UidSidebarProps>(), {
   width: undefined,
   position: 'left',
 })
+
+const uidLocale = useLocale()
 
 defineSlots<{
   header?(): unknown
@@ -28,7 +32,7 @@ defineSlots<{
       { 'uid-pattern-sidebar--collapsed': collapsed },
     ]"
     :style="width && !collapsed ? { '--uid-sidebar-width': width } : undefined"
-    aria-label="Боковая навигация"
+    :aria-label="uidLocale.sidebar.label"
   >
     <div
       v-if="$slots.header"
@@ -38,7 +42,7 @@ defineSlots<{
     </div>
     <nav
       class="uid-pattern-sidebar__nav"
-      aria-label="Навигация"
+      :aria-label="uidLocale.sidebar.nav"
     >
       <slot name="nav" />
     </nav>
