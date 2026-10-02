@@ -12,6 +12,7 @@
   background: var(--uid-drawer-bg, var(--uid-color-surface));
   border-color: var(--uid-drawer-border, var(--uid-color-border));
   border-style: solid;
+  border-width: 0;
   box-shadow: var(--uid-drawer-shadow, var(--uid-shadow-xl, 0 20px 60px rgba(0,0,0,.3)));
   outline: none;
   overflow: hidden;

@@ -4,6 +4,8 @@ import { computed, ref } from 'vue'
 import { Star } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
 import type { Size } from '../../types/index.js'
+import { useLocale } from '../../composables/useLocale.js'
+import { formatFixed } from '../../utils/formatNumber.js'
 
 export type RatingTone = 'warning' | 'primary' | 'success' | 'danger'
 
@@ -17,6 +19,8 @@ export interface UidRatingProps {
   tone?: RatingTone
   icon?: unknown
   label?: string
+  /** BCP 47 tag for number formatting; defaults to the active kit locale. */
+  locale?: string
 }
 
 const props = withDefaults(defineProps<UidRatingProps>(), {
@@ -28,7 +32,11 @@ const props = withDefaults(defineProps<UidRatingProps>(), {
   size: 'md',
   tone: 'warning',
   icon: undefined,
+  locale: undefined,
 })
+
+const uidLocale = useLocale()
+const numberLocale = computed(() => props.locale ?? uidLocale.value.code)
 
 const emit = defineEmits<{
   change: [value: number]
@@ -151,7 +159,7 @@ function onKeydown(e: KeyboardEvent, index: number): void {
       v-if="showLabel"
       class="uid-rating__label"
     >
-      {{ model.toFixed(allowHalf ? 1 : 0) }} / {{ max }}
+      {{ formatFixed(model, numberLocale, allowHalf ? 1 : 0) }} / {{ max }}
     </span>
   </div>
 </template>

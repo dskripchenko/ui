@@ -1,6 +1,9 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
+import { computed, defineComponent, h } from 'vue'
 import UidGauge from './UidGauge.vue'
+import { provideLocale } from '../../composables/useLocale.js'
+import { en } from '../../locales/en.js'
 
 describe('UidGauge', () => {
   it('рендерит SVG с полукруглой аркой', () => {
@@ -25,8 +28,23 @@ describe('UidGauge', () => {
   })
 
   it('форматирует с precision', () => {
-    const wrapper = mount(UidGauge, { props: { value: 42.5678, precision: 2 } })
+    const wrapper = mount(UidGauge, { props: { value: 42.5678, precision: 2, locale: 'en-US' } })
     expect(wrapper.find('.uid-gauge__value').text()).toContain('42.57')
+  })
+
+  it('formats the value in the kit locale', () => {
+    const ru = mount(UidGauge, { props: { value: 83, precision: 1 } })
+    expect(ru.find('.uid-gauge__value').text()).toContain('83,0')
+  })
+
+  it('formats the value in the locale given by provideLocale', () => {
+    const Host = defineComponent({
+      setup() {
+        provideLocale(computed(() => en))
+        return () => h(UidGauge, { value: 83, precision: 1 })
+      },
+    })
+    expect(mount(Host).find('.uid-gauge__value').text()).toContain('83.0')
   })
 
   it('кастомный formatValue', () => {

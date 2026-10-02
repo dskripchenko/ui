@@ -4,6 +4,7 @@ import { computed, ref, useId } from 'vue'
 import { Upload, FileText, X } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
 import { useLocale } from '../../composables/useLocale.js'
+import { formatFileSize } from '../../utils/formatNumber.js'
 
 export interface UploadedFile {
   file: File
@@ -54,9 +55,7 @@ const hasError = computed(() => !!props.error)
 const hintText = computed(() => props.error || props.hint)
 
 function formatSize(bytes: number): string {
-  if (bytes < 1024) return `${bytes} Б`
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} КБ`
-  return `${(bytes / 1024 / 1024).toFixed(1)} МБ`
+  return formatFileSize(bytes, locale.value.code)
 }
 
 function fileMatchesAccept(file: File): boolean {

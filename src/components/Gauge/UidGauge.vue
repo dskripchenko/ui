@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import './UidGauge.css'
 import { computed } from 'vue'
+import { useLocale } from '../../composables/useLocale.js'
+import { formatFixed } from '../../utils/formatNumber.js'
 
 export type GaugeTone = 'primary' | 'success' | 'warning' | 'danger' | 'info'
 
@@ -26,6 +28,8 @@ export interface UidGaugeProps {
   suffix?: string
   precision?: number
   formatValue?: (value: number) => string
+  /** BCP 47 tag for number formatting; defaults to the active kit locale. */
+  locale?: string
 }
 
 const props = withDefaults(defineProps<UidGaugeProps>(), {
@@ -39,7 +43,11 @@ const props = withDefaults(defineProps<UidGaugeProps>(), {
   showLimits: false,
   showNeedle: false,
   precision: 0,
+  locale: undefined,
 })
+
+const uidLocale = useLocale()
+const numberLocale = computed(() => props.locale ?? uidLocale.value.code)
 
 const PADDING = 4
 const radius = computed(() => (props.size - props.strokeWidth) / 2 - PADDING)
@@ -83,7 +91,7 @@ const needleAngle = computed(() => -180 + fraction.value * 180)
 
 const formattedValue = computed(() => {
   if (props.formatValue) return props.formatValue(clampedValue.value)
-  return clampedValue.value.toFixed(props.precision)
+  return formatFixed(clampedValue.value, numberLocale.value, props.precision)
 })
 
 const styleVars = computed(() => ({

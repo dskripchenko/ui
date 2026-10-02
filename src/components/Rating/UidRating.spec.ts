@@ -95,9 +95,16 @@ describe('UidRating', () => {
 
   it('label с allowHalf даёт десятичный', () => {
     const wrapper = mount(UidRating, {
-      props: { modelValue: 3.5, showLabel: true, allowHalf: true },
+      props: { modelValue: 3.5, showLabel: true, allowHalf: true, locale: 'en-US' },
     })
     expect(wrapper.find('.uid-rating__label').text()).toBe('3.5 / 5')
+  })
+
+  it('the label follows the kit locale', () => {
+    const wrapper = mount(UidRating, {
+      props: { modelValue: 3.5, showLabel: true, allowHalf: true },
+    })
+    expect(wrapper.find('.uid-rating__label').text()).toBe('3,5 / 5')
   })
 
   it('aria-valuenow отражает значение', () => {
