@@ -230,6 +230,8 @@ export interface UidLocale {
     summary: (n: number) => string
     less: string
     more: string
+    matrixSummary: (rows: number, cols: number) => string
+    noData: string
   }
 
   validation: {
