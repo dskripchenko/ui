@@ -231,6 +231,8 @@ export const ru: UidLocale = {
     summary: (n) => `Тепловая карта активности: ${n} событий`,
     less: 'Меньше',
     more: 'Больше',
+    matrixSummary: (rows, cols) => `Тепловая карта: ${rows} строк × ${cols} столбцов`,
+    noData: 'Нет данных',
   },
 
   validation: {

@@ -1,2 +1,6 @@
 export { default as UidHeatmap } from './UidHeatmap.vue'
 export type { UidHeatmapProps, HeatmapPoint } from './UidHeatmap.vue'
+export { default as UidHeatmapMatrix } from './UidHeatmapMatrix.vue'
+export type { UidHeatmapMatrixProps, HeatmapMatrixCell, HeatmapMatrixColLabels } from './UidHeatmapMatrix.vue'
+export { heatmapColorScales, resolveHeatmapStops, heatmapColorAt } from './colorScales.js'
+export type { HeatmapColorScaleName } from './colorScales.js'

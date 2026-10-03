@@ -217,6 +217,13 @@ export type { UidGaugeProps, GaugeTone, GaugeRange } from './components/Gauge/in
 
 export { UidHeatmap } from './components/Heatmap/index.js'
 export type { UidHeatmapProps, HeatmapPoint } from './components/Heatmap/index.js'
+export { UidHeatmapMatrix, heatmapColorScales, resolveHeatmapStops, heatmapColorAt } from './components/Heatmap/index.js'
+export type {
+  UidHeatmapMatrixProps,
+  HeatmapMatrixCell,
+  HeatmapMatrixColLabels,
+  HeatmapColorScaleName,
+} from './components/Heatmap/index.js'
 
 export { UidStepper } from './components/Stepper/index.js'
 export type { UidStepperProps, StepperStep } from './components/Stepper/index.js'

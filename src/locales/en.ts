@@ -231,6 +231,8 @@ export const en: UidLocale = {
     summary: (n) => `Activity heatmap: ${n} events`,
     less: 'Less',
     more: 'More',
+    matrixSummary: (rows, cols) => `Heatmap: ${rows} rows × ${cols} columns`,
+    noData: 'No data',
   },
 
   validation: {

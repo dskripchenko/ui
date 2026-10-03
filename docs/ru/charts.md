@@ -2,7 +2,7 @@
 
 В библиотеке намеренно нет своего полноценного чартового движка. Вместо этого:
 
-1. **SVG-примитивы** — `UidSparkline`, `UidProgressRing`, `UidGauge`, `UidHeatmap`. Без зависимостей, ~1 КБ каждый, покрывают большинство сценариев в дашбордах.
+1. **SVG-примитивы** — `UidSparkline`, `UidProgressRing`, `UidGauge`, `UidHeatmap`, `UidHeatmapMatrix`. Без зависимостей, ~1 КБ каждый, покрывают большинство сценариев в дашбордах.
 2. **Полные графики (Line/Bar/Pie/Area)** — паттерн «обёртка над библиотекой по выбору».
 
 ## Встроенные SVG-примитивы
@@ -13,12 +13,40 @@
 | **`UidProgressRing`** | Круговой прогресс с лейблом | % выполнения, рейтинг, индикаторы |
 | **`UidGauge`** | Полукруг-циферблат с диапазонами | Spedometer, нагрузка CPU/диска |
 | **`UidHeatmap`** | Календарный heatmap (GitHub-style) | Активность по дням, контрибьюшны |
+| **`UidHeatmapMatrix`** | Матричный heatmap: строки × столбцы с подписями осей | Заказы по дням недели × месяцам, нагрузка по часам |
 
 Все примитивы:
 - Работают на чистом SVG, без `canvas` и без runtime-библиотек
 - Принимают `color` (CSS-переменная или hex)
 - Имеют `aria-*` атрибуты для скринридеров
 - Тонируются через `tone` (`primary`/`success`/`warning`/`danger`/`info`)
+
+## Матричный heatmap
+
+`UidHeatmapMatrix` рисует ровно ту матрицу, что передали, — о датах он ничего не знает (это работа `UidHeatmap`).
+
+```vue
+<UidHeatmapMatrix
+  :rows="['Mon', 'Tue', 'Wed']"
+  :cols="['May', 'Jun', 'Jul']"
+  :values="[[4, 8, 15], [16, 23, null], [42, 7, 9]]"
+  color-scale="viridis"
+  :format-value="(v) => `${v} orders`"
+/>
+```
+
+| Prop | Тип | По умолчанию | |
+|---|---|---|---|
+| `rows`, `cols` | `string[]` | — | Подписи осей. Подписан каждый столбец; если подписи не помещаются, они поворачиваются на 45° и прореживаются (`colLabels`: `auto` / `horizontal` / `rotated`). |
+| `values` | `(number \| null)[][]` | — | `values[row][col]`. `null` (или отсутствующая ячейка) — пустая ячейка с обводкой, «нет данных», в отличие от `0`. |
+| `colorScale` | имя \| CSS-цвет \| `string[]` | `'default'` | Именованные шкалы: `default` (акцент, следует теме), `viridis`, `magma`, `plasma`, `inferno`, `blues`, `greens`, `reds`. Один CSS-цвет — шкала от его оттенка; список — свои опорные цвета, от меньшего к большему. |
+| `min`, `max` | `number` | min/max данных | Домен цвета. |
+| `formatValue` | `(v: number) => string` | `Intl.NumberFormat` локали | Для тултипа, aria-подписей и легенды. |
+| `cellHeight`, `minCellWidth`, `gap` | `number` | `20`, `10`, `2` | Ячейки растягиваются по ширине контейнера; уже `minCellWidth` сетка прокручивается по горизонтали. |
+| `showLegend` | `boolean` | `true` | Градиент min → max и ключ «нет данных», если есть `null`. |
+| `ariaLabel` | `string` | сводка из локали | |
+
+Слот `#tooltip="{ cell, formatted }"` заменяет содержимое тултипа. Семантика `role="grid"`: заголовки строк и столбцов, `aria-label` «строка × столбец: значение» на каждой ячейке, навигация стрелками (Home/End, Ctrl+Home/End, PageUp/PageDown). Экспортируются хелперы `heatmapColorScales`, `resolveHeatmapStops`, `heatmapColorAt`.
 
 ## Полные графики
 
@@ -106,6 +134,7 @@ const chartColors = computed(() => ({
 - **% выполнения, рейтинг, KPI-кольцо** → `UidProgressRing`
 - **Speedometer, нагрузка с порогами** → `UidGauge` с `ranges`
 - **Активность за период (год/месяцы)** → `UidHeatmap`
+- **Матрица строки × столбцы (день недели × час, регион × квартал)** → `UidHeatmapMatrix`
 - **Сравнение нескольких серий, оси, легенды, зум** → внешняя библиотека
 - **Реалтайм-стрим (WebSocket)** → ECharts (лучшая производительность)
 - **Простой статичный отчёт** → Chart.js (легче, проще API)
