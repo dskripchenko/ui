@@ -17,6 +17,21 @@ export interface UidBreadcrumbProps {
   collapse?: boolean
   /** `collapse` mode: the "…" is a button that opens a menu of the collapsed crumbs. Set `false` for a plain "…". */
   collapseMenu?: boolean
+  /**
+   * `collapse` mode: when even "first › … › current" does not fit, the first
+   * crumb collapses into the "…" as well, leaving "… › current". The current
+   * crumb stays visible and truncates with an ellipsis.
+   */
+  collapseFirst?: boolean
+  /**
+   * `collapse` mode: an extra element whose width changes re-measure the trail.
+   * The trail always watches its own `<nav>` and its parent element; pass an
+   * ancestor here when the parent is itself sized by its content (e.g. a flex
+   * item without `flex-grow` in a toolbar), so the trail expands again when the
+   * room around it grows. A string is a CSS selector matched with `closest()`
+   * from the `<nav>`.
+   */
+  container?: HTMLElement | string | null
 }
 
 const props = withDefaults(defineProps<UidBreadcrumbProps>(), {
@@ -25,6 +40,8 @@ const props = withDefaults(defineProps<UidBreadcrumbProps>(), {
   nowrap: false,
   collapse: false,
   collapseMenu: true,
+  collapseFirst: false,
+  container: null,
 })
 
 defineSlots<{
@@ -60,7 +77,14 @@ let run = 0
 
 /**
  * Lay every crumb out at its natural width, then hide middle crumbs (second
- * one first) until the rest plus the "…" fits the list.
+ * one first) until the rest plus the "…" fits the list. With `collapseFirst`
+ * the first crumb goes too when "first › … › current" still does not fit.
+ *
+ * While measuring nothing in the trail shrinks, so the list gets the room its
+ * container can give a full trail: the measured width is the available one
+ * even when the trail's parent is sized by its content. Siblings that shrink
+ * to make room for a full trail take that room back once it collapses, so the
+ * collapsed trail is checked once more and folds further while it overflows.
  */
 async function recompute(): Promise<void> {
   const id = ++run
@@ -77,16 +101,28 @@ async function recompute(): Promise<void> {
   const available = list?.clientWidth ?? 0
   const widths = items.map(el => el.getBoundingClientRect().width)
   let total = widths.reduce((sum, w) => sum + w, 0)
-  const next: HTMLElement[] = []
-  if (available > 0 && total > available && items.length > 2) {
+  // The order crumbs fold in: the middle ones from the second on, then the first.
+  const candidates = items.slice(1, -1)
+  if (props.collapseFirst && items.length > 1) candidates.push(items[0])
+  let folded = 0
+  if (available > 0 && total > available && items.length > 1) {
     const ellipsis = probeRef.value?.getBoundingClientRect().width ?? 0
-    for (let i = 1; i < items.length - 1; i++) {
-      next.push(items[i])
-      total -= widths[i]
+    while (folded < candidates.length) {
+      const el = candidates[folded++]
+      total -= widths[items.indexOf(el)]
       if (total + ellipsis <= available) break
     }
   }
-  hidden.value = next
+  const fold = (count: number): HTMLElement[] =>
+    items.filter(el => candidates.slice(0, count).includes(el))
+  hidden.value = fold(folded)
+  // Still measuring (nothing shrinks): an overflowing list means the room shrank.
+  while (list && folded > 0 && folded < candidates.length) {
+    await nextTick()
+    if (id !== run) return
+    if (list.scrollWidth <= list.clientWidth + 0.5) break
+    hidden.value = fold(++folded)
+  }
   measuring.value = false
 }
 
@@ -96,13 +132,41 @@ function schedule(): void {
 
 let resizeObserver: ResizeObserver | null = null
 let mutationObserver: MutationObserver | null = null
+/** Last seen width of every observed element: only width changes re-measure. */
+const observedWidths = new WeakMap<Element, number>()
+
+function containerElement(): HTMLElement | null {
+  const container = props.container
+  if (!container) return null
+  if (typeof container !== 'string') return container
+  return navRef.value?.closest<HTMLElement>(container) ?? null
+}
+
+function onResize(entries: ResizeObserverEntry[]): void {
+  let changed = false
+  for (const entry of entries) {
+    const width = entry.contentRect.width
+    if (observedWidths.get(entry.target) !== width) {
+      observedWidths.set(entry.target, width)
+      changed = true
+    }
+  }
+  if (changed) schedule()
+}
 
 function observe(): void {
   disconnect()
   if (!props.collapse) return
-  if (typeof ResizeObserver !== 'undefined' && navRef.value) {
-    resizeObserver = new ResizeObserver(schedule)
-    resizeObserver.observe(navRef.value)
+  const nav = navRef.value
+  if (typeof ResizeObserver !== 'undefined' && nav) {
+    resizeObserver = new ResizeObserver(onResize)
+    // The nav shrinks with a collapsed trail when its parent is sized by its
+    // content, so the parent (and an optional container) tell when room grows.
+    const targets = new Set<Element>([nav])
+    if (nav.parentElement) targets.add(nav.parentElement)
+    const container = containerElement()
+    if (container) targets.add(container)
+    for (const el of targets) resizeObserver.observe(el)
   }
   // Crumbs added or removed through the slot.
   if (typeof MutationObserver !== 'undefined' && listRef.value) {
@@ -128,6 +192,13 @@ watch(() => props.collapse, () => {
   schedule()
   if (!props.collapse) closeMenu()
 })
+
+watch(() => props.container, () => {
+  observe()
+  schedule()
+})
+
+watch(() => props.collapseFirst, schedule)
 
 onBeforeUnmount(() => {
   disconnect()
@@ -281,7 +352,10 @@ defineExpose({ recompute })
       aria-hidden="true"
     >
       <span class="uid-breadcrumb__separator" />
-      <span class="uid-breadcrumb__ellipsis">…</span>
+      <span
+        class="uid-breadcrumb__ellipsis"
+        :class="{ 'uid-breadcrumb__ellipsis--button': collapseMenu }"
+      >…</span>
     </span>
     <Teleport
       v-if="collapse && collapseMenu"
