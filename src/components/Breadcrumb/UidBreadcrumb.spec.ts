@@ -402,6 +402,39 @@ describe('UidBreadcrumb nowrap / collapse', () => {
     wrapper.unmount()
   })
 
+  it('после сворачивания проверяет переполнение ещё раз: соседи забрали место обратно', async () => {
+    // A full trail squeezes the siblings, so the list measures 260; once it
+    // collapses they take their room back and the list only gets 150.
+    vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(function (this: HTMLElement) {
+      if (!this.classList.contains('uid-breadcrumb__list')) return 0
+      return this.querySelector('.uid-breadcrumb__item--ellipsis') ? 150 : 260
+    })
+    vi.spyOn(HTMLElement.prototype, 'scrollWidth', 'get').mockImplementation(function (this: HTMLElement) {
+      if (!this.classList.contains('uid-breadcrumb__list')) return 0
+      return Array.from(this.children).reduce((sum, li) => {
+        if (li.classList.contains('uid-breadcrumb__item--collapsed')) return sum
+        return sum + (li.classList.contains('uid-breadcrumb__item--ellipsis') ? PROBE_WIDTH : ITEM_WIDTH)
+      }, 0)
+    })
+    const folding = mountTrail({ collapse: true, collapseFirst: true })
+    await flushPromises()
+    let items = folding.findAll('.uid-breadcrumb__list > .uid-breadcrumb__item')
+    // 100 + 20 + 100 = 220 > 150 → the first folds as well.
+    expect(items[0].classes()).toContain('uid-breadcrumb__item--ellipsis')
+    expect(items[4].classes()).not.toContain('uid-breadcrumb__item--collapsed')
+    expect(folding.find('nav').classes()).not.toContain('uid-breadcrumb--measuring')
+    folding.unmount()
+
+    const keeping = mountTrail({ collapse: true })
+    await flushPromises()
+    items = keeping.findAll('.uid-breadcrumb__list > .uid-breadcrumb__item')
+    // Without collapseFirst there is nothing more to fold: the crumbs truncate instead.
+    expect(items[0].classes()).not.toContain('uid-breadcrumb__item--ellipsis')
+    expect(items[1].classes()).toContain('uid-breadcrumb__item--ellipsis')
+    expect(keeping.find('nav').classes()).not.toContain('uid-breadcrumb--measuring')
+    keeping.unmount()
+  })
+
   describe('наблюдение за шириной контейнера', () => {
     interface FakeObserver { callback: ResizeObserverCallback, targets: Element[] }
     let observers: FakeObserver[] = []

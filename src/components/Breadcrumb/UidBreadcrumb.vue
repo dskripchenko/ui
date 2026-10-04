@@ -80,9 +80,11 @@ let run = 0
  * one first) until the rest plus the "…" fits the list. With `collapseFirst`
  * the first crumb goes too when "first › … › current" still does not fit.
  *
- * While measuring nothing shrinks, so the list gets the room its container can
- * give a full trail: the measured width is the available one even when the
- * trail's parent is sized by its content.
+ * While measuring nothing in the trail shrinks, so the list gets the room its
+ * container can give a full trail: the measured width is the available one
+ * even when the trail's parent is sized by its content. Siblings that shrink
+ * to make room for a full trail take that room back once it collapses, so the
+ * collapsed trail is checked once more and folds further while it overflows.
  */
 async function recompute(): Promise<void> {
   const id = ++run
@@ -99,20 +101,28 @@ async function recompute(): Promise<void> {
   const available = list?.clientWidth ?? 0
   const widths = items.map(el => el.getBoundingClientRect().width)
   let total = widths.reduce((sum, w) => sum + w, 0)
-  const next: HTMLElement[] = []
+  // The order crumbs fold in: the middle ones from the second on, then the first.
+  const candidates = items.slice(1, -1)
+  if (props.collapseFirst && items.length > 1) candidates.push(items[0])
+  let folded = 0
   if (available > 0 && total > available && items.length > 1) {
     const ellipsis = probeRef.value?.getBoundingClientRect().width ?? 0
-    for (let i = 1; i < items.length - 1; i++) {
-      next.push(items[i])
-      total -= widths[i]
+    while (folded < candidates.length) {
+      const el = candidates[folded++]
+      total -= widths[items.indexOf(el)]
       if (total + ellipsis <= available) break
     }
-    if (props.collapseFirst && total + (next.length > 0 ? ellipsis : 0) > available) {
-      // "first › … › current" does not fit: the first crumb joins the "…".
-      next.unshift(items[0])
-    }
   }
-  hidden.value = next
+  const fold = (count: number): HTMLElement[] =>
+    items.filter(el => candidates.slice(0, count).includes(el))
+  hidden.value = fold(folded)
+  // Still measuring (nothing shrinks): an overflowing list means the room shrank.
+  while (list && folded > 0 && folded < candidates.length) {
+    await nextTick()
+    if (id !== run) return
+    if (list.scrollWidth <= list.clientWidth + 0.5) break
+    hidden.value = fold(++folded)
+  }
   measuring.value = false
 }
 
@@ -342,7 +352,10 @@ defineExpose({ recompute })
       aria-hidden="true"
     >
       <span class="uid-breadcrumb__separator" />
-      <span class="uid-breadcrumb__ellipsis">…</span>
+      <span
+        class="uid-breadcrumb__ellipsis"
+        :class="{ 'uid-breadcrumb__ellipsis--button': collapseMenu }"
+      >…</span>
     </span>
     <Teleport
       v-if="collapse && collapseMenu"
