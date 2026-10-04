@@ -11,6 +11,8 @@ const meta: Meta<typeof UidBreadcrumb> = {
     nowrap: { control: 'boolean' },
     collapse: { control: 'boolean' },
     collapseMenu: { control: 'boolean' },
+    collapseFirst: { control: 'boolean' },
+    container: { control: 'text' },
   },
 }
 export default meta
@@ -127,6 +129,52 @@ export const Collapse: Story = {
         <div style="resize:horizontal;overflow:hidden;width:480px;max-width:100%;padding:8px;border:1px dashed var(--uid-color-border)">
           <UidBreadcrumb collapse :collapse-menu="false">${longTrail}</UidBreadcrumb>
         </div>
+      </div>
+    `,
+  }),
+}
+
+/**
+ * `collapse-first`: on a very narrow bar even "first › … › current" does not
+ * fit, so the first crumb joins the "…" too and the current crumb keeps the
+ * room, truncating with an ellipsis. Drag the corner to resize.
+ */
+export const CollapseFirst: Story = {
+  render: () => ({
+    components: { UidBreadcrumb, UidBreadcrumbItem },
+    template: `
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div style="resize:horizontal;overflow:hidden;width:220px;max-width:100%;padding:8px;border:1px dashed var(--uid-color-border)">
+          <UidBreadcrumb collapse collapse-first>${longTrail}</UidBreadcrumb>
+        </div>
+        <div style="resize:horizontal;overflow:hidden;width:220px;max-width:100%;padding:8px;border:1px dashed var(--uid-color-border)">
+          <UidBreadcrumb collapse>${longTrail}</UidBreadcrumb>
+        </div>
+      </div>
+    `,
+  }),
+}
+
+/**
+ * A toolbar where the trail's wrapper is sized by its content (a flex item
+ * without `flex-grow`, next to a growing spacer). The trail watches its parent
+ * and the `container` ancestor, so after it collapses it expands again when the
+ * toolbar widens. Drag the corner to resize.
+ */
+export const InToolbar: Story = {
+  render: () => ({
+    components: { UidBreadcrumb, UidBreadcrumbItem },
+    template: `
+      <div
+        class="story-toolbar"
+        style="resize:horizontal;overflow:hidden;width:640px;max-width:100%;display:flex;align-items:center;gap:12px;padding:8px 12px;border:1px dashed var(--uid-color-border)"
+      >
+        <span style="flex:none">☰</span>
+        <div style="min-width:0;overflow:hidden">
+          <UidBreadcrumb collapse collapse-first separator="›" container=".story-toolbar">${longTrail}</UidBreadcrumb>
+        </div>
+        <span style="flex:1" />
+        <input placeholder="Search" style="flex:none;width:160px">
       </div>
     `,
   }),

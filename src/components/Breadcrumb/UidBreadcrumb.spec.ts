@@ -342,4 +342,179 @@ describe('UidBreadcrumb nowrap / collapse', () => {
     expect(wrapper.find('.uid-breadcrumb__item--collapsed').exists()).toBe(false)
     wrapper.unmount()
   })
+
+  it('collapse без collapseFirst оставляет первую крошку, даже если не помещается', async () => {
+    listWidth = 150
+    const wrapper = mountTrail({ collapse: true })
+    await flushPromises()
+    const items = wrapper.findAll('.uid-breadcrumb__list > .uid-breadcrumb__item')
+    expect(items[0].classes()).not.toContain('uid-breadcrumb__item--collapsed')
+    expect(items[0].classes()).not.toContain('uid-breadcrumb__item--ellipsis')
+    expect(items[1].classes()).toContain('uid-breadcrumb__item--ellipsis')
+    wrapper.unmount()
+  })
+
+  it('collapseFirst: если не помещается «первая › … › текущая», первая тоже уходит в «…»', async () => {
+    listWidth = 150
+    const wrapper = mountTrail({ collapse: true, collapseFirst: true })
+    await flushPromises()
+    const items = wrapper.findAll('.uid-breadcrumb__list > .uid-breadcrumb__item')
+    // 100 + 20 + 100 > 150 → hide the first as well: 20 + 100 fits.
+    expect(items[0].classes()).toContain('uid-breadcrumb__item--ellipsis')
+    expect(items[1].classes()).toContain('uid-breadcrumb__item--collapsed')
+    expect(items[2].classes()).toContain('uid-breadcrumb__item--collapsed')
+    expect(items[3].classes()).toContain('uid-breadcrumb__item--collapsed')
+    expect(items[4].classes()).not.toContain('uid-breadcrumb__item--collapsed')
+    expect(items[4].find('[aria-current="page"]').text()).toBe('Страница')
+
+    await items[0].find('button.uid-breadcrumb__ellipsis').trigger('click')
+    await flushPromises()
+    const entries = Array.from(document.body.querySelectorAll<HTMLElement>('.uid-breadcrumb__menu [role="menuitem"]'))
+    expect(entries.map(e => e.textContent?.trim())).toEqual(['Главная', 'Раздел A', 'Раздел B', 'Раздел C'])
+    wrapper.unmount()
+  })
+
+  it('collapseFirst не трогает первую крошку, когда «первая › … › текущая» помещается', async () => {
+    const wrapper = mountTrail({ collapse: true, collapseFirst: true })
+    await flushPromises()
+    const items = wrapper.findAll('.uid-breadcrumb__list > .uid-breadcrumb__item')
+    expect(items[0].classes()).not.toContain('uid-breadcrumb__item--ellipsis')
+    expect(items[1].classes()).toContain('uid-breadcrumb__item--ellipsis')
+    wrapper.unmount()
+  })
+
+  it('collapseFirst работает и для двух крошек', async () => {
+    listWidth = 150
+    const wrapper = mount(UidBreadcrumb, {
+      props: { collapse: true, collapseFirst: true },
+      slots: {
+        default: () => [
+          h(UidBreadcrumbItem, { href: '/' }, () => 'Главная'),
+          h(UidBreadcrumbItem, null, () => 'Страница'),
+        ],
+      },
+      attachTo: document.body,
+    })
+    await flushPromises()
+    const items = wrapper.findAll('.uid-breadcrumb__list > .uid-breadcrumb__item')
+    expect(items[0].classes()).toContain('uid-breadcrumb__item--ellipsis')
+    expect(items[1].classes()).not.toContain('uid-breadcrumb__item--collapsed')
+    wrapper.unmount()
+  })
+
+  describe('наблюдение за шириной контейнера', () => {
+    interface FakeObserver { callback: ResizeObserverCallback, targets: Element[] }
+    let observers: FakeObserver[] = []
+
+    beforeEach(() => {
+      observers = []
+      vi.stubGlobal('ResizeObserver', class {
+        private record: FakeObserver
+        constructor(callback: ResizeObserverCallback) {
+          this.record = { callback, targets: [] }
+          observers.push(this.record)
+        }
+
+        observe(el: Element): void { this.record.targets.push(el) }
+        unobserve(): void {}
+        disconnect(): void { this.record.targets = [] }
+      })
+    })
+
+    afterEach(() => {
+      vi.unstubAllGlobals()
+    })
+
+    const active = () => observers.filter(o => o.targets.length > 0)
+    const resize = (target: Element, width: number) => {
+      for (const o of active()) {
+        if (!o.targets.includes(target)) continue
+        o.callback([{ target, contentRect: { width } } as unknown as ResizeObserverEntry], o as unknown as ResizeObserver)
+      }
+    }
+
+    const mountInside = (props: Record<string, unknown>) => {
+      const host = document.createElement('div')
+      host.className = 'toolbar'
+      const parent = document.createElement('div')
+      parent.className = 'crumbs'
+      host.appendChild(parent)
+      document.body.appendChild(host)
+      const wrapper = mount(UidBreadcrumb, {
+        props,
+        slots: {
+          default: () => [
+            h(UidBreadcrumbItem, { href: '/' }, () => 'Главная'),
+            h(UidBreadcrumbItem, { href: '/a' }, () => 'Раздел A'),
+            h(UidBreadcrumbItem, null, () => 'Раздел B'),
+            h(UidBreadcrumbItem, null, () => 'Страница'),
+          ],
+        },
+        attachTo: parent,
+      })
+      return { wrapper, host, cleanup: () => { wrapper.unmount(); host.remove() } }
+    }
+
+    it('следит за nav и его родителем', async () => {
+      const { wrapper, cleanup } = mountInside({ collapse: true })
+      await flushPromises()
+      const nav = wrapper.find('nav').element
+      const targets = active().flatMap(o => o.targets)
+      expect(targets).toContain(nav)
+      expect(targets).toContain(nav.parentElement)
+      cleanup()
+    })
+
+    it('container (селектор) добавляет предка в наблюдение', async () => {
+      const { host, cleanup } = mountInside({ collapse: true, container: '.toolbar' })
+      await flushPromises()
+      expect(active().flatMap(o => o.targets)).toContain(host)
+      cleanup()
+    })
+
+    it('container (элемент) добавляет его в наблюдение', async () => {
+      const outside = document.createElement('section')
+      document.body.appendChild(outside)
+      const { cleanup } = mountInside({ collapse: true, container: outside })
+      await flushPromises()
+      expect(active().flatMap(o => o.targets)).toContain(outside)
+      cleanup()
+      outside.remove()
+    })
+
+    it('разворачивается снова, когда контейнер становится шире', async () => {
+      const { wrapper, host, cleanup } = mountInside({ collapse: true, container: '.toolbar' })
+      await flushPromises()
+      expect(wrapper.find('.uid-breadcrumb__item--ellipsis').exists()).toBe(true)
+      resize(host, 260)
+      await flushPromises()
+
+      listWidth = 600
+      resize(host, 900)
+      await flushPromises()
+      expect(wrapper.find('.uid-breadcrumb__item--ellipsis').exists()).toBe(false)
+      expect(wrapper.find('.uid-breadcrumb__item--collapsed').exists()).toBe(false)
+
+      listWidth = 260
+      resize(host, 400)
+      await flushPromises()
+      expect(wrapper.find('.uid-breadcrumb__item--ellipsis').exists()).toBe(true)
+      cleanup()
+    })
+
+    it('пересчитывает только при смене ширины', async () => {
+      const { wrapper, host, cleanup } = mountInside({ collapse: true, container: '.toolbar' })
+      await flushPromises()
+      const spy = vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect')
+      resize(host, 500)
+      await flushPromises()
+      const calls = spy.mock.calls.length
+      expect(calls).toBeGreaterThan(0)
+      resize(host, 500)
+      await flushPromises()
+      expect(spy.mock.calls.length).toBe(calls)
+      expect(wrapper.find('nav').exists()).toBe(true)
+      cleanup()
+    })
+  })
 })
