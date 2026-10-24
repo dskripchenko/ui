@@ -1,5 +1,11 @@
 # @dskripchenko/ui
 
+## 1.12.0
+
+### Minor Changes
+
+- 679200e: Добавлен `UidMarkdown` — markdown-документ без зависимостей: безопасный рендерер (исходник экранируется до разметки, ссылки только http(s)/mailto/относительные), код через `UidCode`, оглавление, `linkBase`, врезки `[!NOTE]`. Блоки кода выбранных языков можно отдать своим рендерерам (`blockRenderers` или `provideMarkdownBlockRenderers`) — так подключаются диаграммы.
+
 ## 1.11.0
 
 ### Minor Changes
