@@ -15,6 +15,7 @@
 | `tocLabel` | `string` | 本地化 | 目录标题 |
 | `stripMdExtension` | `boolean` | 有 `linkBase` 时为 `true` | 去掉相对链接结尾的 `.md` |
 | `imageBase` | `string` | — | 相对图片路径据此解析 |
+| `internalLinksInPlace` | `boolean` | `true` | 相对链接在当前标签页打开；关闭时在新标签页打开（例如表单旁的预览） |
 | `calloutTitles` | `Partial<Record<kind, string>>` | 本地化 | 提示框标题（`note`、`tip`、`important`、`warning`、`caution`） |
 | `blockRenderers` | `Record<string, UidMarkdownBlockRenderer>` | — | 按语言渲染代码块的渲染器 |
 

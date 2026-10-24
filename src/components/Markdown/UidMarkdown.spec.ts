@@ -198,3 +198,12 @@ describe('UidMarkdown pass-through options', () => {
     expect(wrapper.text()).toContain('Heads up')
   })
 })
+
+describe('UidMarkdown link targets', () => {
+  it('opens relative links in place by default and in a new tab when asked', () => {
+    const inPlace = mount(UidMarkdown, { props: { source: '[x](other/page)' } })
+    expect(inPlace.find('a').attributes('target')).toBeUndefined()
+    const newTab = mount(UidMarkdown, { props: { source: '[x](other/page)', internalLinksInPlace: false } })
+    expect(newTab.find('a').attributes('target')).toBe('_blank')
+  })
+})

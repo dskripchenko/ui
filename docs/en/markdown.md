@@ -15,6 +15,7 @@
 | `tocLabel` | `string` | locale | Title of the table of contents |
 | `stripMdExtension` | `boolean` | `true` with `linkBase` | Drop a trailing `.md` from relative links |
 | `imageBase` | `string` | — | Relative image paths resolve against it |
+| `internalLinksInPlace` | `boolean` | `true` | Relative links open in the same tab; off — in a new one (e.g. a preview beside a form) |
 | `calloutTitles` | `Partial<Record<kind, string>>` | locale | Callout titles (`note`, `tip`, `important`, `warning`, `caution`) |
 | `blockRenderers` | `Record<string, UidMarkdownBlockRenderer>` | — | Renderers for fenced blocks by language |
 

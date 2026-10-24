@@ -15,6 +15,7 @@
 | `tocLabel` | `string` | Locale | Titel des Inhaltsverzeichnisses |
 | `stripMdExtension` | `boolean` | `true` mit `linkBase` | `.md` am Ende relativer Links entfernen |
 | `imageBase` | `string` | — | Relative Bildpfade werden dagegen aufgelöst |
+| `internalLinksInPlace` | `boolean` | `true` | Relative Links öffnen im selben Tab; aus — in einem neuen (etwa eine Vorschau neben einem Formular) |
 | `calloutTitles` | `Partial<Record<kind, string>>` | Locale | Titel der Hinweisboxen (`note`, `tip`, `important`, `warning`, `caution`) |
 | `blockRenderers` | `Record<string, UidMarkdownBlockRenderer>` | — | Renderer für Codeblöcke nach Sprache |
 

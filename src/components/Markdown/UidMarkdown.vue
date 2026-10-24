@@ -31,6 +31,12 @@ export interface UidMarkdownProps {
   stripMdExtension?: boolean
   /** The base relative image paths resolve against. */
   imageBase?: string
+  /**
+   * Opens relative and anchor links in the same tab (the default). Off, every
+   * link but an anchor opens in a new tab — for a preview next to a form,
+   * where leaving the page would lose the input.
+   */
+  internalLinksInPlace?: boolean
   /** Callout titles; override the locale's, kind by kind. */
   calloutTitles?: Partial<Record<UidMarkdownCalloutKind, string>>
   /** Renderers for fenced blocks by language; override the provided ones. */
@@ -45,6 +51,7 @@ const props = withDefaults(defineProps<UidMarkdownProps>(), {
   linkBase: undefined,
   stripMdExtension: undefined,
   imageBase: undefined,
+  internalLinksInPlace: true,
   calloutTitles: undefined,
   blockRenderers: undefined,
 })
@@ -116,7 +123,7 @@ function render(): void {
           linkBase: props.linkBase ?? null,
           stripMdExtension: props.stripMdExtension ?? !!props.linkBase,
           imageBase: props.imageBase ?? null,
-          internalLinksInPlace: true,
+          internalLinksInPlace: props.internalLinksInPlace,
           calloutTitles: titles,
         }),
       }
@@ -159,6 +166,7 @@ watch(
       props.linkBase,
       props.stripMdExtension,
       props.imageBase,
+      props.internalLinksInPlace,
       props.calloutTitles,
       props.blockRenderers,
       locale.value,

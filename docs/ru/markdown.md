@@ -15,6 +15,7 @@
 | `tocLabel` | `string` | из локали | Заголовок оглавления |
 | `stripMdExtension` | `boolean` | `true` при `linkBase` | Отбрасывать `.md` в конце относительных ссылок |
 | `imageBase` | `string` | — | Относительные пути картинок разрешаются от него |
+| `internalLinksInPlace` | `boolean` | `true` | Относительные ссылки открываются в той же вкладке; выключено — в новой (например, превью рядом с формой) |
 | `calloutTitles` | `Partial<Record<kind, string>>` | из локали | Заголовки врезок (`note`, `tip`, `important`, `warning`, `caution`) |
 | `blockRenderers` | `Record<string, UidMarkdownBlockRenderer>` | — | Рендереры блоков кода по языку |
 
