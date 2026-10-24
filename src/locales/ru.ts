@@ -227,6 +227,17 @@ export const ru: UidLocale = {
     label: 'Содержание',
   },
 
+  markdown: {
+    toc: 'На этой странице',
+    note: 'Примечание',
+    tip: 'Совет',
+    important: 'Важно',
+    warning: 'Внимание',
+    caution: 'Осторожно',
+    blockPending: 'Отрисовка…',
+    blockError: 'Не удалось отрисовать блок',
+  },
+
   heatmap: {
     summary: (n) => `Тепловая карта активности: ${n} событий`,
     less: 'Меньше',

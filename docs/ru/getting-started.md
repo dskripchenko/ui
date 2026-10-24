@@ -88,6 +88,7 @@ import { UidLocaleProvider, en } from '@dskripchenko/ui'
 - **[Паттерны и лейауты](./patterns.md)** — Header, Sidebar, Wizard, шаблоны страниц
 - **[Валидация](./validation.md)** — проверка форм
 - **[Графики](./charts.md)** — Sparkline, ProgressRing, Gauge, Heatmap
+- **[Markdown](./markdown.md)** — документы, оглавление, подключаемые рендереры блоков
 - **[i18n](./i18n.md)** — многоязычность
 
 Живой каталог компонентов — на [сайте Storybook](https://dskripchenko.github.io/ui/).

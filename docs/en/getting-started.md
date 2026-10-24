@@ -88,6 +88,7 @@ The kit has a tiny built-in validator (`useField`, `useForm`) so you don't need 
 - **[Patterns & Layouts](./patterns.md)** — Header, Sidebar, Wizard, page templates
 - **[Validation](./validation.md)** — form validation
 - **[Charts](./charts.md)** — Sparkline, ProgressRing, Gauge, Heatmap
+- **[Markdown](./markdown.md)** — documents, table of contents, pluggable block renderers
 - **[i18n](./i18n.md)** — multi-language support
 
 A live catalog is available at the [Storybook site](https://dskripchenko.github.io/ui/).

@@ -99,7 +99,7 @@ Anwender-Dokumentation in vier Sprachen — wähle deine:
 
 - 🇬🇧 **English** (default): [docs/en/](../../docs/en/)
 - 🇷🇺 **Русский**: [docs/ru/](../../docs/ru/)
-- 🇩🇪 **Deutsch**: [Erste Schritte](../../docs/de/getting-started.md), [Theming](../../docs/de/theming.md), [Tokens](../../docs/de/tokens.md), [Icons](../../docs/de/icons.md), [Patterns](../../docs/de/patterns.md), [Validation](../../docs/de/validation.md), [Charts](../../docs/de/charts.md), [i18n](../../docs/de/i18n.md)
+- 🇩🇪 **Deutsch**: [Erste Schritte](../../docs/de/getting-started.md), [Theming](../../docs/de/theming.md), [Tokens](../../docs/de/tokens.md), [Icons](../../docs/de/icons.md), [Patterns](../../docs/de/patterns.md), [Validation](../../docs/de/validation.md), [Charts](../../docs/de/charts.md), [Markdown](../../docs/de/markdown.md), [i18n](../../docs/de/i18n.md)
 - 🇨🇳 **中文**: [docs/zh/](../../docs/zh/)
 
 Mitwirkenden-Dokumentation (nur Englisch): [Architecture](../internal/architecture.md), [Component guidelines](../internal/component-guidelines.md), [Contributing](../../.github/CONTRIBUTING.md), [Roadmap](../internal/roadmap.md).
