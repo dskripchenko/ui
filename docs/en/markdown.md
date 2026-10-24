@@ -10,8 +10,12 @@
 |---|---|---|---|
 | `source` | `string` | `''` | The markdown text |
 | `toc` | `boolean` | `false` | Table of contents from the headings (sticky on the right, on top on narrow screens) |
-| `tocDepth` | `2 \| 3 \| 4` | `3` | Deepest heading level in the table of contents |
-| `linkBase` | `string` | — | Relative links resolve against it; a trailing `.md` is dropped |
+| `tocDepth` | `2`–`6` | `3` | Deepest heading level in the table of contents |
+| `linkBase` | `string` | — | Relative links resolve against it |
+| `tocLabel` | `string` | locale | Title of the table of contents |
+| `stripMdExtension` | `boolean` | `true` with `linkBase` | Drop a trailing `.md` from relative links |
+| `imageBase` | `string` | — | Relative image paths resolve against it |
+| `calloutTitles` | `Partial<Record<kind, string>>` | locale | Callout titles (`note`, `tip`, `important`, `warning`, `caution`) |
 | `blockRenderers` | `Record<string, UidMarkdownBlockRenderer>` | — | Renderers for fenced blocks by language |
 
 ## Safety

@@ -10,8 +10,12 @@
 |---|---|---|---|
 | `source` | `string` | `''` | Der Markdown-Text |
 | `toc` | `boolean` | `false` | Inhaltsverzeichnis aus den Überschriften (rechts, auf schmalen Bildschirmen oben) |
-| `tocDepth` | `2 \| 3 \| 4` | `3` | Tiefste Überschriftenebene im Inhaltsverzeichnis |
-| `linkBase` | `string` | — | Relative Links werden dagegen aufgelöst; ein `.md` am Ende entfällt |
+| `tocDepth` | `2`–`6` | `3` | Tiefste Überschriftenebene im Inhaltsverzeichnis |
+| `linkBase` | `string` | — | Relative Links werden dagegen aufgelöst |
+| `tocLabel` | `string` | Locale | Titel des Inhaltsverzeichnisses |
+| `stripMdExtension` | `boolean` | `true` mit `linkBase` | `.md` am Ende relativer Links entfernen |
+| `imageBase` | `string` | — | Relative Bildpfade werden dagegen aufgelöst |
+| `calloutTitles` | `Partial<Record<kind, string>>` | Locale | Titel der Hinweisboxen (`note`, `tip`, `important`, `warning`, `caution`) |
 | `blockRenderers` | `Record<string, UidMarkdownBlockRenderer>` | — | Renderer für Codeblöcke nach Sprache |
 
 ## Sicherheit

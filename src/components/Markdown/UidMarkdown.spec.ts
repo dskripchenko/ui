@@ -170,3 +170,31 @@ describe('UidMarkdown', () => {
     })
   })
 })
+
+describe('UidMarkdown pass-through options', () => {
+  it('uses tocLabel and goes down to tocDepth 6', () => {
+    const source = '## A\n\n### B\n\n#### C\n\n##### D\n\n###### E'
+    const wrapper = mount(UidMarkdown, { props: { source, toc: true, tocDepth: 6, tocLabel: 'Contents here' } })
+    expect(wrapper.find('.uid-markdown__toc-title').text()).toBe('Contents here')
+    expect(wrapper.findAll('.uid-markdown__toc-item')).toHaveLength(5)
+  })
+
+  it('resolves images against imageBase', () => {
+    const wrapper = mount(UidMarkdown, { props: { source: '![pic](img/a.png)', imageBase: '/media/' } })
+    expect(wrapper.find('img').attributes('src')).toBe('/media/img/a.png')
+  })
+
+  it('keeps .md when stripMdExtension is false', () => {
+    const wrapper = mount(UidMarkdown, {
+      props: { source: '[x](guide/start.md)', linkBase: '/docs/', stripMdExtension: false },
+    })
+    expect(wrapper.find('a').attributes('href')).toBe('/docs/guide/start.md')
+  })
+
+  it('takes callout titles from the prop over the locale', () => {
+    const wrapper = mount(UidMarkdown, {
+      props: { source: '> [!WARNING]\n> careful', calloutTitles: { warning: 'Heads up' } },
+    })
+    expect(wrapper.text()).toContain('Heads up')
+  })
+})

@@ -3,7 +3,13 @@ import './UidMarkdown.css'
 import { computed, nextTick, onMounted, shallowRef, watch } from 'vue'
 import UidCode from '../Code/UidCode.vue'
 import { useLocale } from '../../composables/useLocale.js'
-import { createSlugger, renderMarkdown, splitMarkdown, type MarkdownHeading } from './markdown.js'
+import {
+  createSlugger,
+  renderMarkdown,
+  splitMarkdown,
+  type MarkdownHeading,
+  type UidMarkdownCalloutKind,
+} from './markdown.js'
 import {
   useMarkdownBlockRenderers,
   type UidMarkdownBlockRenderer,
@@ -15,10 +21,18 @@ export interface UidMarkdownProps {
   source?: string
   /** Shows a table of contents built from the headings. */
   toc?: boolean
-  /** Deepest heading level in the table of contents, 2 to 4. */
+  /** Deepest heading level in the table of contents, 2 to 6. */
   tocDepth?: number
-  /** The base relative links resolve against (a trailing `.md` is dropped). */
+  /** Title of the table of contents; the locale's by default. */
+  tocLabel?: string
+  /** The base relative links resolve against. */
   linkBase?: string
+  /** Drops a trailing `.md` from relative links; on by default when `linkBase` is set. */
+  stripMdExtension?: boolean
+  /** The base relative image paths resolve against. */
+  imageBase?: string
+  /** Callout titles; override the locale's, kind by kind. */
+  calloutTitles?: Partial<Record<UidMarkdownCalloutKind, string>>
   /** Renderers for fenced blocks by language; override the provided ones. */
   blockRenderers?: Record<string, UidMarkdownBlockRenderer>
 }
@@ -27,7 +41,11 @@ const props = withDefaults(defineProps<UidMarkdownProps>(), {
   source: '',
   toc: false,
   tocDepth: 3,
+  tocLabel: undefined,
   linkBase: undefined,
+  stripMdExtension: undefined,
+  imageBase: undefined,
+  calloutTitles: undefined,
   blockRenderers: undefined,
 })
 
@@ -84,7 +102,7 @@ function render(): void {
   const renderers = { ...injected, ...(props.blockRenderers ?? {}) }
   const slugger = createSlugger()
   const found: MarkdownHeading[] = []
-  const titles = locale.value.markdown
+  const titles = { ...locale.value.markdown, ...(props.calloutTitles ?? {}) }
   const pending: { index: number; run: () => UidMarkdownBlockResult | Promise<UidMarkdownBlockResult> }[] = []
   let codeIndex = 0
 
@@ -96,7 +114,8 @@ function render(): void {
           slugger,
           onHeading: (h) => found.push(h),
           linkBase: props.linkBase ?? null,
-          stripMdExtension: !!props.linkBase,
+          stripMdExtension: props.stripMdExtension ?? !!props.linkBase,
+          imageBase: props.imageBase ?? null,
           internalLinksInPlace: true,
           calloutTitles: titles,
         }),
@@ -134,12 +153,22 @@ function render(): void {
 }
 
 watch(
-  () => [props.source, props.linkBase, props.blockRenderers, locale.value] as const,
+  () =>
+    [
+      props.source,
+      props.linkBase,
+      props.stripMdExtension,
+      props.imageBase,
+      props.calloutTitles,
+      props.blockRenderers,
+      locale.value,
+    ] as const,
   render,
   { immediate: true },
 )
 
-const depth = computed(() => Math.min(4, Math.max(2, props.tocDepth)))
+const depth = computed(() => Math.min(6, Math.max(2, props.tocDepth)))
+const tocTitle = computed(() => props.tocLabel || locale.value.markdown.toc)
 const tocItems = computed(() =>
   props.toc ? headings.value.filter((h) => h.level >= 2 && h.level <= depth.value) : [],
 )
@@ -243,10 +272,10 @@ onMounted(() => {
     <nav
       v-if="tocItems.length > 0"
       class="uid-markdown__toc"
-      :aria-label="locale.markdown.toc"
+      :aria-label="tocTitle"
     >
       <div class="uid-markdown__toc-title">
-        {{ locale.markdown.toc }}
+        {{ tocTitle }}
       </div>
       <ul>
         <li

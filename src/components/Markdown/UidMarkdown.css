@@ -185,7 +185,9 @@
 .uid-markdown__toc ul { list-style: none; margin: 0; padding: 0; }
 .uid-markdown__toc-item { margin: 2px 0; }
 .uid-markdown__toc-item--l3 { padding-left: var(--uid-space-md); }
-.uid-markdown__toc-item--l4 { padding-left: var(--uid-space-xl); }
+.uid-markdown__toc-item--l4,
+.uid-markdown__toc-item--l5,
+.uid-markdown__toc-item--l6 { padding-left: var(--uid-space-xl); }
 
 .uid-markdown__toc a {
   color: var(--uid-markdown-muted);

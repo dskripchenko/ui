@@ -10,8 +10,12 @@
 |---|---|---|---|
 | `source` | `string` | `''` | Текст в markdown |
 | `toc` | `boolean` | `false` | Оглавление по заголовкам (справа, на узком экране — сверху) |
-| `tocDepth` | `2 \| 3 \| 4` | `3` | Самый глубокий уровень заголовков в оглавлении |
-| `linkBase` | `string` | — | Относительные ссылки разрешаются от него; окончание `.md` отбрасывается |
+| `tocDepth` | `2`–`6` | `3` | Самый глубокий уровень заголовков в оглавлении |
+| `linkBase` | `string` | — | Относительные ссылки разрешаются от него |
+| `tocLabel` | `string` | из локали | Заголовок оглавления |
+| `stripMdExtension` | `boolean` | `true` при `linkBase` | Отбрасывать `.md` в конце относительных ссылок |
+| `imageBase` | `string` | — | Относительные пути картинок разрешаются от него |
+| `calloutTitles` | `Partial<Record<kind, string>>` | из локали | Заголовки врезок (`note`, `tip`, `important`, `warning`, `caution`) |
 | `blockRenderers` | `Record<string, UidMarkdownBlockRenderer>` | — | Рендереры блоков кода по языку |
 
 ## Безопасность

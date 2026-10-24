@@ -10,8 +10,12 @@
 |---|---|---|---|
 | `source` | `string` | `''` | Markdown 文本 |
 | `toc` | `boolean` | `false` | 根据标题生成目录（右侧固定，窄屏时在顶部） |
-| `tocDepth` | `2 \| 3 \| 4` | `3` | 目录中最深的标题级别 |
-| `linkBase` | `string` | — | 相对链接据此解析；去掉结尾的 `.md` |
+| `tocDepth` | `2`–`6` | `3` | 目录中最深的标题级别 |
+| `linkBase` | `string` | — | 相对链接据此解析 |
+| `tocLabel` | `string` | 本地化 | 目录标题 |
+| `stripMdExtension` | `boolean` | 有 `linkBase` 时为 `true` | 去掉相对链接结尾的 `.md` |
+| `imageBase` | `string` | — | 相对图片路径据此解析 |
+| `calloutTitles` | `Partial<Record<kind, string>>` | 本地化 | 提示框标题（`note`、`tip`、`important`、`warning`、`caution`） |
 | `blockRenderers` | `Record<string, UidMarkdownBlockRenderer>` | — | 按语言渲染代码块的渲染器 |
 
 ## 安全
