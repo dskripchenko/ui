@@ -148,6 +148,29 @@ export type { UidFileUploadProps, UploadedFile } from './components/FileUpload/i
 export { UidCode, tokenize, isHighlightable } from './components/Code/index.js'
 export type { UidCodeProps, UidCodeToken, UidCodeTokenType } from './components/Code/index.js'
 
+export {
+  UidMarkdown,
+  createSlugger,
+  escapeHtml,
+  renderMarkdown,
+  resolveAgainst,
+  splitMarkdown,
+  markdownBlockRenderersKey,
+  provideMarkdownBlockRenderers,
+  useMarkdownBlockRenderers,
+} from './components/Markdown/index.js'
+export type {
+  UidMarkdownProps,
+  MarkdownHeading,
+  MarkdownOptions,
+  MarkdownSegment,
+  Slugger,
+  UidMarkdownCalloutKind,
+  UidMarkdownBlockRenderer,
+  UidMarkdownBlockRenderers,
+  UidMarkdownBlockResult,
+} from './components/Markdown/index.js'
+
 export { UidImage } from './components/Image/index.js'
 export type { UidImageProps, UidImageFit } from './components/Image/index.js'
 

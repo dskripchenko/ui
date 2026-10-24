@@ -88,6 +88,7 @@ import { UidLocaleProvider, en } from '@dskripchenko/ui'
 - **[Patterns 与 Layouts](./patterns.md)** — Header、Sidebar、Wizard、页面模板
 - **[表单校验](./validation.md)** — 表单校验
 - **[图表](./charts.md)** — Sparkline、ProgressRing、Gauge、Heatmap
+- **[Markdown](./markdown.md)** — 文档、目录、可插拔的代码块渲染器
 - **[i18n](./i18n.md)** — 多语言支持
 
 完整在线目录见 [Storybook 站点](https://dskripchenko.github.io/ui/)。

@@ -88,6 +88,7 @@ Das Kit hat einen kleinen eingebauten Validator (`useField`, `useForm`) — für
 - **[Patterns & Layouts](./patterns.md)** — Header, Sidebar, Wizard, Seitenvorlagen
 - **[Validation](./validation.md)** — Formularvalidierung
 - **[Charts](./charts.md)** — Sparkline, ProgressRing, Gauge, Heatmap
+- **[Markdown](./markdown.md)** — Dokumente, Inhaltsverzeichnis, einsteckbare Block-Renderer
 - **[i18n](./i18n.md)** — Mehrsprachigkeit
 
 Ein Live-Katalog steht im [Storybook](https://dskripchenko.github.io/ui/) bereit.

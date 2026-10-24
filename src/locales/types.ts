@@ -226,6 +226,20 @@ export interface UidLocale {
     label: string
   }
 
+  markdown: {
+    /** Heading of the table of contents. */
+    toc: string
+    note: string
+    tip: string
+    important: string
+    warning: string
+    caution: string
+    /** Shown while an asynchronous block renderer works. */
+    blockPending: string
+    /** Prefix of the notice when a block renderer fails; the message follows. */
+    blockError: string
+  }
+
   heatmap: {
     summary: (n: number) => string
     less: string

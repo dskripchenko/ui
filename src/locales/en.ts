@@ -227,6 +227,17 @@ export const en: UidLocale = {
     label: 'Contents',
   },
 
+  markdown: {
+    toc: 'On this page',
+    note: 'Note',
+    tip: 'Tip',
+    important: 'Important',
+    warning: 'Warning',
+    caution: 'Caution',
+    blockPending: 'Rendering…',
+    blockError: 'Could not render this block',
+  },
+
   heatmap: {
     summary: (n) => `Activity heatmap: ${n} events`,
     less: 'Less',
