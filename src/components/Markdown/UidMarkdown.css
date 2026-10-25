@@ -149,6 +149,12 @@
 
 .uid-markdown__block > svg { max-width: 100%; height: auto; }
 
+/* A live block holds an interactive widget, laid out as the widget wants. */
+.uid-markdown__block--live {
+  overflow: visible;
+  text-align: start;
+}
+
 .uid-markdown__block--pending {
   padding: var(--uid-space-lg);
   border: 1px dashed var(--uid-markdown-border);

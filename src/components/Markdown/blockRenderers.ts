@@ -13,6 +13,32 @@ export interface UidMarkdownBlockResult {
   html?: string
   /** Why the block could not be rendered; the block is then shown as code with this message. */
   error?: string
+  /**
+   * A live block: the host's widget (an API console, a chart with controls)
+   * is mounted into the block's element instead of static markup. Return a
+   * handle or a cleanup function: `update` takes a changed source without
+   * remounting, `destroy` runs when the block goes away.
+   */
+  mount?: (
+    el: HTMLElement,
+    ctx: UidMarkdownBlockMountContext,
+  ) => UidMarkdownBlockMountHandle | (() => void) | void
+}
+
+/** What a live block's `mount` is told. The contract is the WYSIWYG editor's too. */
+export interface UidMarkdownBlockMountContext {
+  /** The block's source. */
+  code: string
+  language: string
+  /** Always false here: rendered markdown is read-only. */
+  editable: boolean
+  /** Ignored here — rendered markdown has no source to write to. */
+  setCode(code: string): void
+}
+
+export interface UidMarkdownBlockMountHandle {
+  update?(code: string): void
+  destroy?(): void
 }
 
 /**

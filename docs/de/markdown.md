@@ -60,6 +60,23 @@ provideMarkdownBlockRenderers({ mermaid })
 - **`html` wird unverändert eingefügt.** Für die Sicherheit ist der Renderer verantwortlich: nur selbst erzeugtes Markup mit maskiertem Benutzertext zurückgeben.
 - Das Prop `blockRenderers` hat Vorrang vor bereitgestellten Renderern, je Sprache. App-weit: `app.provide(markdownBlockRenderersKey, renderers)`.
 
+### Live-Blöcke
+
+Statt `html` kann ein Renderer `mount` liefern — ein Widget wird in das Element des Blocks gemountet (eine API-Konsole, ein Diagramm mit Bedienelementen):
+
+```ts
+const api: UidMarkdownBlockRenderer = () => ({
+  mount: (el, { code }) => {
+    const widget = createWidget(el, code)
+    return { update: (next) => widget.setSource(next), destroy: () => widget.unmount() }
+  },
+})
+```
+
+- `mount(el, { code, language, editable, setCode })` gibt ein Handle `{ update?, destroy? }` oder eine Aufräumfunktion zurück. Gerendertes Markdown ist schreibgeschützt: `editable` ist `false`, `setCode` tut nichts.
+- Ändert sich die Quelle und der Block bleibt an seiner Stelle, lebt das Widget weiter und erhält die neue Quelle über `update`; ohne `update` wird es neu gemountet. `destroy` läuft, wenn der Block verschwindet oder UidMarkdown ausgehängt wird.
+- Der Vertrag ist derselbe wie bei den Live-Blöcken des WYSIWYG-Editors (`@dskripchenko/wysiwyg`): Ein einmal registrierter Renderer bedient beide.
+
 ## Der Renderer als Funktion
 
 Auch `renderMarkdown(source, options)` und `splitMarkdown(source)` werden exportiert — für eine Vorschau außerhalb einer Komponente oder serverseitig. Optionen: `slugger`, `onHeading`, `linkBase`, `stripMdExtension`, `imageBase`, `internalLinksInPlace`, `calloutTitles`.
