@@ -139,6 +139,124 @@ const bash: Grammar = {
   ],
 }
 
+const python: Grammar = {
+  main: [
+    ['comment', /#.*/],
+    ['string', /[rbfu]{0,2}(?:"""[\s\S]*?(?:"""|$)|'''[\s\S]*?(?:'''|$))/i],
+    ['string', /[rbfu]{0,2}(?:"(?:\\[\s\S]|[^"\\\n])*"?|'(?:\\[\s\S]|[^'\\\n])*'?)/i],
+    ['attr', /@[\w.]+/],
+    ['number', NUMBER],
+    ['keyword', words('and as assert async await break class continue def del elif else except finally for from global if import in is lambda nonlocal not or pass raise return try while with yield match case')],
+    ['literal', words('True False None')],
+    ['function', FUNC],
+    ['plain', IDENT],
+    ['punctuation', PUNCT],
+  ],
+}
+
+const go: Grammar = {
+  main: [
+    ['comment', /\/\/.*/],
+    ['comment', BLOCK_COMMENT],
+    ['string', DQ],
+    ['string', /`[^`]*`?/],
+    ['string', /'(?:\\[\s\S]|[^'\\\n])*'?/],
+    ['number', NUMBER],
+    ['keyword', words('break case chan const continue default defer else fallthrough for func go goto if import interface map package range return select struct switch type var')],
+    ['literal', words('true false nil iota')],
+    ['function', FUNC],
+    ['plain', IDENT],
+    ['punctuation', PUNCT],
+  ],
+}
+
+/** Java, C#, Kotlin and Swift: C-like, each with its own words. */
+const cLike = (keywords: string, literals: string, extra: Rule[] = []): Grammar => ({
+  main: [
+    ['comment', /\/\/.*/],
+    ['comment', BLOCK_COMMENT],
+    ...extra,
+    ['string', /"""[\s\S]*?(?:"""|$)/],
+    ['string', DQ],
+    ['string', SQ],
+    ['attr', /@\w+/],
+    ['number', NUMBER],
+    ['keyword', words(keywords)],
+    ['literal', words(literals)],
+    ['function', FUNC],
+    ['plain', IDENT],
+    ['punctuation', PUNCT],
+  ],
+})
+
+const java = cLike(
+  'abstract assert break case catch class const continue default do else enum extends final finally for goto if implements import instanceof interface native new package private protected public record return static strictfp super switch synchronized this throw throws transient try var void volatile while yield',
+  'true false null',
+)
+
+const csharp = cLike(
+  'abstract as async await base break case catch checked class const continue default delegate do else enum event explicit extern finally fixed for foreach goto if implicit in interface internal is lock namespace new operator out override params private protected public readonly record ref return sealed sizeof stackalloc static struct switch this throw try typeof unchecked unsafe using var virtual void volatile while',
+  'true false null',
+  [['string', /[$@]+"(?:""|\\[\s\S]|[^"\\])*"?/]],
+)
+
+const kotlin = cLike(
+  'as break by catch class companion constructor continue data do else enum finally for fun get if import in init interface internal is lateinit object open override package private protected public return sealed set super suspend this throw try typealias typeof val var when while',
+  'true false null',
+)
+
+const swift = cLike(
+  'as associatedtype async await break case catch class continue default defer deinit do else enum extension fallthrough fileprivate for func guard if import in init inout internal is let open operator private protocol public repeat rethrows return self Self static struct subscript super switch throw throws try typealias var where while',
+  'true false nil',
+)
+
+const powershell: Grammar = {
+  main: [
+    ['comment', /<#[\s\S]*?(?:#>|$)/],
+    ['comment', /#.*/],
+    ['string', /@"[\s\S]*?(?:"@|$)|@'[\s\S]*?(?:'@|$)/],
+    ['string', /"(?:`[\s\S]|[^"`])*"?/],
+    ['string', /'(?:''|[^'])*'?/],
+    ['variable', /\$(?:\{[^}]*\}?|[\w:]+)/],
+    ['attr', /-[A-Za-z]\w*/],
+    ['number', NUMBER],
+    ['keyword', words('begin break catch class continue data do dynamicparam else elseif end exit filter finally for foreach from function if in param process return switch throw trap try until using while', 'i')],
+    ['function', /\b[A-Z][a-z]+-[A-Za-z]+\b/],
+    ['plain', IDENT],
+    ['punctuation', /[{}()[\];,.<>=+*/%!&|@]+/],
+  ],
+}
+
+/** A raw HTTP message: the request or status line, the headers, then the body. */
+const http: Grammar = {
+  main: [
+    ['keyword', /^(?:GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS|TRACE|CONNECT)\b/m],
+    ['literal', /\bHTTP\/[\d.]+\b/],
+    ['property', /^[\w-]+(?=:)/m],
+    ['number', /\b[1-5]\d\d\b/],
+    ['string', DQ],
+    ['plain', /[^\s"]+/],
+  ],
+}
+
+const yaml: Grammar = {
+  main: [
+    // No lookbehind (older Safari); tokenize() splits the leading whitespace off.
+    ['comment', /(?:^|[ \t])#.*/m],
+    ['keyword', /^(?:---|\.\.\.)(?=\s|$)/m],
+    ['property', /"(?:\\.|[^"\\\n])*"(?=[ \t]*:(?:\s|$))|'(?:''|[^'\n])*'(?=[ \t]*:(?:\s|$))/],
+    ['property', /[^\s:#'"[\]{},&*!|>-][^\n:#]*?(?=[ \t]*:(?:\s|$))/],
+    ['string', DQ],
+    ['string', /'(?:''|[^'])*'?/],
+    ['variable', /[&*][^\s,[\]{}]+/],
+    ['attr', /!{1,2}[\w./-]*/],
+    ['literal', /\b(?:true|false|null|True|False|Null|NULL)\b|~/],
+    ['number', /[-+]?(?:\.inf|\.nan|0x[\da-f]+|0o[0-7]+|\d+(?:\.\d+)?(?:e[+-]?\d+)?)\b/i],
+    ['punctuation', /[-:,[\]{}|>?]+/],
+    ['plain', /[^\s:#,[\]{}]+/],
+  ],
+}
+
 const ALIASES: Record<string, Grammar> = {
   js, javascript: js, jsx: js, mjs: js, ts: js, typescript: js, tsx: js,
   php,
@@ -146,7 +264,16 @@ const ALIASES: Record<string, Grammar> = {
   sql, mysql: sql, pgsql: sql, postgresql: sql,
   css,
   html: markup, xml: markup, vue: markup, svg: markup, markup,
-  bash, sh: bash, shell: bash, zsh: bash,
+  bash, sh: bash, shell: bash, zsh: bash, curl: bash,
+  python, py: python,
+  go, golang: go,
+  java,
+  csharp, cs: csharp, 'c#': csharp,
+  kotlin, kt: kotlin,
+  swift,
+  powershell, ps1: powershell, pwsh: powershell,
+  http,
+  yaml, yml: yaml,
 }
 
 const compiled = new WeakMap<RegExp, RegExp>()

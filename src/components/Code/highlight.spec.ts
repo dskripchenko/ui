@@ -106,4 +106,60 @@ describe('tokenize', () => {
     expect(joined('/* open', 'css')).toBe('/* open')
     expect(joined('<div class="x', 'html')).toBe('<div class="x')
   })
+
+  it('новые языки: исходник восстанавливается без потерь', () => {
+    const samples: [string, string][] = [
+      ['import requests\nr = requests.post("u", json={"a": True}, headers=None)  # c\n"""doc"""', 'python'],
+      ['package main\nfunc main() { s := `raw`; fmt.Println("x", nil) } // c', 'go'],
+      ['var r = HttpRequest.newBuilder().uri(URI.create("u")).build(); /* c */', 'java'],
+      ['using var c = new HttpClient(); var s = $"x{1}"; // c', 'csharp'],
+      ['val body = """{"a":1}""".toRequestBody(null) // c', 'kotlin'],
+      ['let url = URL(string: "u")!; var r = URLRequest(url: url) // c', 'swift'],
+      ["$h = @{ 'A' = \"b\" } # c\nInvoke-RestMethod -Uri 'u' -Method Post", 'powershell'],
+      ['POST /pets HTTP/1.1\nHost: api.example.com\nContent-Type: application/json\n\n{"a": 1}', 'http'],
+      ["openapi: 3.1.0 # c\ninfo:\n  title: 'Pet store'\n  version: \"1\"\npaths: {}\ntags: [a, b]\nx: &a 1\ny: *a\nz: |\n  text", 'yaml'],
+    ]
+    for (const [code, lang] of samples) expect(joined(code, lang)).toBe(code)
+  })
+
+  it('python: keyword, literal, string, comment, decorator', () => {
+    const code = '@app.get\ndef f(x):\n    return None  # done\ns = f"hi"'
+    expect(typesOf(code, 'py', 'keyword')).toEqual(['def', 'return'])
+    expect(typesOf(code, 'python', 'literal')).toEqual(['None'])
+    expect(typesOf(code, 'python', 'comment')).toEqual(['# done'])
+    expect(typesOf(code, 'python', 'string')).toEqual(['f"hi"'])
+    expect(typesOf(code, 'python', 'attr')).toEqual(['@app.get'])
+  })
+
+  it('go, java, csharp, kotlin, swift: keywords and literals', () => {
+    expect(typesOf('func f() error { return nil }', 'go', 'keyword')).toEqual(['func', 'return'])
+    expect(typesOf('public static void main() { return null; }', 'java', 'literal')).toEqual(['null'])
+    expect(typesOf('var s = $"a{b}";', 'cs', 'string')).toEqual(['$"a{b}"'])
+    expect(typesOf('val x = when (y) { else -> null }', 'kt', 'keyword')).toEqual(['val', 'when', 'else'])
+    expect(typesOf('guard let x = y else { return nil }', 'swift', 'keyword')).toEqual(['guard', 'let', 'else', 'return'])
+  })
+
+  it('powershell: variable, parameter, cmdlet', () => {
+    const code = 'Invoke-RestMethod -Uri $url -Headers $h'
+    expect(typesOf(code, 'ps1', 'function')).toEqual(['Invoke-RestMethod'])
+    expect(typesOf(code, 'pwsh', 'attr')).toEqual(['-Uri', '-Headers'])
+    expect(typesOf(code, 'powershell', 'variable')).toEqual(['$url', '$h'])
+  })
+
+  it('http: method, version, header names', () => {
+    const code = 'GET /pets?limit=10 HTTP/1.1\nAccept: application/json\nX-Trace-Id: 1'
+    expect(typesOf(code, 'http', 'keyword')).toEqual(['GET'])
+    expect(typesOf(code, 'http', 'literal')).toEqual(['HTTP/1.1'])
+    expect(typesOf(code, 'http', 'property')).toEqual(['Accept', 'X-Trace-Id'])
+  })
+
+  it('yaml: keys, scalars, anchors, comments', () => {
+    const code = "openapi: 3.1.0\ninfo:\n  title: 'Pets'  # name\n  x-flag: true\nbase: &b {a: 1}\nother: *b\n'quoted key': ~"
+    expect(typesOf(code, 'yml', 'property')).toEqual(['openapi', 'info', 'title', 'x-flag', 'base', 'a', 'other', "'quoted key'"])
+    expect(typesOf(code, 'yaml', 'string')).toEqual(["'Pets'"])
+    expect(typesOf(code, 'yaml', 'comment')).toEqual(['# name'])
+    expect(typesOf(code, 'yaml', 'literal')).toEqual(['true', '~'])
+    expect(typesOf(code, 'yaml', 'variable')).toEqual(['&b', '*b'])
+    expect(typesOf(code, 'yaml', 'number')).toEqual(['3.1', '1'])
+  })
 })
