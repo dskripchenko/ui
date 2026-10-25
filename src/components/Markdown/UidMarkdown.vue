@@ -2,6 +2,7 @@
 import './UidMarkdown.css'
 import { computed, nextTick, onMounted, shallowRef, watch } from 'vue'
 import UidCode from '../Code/UidCode.vue'
+import UidMarkdownLiveBlock from './UidMarkdownLiveBlock.vue'
 import { useLocale } from '../../composables/useLocale.js'
 import {
   createSlugger,
@@ -78,9 +79,10 @@ type Block =
       kind: 'custom'
       code: string
       language: string
-      state: 'pending' | 'done' | 'error'
+      state: 'pending' | 'done' | 'error' | 'live'
       html?: string
       error?: string
+      mount?: UidMarkdownBlockResult['mount']
     }
 
 const blocks = shallowRef<Block[]>([])
@@ -93,8 +95,9 @@ function settle(index: number, gen: number, result: UidMarkdownBlockResult): voi
   const current = blocks.value[index]
   if (!current || current.kind !== 'custom') return
   const next = blocks.value.slice()
-  next[index] =
-    result.error !== undefined || result.html === undefined
+  next[index] = result.mount
+    ? { ...current, state: 'live', mount: result.mount }
+    : result.error !== undefined || result.html === undefined
       ? { ...current, state: 'error', error: result.error ?? '' }
       : { ...current, state: 'done', html: result.html }
   blocks.value = next
@@ -112,6 +115,7 @@ function render(): void {
   const titles = { ...locale.value.markdown, ...(props.calloutTitles ?? {}) }
   const pending: { index: number; run: () => UidMarkdownBlockResult | Promise<UidMarkdownBlockResult> }[] = []
   let codeIndex = 0
+  const previous = blocks.value
 
   const out: Block[] = splitMarkdown(props.source).map((segment, index) => {
     if (segment.kind === 'text') {
@@ -132,6 +136,12 @@ function render(): void {
     const ctx = { language: segment.language, index: codeIndex++ }
     if (!renderer) {
       return { kind: 'code', code: segment.code, language: LANGUAGE_ALIASES[segment.language] ?? segment.language }
+    }
+    // A live block that stays where it was keeps its widget: the widget
+    // takes the new source (typing in a preview) instead of remounting.
+    const before = previous[index]
+    if (before?.kind === 'custom' && before.state === 'live' && before.language === segment.language) {
+      return { ...before, code: segment.code }
     }
     pending.push({ index, run: () => renderer(segment.code, ctx) })
     return { kind: 'custom', code: segment.code, language: segment.language, state: 'pending' }
@@ -247,6 +257,14 @@ onMounted(() => {
           class="uid-markdown__block"
           :data-language="block.language"
           v-html="block.html"
+        />
+        <UidMarkdownLiveBlock
+          v-else-if="block.state === 'live' && block.mount"
+          class="uid-markdown__block uid-markdown__block--live"
+          :data-language="block.language"
+          :code="block.code"
+          :language="block.language"
+          :mount="block.mount"
         />
         <div
           v-else-if="block.state === 'pending'"

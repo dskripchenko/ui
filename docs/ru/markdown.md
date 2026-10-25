@@ -60,6 +60,23 @@ provideMarkdownBlockRenderers({ mermaid })
 - **`html` вставляется как есть.** За его безопасность отвечает рендерер: возвращайте только разметку, собранную вами, с экранированным пользовательским текстом.
 - Prop `blockRenderers` важнее переданных через provide — по каждому языку отдельно. На всё приложение: `app.provide(markdownBlockRenderersKey, renderers)`.
 
+### Живые блоки
+
+Вместо `html` рендерер может вернуть `mount` — в элемент блока монтируется виджет (консоль API, график с элементами управления):
+
+```ts
+const api: UidMarkdownBlockRenderer = () => ({
+  mount: (el, { code }) => {
+    const widget = createWidget(el, code)
+    return { update: (next) => widget.setSource(next), destroy: () => widget.unmount() }
+  },
+})
+```
+
+- `mount(el, { code, language, editable, setCode })` возвращает handle `{ update?, destroy? }` или функцию очистки. Отрисованный markdown только для чтения: `editable` равно `false`, `setCode` ничего не делает.
+- Если исходник изменился, а блок остался на месте, виджет продолжает жить и получает новый исходник через `update`; без `update` он монтируется заново. `destroy` вызывается, когда блок исчезает или UidMarkdown размонтируется.
+- Контракт тот же, что у живых блоков WYSIWYG-редактора (`@dskripchenko/wysiwyg`): один зарегистрированный рендерер обслуживает оба.
+
 ## Рендерер как функция
 
 Экспортированы и `renderMarkdown(source, options)`, `splitMarkdown(source)` — для превью вне компонента или на сервере. Опции: `slugger`, `onHeading`, `linkBase`, `stripMdExtension`, `imageBase`, `internalLinksInPlace`, `calloutTitles`.

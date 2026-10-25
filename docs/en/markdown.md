@@ -60,6 +60,23 @@ provideMarkdownBlockRenderers({ mermaid })
 - **`html` is inserted as is.** The renderer is responsible for its safety: return only markup you built with every piece of user text escaped.
 - The `blockRenderers` prop takes precedence over provided renderers, language by language. App-wide: `app.provide(markdownBlockRenderersKey, renderers)`.
 
+### Live blocks
+
+Instead of `html` a renderer may return `mount` — a widget is mounted into the block's element (an API console, a chart with controls):
+
+```ts
+const api: UidMarkdownBlockRenderer = () => ({
+  mount: (el, { code }) => {
+    const widget = createWidget(el, code)
+    return { update: (next) => widget.setSource(next), destroy: () => widget.unmount() }
+  },
+})
+```
+
+- `mount(el, { code, language, editable, setCode })` returns a handle `{ update?, destroy? }` or a cleanup function. Rendered markdown is read-only: `editable` is `false` and `setCode` does nothing.
+- When the source changes and the block stays in place, the widget keeps living and gets the new source through `update`; without `update` it is mounted again. `destroy` runs when the block goes away or UidMarkdown unmounts.
+- The contract is the one of the WYSIWYG editor's live blocks (`@dskripchenko/wysiwyg`), so a renderer registered once serves both.
+
 ## The renderer as a function
 
 `renderMarkdown(source, options)` and `splitMarkdown(source)` are exported too — for a preview outside a component or for server-side use. Options: `slugger`, `onHeading`, `linkBase`, `stripMdExtension`, `imageBase`, `internalLinksInPlace`, `calloutTitles`.

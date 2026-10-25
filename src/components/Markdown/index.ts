@@ -23,4 +23,6 @@ export type {
   UidMarkdownBlockRenderer,
   UidMarkdownBlockRenderers,
   UidMarkdownBlockResult,
+  UidMarkdownBlockMountContext,
+  UidMarkdownBlockMountHandle,
 } from './blockRenderers.js'

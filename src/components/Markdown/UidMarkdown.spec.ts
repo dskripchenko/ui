@@ -158,6 +158,51 @@ describe('UidMarkdown', () => {
       expect(wrapper.find('.from-provide-b').exists()).toBe(false)
     })
 
+    it('mounts a live block, updates it with a new source and destroys it', async () => {
+      const log: string[] = []
+      const live: UidMarkdownBlockRenderer = () => ({
+        mount: (el, ctx) => {
+          log.push(`mount:${ctx.code}:${ctx.editable}`)
+          el.innerHTML = '<button class="widget">Send</button>'
+          return {
+            update: (code) => log.push(`update:${code}`),
+            destroy: () => log.push('destroy'),
+          }
+        },
+      })
+      const wrapper = mount(UidMarkdown, { props: { source: fence('api', 'GET /a'), blockRenderers: { api: live } } })
+      await flushPromises()
+      expect(wrapper.find('.uid-markdown__block--live button.widget').exists()).toBe(true)
+      expect(log).toEqual(['mount:GET /a:false'])
+
+      // The widget stays and takes the new source.
+      await wrapper.setProps({ source: fence('api', 'GET /b') })
+      await flushPromises()
+      expect(log).toEqual(['mount:GET /a:false', 'update:GET /b'])
+
+      await wrapper.setProps({ source: 'No blocks' })
+      await flushPromises()
+      expect(log).toContain('destroy')
+      wrapper.unmount()
+    })
+
+    it('remounts a live block without update, and accepts a cleanup function', async () => {
+      const log: string[] = []
+      const live: UidMarkdownBlockRenderer = () => ({
+        mount: (_el, ctx) => {
+          log.push(`mount:${ctx.code}`)
+          return () => log.push('cleanup')
+        },
+      })
+      const wrapper = mount(UidMarkdown, { props: { source: fence('api', '1'), blockRenderers: { api: live } } })
+      await flushPromises()
+      await wrapper.setProps({ source: fence('api', '2') })
+      await flushPromises()
+      expect(log).toEqual(['mount:1', 'cleanup', 'mount:2'])
+      wrapper.unmount()
+      expect(log.at(-1)).toBe('cleanup')
+    })
+
     it('counts the index among code blocks', () => {
       const seen: number[] = []
       mount(UidMarkdown, {

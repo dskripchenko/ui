@@ -60,6 +60,23 @@ provideMarkdownBlockRenderers({ mermaid })
 - **`html` 原样插入。** 其安全性由渲染器负责：只返回自己生成、且所有用户文本均已转义的标记。
 - `blockRenderers` prop 按语言优先于通过 provide 提供的渲染器。全应用范围：`app.provide(markdownBlockRenderersKey, renderers)`。
 
+### 实时块
+
+渲染器可以返回 `mount` 而不是 `html`——组件被挂载到块的元素中（API 控制台、带控件的图表）：
+
+```ts
+const api: UidMarkdownBlockRenderer = () => ({
+  mount: (el, { code }) => {
+    const widget = createWidget(el, code)
+    return { update: (next) => widget.setSource(next), destroy: () => widget.unmount() }
+  },
+})
+```
+
+- `mount(el, { code, language, editable, setCode })` 返回句柄 `{ update?, destroy? }` 或清理函数。渲染后的 markdown 是只读的：`editable` 为 `false`，`setCode` 不做任何事。
+- 源码改变而块位置不变时，组件继续存在，并通过 `update` 收到新源码；没有 `update` 时重新挂载。块消失或 UidMarkdown 卸载时调用 `destroy`。
+- 该契约与 WYSIWYG 编辑器（`@dskripchenko/wysiwyg`）的实时块相同：注册一次的渲染器可同时用于两者。
+
 ## 作为函数使用
 
 同时导出 `renderMarkdown(source, options)` 和 `splitMarkdown(source)` —— 用于组件之外的预览或服务端。选项：`slugger`、`onHeading`、`linkBase`、`stripMdExtension`、`imageBase`、`internalLinksInPlace`、`calloutTitles`。
