@@ -50,6 +50,11 @@
       "import": "./dist/icons/index.mjs",
       "require": "./dist/icons/index.cjs"
     },
+    "./hls": {
+      "types": "./dist/hls/index.d.ts",
+      "import": "./dist/hls/index.mjs",
+      "require": "./dist/hls/index.cjs"
+    },
     "./styles/tokens.css": "./dist/styles/tokens.css",
     "./styles/themes.css": "./dist/styles/themes.css",
     "./styles/reset.css": "./dist/styles/reset.css",
@@ -73,6 +78,9 @@
     "test:watch": "vitest",
     "lint": "eslint src",
     "typecheck": "vue-tsc --noEmit",
+    "media:fixtures": "bash scripts/media-check/fixtures.sh",
+    "media:check": "node scripts/media-check/check.mjs",
+    "media:screens": "node scripts/media-check/screens.mjs",
     "changeset": "changeset",
     "release": "pnpm build && changeset publish"
   },

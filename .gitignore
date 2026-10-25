@@ -6,3 +6,4 @@ storybook-static
 coverage
 .npmrc
 stats.html
+.media-fixtures

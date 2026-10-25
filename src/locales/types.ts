@@ -126,6 +126,9 @@ export interface UidLocale {
     error: string
   }
 
+  /** Video and audio players (UidVideo, UidAudio). */
+  media?: UidMediaLocale
+
   breadcrumb?: {
     /** Accessible name of the "…" button that lists the collapsed crumbs. */
     showHidden: string
@@ -268,4 +271,48 @@ export interface UidLocale {
 
 export type UidPartialLocale = {
   [K in keyof UidLocale]?: Partial<UidLocale[K]>
+}
+
+export interface UidMediaLocale {
+  play: string
+  pause: string
+  replay: string
+  mute: string
+  unmute: string
+  volume: string
+  seek: string
+  /** Value text of the scrub bar: "1:05 of 3:20". */
+  timeOf: (current: string, total: string) => string
+  speed: string
+  normalSpeed: string
+  quality: string
+  auto: string
+  captions: string
+  captionsOff: string
+  settings: string
+  fullscreen: string
+  exitFullscreen: string
+  pip: string
+  exitPip: string
+  live: string
+  goLive: string
+  next: string
+  prev: string
+  playlist: string
+  forward: (s: number) => string
+  backward: (s: number) => string
+  chapter: string
+  loading: string
+  retry: string
+  errors: {
+    aborted: string
+    network: string
+    decode: string
+    unsupported: string
+    mse: string
+    manifest: string
+    encrypted: string
+    codec: string
+    unknown: string
+  }
 }

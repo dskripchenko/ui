@@ -23,6 +23,7 @@
 - **i18n** — 内置 `ru` + `en` locale，`UidLocaleProvider` 支持部分覆盖与自定义 locale
 - **~1500 图标** — 底层使用 `lucide-vue-next` + 子导出 `@dskripchenko/ui/icons`
 - **零图表运行时依赖** — 内置 SVG 原语(Sparkline、ProgressRing、Gauge、Heatmap)
+- **无依赖的媒体播放器** — 基于原生元素的视频与音频、浏览器内生成波形、按需加载的 HLS 入口（fMP4 与 MPEG-TS）
 
 ## 安装
 
@@ -85,13 +86,15 @@ import { Check } from '@dskripchenko/ui/icons'
 
 **图表：** Sparkline、ProgressRing、Gauge、Heatmap
 
+**媒体：** Video、Audio（波形、mini、播放列表）、HLS 适配器（`@dskripchenko/ui/hls`）
+
 **Wizards：** Stepper、Wizard、WizardStep
 
 **Patterns：** Header、Footer、Sidebar、PageHeader、EmptyState、ErrorState、Result
 
 **Layouts：** SimpleLayout、SidebarLayout、AuthLayout、WizardLayout
 
-**Composables：** useTheme、useLocale、useField、useToast、useWizard、useSidebar、useCommandPalette、useFocusTrap、useScrollLock、usePopover
+**Composables：** useMediaController、useTheme、useLocale、useField、useToast、useWizard、useSidebar、useCommandPalette、useFocusTrap、useScrollLock、usePopover
 
 ## 文档
 
@@ -100,7 +103,7 @@ import { Check } from '@dskripchenko/ui/icons'
 - 🇬🇧 **English**(default)：[docs/en/](../../docs/en/)
 - 🇷🇺 **Русский**：[docs/ru/](../../docs/ru/)
 - 🇩🇪 **Deutsch**：[docs/de/](../../docs/de/)
-- 🇨🇳 **中文**：[快速开始](../../docs/zh/getting-started.md)、[主题](../../docs/zh/theming.md)、[Tokens](../../docs/zh/tokens.md)、[图标](../../docs/zh/icons.md)、[Patterns](../../docs/zh/patterns.md)、[表单校验](../../docs/zh/validation.md)、[图表](../../docs/zh/charts.md)、[Markdown](../../docs/zh/markdown.md)、[i18n](../../docs/zh/i18n.md)
+- 🇨🇳 **中文**：[快速开始](../../docs/zh/getting-started.md)、[主题](../../docs/zh/theming.md)、[Tokens](../../docs/zh/tokens.md)、[图标](../../docs/zh/icons.md)、[Patterns](../../docs/zh/patterns.md)、[表单校验](../../docs/zh/validation.md)、[图表](../../docs/zh/charts.md)、[Markdown](../../docs/zh/markdown.md)、[视频](../../docs/zh/video.md)、[音频](../../docs/zh/audio.md)、[i18n](../../docs/zh/i18n.md)
 
 贡献者文档(仅英文)：[Architecture](../internal/architecture.md)、[Component guidelines](../internal/component-guidelines.md)、[Contributing](../../.github/CONTRIBUTING.md)、[Roadmap](../internal/roadmap.md)。
 

@@ -23,6 +23,7 @@ A Vue 3 component, token, and theme library on CSS custom properties.
 - **i18n** — built-in `ru` + `en` locales, `UidLocaleProvider` for partial overrides or custom locales
 - **~1500 icons** — `lucide-vue-next` under the hood + `@dskripchenko/ui/icons` sub-export
 - **Zero runtime chart deps** — built-in SVG primitives (Sparkline, ProgressRing, Gauge, Heatmap)
+- **Media players without dependencies** — video and audio on the native elements, in-browser waveform, HLS (fMP4 and MPEG-TS) in a lazily loaded entry
 
 ## Install
 
@@ -95,19 +96,21 @@ A short selection — the full catalog is in [Storybook](https://dskripchenko.gi
 
 **Charts:** Sparkline, ProgressRing, Gauge, Heatmap
 
+**Media:** Video, Audio (waveform, mini, playlist), HLS adapter (`@dskripchenko/ui/hls`)
+
 **Wizards:** Stepper, Wizard, WizardStep
 
 **Patterns:** Header, Footer, Sidebar, PageHeader, EmptyState, ErrorState, Result
 
 **Layouts:** SimpleLayout, SidebarLayout, AuthLayout, WizardLayout
 
-**Composables:** useTheme, useLocale, useField, useToast, useWizard, useSidebar, useCommandPalette, useFocusTrap, useScrollLock, usePopover
+**Composables:** useMediaController, useTheme, useLocale, useField, useToast, useWizard, useSidebar, useCommandPalette, useFocusTrap, useScrollLock, usePopover
 
 ## Documentation
 
 User docs are translated into four languages — pick yours:
 
-- 🇬🇧 **English** (default): [getting-started](./docs/en/getting-started.md), [theming](./docs/en/theming.md), [tokens](./docs/en/tokens.md), [icons](./docs/en/icons.md), [patterns](./docs/en/patterns.md), [validation](./docs/en/validation.md), [charts](./docs/en/charts.md), [markdown](./docs/en/markdown.md), [i18n](./docs/en/i18n.md)
+- 🇬🇧 **English** (default): [getting-started](./docs/en/getting-started.md), [theming](./docs/en/theming.md), [tokens](./docs/en/tokens.md), [icons](./docs/en/icons.md), [patterns](./docs/en/patterns.md), [validation](./docs/en/validation.md), [charts](./docs/en/charts.md), [markdown](./docs/en/markdown.md), [video](./docs/en/video.md), [audio](./docs/en/audio.md), [i18n](./docs/en/i18n.md)
 - 🇷🇺 **Русский**: [docs/ru/](./docs/ru/)
 - 🇩🇪 **Deutsch**: [docs/de/](./docs/de/)
 - 🇨🇳 **中文**: [docs/zh/](./docs/zh/)

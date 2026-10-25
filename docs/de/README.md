@@ -23,6 +23,7 @@ Eine Bibliothek aus Vue-3-Komponenten, Tokens und Themes auf Basis von CSS Custo
 - **i18n** — eingebaute `ru` + `en` Locales, `UidLocaleProvider` für partielle Überschreibungen und eigene Locales
 - **~1500 Icons** — `lucide-vue-next` unter der Haube + Sub-Export `@dskripchenko/ui/icons`
 - **Keine Runtime-Chart-Deps** — eingebaute SVG-Primitive (Sparkline, ProgressRing, Gauge, Heatmap)
+- **Mediaplayer ohne Abhängigkeiten** — Video und Audio auf den nativen Elementen, Wellenform im Browser, HLS (fMP4 und MPEG-TS) in einem bei Bedarf geladenen Entry
 
 ## Installation
 
@@ -85,13 +86,15 @@ Kurze Auswahl — vollständiger Katalog im [Storybook](https://dskripchenko.git
 
 **Charts:** Sparkline, ProgressRing, Gauge, Heatmap
 
+**Medien:** Video, Audio (Wellenform, Mini, Playlist), HLS-Adapter (`@dskripchenko/ui/hls`)
+
 **Wizards:** Stepper, Wizard, WizardStep
 
 **Patterns:** Header, Footer, Sidebar, PageHeader, EmptyState, ErrorState, Result
 
 **Layouts:** SimpleLayout, SidebarLayout, AuthLayout, WizardLayout
 
-**Composables:** useTheme, useLocale, useField, useToast, useWizard, useSidebar, useCommandPalette, useFocusTrap, useScrollLock, usePopover
+**Composables:** useMediaController, useTheme, useLocale, useField, useToast, useWizard, useSidebar, useCommandPalette, useFocusTrap, useScrollLock, usePopover
 
 ## Dokumentation
 
@@ -99,7 +102,7 @@ Anwender-Dokumentation in vier Sprachen — wähle deine:
 
 - 🇬🇧 **English** (default): [docs/en/](../../docs/en/)
 - 🇷🇺 **Русский**: [docs/ru/](../../docs/ru/)
-- 🇩🇪 **Deutsch**: [Erste Schritte](../../docs/de/getting-started.md), [Theming](../../docs/de/theming.md), [Tokens](../../docs/de/tokens.md), [Icons](../../docs/de/icons.md), [Patterns](../../docs/de/patterns.md), [Validation](../../docs/de/validation.md), [Charts](../../docs/de/charts.md), [Markdown](../../docs/de/markdown.md), [i18n](../../docs/de/i18n.md)
+- 🇩🇪 **Deutsch**: [Erste Schritte](../../docs/de/getting-started.md), [Theming](../../docs/de/theming.md), [Tokens](../../docs/de/tokens.md), [Icons](../../docs/de/icons.md), [Patterns](../../docs/de/patterns.md), [Validation](../../docs/de/validation.md), [Charts](../../docs/de/charts.md), [Markdown](../../docs/de/markdown.md), [Video](../../docs/de/video.md), [Audio](../../docs/de/audio.md), [i18n](../../docs/de/i18n.md)
 - 🇨🇳 **中文**: [docs/zh/](../../docs/zh/)
 
 Mitwirkenden-Dokumentation (nur Englisch): [Architecture](../internal/architecture.md), [Component guidelines](../internal/component-guidelines.md), [Contributing](../../.github/CONTRIBUTING.md), [Roadmap](../internal/roadmap.md).
