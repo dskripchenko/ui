@@ -61,4 +61,21 @@ describe('UidTooltip', () => {
     expect(document.querySelector('[role="tooltip"]')).not.toBeNull()
     wrapper.unmount()
   })
+
+  it('ставит tooltip у описываемого элемента, а не у пустой обёртки с display: contents', async () => {
+    const wrapper = mount(UidTooltip, {
+      props: { content: 'Подсказка', placement: 'bottom' },
+      slots: { default: '<button>Hover me</button>' },
+      attachTo: document.body,
+    })
+    const button = wrapper.find('button').element
+    button.getBoundingClientRect = () => new DOMRect(300, 200, 80, 32)
+    await wrapper.find('.uid-tooltip-anchor').trigger('mouseenter')
+    await flushPromises()
+    const tip = document.querySelector<HTMLElement>('.uid-tooltip')!
+    // Under the button (200 + 32 + 8): the empty anchor would have put it at the top margin.
+    expect(parseFloat(tip.style.top)).toBe(240)
+    wrapper.unmount()
+  })
 })
+

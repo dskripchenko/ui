@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
+import { ref } from 'vue'
 import UidMenu from './UidMenu.vue'
 import UidMenuItem from './UidMenuItem.vue'
 import UidMenuSeparator from './UidMenuSeparator.vue'
@@ -146,3 +147,29 @@ export const NestedSubmenus: Story = {
     `,
   }),
 }
+
+export const ContextMenu: Story = {
+  name: 'Контекстное меню (openAt)',
+  render: () => ({
+    components: { UidMenu, UidMenuItem, UidMenuSeparator },
+    setup() {
+      const menu = ref<InstanceType<typeof UidMenu> | null>(null)
+      return { menu }
+    },
+    template: `
+      <div
+        style="height:240px;display:grid;place-items:center;border:1px dashed var(--uid-color-border);border-radius:8px"
+        @contextmenu.prevent="menu.openAt($event.clientX, $event.clientY)"
+      >
+        Правый клик в любом месте области
+        <UidMenu ref="menu">
+          <UidMenuItem>Открыть</UidMenuItem>
+          <UidMenuItem>Переименовать</UidMenuItem>
+          <UidMenuSeparator />
+          <UidMenuItem variant="danger">Удалить</UidMenuItem>
+        </UidMenu>
+      </div>
+    `,
+  }),
+}
+
