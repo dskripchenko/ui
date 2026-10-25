@@ -256,6 +256,32 @@
   outline-offset: 2px;
 }
 
+.uid-media-scrubber__placeholder {
+  position: relative;
+  width: 100%;
+  height: 40%;
+  border-radius: 2px;
+  background:
+    linear-gradient(90deg, transparent 0, rgb(255 255 255 / 0.55) 50%, transparent 100%) no-repeat,
+    repeating-linear-gradient(90deg, var(--uid-media-wave, #c4c4c8) 0 2px, transparent 2px 3px);
+  background-size: 40% 100%, auto;
+  background-position: -40% 0, 0 0;
+  opacity: 0.6;
+  animation: uid-media-shimmer 1.4s ease-in-out infinite;
+}
+
+:root[data-theme='dark'] .uid-media-scrubber__placeholder {
+  background:
+    linear-gradient(90deg, transparent 0, rgb(255 255 255 / 0.18) 50%, transparent 100%) no-repeat,
+    repeating-linear-gradient(90deg, var(--uid-media-wave, #52525b) 0 2px, transparent 2px 3px);
+  background-size: 40% 100%, auto;
+  background-position: -40% 0, 0 0;
+}
+
+@keyframes uid-media-shimmer {
+  to { background-position: 140% 0, 0 0; }
+}
+
 .uid-media-scrubber__hover-line {
   position: absolute;
   top: 0;
@@ -337,7 +363,7 @@
   z-index: var(--uid-z-popover, 1000);
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
   padding: 0 10px 8px;
   overflow-y: auto;
   backdrop-filter: blur(8px);
@@ -347,7 +373,16 @@
 .uid-media-menu__panel--sheet .uid-media-menu__group {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
-  gap: 4px;
+  gap: 3px 4px;
+}
+
+.uid-media-menu__panel--sheet .uid-media-menu__group--compact {
+  grid-template-columns: repeat(auto-fill, minmax(42px, 1fr));
+}
+
+.uid-media-menu__panel--sheet .uid-media-menu__group--compact .uid-media-menu__item {
+  padding: 2px;
+  font-size: var(--uid-font-size-xs, 12px);
 }
 
 .uid-media-menu__panel--sheet .uid-media-menu__group + .uid-media-menu__group {
@@ -359,11 +394,13 @@
 .uid-media-menu__panel--sheet .uid-media-menu__heading {
   grid-column: 1 / -1;
   padding: 0 2px;
+  font-size: 11px;
+  line-height: 16px;
 }
 
 .uid-media-menu__panel--sheet .uid-media-menu__item {
   justify-content: center;
-  min-height: 32px;
+  min-height: 30px;
   padding: 2px 6px;
   border: 1px solid var(--uid-media-menu-divider, rgb(255 255 255 / 0.14));
   text-align: center;
@@ -387,7 +424,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: 34px;
+  min-height: 30px;
   font-weight: 600;
 }
 
@@ -497,6 +534,10 @@
 @media (prefers-reduced-motion: reduce) {
   .uid-media__spin {
     animation-duration: 2.4s;
+  }
+
+  .uid-media-scrubber__placeholder {
+    animation: none;
   }
 
   .uid-media__volume-range,

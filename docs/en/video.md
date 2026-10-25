@@ -37,13 +37,13 @@
 | `hlsOptions` | `HlsOptions` | — | Passed to the HLS adapter (see below) |
 | `hlsLoader` | `() => Promise<module>` | dynamic import | Where the HLS adapter comes from |
 
-Events: `play`, `pause`, `ended`, `error` (`{ kind, detail? }`), `qualitychange` (label). The component exposes `play()`, `pause()`, `toggle()`, `seek(seconds)`, the reactive `state` and the `media` element.
+Events: `play`, `pause`, `ended`, `error` (`{ kind, detail? }`), `qualitychange` (label), `audiotrackchange` (label). The component exposes `play()`, `pause()`, `toggle()`, `seek(seconds)`, the reactive `state` and the `media` element.
 
 ## Controls
 
 - **Scrub bar** — played part in the accent colour, buffered ranges, gaps between chapters; hovering shows the time, the chapter title and the thumbnail. Dragging seeks live. As a `slider` it takes arrows (±5 s), Page Up/Down (±10 %), Home/End.
 - **Volume** — the button mutes, the slider unfolds on hover or focus (on touch screens the hardware buttons do the job).
-- **Settings** — speed and, when there are several, quality (`Auto` follows the bandwidth for HLS). The menus live inside the player, so they work in full screen; in a small player they become a sheet over the video.
+- **Settings** — speed and, when there are several, quality (`Auto` follows the bandwidth for HLS) and, for an HLS stream with several audio renditions, the audio track. The menus live inside the player, so they work in full screen; in a small player they become a sheet over the video.
 - **Subtitles** — the kit draws the cues itself (position above the controls, readable on any video); iOS native full screen shows them through the system player.
 - **Full screen** — the whole player; on iPhone, where only the `<video>` itself can go full screen, the native player opens.
 - **Picture-in-picture** — standard API or Safari's presentation mode.
@@ -81,15 +81,15 @@ What the browsers play natively (the kit adds nothing for these):
 | MP4/WebM · AV1 | ✓ | ✓ | with hardware decoding | with hardware decoding |
 | HLS (`.m3u8`) | through the kit's adapter; recent versions also natively | through the kit's adapter | natively | natively |
 
-Checked in real browsers (Playwright): Chromium 156, Chrome 156, WebKit 27 — MP4 H.264/AAC, WebM VP9/Opus, HLS fMP4 and MPEG-TS (through the adapter and natively), AES-128, live playlists, discontinuities. Firefox was not available in the test environment.
+Checked in real browsers (Playwright): Chromium 156, Chrome 156, WebKit 27 — MP4 H.264/AAC, WebM VP9/Opus, HLS fMP4 and MPEG-TS (through the adapter and natively), AES-128, live playlists, discontinuities, alternate audio renditions (fMP4, MPEG-TS, packed AAC) with switching. Firefox was not available in the test environment.
 
 ## HLS
 
 A source with `type: 'application/x-mpegURL'` (or a `.m3u8` address) is played through `@dskripchenko/ui/hls`. The adapter is a separate entry loaded with a dynamic import only when such a source appears — the main bundle does not grow.
 
 - Where the browser plays HLS itself (Safari, iOS, recent Chrome) the address goes straight to `<video>` (`preferNative: true`; set `false` to always use the adapter and get the quality menu).
-- Otherwise the adapter feeds Media Source Extensions: master and media playlists, **fMP4/CMAF** segments with `EXT-X-MAP`, **MPEG-TS** segments (H.264 + AAC) converted to fMP4 in the browser, byte ranges, `EXT-X-DISCONTINUITY`, **AES-128** (WebCrypto), live playlists with reloads and a sliding window, buffer-ahead and eviction, seeking, ABR with manual quality selection, retries with backoff.
-- Not supported: SAMPLE-AES / DRM (`encrypted` error), HEVC or MP3 inside MPEG-TS (`codec` error), alternative audio renditions (`EXT-X-MEDIA TYPE=AUDIO` with a URI) — only the audio muxed into the variant plays, low-latency HLS parts.
+- Otherwise the adapter feeds Media Source Extensions: master and media playlists, **fMP4/CMAF** segments with `EXT-X-MAP`, **MPEG-TS** segments (H.264 + AAC) converted to fMP4 in the browser, byte ranges, `EXT-X-DISCONTINUITY`, **AES-128** (WebCrypto), **alternate audio renditions** (`EXT-X-MEDIA TYPE=AUDIO` with a URI) in their own SourceBuffer, kept in sync with the video across seeking and quality switches, chosen by `audioLanguage`, then `DEFAULT`, then `AUTOSELECT` in the browser language, and switchable from the settings menu; audio renditions as fMP4, MPEG-TS or **packed AAC** with an ID3 timestamp; live playlists with reloads and a sliding window, buffer-ahead and eviction, seeking, ABR with manual quality selection, retries with backoff.
+- Not supported: SAMPLE-AES / DRM (`encrypted` error), HEVC or MP3 inside MPEG-TS (`codec` error), low-latency HLS parts.
 
 ```ts
 import { UidVideo } from '@dskripchenko/ui'
@@ -102,6 +102,7 @@ import { UidVideo } from '@dskripchenko/ui'
 |---|---|---|
 | `preferNative` | `true` | Use the browser's own HLS when present |
 | `startLevel` | `-1` | Starting variant; `-1` — ABR decides |
+| `audioLanguage` | — | Preferred audio rendition language (`ru`, `en-US`…) |
 | `maxBufferAhead` | `30` | Seconds to buffer ahead |
 | `maxBufferBehind` | `30` | Seconds kept behind the playhead |
 | `retries` | `3` | Repeats of a failed request (500 ms, 1 s, 2 s…) |
@@ -119,6 +120,8 @@ const session = attachHls(videoElement, url, {
   onError: (e) => console.warn(e.code, e.message),
 })
 session.setLevel(1)   // -1 — back to automatic
+session.setAudioTrack(1) // another audio rendition
+session.stats()        // buffered ranges per SourceBuffer, level, bandwidth
 session.destroy()
 ```
 

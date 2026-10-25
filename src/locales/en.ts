@@ -141,6 +141,7 @@ export const en: UidLocale = {
     speed: 'Speed',
     normalSpeed: 'Normal',
     quality: 'Quality',
+    audioTrack: 'Audio',
     auto: 'Auto',
     captions: 'Subtitles',
     captionsOff: 'Off',

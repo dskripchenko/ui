@@ -110,6 +110,28 @@ describe('UidAudio', () => {
     expect(HTMLMediaElement.prototype.play).toHaveBeenCalled()
   })
 
+  it('длительности плейлиста: известные сразу, остальные — прочерк до загрузки метаданных', async () => {
+    const w = mountAudio({ tracks })
+    const times = w.findAll('.uid-audio__item-time').map((x) => x.text())
+    expect(times).toEqual(['1:01', '—', '—'])
+  })
+
+  it('ожидание волны показывает заглушку, а не финальную полосу', () => {
+    const w = mountAudio({ src: '/a.mp3', waveform: true })
+    expect(w.find('.uid-media-scrubber__placeholder').exists()).toBe(true)
+    expect(w.find('.uid-media-scrubber__rail').exists()).toBe(false)
+  })
+
+  it('HLS-источник: адаптер подгружается лениво, src не ставится напрямую', async () => {
+    const attachHls = vi.fn(() => ({ destroy: vi.fn() }))
+    const w = mountAudio({ src: '/radio/master.m3u8', waveform: true, hlsLoader: async () => ({ attachHls }) as never })
+    await flushPromises()
+    expect(attachHls).toHaveBeenCalled()
+    expect(attachHls.mock.calls[0][1]).toBe('/radio/master.m3u8')
+    expect(w.find('audio').attributes('src')).toBeUndefined()
+    expect(w.find('.uid-media-scrubber--wave').exists()).toBe(false)
+  })
+
   it('меню скорости', async () => {
     const w = mountAudio({ src: '/a.mp3' })
     await w.find('[aria-label="Speed"]').trigger('click')

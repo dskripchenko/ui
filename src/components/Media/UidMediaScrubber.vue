@@ -17,6 +17,10 @@ const props = withDefaults(defineProps<{
   valueText: (current: string, total: string) => string
   disabled?: boolean
   step?: number
+  /** A waveform is on its way: show a placeholder instead of a bar that looks final. */
+  pending?: boolean
+  /** Hides the hover preview (e.g. while a menu is open over the bar). */
+  suppressPreview?: boolean
 }>(), {
   buffered: () => [],
   chapters: () => [],
@@ -24,6 +28,8 @@ const props = withDefaults(defineProps<{
   thumbnailAt: undefined,
   disabled: false,
   step: 5,
+  pending: false,
+  suppressPreview: false,
 })
 
 const emit = defineEmits<{
@@ -95,7 +101,7 @@ const hoverTime = computed(() => {
   return clamp(hoverX.value / width.value, 0, 1) * props.duration
 })
 
-const previewTime = computed(() => dragTime.value ?? hoverTime.value)
+const previewTime = computed(() => (props.suppressPreview && dragTime.value === null ? null : dragTime.value ?? hoverTime.value))
 const previewChapter = computed(() =>
   previewTime.value === null ? undefined : cueAt(props.chapters, previewTime.value)?.text,
 )
@@ -209,7 +215,8 @@ const ariaValueText = computed(() =>
     ref="root"
     class="uid-media-scrubber"
     :class="{
-      'uid-media-scrubber--wave': !!waveBars,
+      'uid-media-scrubber--wave': !!waveBars || pending,
+      'uid-media-scrubber--pending': pending && !waveBars,
       'uid-media-scrubber--dragging': dragTime !== null,
       'uid-media-scrubber--disabled': disabled || !hasDuration,
     }"
@@ -250,6 +257,11 @@ const ariaValueText = computed(() =>
       </svg>
     </div>
     <div
+      v-else-if="pending"
+      class="uid-media-scrubber__placeholder"
+      aria-hidden="true"
+    />
+    <div
       v-else
       class="uid-media-scrubber__rail"
       :style="chapterMask"
@@ -264,12 +276,12 @@ const ariaValueText = computed(() =>
       <div class="uid-media-scrubber__played" />
     </div>
     <div
-      v-if="!waveBars"
+      v-if="!waveBars && !pending"
       class="uid-media-scrubber__handle"
       aria-hidden="true"
     />
     <div
-      v-if="hoverTime !== null && waveBars"
+      v-if="previewTime !== null && hoverTime !== null && (waveBars || pending)"
       class="uid-media-scrubber__hover-line"
       :style="{ left: `${pct(hoverTime)}%` }"
       aria-hidden="true"

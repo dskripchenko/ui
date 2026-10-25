@@ -32,17 +32,17 @@
 | `showVolume`, `showRate` | `boolean` | `true` | |
 | `showPlaylist` | `boolean` | `true` | Titelliste unter dem Player |
 
-Events: `play`, `pause`, `ended`, `error`, `trackchange` (Index), `update:index`. Bereitgestellt: `play()`, `pause()`, `toggle()`, `seek()`, `next()`, `prev()`, `state`, `media`.
+Events: `play`, `pause`, `ended`, `error`, `trackchange` (Index), `update:index`. Die Props `hlsOptions` und `hlsLoader` funktionieren wie bei UidVideo. Bereitgestellt: `play()`, `pause()`, `toggle()`, `seek()`, `next()`, `prev()`, `state`, `media`.
 
 ## Layout
 
-- **Standard** — eine Zeile: Wiedergabe-Button, Titel und Zeitleiste, Zeit, Lautstärke, Geschwindigkeit. In einem schmalen Container (unter 480 px) wandert die Zeitleiste in eine eigene Zeile in voller Breite, Titel und Interpret stehen untereinander, der Lautstärkeregler bleibt den Hardwaretasten überlassen. Ab 560 px ist der Lautstärkeregler immer sichtbar.
+- **Standard** — eine Zeile: Wiedergabe-Button, Titel und Zeitleiste, Zeit, Lautstärke, Geschwindigkeit. In einem schmalen Container (unter 480 px) stehen Titel und Interpret untereinander und werden mit Auslassungspunkten gekürzt, die Zeitleiste wandert in eine eigene Zeile in voller Breite, die Zeit darunter, der Lautstärkeregler bleibt den Hardwaretasten überlassen. Ab 560 px ist der Lautstärkeregler immer sichtbar.
 - **Mini** — standardmäßig `240px` breit (`--uid-audio-mini-width`), passt in eine Tabellenzelle: Wiedergabe, Leiste oder kleine Wellenform, Zeit (vor der Wiedergabe die Dauer, währenddessen die Position). Der Start einer Zeile pausiert die anderen.
-- **Playlist** — Zurück / Weiter neben dem Wiedergabe-Button und eine nummerierte Liste mit markiertem laufendem Titel. „Zurück“ spult einen Titel, der länger als 3 Sekunden läuft, zuerst an den Anfang. Sperrbildschirm und Hardware-Medientasten funktionieren über die Media Session API.
+- **Playlist** — Zurück / Weiter neben dem Wiedergabe-Button und eine nummerierte Liste mit markiertem laufendem Titel. „Zurück“ spult einen Titel, der länger als 3 Sekunden läuft, zuerst an den Anfang. Sperrbildschirm und Hardware-Medientasten funktionieren über die Media Session API. Die Dauern aller Titel werden nacheinander aus ihren Metadaten gelesen; bis dahin zeigt die Liste „—“.
 
 ## Wellenform
 
-Mit `waveform` wird die Datei geladen und mit Web Audio dekodiert (`decodeAudioData` mit niedriger Abtastrate, um Speicher zu sparen), und die Spitzen werden in Portionen berechnet, zwischen denen der Browser zum Zug kommt (`requestIdleCallback`, sonst `setTimeout`). Ergebnisse werden je Adresse für die Lebensdauer der Seite zwischengespeichert; Dateien werden einzeln dekodiert und erst, wenn der Player nahe am Viewport ist, sodass eine Tabelle mit hundert Aufnahmen reaktionsschnell bleibt. Dateien über `waveformMaxBytes` oder länger als `waveformMaxDuration` behalten die einfache Leiste. Das Audio muss für `fetch` lesbar sein — gleicher Origin oder CORS.
+Mit `waveform` wird die Datei geladen und mit Web Audio dekodiert (`decodeAudioData` mit niedriger Abtastrate, um Speicher zu sparen), und die Spitzen werden in Portionen berechnet, zwischen denen der Browser zum Zug kommt (`requestIdleCallback`, sonst `setTimeout`). Ergebnisse werden je Adresse für die Lebensdauer der Seite zwischengespeichert; Dateien werden einzeln dekodiert und erst, wenn der Player nahe am Viewport ist, sodass eine Tabelle mit hundert Aufnahmen reaktionsschnell bleibt. Dateien über `waveformMaxBytes` oder länger als `waveformMaxDuration` behalten die einfache Leiste. Das Audio muss für `fetch` lesbar sein — gleicher Origin oder CORS. Bis die Spitzen fertig sind, zeigt die Leiste einen schimmernden Platzhalter statt einer einfachen Linie, die endgültig wirkt.
 
 Für lange Aufnahmen die Spitzen auf dem Server berechnen und in `peaks` übergeben (beliebige Länge; der Player resampelt auf seine Breite):
 
@@ -54,6 +54,10 @@ const peaks = await computePeaks([audioBuffer.getChannelData(0)], 512)
 ```
 
 Helfer: `getWaveform(src, options)`, `computePeaks(channels, count)`, `resamplePeaks(peaks, n)`, `peaksToPath(peaks)`.
+
+## HLS
+
+Eine `.m3u8`-Quelle (oder `type: 'application/x-mpegURL'`) spielt über denselben bei Bedarf geladenen Adapter wie in [UidVideo](./video.md#hls): reine Audio-Master- oder Media-Playlists, Segmente in fMP4, MPEG-TS oder Packed AAC. Für Streams wird keine Wellenform gezeichnet.
 
 ## Formate
 

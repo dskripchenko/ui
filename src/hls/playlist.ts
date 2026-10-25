@@ -61,6 +61,8 @@ export interface HlsRendition {
   language?: string
   uri?: string
   default?: boolean
+  autoselect?: boolean
+  channels?: string
 }
 
 export interface HlsMasterPlaylist {
@@ -158,6 +160,8 @@ function parseMaster(lines: string[], url: string): HlsMasterPlaylist {
         language: a.LANGUAGE,
         uri: a.URI ? resolve(a.URI, url) : undefined,
         default: a.DEFAULT === 'YES',
+        autoselect: a.AUTOSELECT === 'YES',
+        channels: a.CHANNELS,
       })
     }
   }

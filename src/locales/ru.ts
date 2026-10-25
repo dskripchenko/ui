@@ -141,6 +141,7 @@ export const ru: UidLocale = {
     speed: 'Скорость',
     normalSpeed: 'Обычная',
     quality: 'Качество',
+    audioTrack: 'Аудиодорожка',
     auto: 'Авто',
     captions: 'Субтитры',
     captionsOff: 'Выкл.',

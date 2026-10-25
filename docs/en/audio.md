@@ -32,17 +32,17 @@
 | `showVolume`, `showRate` | `boolean` | `true` | |
 | `showPlaylist` | `boolean` | `true` | Track list under the player |
 
-Events: `play`, `pause`, `ended`, `error`, `trackchange` (index), `update:index`. Exposed: `play()`, `pause()`, `toggle()`, `seek()`, `next()`, `prev()`, `state`, `media`.
+Events: `play`, `pause`, `ended`, `error`, `trackchange` (index), `update:index`. Props `hlsOptions` and `hlsLoader` work as in UidVideo. Exposed: `play()`, `pause()`, `toggle()`, `seek()`, `next()`, `prev()`, `state`, `media`.
 
 ## Layout
 
-- **Default** — a row: play button, title and scrub bar, time, volume, speed. In a narrow container (under 480 px) the scrub bar moves to its own full-width line, the title and artist stack, the volume slider is left to the hardware buttons. From 560 px the volume slider is always visible.
+- **Default** — a row: play button, title and scrub bar, time, volume, speed. In a narrow container (under 480 px) the title and artist stack and are cut with an ellipsis, the scrub bar moves to its own full-width line with the time under it, the volume slider is left to the hardware buttons. From 560 px the volume slider is always visible.
 - **Mini** — `240px` wide by default (`--uid-audio-mini-width`), fits a table cell: play, bar or small waveform, time (the duration before playback, the position during it). Starting one row pauses the others.
-- **Playlist** — previous / next around the play button and a numbered list with the playing track marked. "Previous" first rewinds a track that has been playing for more than 3 seconds. The lock screen and hardware media keys work through the Media Session API.
+- **Playlist** — previous / next around the play button and a numbered list with the playing track marked. "Previous" first rewinds a track that has been playing for more than 3 seconds. The lock screen and hardware media keys work through the Media Session API. Durations of all tracks are read one by one from their metadata; until then the list shows “—”.
 
 ## Waveform
 
-With `waveform` the file is fetched and decoded with Web Audio (`decodeAudioData` at a low sample rate to keep memory small), and peaks are computed in chunks that yield to the browser between them (`requestIdleCallback`, otherwise `setTimeout`). Results are cached per address for the page's lifetime; files are decoded one at a time and only once the player is near the viewport, so a table of a hundred recordings stays responsive. Files over `waveformMaxBytes` or longer than `waveformMaxDuration` keep the plain bar. The audio has to be readable by `fetch` — same origin or CORS.
+With `waveform` the file is fetched and decoded with Web Audio (`decodeAudioData` at a low sample rate to keep memory small), and peaks are computed in chunks that yield to the browser between them (`requestIdleCallback`, otherwise `setTimeout`). Results are cached per address for the page's lifetime; files are decoded one at a time and only once the player is near the viewport, so a table of a hundred recordings stays responsive. Files over `waveformMaxBytes` or longer than `waveformMaxDuration` keep the plain bar. The audio has to be readable by `fetch` — same origin or CORS. Until the peaks are ready the bar shows a shimmering placeholder rather than a plain line that looks final.
 
 For long recordings compute the peaks on the server and pass them in `peaks` (any length; the player resamples to its width):
 
@@ -54,6 +54,10 @@ const peaks = await computePeaks([audioBuffer.getChannelData(0)], 512)
 ```
 
 Helpers: `getWaveform(src, options)`, `computePeaks(channels, count)`, `resamplePeaks(peaks, n)`, `peaksToPath(peaks)`.
+
+## HLS
+
+An `.m3u8` source (or `type: 'application/x-mpegURL'`) plays through the same lazily loaded adapter as in [UidVideo](./video.md#hls): an audio-only master or media playlist, fMP4, MPEG-TS or packed AAC segments. The waveform is not drawn for streams.
 
 ## Formats
 

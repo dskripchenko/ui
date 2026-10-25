@@ -5,6 +5,8 @@ export interface UidMediaMenuOption {
   value: string | number
   label: string
   hint?: string
+  /** Shorter label for the compact sheet (`1×` instead of `Normal`). */
+  short?: string
 }
 
 export interface UidMediaMenuGroup {
@@ -66,6 +68,7 @@ function fitPanel(): void {
   sheet.value = false
   if (!el || !host || !button.value) return
   const hostRect = host.getBoundingClientRect()
+  if (!hostRect.height) return
   const btn = button.value.getBoundingClientRect()
   const up = getComputedStyle(el).bottom !== 'auto'
   const space = up ? btn.top - hostRect.top - 12 : hostRect.bottom - btn.bottom - 12
@@ -209,6 +212,7 @@ defineExpose({ show, hide, open })
         v-for="g in props.groups"
         :key="g.id"
         class="uid-media-menu__group"
+        :class="{ 'uid-media-menu__group--compact': g.options.every((o) => o.short) }"
         role="group"
         :aria-label="g.label"
       >
@@ -233,7 +237,7 @@ defineExpose({ show, hide, open })
             class="uid-media-menu__check"
             aria-hidden="true"
           />
-          <span class="uid-media-menu__label">{{ o.label }}</span>
+          <span class="uid-media-menu__label">{{ sheet && o.short ? o.short : o.label }}</span>
           <span
             v-if="o.hint"
             class="uid-media-menu__hint"

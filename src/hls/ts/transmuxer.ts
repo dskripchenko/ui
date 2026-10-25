@@ -2,6 +2,7 @@ import { isMpegTs, type Mp4TrackInfo } from '../mp4.js'
 import { TransmuxError, type SegmentTransmuxer, type TransmuxContext, type TransmuxResult } from '../transmux.js'
 import { audioSpecificConfig, parseAdts, type AdtsConfig } from './adts.js'
 import { demuxTs, STREAM_AAC, STREAM_H264, type DemuxState, type PesPacket } from './demux.js'
+import { isPackedAudio, parsePackedAudio } from './id3.js'
 import { avcCodec, nalType, NAL_AUD, NAL_IDR, NAL_PPS, NAL_SPS, parseSps, splitNals, toAvcc } from './h264.js'
 import { concatBytes, fragment, initSegment, type MuxSample, type MuxTrack } from './mp4mux.js'
 
@@ -9,6 +10,8 @@ const VIDEO_ID = 1
 const AUDIO_ID = 2
 const WRAP = 8589934592
 const FRAME = 1024
+
+interface Samples { base: number, samples: MuxSample[], payload: Uint8Array }
 
 interface VideoConfig { sps: Uint8Array, pps: Uint8Array, width: number, height: number, codec: string }
 
@@ -31,7 +34,7 @@ export class TsTransmuxer implements SegmentTransmuxer {
   private videoDuration = 3000
 
   canHandle(data: Uint8Array): boolean {
-    return isMpegTs(data)
+    return isMpegTs(data) || isPackedAudio(data)
   }
 
   reset(): void {
@@ -56,6 +59,7 @@ export class TsTransmuxer implements SegmentTransmuxer {
       this.nextVideoDts = null
       this.nextAudioDts = null
     }
+    if (!isMpegTs(data)) return this.pushPacked(data)
     const res = demuxTs(data, this.demux)
     this.demux = res
     if (res.videoType !== undefined && res.videoType !== STREAM_H264) {
@@ -70,7 +74,22 @@ export class TsTransmuxer implements SegmentTransmuxer {
 
     const video = res.video.length ? this.videoSamples(res.video) : null
     const audio = res.audio.length ? this.audioSamples(res.audio) : null
+    return this.output(video, audio)
+  }
 
+  private pushPacked(data: Uint8Array): TransmuxResult {
+    const packed = parsePackedAudio(data)
+    if (packed.pts === undefined && this.nextAudioDts === null) {
+      throw new TransmuxError('Packed audio segment without an ID3 timestamp', 'format')
+    }
+    // Without a timestamp the segment continues the previous one.
+    const pts = packed.pts ?? Math.round(((this.nextAudioDts as number) * 90000) / (this.audio?.sampleRate ?? 90000))
+    const audio = this.audioSamples([{ pts, dts: pts, data: packed.data }])
+    if (!audio) throw new TransmuxError('No AAC frames in the packed audio segment', 'format')
+    return this.output(null, audio)
+  }
+
+  private output(video: Samples | null, audio: Samples | null): TransmuxResult {
     const tracks: MuxTrack[] = []
     const info: Mp4TrackInfo[] = []
     const codecs: string[] = []
@@ -113,7 +132,7 @@ export class TsTransmuxer implements SegmentTransmuxer {
     }
   }
 
-  private videoSamples(pes: PesPacket[]): { base: number, samples: MuxSample[], payload: Uint8Array } | null {
+  private videoSamples(pes: PesPacket[]): Samples | null {
     const units: { dts: number, pts: number, key: boolean, data: Uint8Array }[] = []
     let lastDts: number | null = null
     for (const p of pes) {
@@ -165,7 +184,7 @@ export class TsTransmuxer implements SegmentTransmuxer {
     return { base: units[0].dts, samples, payload: concatBytes(units.map((u) => u.data)) }
   }
 
-  private audioSamples(pes: PesPacket[]): { base: number, samples: MuxSample[], payload: Uint8Array } | null {
+  private audioSamples(pes: PesPacket[]): Samples | null {
     const frames: Uint8Array[] = []
     let firstPts: number | null = null
     let carry: Uint8Array = new Uint8Array(0)

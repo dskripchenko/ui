@@ -97,6 +97,80 @@ async function hlsCase(page, scenario, extra, { quality = true, seekTo = 8 } = {
 }
 
 
+const stats = (page) => page.evaluate(() => window.__hls?.stats() ?? null)
+const covers = (ranges, t) => (ranges ?? []).some(([a, b]) => a <= t + 0.1 && b > t + 0.5)
+
+// Dominant frequency of what the element plays (Chromium only: WebKit does not tap MSE audio).
+async function installTone(page) {
+  await page.evaluate(() => {
+    const el = document.querySelector('video, audio')
+    const ctx = new AudioContext()
+    const an = ctx.createAnalyser()
+    an.fftSize = 8192
+    ctx.createMediaElementSource(el).connect(an)
+    an.connect(ctx.destination)
+    ctx.resume()
+    window.__tone = () => {
+      const d = new Float32Array(an.frequencyBinCount)
+      an.getFloatFrequencyData(d)
+      let best = 1
+      for (let i = 1; i < d.length; i++) if (d[i] > d[best]) best = i
+      return d[best] > -90 ? Math.round((best * ctx.sampleRate) / an.fftSize) : 0
+    }
+  })
+}
+
+async function waitTone(page, hz, what) {
+  const t0 = Date.now()
+  let last
+  while (Date.now() - t0 < 8000) {
+    last = await page.evaluate(() => window.__tone())
+    if (Math.abs(last - hz) < 15) return last
+    await sleep(250)
+  }
+  throw new Error(`${what}: expected ~${hz} Hz, got ${last}`)
+}
+
+function overlaps(a, b) {
+  return a.x < b.x + b.width - 0.5 && b.x < a.x + a.width - 0.5 && a.y < b.y + b.height - 0.5 && b.y < a.y + a.height - 0.5
+}
+
+async function altAudioCase(page, scenario, browser) {
+  await open(page, scenario, '&native=0')
+  const chromium = browser === 'chromium' || browser === 'chrome'
+  await startVideo(page)
+  if (chromium) await installTone(page)
+  const s0 = await stats(page)
+  if (!s0?.buffered.audio) throw new Error('no separate audio SourceBuffer')
+  const notes = ['audio SourceBuffer']
+  if (chromium) notes.push(`en ${await waitTone(page, 330, 'English rendition')} Hz`)
+  await chooseMenu(page, 'Settings', 'Русский')
+  const t = (await media(page)).t
+  const t0 = Date.now()
+  for (;;) {
+    const st = await stats(page)
+    const now = (await media(page)).t
+    if (st.audioTrack === 1 && covers(st.buffered.audio, now)) break
+    if (Date.now() - t0 > 8000) throw new Error(`audio switch: ${JSON.stringify(st)}`)
+    await sleep(200)
+  }
+  await waitFor(page, (m) => m.t > t + 0.5 && !m.paused, 'plays after the audio switch')
+  notes.push('switched to ru')
+  if (chromium) notes.push(`ru ${await waitTone(page, 660, 'Russian rendition')} Hz`)
+  await clickScrubber(page, 8 / 12)
+  const m = await waitFor(page, (x) => x.t >= 7.5 && x.rs >= 3 && !x.paused, 'seek to 8', 15000)
+  const st = await stats(page)
+  if (!covers(st.buffered.audio, m.t) || !covers(st.buffered.main, m.t)) throw new Error(`seek: buffers ${JSON.stringify(st.buffered)}`)
+  notes.push('seek: both buffers')
+  await clickScrubber(page, 0.1)
+  await waitFor(page, (x) => x.t < 3 && x.rs >= 3, 'seek back', 10000)
+  await chooseMenu(page, 'Settings', '360p')
+  await waitFor(page, (x) => x.h === 360 && !x.paused, 'quality 360p', 15000)
+  if (chromium) await waitTone(page, 660, 'audio kept after the quality switch')
+  notes.push('360p keeps ru audio')
+  return notes.join(', ')
+}
+
 const tests = [
   {
     name: 'MP4 H.264/AAC: play, seek, volume, rate, captions, chapters, thumbnails',
@@ -218,6 +292,31 @@ const tests = [
       return `t=${m.t.toFixed(1)}, live badge`
     },
   })),
+  { name: 'HLS alternate audio (fMP4, 2 languages) via MSE', run: (page, b) => altAudioCase(page, 'hls-alt-fmp4', b) },
+  { name: 'HLS alternate audio (MPEG-TS) via MSE', run: (page, b) => altAudioCase(page, 'hls-alt-ts', b) },
+  { name: 'HLS alternate audio (packed AAC + ID3) via MSE', run: (page, b) => altAudioCase(page, 'hls-alt-packed', b) },
+  {
+    name: 'HLS alternate audio (browser default path)',
+    run: async (page) => {
+      await open(page, 'hls-alt-fmp4')
+      const m = await startVideo(page)
+      return `${m.h}p`
+    },
+  },
+  {
+    name: 'UidAudio with HLS: audio-only master, TS and packed media playlists',
+    run: async (page) => {
+      await open(page, 'audio-hls', '&native=0')
+      const out = []
+      for (let i = 0; i < 3; i++) {
+        const sel = `.uid-audio:nth-child(${i + 1}) audio`
+        await page.locator('.uid-audio').nth(i).locator('.uid-audio__play').click()
+        const m = await waitFor(page, (x) => x.t > 0.8 && !x.paused, `audio HLS #${i + 1} plays`, 10000, sel)
+        out.push(m.t.toFixed(1))
+      }
+      return `playing (${out.join(', ')} s)`
+    },
+  },
   {
     name: 'HLS bad URL → readable error',
     run: async (page) => {
@@ -268,6 +367,72 @@ const tests = [
     },
   },
   {
+    name: 'Playlist: every row gets its duration',
+    run: async (page) => {
+      await open(page, 'audio-playlist')
+      await page.waitForFunction(() => [...document.querySelectorAll('.uid-audio__item-time')].every((e) => /\d:\d\d/.test(e.textContent)), null, { timeout: 8000 })
+      return (await page.locator('.uid-audio__item-time').allTextContents()).join(' ')
+    },
+  },
+  {
+    name: 'Mini players in a table: every row gets its waveform',
+    run: async (page) => {
+      await open(page, 'mini-table')
+      await page.waitForFunction(() => {
+        const rows = [...document.querySelectorAll('.uid-audio')]
+        return rows.length === 6 && rows.every((r) => r.querySelector('.uid-media-scrubber__wave path'))
+      }, null, { timeout: 10000 })
+      return '6/6 waveforms'
+    },
+  },
+  {
+    name: 'Phone: audio header text boxes do not overlap',
+    viewport: { width: 390, height: 844 },
+    run: async (page) => {
+      await open(page, 'audio-playlist')
+      await page.click('.uid-audio__play')
+      await waitFor(page, (m) => m.t > 0.3, 'plays')
+      const boxes = await page.evaluate(() => {
+        const pick = (sel) => {
+          const el = document.querySelector(sel)
+          if (!el) return null
+          const r = el.getBoundingClientRect()
+          // The visible text extent: a truncated span is limited by its own box.
+          return { sel, x: r.x, y: r.y, width: r.width, height: r.height, clipped: el.scrollWidth > el.clientWidth }
+        }
+        return ['.uid-audio__title', '.uid-audio__artist', '.uid-audio__time', '.uid-audio__rate', '.uid-audio__play', '.uid-audio__scrubber']
+          .map(pick).filter(Boolean)
+      })
+      for (let i = 0; i < boxes.length; i++) {
+        for (let j = i + 1; j < boxes.length; j++) {
+          if (overlaps(boxes[i], boxes[j])) throw new Error(`${boxes[i].sel} overlaps ${boxes[j].sel}`)
+        }
+      }
+      const title = boxes.find((b) => b.sel === '.uid-audio__title')
+      return `${boxes.length} boxes, title ${Math.round(title.width)}px${title.clipped ? ' (ellipsis)' : ''}`
+    },
+  },
+  {
+    name: 'Scrub preview is hidden when a menu opens or the pointer leaves',
+    run: async (page) => {
+      await open(page, 'video-mp4')
+      await startVideo(page)
+      const bb = await page.locator('.uid-video .uid-media-scrubber').boundingBox()
+      await page.mouse.move(bb.x + bb.width * 0.3, bb.y + bb.height / 2)
+      await page.waitForSelector('.uid-media-scrubber__preview')
+      await page.mouse.move(bb.x + bb.width * 0.3, bb.y - 120)
+      await page.waitForSelector('.uid-media-scrubber__preview', { state: 'detached', timeout: 2000 })
+      await page.mouse.move(bb.x + bb.width * 0.3, bb.y + bb.height / 2)
+      await page.waitForSelector('.uid-media-scrubber__preview')
+      await page.keyboard.press('Escape')
+      await page.click('.uid-video [aria-label="Settings"]')
+      await page.waitForSelector('.uid-media-menu__panel')
+      const left = await page.locator('.uid-media-scrubber__preview, .uid-media-scrubber__hover-line').count()
+      if (left) throw new Error('preview visible under the open menu')
+      return 'ok'
+    },
+  },
+  {
     name: 'Broken audio → readable error',
     run: async (page) => {
       await open(page, 'audio-broken')
@@ -289,7 +454,7 @@ for (const b of browsers) {
   console.log(`\n## ${b.name} ${b.browser.version()}`)
   for (const test of tests) {
     if (only && !test.name.toLowerCase().includes(only.toLowerCase())) continue
-    const ctx = await b.browser.newContext({ viewport: { width: 1000, height: 800 } })
+    const ctx = await b.browser.newContext({ viewport: test.viewport ?? { width: 1000, height: 800 } })
     const page = await ctx.newPage()
     const errors = []
     page.on('pageerror', (e) => errors.push(e.message))

@@ -4,6 +4,7 @@ set -euo pipefail
 FF=${FFMPEG:-ffmpeg}
 OUT=${1:-"$(cd "$(dirname "$0")/../.." && pwd)/.media-fixtures"}
 mkdir -p "$OUT"
+HERE="$(cd "$(dirname "$0")" && pwd)"
 cd "$OUT"
 Q="-hide_banner -loglevel error -y"
 DUR=12
@@ -64,4 +65,32 @@ mkdir -p hls-disc
 $FF $Q -f lavfi -i "testsrc=size=640x360:rate=30:duration=6" -f lavfi -i "sine=frequency=880:duration=6:sample_rate=48000" \
   -c:v libx264 -pix_fmt yuv420p -g 60 -sc_threshold 0 -c:a aac -b:a 64k -ac 2 \
   -output_ts_offset 5000 -f hls -hls_time 2 -hls_playlist_type vod -hls_segment_filename "hls-disc/b%03d.ts" hls-disc/b.m3u8
+# Alternate audio: video-only renditions + two audio languages (English 330 Hz, Russian 660 Hz).
+alt() { # $1 dir, $2 segment type
+  local dir=$1 type=$2 ext=m4s
+  [ "$type" = mpegts ] && ext=ts
+  mkdir -p "$dir"
+  $FF $Q -f lavfi -i "$VSRC" -f lavfi -i "sine=frequency=330:duration=$DUR:sample_rate=48000" -f lavfi -i "sine=frequency=660:duration=$DUR:sample_rate=48000" \
+    -filter_complex "[0:v]split=2[v1][v2];[v1]scale=640:360[v360];[v2]scale=1280:720[v720]" \
+    -map "[v360]" -map "[v720]" -map 1:a -map 2:a \
+    -c:v libx264 -profile:v main -pix_fmt yuv420p -g 60 -keyint_min 60 -sc_threshold 0 -b:v:0 400k -b:v:1 1800k \
+    -c:a aac -b:a 64k -ac 2 \
+    -f hls -hls_time 2 -hls_playlist_type vod -hls_segment_type "$type" \
+    -hls_segment_filename "$dir/%v/seg%03d.$ext" -master_pl_name master.m3u8 \
+    -var_stream_map "v:0,agroup:aud,name:v360 v:1,agroup:aud,name:v720 a:0,agroup:aud,language:en,name:en,default:yes a:1,agroup:aud,language:ru,name:ru" \
+    "$dir/%v/index.m3u8"
+  sed -i.bak -e 's/NAME="audio_2"/NAME="English",AUTOSELECT=YES/' -e 's/NAME="audio_3"/NAME="Русский",AUTOSELECT=YES/' "$dir/master.m3u8" && rm "$dir/master.m3u8.bak"
+}
+alt hls-alt-fmp4 fmp4
+alt hls-alt-ts mpegts
+
+# Packed audio (ID3 timestamp + ADTS) built from the TS audio renditions; video from hls-alt-ts.
+mkdir -p hls-alt-packed
+node "$HERE/packed-audio.mjs" hls-alt-ts/en/index.m3u8 hls-alt-packed/en
+node "$HERE/packed-audio.mjs" hls-alt-ts/ru/index.m3u8 hls-alt-packed/ru
+sed -e 's#URI="en/#URI="en/#' -e 's#^v360/#../hls-alt-ts/v360/#' -e 's#^v720/#../hls-alt-ts/v720/#' -e 's/mp4a.40.2/mp4a.40.2/' hls-alt-ts/master.m3u8 > hls-alt-packed/master.m3u8
+
+# Audio-only HLS for UidAudio: the English fMP4 rendition, and a master with both languages as variants.
+mkdir -p hls-audio
+printf '#EXTM3U\n#EXT-X-VERSION:7\n#EXT-X-STREAM-INF:BANDWIDTH=70000,CODECS="mp4a.40.2"\n../hls-alt-fmp4/en/index.m3u8\n#EXT-X-STREAM-INF:BANDWIDTH=72000,CODECS="mp4a.40.2"\n../hls-alt-fmp4/ru/index.m3u8\n' > hls-audio/master.m3u8
 echo "fixtures in $OUT"

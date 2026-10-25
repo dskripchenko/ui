@@ -37,13 +37,13 @@
 | `hlsOptions` | `HlsOptions` | — | 传给 HLS 适配器（见下文） |
 | `hlsLoader` | `() => Promise<module>` | 动态导入 | HLS 适配器的来源 |
 
-事件：`play`、`pause`、`ended`、`error`（`{ kind, detail? }`）、`qualitychange`（标签）。组件对外暴露 `play()`、`pause()`、`toggle()`、`seek(seconds)`、响应式的 `state` 以及 `media` 元素。
+事件：`play`、`pause`、`ended`、`error`（`{ kind, detail? }`）、`qualitychange`（标签）、`audiotrackchange`（标签）。组件对外暴露 `play()`、`pause()`、`toggle()`、`seek(seconds)`、响应式的 `state` 以及 `media` 元素。
 
 ## 控件
 
 - **进度条** —— 已播放部分使用强调色，显示缓冲区段和章节间隔；悬停时显示时间、章节标题和缩略图。拖动时实时跳转。作为 `slider`，它响应方向键（±5 秒）、Page Up/Down（±10 %）、Home/End。
 - **音量** —— 按钮切换静音，滑块在悬停或聚焦时展开（触屏设备上由硬件按键负责）。
-- **设置** —— 速度，以及存在多个画质时的画质（自动（`Auto`）在 HLS 下随带宽调整）。菜单位于播放器内部，因此全屏时也可使用；在小尺寸播放器中会变成覆盖在视频上的面板。
+- **设置** —— 速度，以及存在多个画质时的画质（自动（`Auto`）在 HLS 下随带宽调整），以及含多条音轨的 HLS 流的音轨。菜单位于播放器内部，因此全屏时也可使用；在小尺寸播放器中会变成覆盖在视频上的面板。
 - **字幕** —— 由组件库自行绘制 cue（位于控件上方，在任何视频上都清晰可读）；在 iOS 原生全屏中由系统播放器显示。
 - **全屏** —— 整个播放器全屏；在 iPhone 上只有 `<video>` 本身能进入全屏，此时会打开原生播放器。
 - **画中画** —— 标准 API 或 Safari 的演示模式。
@@ -81,15 +81,15 @@
 | MP4/WebM · AV1 | ✓ | ✓ | 需硬件解码 | 需硬件解码 |
 | HLS (`.m3u8`) | 通过组件库的适配器；较新版本也可原生播放 | 通过组件库的适配器 | 原生 | 原生 |
 
-已在真实浏览器中验证（Playwright）：Chromium 156、Chrome 156、WebKit 27 —— MP4 H.264/AAC、WebM VP9/Opus、HLS fMP4 和 MPEG-TS（通过适配器及原生）、AES-128、直播播放列表、不连续点。测试环境中没有 Firefox。
+已在真实浏览器中验证（Playwright）：Chromium 156、Chrome 156、WebKit 27 —— MP4 H.264/AAC、WebM VP9/Opus、HLS fMP4 和 MPEG-TS（通过适配器及原生）、AES-128、直播播放列表、不连续点、备用音轨（fMP4、MPEG-TS、packed AAC）及其切换。测试环境中没有 Firefox。
 
 ## HLS
 
 `type: 'application/x-mpegURL'`（或 `.m3u8` 地址）的源通过 `@dskripchenko/ui/hls` 播放。适配器是一个单独的入口，仅在出现此类源时通过动态导入加载 —— 主包体积不会增加。
 
 - 在浏览器自身支持 HLS 的地方（Safari、iOS、较新的 Chrome），地址直接交给 `<video>`（`preferNative: true`；设为 `false` 则始终使用适配器并获得画质菜单）。
-- 否则由适配器向 Media Source Extensions 供数据：master 和 media 播放列表、带 `EXT-X-MAP` 的 **fMP4/CMAF** 分片、在浏览器中转换为 fMP4 的 **MPEG-TS** 分片（H.264 + AAC）、字节范围、`EXT-X-DISCONTINUITY`、**AES-128**（WebCrypto）、带重新加载和滑动窗口的直播播放列表、预缓冲与淘汰、跳转、支持手动选择画质的 ABR、带退避的重试。
-- 不支持：SAMPLE-AES / DRM（`encrypted` 错误）、MPEG-TS 中的 HEVC 或 MP3（`codec` 错误）、备用音轨（带 URI 的 `EXT-X-MEDIA TYPE=AUDIO`）—— 只播放混流在变体中的音频、低延迟 HLS 的 part。
+- 否则由适配器向 Media Source Extensions 供数据：master 和 media 播放列表、带 `EXT-X-MAP` 的 **fMP4/CMAF** 分片、在浏览器中转换为 fMP4 的 **MPEG-TS** 分片（H.264 + AAC）、字节范围、`EXT-X-DISCONTINUITY`、**AES-128**（WebCrypto）、**备用音轨**（带 URI 的 `EXT-X-MEDIA TYPE=AUDIO`）使用独立的 SourceBuffer，在拖动和切换画质时与视频保持同步；按 `audioLanguage`、`DEFAULT`、浏览器语言下的 `AUTOSELECT` 依次选择，并可在设置菜单中切换；音轨可以是 fMP4、MPEG-TS 或带 ID3 时间戳的 **packed AAC**；带重新加载和滑动窗口的直播播放列表、预缓冲与淘汰、跳转、支持手动选择画质的 ABR、带退避的重试。
+- 不支持：SAMPLE-AES / DRM（`encrypted` 错误）、MPEG-TS 中的 HEVC 或 MP3（`codec` 错误）、低延迟 HLS 的 part。
 
 ```ts
 import { UidVideo } from '@dskripchenko/ui'
@@ -102,6 +102,7 @@ import { UidVideo } from '@dskripchenko/ui'
 |---|---|---|
 | `preferNative` | `true` | 浏览器自带 HLS 时使用它 |
 | `startLevel` | `-1` | 起始变体；`-1` —— 由 ABR 决定 |
+| `audioLanguage` | — | 首选音轨语言（`ru`、`en-US`…） |
 | `maxBufferAhead` | `30` | 向前缓冲的秒数 |
 | `maxBufferBehind` | `30` | 播放位置之后保留的秒数 |
 | `retries` | `3` | 失败请求的重试次数（500 毫秒、1 秒、2 秒……） |
@@ -119,6 +120,8 @@ const session = attachHls(videoElement, url, {
   onError: (e) => console.warn(e.code, e.message),
 })
 session.setLevel(1)   // -1 —— 恢复自动
+session.setAudioTrack(1) // 切换音轨
+session.stats()        // 各 SourceBuffer 的缓冲区间、档位、带宽
 session.destroy()
 ```
 

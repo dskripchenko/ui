@@ -201,20 +201,39 @@
   }
 }
 
-/* Narrow: title and controls on top, the scrub bar across the whole width below. */
+/* Narrow: title and speed on top, the scrub bar across the whole width, the time under it. */
 @container (max-width: 480px) {
-  .uid-audio__volume {
+  .uid-audio:not(.uid-audio--mini) .uid-audio__volume {
     display: none;
   }
 
-  .uid-audio__row {
-    gap: 0 8px;
+  .uid-audio:not(.uid-audio--mini) .uid-audio__side {
+    display: contents;
   }
 
-  .uid-audio__row--meta {
+  .uid-audio:not(.uid-audio--mini) .uid-audio__side .uid-media-menu {
+    grid-area: rate;
+  }
+
+  .uid-audio:not(.uid-audio--mini) .uid-audio__time {
+    grid-area: time;
+    min-width: 0;
+    margin: 2px 0 0;
+    text-align: left;
+  }
+
+  .uid-audio:not(.uid-audio--mini) .uid-audio__row {
+    gap: 0 8px;
     grid-template-areas:
-      'lead meta side'
-      'track track track';
+      'lead track rate'
+      'lead time time';
+  }
+
+  .uid-audio:not(.uid-audio--mini) .uid-audio__row--meta {
+    grid-template-areas:
+      'lead meta rate'
+      'track track track'
+      'time time time';
   }
 
   .uid-audio__row--meta .uid-audio__track {
@@ -223,21 +242,21 @@
 
   .uid-audio__meta {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
     gap: 0;
   }
 
+  .uid-audio__title,
   .uid-audio__artist {
     max-width: 100%;
+  }
+
+  .uid-audio__artist {
     font-size: var(--uid-font-size-xs, 12px);
   }
 
   .uid-audio__artist::before {
     display: none;
-  }
-
-  .uid-audio__time {
-    min-width: 0;
   }
 }
 

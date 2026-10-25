@@ -112,6 +112,25 @@ describe('UidVideo', () => {
     delete (window as unknown as { MediaSource?: unknown }).MediaSource
   })
 
+  it('HLS: меню аудиодорожек, когда их больше одной', async () => {
+    const setAudioTrack = vi.fn()
+    const attachHls = vi.fn((_el: HTMLMediaElement, _url: string, opts: { onAudioTracks: (l: unknown[]) => void, onAudioTrackSwitched: (i: number) => void }) => {
+      opts.onAudioTracks([{ index: 0, label: 'English', language: 'en', default: true }, { index: 1, label: 'Русский', language: 'ru', default: false }])
+      opts.onAudioTrackSwitched(0)
+      return { setLevel: vi.fn(), setAudioTrack, destroy: vi.fn() }
+    })
+    ;(window as unknown as { MediaSource: unknown }).MediaSource = function () {}
+    const w = mountVideo({ src: '/m.m3u8', hlsLoader: async () => ({ attachHls }) as never })
+    await flushPromises()
+    await w.find('[aria-label="Settings"]').trigger('click')
+    expect(w.find('[role="group"][aria-label="Audio"]').exists()).toBe(true)
+    const item = w.findAll('[role="menuitemradio"]').find((i) => i.text() === 'Русский')!
+    await item.trigger('click')
+    expect(setAudioTrack).toHaveBeenCalledWith(1)
+    expect(w.findComponent(UidVideo).emitted('audiotrackchange')?.[0]).toEqual(['Русский'])
+    delete (window as unknown as { MediaSource?: unknown }).MediaSource
+  })
+
   it('ошибка HLS показывается локализованным текстом', async () => {
     const attachHls = vi.fn((_el: HTMLMediaElement, _url: string, opts: { onError: (e: { code: string, message: string }) => void }) => {
       opts.onError({ code: 'encrypted', message: 'SAMPLE-AES' })

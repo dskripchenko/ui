@@ -18,7 +18,7 @@ import {
   PLAYBACK_RATES, cueAt, cueText, formatTime, isHlsSource, orderSources, parseThumbnail, parseVtt,
   type UidMediaCue, type UidMediaSource, type UidMediaTrack,
 } from '../Media/mediaUtils.js'
-import type { HlsLevel, HlsOptions, HlsSession } from '../../hls/index.js'
+import type { HlsAudioTrack, HlsLevel, HlsOptions, HlsSession } from '../../hls/index.js'
 
 export type UidHlsModule = typeof import('../../hls/index.js')
 
@@ -51,7 +51,7 @@ export interface UidVideoProps {
   title?: string
   /** Milliseconds of inactivity before the controls hide while playing. */
   autoHide?: number
-  hlsOptions?: Omit<HlsOptions, 'onLevels' | 'onLevelSwitched' | 'onError'>
+  hlsOptions?: Omit<HlsOptions, 'onLevels' | 'onLevelSwitched' | 'onAudioTracks' | 'onAudioTrackSwitched' | 'onError'>
   /** Loads the HLS adapter; defaults to the lazily imported `@dskripchenko/ui/hls`. */
   hlsLoader?: () => Promise<UidHlsModule>
 }
@@ -85,6 +85,7 @@ const emit = defineEmits<{
   ended: []
   error: [error: UidMediaErrorInfo]
   qualitychange: [label: string]
+  audiotrackchange: [label: string]
 }>()
 
 const t = useMediaLocale()
@@ -115,6 +116,8 @@ const hls = shallowRef<HlsSession | null>(null)
 const hlsLevels = ref<HlsLevel[]>([])
 const hlsLevel = ref(-1)
 const hlsAuto = ref(true)
+const audioTracks = ref<HlsAudioTrack[]>([])
+const audioTrack = ref(-1)
 let loadToken = 0
 
 function hlsPlayable(el: HTMLVideoElement): boolean {
@@ -127,6 +130,8 @@ function teardownHls(): void {
   hls.value = null
   hlsLevels.value = []
   hlsLevel.value = -1
+  audioTracks.value = []
+  audioTrack.value = -1
 }
 
 async function load(index: number, resume?: { time: number, play: boolean }): Promise<void> {
@@ -155,6 +160,8 @@ async function load(index: number, resume?: { time: number, play: boolean }): Pr
         ...props.hlsOptions,
         onLevels: (levels) => { hlsLevels.value = levels },
         onLevelSwitched: (i) => { hlsLevel.value = i },
+        onAudioTracks: (list) => { audioTracks.value = list },
+        onAudioTrackSwitched: (i) => { audioTrack.value = i },
         onError: (e) => ctrl.setError({ kind: e.code, detail: e.message }),
       })
     } catch (e) {
@@ -337,14 +344,29 @@ const rateGroup = computed<UidMediaMenuGroup>(() => ({
   id: 'rate',
   label: t.value.speed,
   value: state.rate,
-  options: props.rates.map((r) => ({ value: r, label: r === 1 ? t.value.normalSpeed : `${r}×` })),
+  options: props.rates.map((r) => ({ value: r, label: r === 1 ? t.value.normalSpeed : `${r}×`, short: `${r}×` })),
 }))
 
-const settingsGroups = computed(() => (qualityGroup.value ? [rateGroup.value, qualityGroup.value] : [rateGroup.value]))
+const audioGroup = computed<UidMediaMenuGroup | null>(() => (audioTracks.value.length > 1
+  ? {
+      id: 'audio',
+      label: t.value.audioTrack,
+      value: audioTrack.value,
+      options: audioTracks.value.map((a) => ({ value: a.index, label: a.label })),
+    }
+  : null))
+
+const settingsGroups = computed(() =>
+  [rateGroup.value, qualityGroup.value, audioGroup.value].filter((g): g is UidMediaMenuGroup => !!g),
+)
 
 function onMenuSelect(group: string, value: string | number): void {
   if (group === 'rate') ctrl.setRate(Number(value))
   else if (group === 'quality') setQuality(Number(value))
+  else if (group === 'audio') {
+    hls.value?.setAudioTrack(Number(value))
+    emit('audiotrackchange', audioTracks.value[Number(value)]?.label ?? '')
+  }
   else if (group === 'captions') {
     captionIndex.value = Number(value)
     if (captionIndex.value >= 0) lastCaption = captionIndex.value
@@ -648,6 +670,7 @@ defineExpose({
           :label="t.seek"
           :value-text="t.timeOf"
           :disabled="!!state.error"
+          :suppress-preview="menuOpen || !controlsVisible"
           @seek="ctrl.seek"
           @scrubstart="scrubbing = true"
           @scrubend="scrubbing = false"

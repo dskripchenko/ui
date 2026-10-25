@@ -22,6 +22,10 @@ async function shot(name, device, theme, scenario, action, opts = {}) {
   await page.goto(`${BASE}/?s=${scenario}&theme=${theme}${opts.query ?? ''}`)
   await page.waitForSelector('.uid-video, .uid-audio')
   await sleep(1500)
+  // Waveforms decode lazily (near the viewport) and one after another: scroll through, shoot the settled state.
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
+  await page.waitForFunction(() => !document.querySelector('.uid-media-scrubber__placeholder'), null, { timeout: 10000 }).catch(() => {})
+  await page.evaluate(() => window.scrollTo(0, 0))
   if (action) await action(page, device)
   const file = resolve(out, `${name}-${device}-${theme}.png`)
   const target = opts.selector ? page.locator(opts.selector).first() : page
@@ -51,6 +55,11 @@ for (const theme of ['light', 'dark']) {
       }
     }, { selector: '.uid-video' })
     await shot('video-settings', device, theme, 'hls-ts', async (page, d) => {
+      await playVideo(page, d)
+      await tap(page, d, '[aria-label="Settings"]')
+      await sleep(300)
+    }, { selector: '.uid-video', query: '&native=0' })
+    await shot('video-audio-tracks', device, theme, 'hls-alt-fmp4', async (page, d) => {
       await playVideo(page, d)
       await tap(page, d, '[aria-label="Settings"]')
       await sleep(300)

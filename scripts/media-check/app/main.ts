@@ -21,6 +21,11 @@ const tracks = [
   { src: fx('chapters.vtt'), kind: 'chapters' as const },
 ]
 const hlsOptions = { preferNative: native }
+// Keeps the last HLS session reachable for the checks (window.__hls.stats()).
+const hlsLoader = async () => {
+  const mod = await import('../../../src/hls/index.js')
+  return { ...mod, attachHls: (...args: Parameters<typeof mod.attachHls>) => ((window as unknown as { __hls: unknown }).__hls = mod.attachHls(...args)) } as typeof mod
+}
 
 const playlist = [
   { src: fx('audio.mp3'), title: 'Morning drive', artist: 'Test Signal' },
@@ -28,7 +33,7 @@ const playlist = [
   { src: fx('audio.wav'), title: 'Plain wave', artist: 'Lab' },
 ]
 
-const video = (props: Record<string, unknown>) => h(UidVideo, { class: 'case', style: 'max-width:720px', ...props })
+const video = (props: Record<string, unknown>) => h(UidVideo, { class: 'case', style: 'max-width:720px', hlsLoader, ...props })
 
 const scenarios: Record<string, () => unknown> = {
   'video-mp4': () => video({ src: fx('video.mp4'), tracks, thumbnails: fx('thumbs.vtt'), poster: fx('poster.jpg'), title: 'Test video' }),
@@ -44,6 +49,19 @@ const scenarios: Record<string, () => unknown> = {
   'hls-live-fmp4': () => video({ src: '/live/fmp4.m3u8', hlsOptions }),
   'hls-live-ts': () => video({ src: '/live/ts.m3u8', hlsOptions }),
   'hls-bad': () => video({ src: fx('nothing.m3u8'), hlsOptions }),
+  'hls-alt-fmp4': () => video({ src: fx('hls-alt-fmp4/master.m3u8'), hlsOptions }),
+  'hls-alt-ts': () => video({ src: fx('hls-alt-ts/master.m3u8'), hlsOptions }),
+  'hls-alt-packed': () => video({ src: fx('hls-alt-packed/master.m3u8'), hlsOptions }),
+  'audio-hls': () => h('div', { style: 'display:grid;gap:12px;max-width:640px' }, [
+    h(UidAudio, { class: 'case', src: fx('hls-audio/master.m3u8'), title: 'HLS master (audio only)', hlsOptions, hlsLoader }),
+    h(UidAudio, { class: 'case', src: fx('hls-alt-ts/ru/index.m3u8'), title: 'HLS media playlist (TS audio)', hlsOptions }),
+    h(UidAudio, { class: 'case', src: fx('hls-alt-packed/en/index.m3u8'), title: 'HLS packed audio', hlsOptions }),
+  ]),
+  'mini-table': () => h('table', { style: 'border-collapse:collapse;width:100%;max-width:640px;font-size:14px' },
+    ['mp3', 'ogg', 'wav', 'flac', 'm4a', 'mp3'].map((ext, i) => h('tr', [
+      h('td', { style: 'padding:6px 8px' }, `Row ${i + 1}`),
+      h('td', { style: 'padding:4px 8px' }, h(UidAudio, { src: fx(`audio.${ext}`), variant: 'mini', waveform: true })),
+    ]))),
   'hls-url': () => video({ src: q.get('u') ?? '', hlsOptions }),
   'audio-formats': () => h('div', { style: 'display:grid;gap:12px;max-width:640px' },
     ['mp3', 'ogg', 'wav', 'flac', 'm4a'].map((ext) => h(UidAudio, { class: 'case', src: fx(`audio.${ext}`), title: `audio.${ext}`, waveform: true }))),
@@ -62,7 +80,7 @@ const scenarios: Record<string, () => unknown> = {
           h('tbody', [['Call #1', 'audio.mp3', '146 KB'], ['Call #2', 'audio.ogg', '98 KB'], ['Voicemail', 'audio.m4a', '150 KB']].map(([n, f, s], i) =>
             h('tr', [
               h('td', { style: 'padding:8px;border-bottom:1px solid var(--uid-border-subtle)' }, n),
-              h('td', { style: 'padding:4px 8px;border-bottom:1px solid var(--uid-border-subtle)' }, h(UidAudio, { src: fx(f), variant: 'mini', waveform: i !== 1 })),
+              h('td', { style: 'padding:4px 8px;border-bottom:1px solid var(--uid-border-subtle)' }, h(UidAudio, { src: fx(f), variant: 'mini', waveform: true })),
               h('td', { style: 'padding:8px;border-bottom:1px solid var(--uid-border-subtle);color:var(--uid-text-secondary)' }, s),
             ]))),
         ]),

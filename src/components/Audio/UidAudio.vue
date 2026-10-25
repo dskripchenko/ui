@@ -10,7 +10,9 @@ import UidMediaScrubber from '../Media/UidMediaScrubber.vue'
 import UidMediaMenu, { type UidMediaMenuGroup } from '../Media/UidMediaMenu.vue'
 import { useMediaController, type UidMediaErrorInfo } from '../Media/useMediaController.js'
 import { useMediaLocale } from '../Media/useMediaLocale.js'
-import { PLAYBACK_RATES, formatTime } from '../Media/mediaUtils.js'
+import { PLAYBACK_RATES, formatTime, isHlsSource } from '../Media/mediaUtils.js'
+import type { HlsOptions, HlsSession } from '../../hls/index.js'
+import type { UidHlsModule } from '../Video/UidVideo.vue'
 import { getWaveform } from '../Media/waveform.js'
 
 export interface UidAudioTrack {
@@ -55,6 +57,9 @@ export interface UidAudioProps {
   showRate?: boolean
   /** Shows the track list in playlist mode. */
   showPlaylist?: boolean
+  hlsOptions?: Omit<HlsOptions, 'onError'>
+  /** Loads the HLS adapter for `.m3u8` sources; defaults to the lazily imported `@dskripchenko/ui/hls`. */
+  hlsLoader?: () => Promise<UidHlsModule>
 }
 
 const props = withDefaults(defineProps<UidAudioProps>(), {
@@ -79,6 +84,8 @@ const props = withDefaults(defineProps<UidAudioProps>(), {
   showVolume: true,
   showRate: true,
   showPlaylist: true,
+  hlsOptions: undefined,
+  hlsLoader: undefined,
 })
 
 const index = defineModel<number>('index', { default: 0 })
@@ -108,12 +115,14 @@ const current = computed<UidAudioTrack | null>(() => {
   return props.src ? { src: props.src, type: props.type, title: props.title, artist: props.artist, peaks: props.peaks } : null
 })
 const mini = computed(() => props.variant === 'mini')
+const isHls = computed(() => !!current.value && isHlsSource(current.value))
 const hasMeta = computed(() => !mini.value && !!(current.value?.title || current.value?.artist))
 
 // ---- waveform ----
 
 const wavePeaks = ref<number[] | null>(null)
-const waveWanted = computed(() => props.waveform || !!current.value?.peaks?.length)
+const waveWanted = computed(() => (props.waveform && !isHls.value) || !!current.value?.peaks?.length)
+const wavePending = ref(false)
 const visible = ref(false)
 let io: IntersectionObserver | null = null
 let waveToken = 0
@@ -122,13 +131,16 @@ async function loadWave(): Promise<void> {
   const tr = current.value
   const token = ++waveToken
   wavePeaks.value = tr?.peaks?.length ? tr.peaks : null
-  if (!tr || wavePeaks.value || !props.waveform || !visible.value) return
+  wavePending.value = !!tr && !wavePeaks.value && waveWanted.value
+  if (!tr || wavePeaks.value || !waveWanted.value || !visible.value) return
   const result = await getWaveform(tr.src, {
     maxBytes: props.waveformMaxBytes,
     maxDuration: props.waveformMaxDuration,
     fetchInit: props.crossorigin === 'use-credentials' ? { credentials: 'include' } : undefined,
   })
-  if (token === waveToken) wavePeaks.value = result
+  if (token !== waveToken) return
+  wavePeaks.value = result
+  wavePending.value = false
 }
 
 watch([() => current.value?.src, () => current.value?.peaks, () => props.waveform, visible], loadWave, { immediate: true })
@@ -151,16 +163,51 @@ function select(i: number, autoplay = true): void {
   index.value = next
 }
 
+let session: HlsSession | null = null
+let hlsToken = 0
+
+function detachHls(): void {
+  hlsToken++
+  session?.destroy()
+  session = null
+}
+
+async function attachHls(): Promise<void> {
+  const el = audio.value
+  const tr = current.value
+  if (!el || !tr || !isHls.value) return
+  const token = ++hlsToken
+  try {
+    const mod = await (props.hlsLoader ?? (() => import('../../hls/index.js')))()
+    if (token !== hlsToken) return
+    session = mod.attachHls(el, tr.src, {
+      ...props.hlsOptions,
+      onError: (e) => ctrl.setError({ kind: e.code, detail: e.message }),
+    })
+  } catch (e) {
+    ctrl.setError({ kind: 'unknown', detail: (e as Error).message })
+  }
+}
+
 function checkType(): void {
   const type = current.value?.type
   if (type && audio.value && !audio.value.canPlayType(type)) ctrl.setError({ kind: 'unsupported', detail: type })
 }
 
+// Before the DOM update: an HLS session must let go of the element before a plain src is bound.
+watch(() => current.value?.src, detachHls)
+
 watch(() => current.value?.src, () => {
   ctrl.setError(null)
   emit('trackchange', index.value)
   checkType()
-  if (playOnLoad && !state.error) ctrl.play().catch(() => {})
+  if (isHls.value) {
+    attachHls()
+    // MediaSource attaches asynchronously: start once there is something to play.
+    if (playOnLoad) audio.value?.addEventListener('loadedmetadata', () => ctrl.play().catch(() => {}), { once: true })
+  } else if (playOnLoad && !state.error) {
+    ctrl.play().catch(() => {})
+  }
   playOnLoad = false
 }, { flush: 'post' })
 
@@ -193,6 +240,39 @@ function next(): void {
 }
 
 const durations = ref<Record<number, number>>({})
+let durationToken = 0
+
+/** Reads the duration of every playlist track, one at a time, from its metadata. */
+async function prefetchDurations(): Promise<void> {
+  if (!isPlaylist.value || typeof Audio === 'undefined') return
+  const token = ++durationToken
+  const list = playlist.value
+  for (let i = 0; i < list.length; i++) {
+    const tr = list[i]
+    if (token !== durationToken) return
+    if (tr.duration || durations.value[i] || isHlsSource(tr)) continue
+    const d = await new Promise<number>((resolve) => {
+      const probe = new Audio()
+      probe.preload = 'metadata'
+      if (props.crossorigin !== undefined) probe.crossOrigin = props.crossorigin
+      const done = (value: number): void => {
+        probe.removeAttribute('src')
+        probe.load()
+        resolve(value)
+      }
+      probe.addEventListener('loadedmetadata', () => done(probe.duration), { once: true })
+      probe.addEventListener('error', () => done(NaN), { once: true })
+      setTimeout(() => done(NaN), 15000)
+      probe.src = tr.src
+    })
+    if (token === durationToken && Number.isFinite(d) && d > 0) durations.value = { ...durations.value, [i]: d }
+  }
+}
+
+watch(() => props.tracks, () => {
+  durations.value = {}
+  prefetchDurations()
+})
 watch(() => state.duration, (d) => {
   if (d && isPlaylist.value) durations.value = { ...durations.value, [index.value]: d }
 })
@@ -269,6 +349,8 @@ function playTrack(i: number): void {
 
 onMounted(() => {
   checkType()
+  attachHls()
+  prefetchDurations()
   if (typeof IntersectionObserver === 'undefined' || !root.value) {
     visible.value = true
     return
@@ -284,6 +366,8 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
+  detachHls()
+  durationToken++
   io?.disconnect()
   waveToken++
 })
@@ -321,7 +405,7 @@ defineExpose({
       :preload="preload"
       :loop="loop && !isPlaylist"
       :crossorigin="crossorigin"
-      :src="current?.src"
+      :src="isHls ? undefined : current?.src"
     />
 
     <div
@@ -412,6 +496,7 @@ defineExpose({
           :duration="state.duration || current?.duration || 0"
           :buffered="state.buffered"
           :peaks="waveWanted ? wavePeaks : null"
+          :pending="wavePending"
           :label="t.seek"
           :value-text="t.timeOf"
           @seek="ctrl.seek"
@@ -494,7 +579,7 @@ defineExpose({
               class="uid-audio__item-artist"
             >{{ tr.artist }}</span>
           </span>
-          <span class="uid-audio__item-time">{{ durations[i] || tr.duration ? formatTime(durations[i] || tr.duration || 0) : '' }}</span>
+          <span class="uid-audio__item-time">{{ durations[i] || tr.duration ? formatTime(durations[i] || tr.duration || 0) : '—' }}</span>
         </button>
       </li>
     </ol>

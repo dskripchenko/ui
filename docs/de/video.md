@@ -37,13 +37,13 @@
 | `hlsOptions` | `HlsOptions` | — | Werden an den HLS-Adapter übergeben (siehe unten) |
 | `hlsLoader` | `() => Promise<module>` | dynamischer Import | Woher der HLS-Adapter kommt |
 
-Events: `play`, `pause`, `ended`, `error` (`{ kind, detail? }`), `qualitychange` (Label). Die Komponente stellt `play()`, `pause()`, `toggle()`, `seek(seconds)`, den reaktiven `state` und das Element `media` bereit.
+Events: `play`, `pause`, `ended`, `error` (`{ kind, detail? }`), `qualitychange` (Label), `audiotrackchange` (Label). Die Komponente stellt `play()`, `pause()`, `toggle()`, `seek(seconds)`, den reaktiven `state` und das Element `media` bereit.
 
 ## Bedienelemente
 
 - **Zeitleiste** — gespielter Teil in der Akzentfarbe, gepufferte Bereiche, Lücken zwischen Kapiteln; beim Überfahren erscheinen Zeit, Kapiteltitel und Vorschaubild. Ziehen spult live. Als `slider` reagiert sie auf Pfeiltasten (±5 s), Page Up/Down (±10 %), Home/End.
 - **Lautstärke** — der Button schaltet stumm, der Regler klappt bei Hover oder Fokus auf (auf Touchscreens übernehmen das die Hardwaretasten).
-- **Einstellungen** — Geschwindigkeit und, falls es mehrere gibt, Qualität (`Auto` folgt bei HLS der Bandbreite). Die Menüs leben im Player und funktionieren daher im Vollbild; in einem kleinen Player werden sie zu einem Sheet über dem Video.
+- **Einstellungen** — Geschwindigkeit und, falls es mehrere gibt, Qualität (`Auto` folgt bei HLS der Bandbreite) und bei einem HLS-Stream mit mehreren Audiospuren die Audiospur. Die Menüs leben im Player und funktionieren daher im Vollbild; in einem kleinen Player werden sie zu einem Sheet über dem Video.
 - **Untertitel** — das Kit zeichnet die Cues selbst (oberhalb der Bedienelemente, auf jedem Video lesbar); im nativen Vollbild von iOS zeigt sie der Systemplayer.
 - **Vollbild** — der ganze Player; auf dem iPhone, wo nur das `<video>` selbst ins Vollbild kann, öffnet sich der native Player.
 - **Bild-in-Bild** — Standard-API oder der Präsentationsmodus von Safari.
@@ -81,15 +81,15 @@ Was die Browser nativ abspielen (das Kit fügt dafür nichts hinzu):
 | MP4/WebM · AV1 | ✓ | ✓ | mit Hardware-Dekodierung | mit Hardware-Dekodierung |
 | HLS (`.m3u8`) | über den Adapter des Kits; neuere Versionen auch nativ | über den Adapter des Kits | nativ | nativ |
 
-In echten Browsern geprüft (Playwright): Chromium 156, Chrome 156, WebKit 27 — MP4 H.264/AAC, WebM VP9/Opus, HLS fMP4 und MPEG-TS (über den Adapter und nativ), AES-128, Live-Playlists, Diskontinuitäten. Firefox stand in der Testumgebung nicht zur Verfügung.
+In echten Browsern geprüft (Playwright): Chromium 156, Chrome 156, WebKit 27 — MP4 H.264/AAC, WebM VP9/Opus, HLS fMP4 und MPEG-TS (über den Adapter und nativ), AES-128, Live-Playlists, Diskontinuitäten, alternative Audiospuren (fMP4, MPEG-TS, Packed AAC) mit Umschalten. Firefox stand in der Testumgebung nicht zur Verfügung.
 
 ## HLS
 
 Eine Quelle mit `type: 'application/x-mpegURL'` (oder einer `.m3u8`-Adresse) wird über `@dskripchenko/ui/hls` abgespielt. Der Adapter ist ein separater Einstiegspunkt, der per dynamischem Import erst geladen wird, wenn eine solche Quelle auftaucht — das Haupt-Bundle wächst nicht.
 
 - Wo der Browser HLS selbst abspielt (Safari, iOS, neueres Chrome), geht die Adresse direkt an `<video>` (`preferNative: true`; `false` setzen, um immer den Adapter zu nutzen und das Qualitätsmenü zu erhalten).
-- Sonst speist der Adapter Media Source Extensions: Master- und Media-Playlists, **fMP4/CMAF**-Segmente mit `EXT-X-MAP`, **MPEG-TS**-Segmente (H.264 + AAC), die im Browser in fMP4 umgewandelt werden, Byte-Bereiche, `EXT-X-DISCONTINUITY`, **AES-128** (WebCrypto), Live-Playlists mit Neuladen und gleitendem Fenster, Vorauspufferung und Verdrängung, Spulen, ABR mit manueller Qualitätswahl, Wiederholungen mit Backoff.
-- Nicht unterstützt: SAMPLE-AES / DRM (Fehler `encrypted`), HEVC oder MP3 in MPEG-TS (Fehler `codec`), alternative Audiospuren (`EXT-X-MEDIA TYPE=AUDIO` mit URI) — es spielt nur der in die Variante gemuxte Ton, Low-Latency-HLS-Parts.
+- Sonst speist der Adapter Media Source Extensions: Master- und Media-Playlists, **fMP4/CMAF**-Segmente mit `EXT-X-MAP`, **MPEG-TS**-Segmente (H.264 + AAC), die im Browser in fMP4 umgewandelt werden, Byte-Bereiche, `EXT-X-DISCONTINUITY`, **AES-128** (WebCrypto), **alternative Audiospuren** (`EXT-X-MEDIA TYPE=AUDIO` mit URI) in einem eigenen SourceBuffer, beim Spulen und Qualitätswechsel synchron zum Video; gewählt nach `audioLanguage`, dann `DEFAULT`, dann `AUTOSELECT` in der Browsersprache, umschaltbar im Einstellungsmenü; Audiospuren als fMP4, MPEG-TS oder **Packed AAC** mit ID3-Zeitstempel; Live-Playlists mit Neuladen und gleitendem Fenster, Vorauspufferung und Verdrängung, Spulen, ABR mit manueller Qualitätswahl, Wiederholungen mit Backoff.
+- Nicht unterstützt: SAMPLE-AES / DRM (Fehler `encrypted`), HEVC oder MP3 in MPEG-TS (Fehler `codec`), Low-Latency-HLS-Parts.
 
 ```ts
 import { UidVideo } from '@dskripchenko/ui'
@@ -102,6 +102,7 @@ import { UidVideo } from '@dskripchenko/ui'
 |---|---|---|
 | `preferNative` | `true` | Das eigene HLS des Browsers nutzen, falls vorhanden |
 | `startLevel` | `-1` | Startvariante; `-1` — ABR entscheidet |
+| `audioLanguage` | — | Bevorzugte Sprache der Audiospur (`ru`, `en-US`…) |
 | `maxBufferAhead` | `30` | Sekunden, die vorausgepuffert werden |
 | `maxBufferBehind` | `30` | Sekunden, die hinter der Abspielposition behalten werden |
 | `retries` | `3` | Wiederholungen einer fehlgeschlagenen Anfrage (500 ms, 1 s, 2 s…) |
@@ -119,6 +120,8 @@ const session = attachHls(videoElement, url, {
   onError: (e) => console.warn(e.code, e.message),
 })
 session.setLevel(1)   // -1 — zurück zur Automatik
+session.setAudioTrack(1) // andere Audiospur
+session.stats()        // Puffer je SourceBuffer, Level, Bandbreite
 session.destroy()
 ```
 

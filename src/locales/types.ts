@@ -286,6 +286,7 @@ export interface UidMediaLocale {
   speed: string
   normalSpeed: string
   quality: string
+  audioTrack: string
   auto: string
   captions: string
   captionsOff: string
