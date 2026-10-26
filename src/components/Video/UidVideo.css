@@ -11,6 +11,9 @@
   overflow: hidden;
   border-radius: var(--uid-video-radius, var(--uid-radius-lg, 12px));
   background: var(--uid-video-bg, #000);
+  /* One clip for the whole subtree: with overflow + radius alone the video's own compositing layer
+     is clipped separately and the dark background bleeds as a hairline arc at the corners. */
+  clip-path: inset(0 round var(--uid-video-radius, var(--uid-radius-lg, 12px)));
   color: #fff;
   font-family: var(--uid-font-family-sans, system-ui, sans-serif);
   line-height: 1.2;
@@ -21,11 +24,13 @@
 }
 
 .uid-video:focus-visible {
-  box-shadow: 0 0 0 3px var(--uid-color-focus-ring, var(--uid-accent));
+  /* Inset: the clip-path would cut an outer ring off. */
+  box-shadow: inset 0 0 0 3px var(--uid-color-focus-ring, var(--uid-accent));
 }
 
 .uid-video--fullscreen {
   border-radius: 0;
+  clip-path: none;
 }
 
 .uid-video__media {
@@ -33,7 +38,8 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
-  background: transparent;
+  object-position: center;
+  background: var(--uid-video-bg, #000);
 }
 
 .uid-video__media::cue {
@@ -327,10 +333,21 @@
   }
 }
 
-@container (max-width: 360px) {
-  .uid-video__pip {
-    display: none;
-  }
+/* Whatever the width, the essentials never leave the bar: the time gives way first. */
+.uid-video__bar > .uid-media__button,
+.uid-video__bar > .uid-media-menu {
+  flex: none;
+}
+
+.uid-video__bar .uid-media__time {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: clip;
+}
+
+.uid-video--folded .uid-video__bar {
+  gap: 0;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -20,6 +20,8 @@ $FF $Q -f lavfi -i "$ASRC" -c:a pcm_s16le audio.wav
 $FF $Q -f lavfi -i "$ASRC" -c:a flac audio.flac
 $FF $Q -f lavfi -i "$ASRC" -c:a aac -b:a 96k audio.m4a
 head -c 40000 /dev/urandom > broken.mp4
+$FF $Q -f lavfi -i "testsrc=size=640x480:rate=30:duration=$DUR" -f lavfi -i "$ASRC" -c:v libx264 -pix_fmt yuv420p -c:a aac -shortest -movflags +faststart video-4x3.mp4
+$FF $Q -ss 2 -i video-4x3.mp4 -frames:v 1 poster-4x3.jpg
 
 $FF $Q -ss 3 -i video.mp4 -frames:v 1 poster.jpg
 # Sprite of thumbnails: one frame every 2 s, 160x90, 6 in a row.

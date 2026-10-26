@@ -37,6 +37,9 @@ const video = (props: Record<string, unknown>) => h(UidVideo, { class: 'case', s
 
 const scenarios: Record<string, () => unknown> = {
   'video-mp4': () => video({ src: fx('video.mp4'), tracks, thumbnails: fx('thumbs.vtt'), poster: fx('poster.jpg'), title: 'Test video' }),
+  'video-4x3': () => h(UidVideo, { class: 'case', style: 'max-width:760px', src: fx('video-4x3.mp4'), poster: fx('poster-4x3.jpg'), tracks, title: '4:3 in a 16:9 box' }),
+  'video-testsrc': () => h(UidVideo, { class: 'case', style: 'max-width:760px', src: fx('video-testsrc.mp4'), tracks, title: 'testsrc' }),
+  'video-narrow': () => h(UidVideo, { class: 'case', style: `width:${q.get('w') ?? 320}px`, src: fx('video.mp4'), tracks, title: 'Narrow' }),
   'video-webm': () => video({ sources: [{ src: fx('video.webm'), type: 'video/webm' }] }),
   'video-fallback': () => video({ sources: [{ src: fx('video.webm'), type: 'video/x-unknown' }, { src: fx('video.webm'), type: 'video/webm' }] }),
   'video-quality': () => video({ sources: [{ src: fx('video.mp4'), type: 'video/mp4', label: '720p' }, { src: fx('video-360.mp4'), type: 'video/mp4', label: '360p' }] }),

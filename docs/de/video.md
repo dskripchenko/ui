@@ -45,6 +45,7 @@ Events: `play`, `pause`, `ended`, `error` (`{ kind, detail? }`), `qualitychange`
 - **Lautstärke** — der Button schaltet stumm, der Regler klappt bei Hover oder Fokus auf (auf Touchscreens übernehmen das die Hardwaretasten).
 - **Einstellungen** — Geschwindigkeit und, falls es mehrere gibt, Qualität (`Auto` folgt bei HLS der Bandbreite) und bei einem HLS-Stream mit mehreren Audiospuren die Audiospur. Die Menüs leben im Player und funktionieren daher im Vollbild; in einem kleinen Player werden sie zu einem Sheet über dem Video.
 - **Untertitel** — das Kit zeichnet die Cues selbst (oberhalb der Bedienelemente, auf jedem Video lesbar); im nativen Vollbild von iOS zeigt sie der Systemplayer.
+- **Schmale Player** — die Leiste richtet sich nach der Breite des Players selbst: unter 440 px wandern Untertitel und Bild-in-Bild ins Einstellungsmenü, unter 360 px zeigt die Zeit nur die Position. Wiedergabe, Einstellungen und Vollbild bleiben immer.
 - **Vollbild** — der ganze Player; auf dem iPhone, wo nur das `<video>` selbst ins Vollbild kann, öffnet sich der native Player.
 - **Bild-in-Bild** — Standard-API oder der Präsentationsmodus von Safari.
 - **Live**-Streams zeigen statt der Zeit ein Abzeichen „Live“; an der Live-Kante wird es rot, ein Klick springt dorthin.

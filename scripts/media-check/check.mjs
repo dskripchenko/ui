@@ -23,7 +23,10 @@ const browsers = []
 for (const name of wanted) {
   const type = name === 'chrome' ? pw.chromium : pw[name]
   try {
-    const b = await type.launch(name === 'chrome' ? { channel: 'chrome' } : {})
+    // Muted: the checks play sound, the machine running them should not.
+    const args = name === 'chromium' || name === 'chrome' ? ['--mute-audio'] : []
+    const prefs = name === 'firefox' ? { firefoxUserPrefs: { 'media.volume_scale': '0.0' } } : {}
+    const b = await type.launch({ ...(name === 'chrome' ? { channel: 'chrome' } : {}), args, ...prefs })
     browsers.push({ name, browser: b })
   } catch (e) {
     browsers.push({ name, error: e.message.split('\n')[0] })
@@ -169,6 +172,22 @@ async function altAudioCase(page, scenario, browser) {
   if (chromium) await waitTone(page, 660, 'audio kept after the quality switch')
   notes.push('360p keeps ru audio')
   return notes.join(', ')
+}
+
+// Pixels of a page region, read back through a canvas in the page.
+async function pixels(page, clip) {
+  const png = await page.screenshot({ clip })
+  return page.evaluate(async (b64) => {
+    const blob = await (await fetch(`data:image/png;base64,${b64}`)).blob()
+    const bmp = await createImageBitmap(blob)
+    const c = new OffscreenCanvas(bmp.width, bmp.height)
+    const ctx = c.getContext('2d')
+    ctx.drawImage(bmp, 0, 0)
+    const d = ctx.getImageData(0, 0, bmp.width, bmp.height).data
+    const lum = []
+    for (let i = 0; i < d.length; i += 4) lum.push(Math.round(0.2126 * d[i] + 0.7152 * d[i + 1] + 0.0722 * d[i + 2]))
+    return { width: bmp.width, height: bmp.height, lum }
+  }, png.toString('base64'))
 }
 
 const tests = [
@@ -433,6 +452,86 @@ const tests = [
     },
   },
   {
+    name: 'Letterbox is black, no spinner while idle',
+    run: async (page) => {
+      await open(page, 'video-4x3')
+      await sleep(800)
+      if (await page.locator('.uid-video__loading').count()) throw new Error('spinner shown while idle')
+      const box = await page.locator('.uid-video').boundingBox()
+      const media = await page.locator('.uid-video video').boundingBox()
+      if (Math.abs(media.width - box.width) > 1 || Math.abs(media.height - box.height) > 1) throw new Error('media does not fill the player')
+      // Right letterbox band, above the controls.
+      const px = await pixels(page, { x: box.x + box.width - 24, y: box.y + box.height * 0.3, width: 12, height: 12 })
+      const max = Math.max(...px.lum)
+      if (max > 24) throw new Error(`letterbox not black (luminance ${max})`)
+      await startVideo(page)
+      await waitFor(page, (m) => m.t > 1.2, 'plays')
+      if (await page.locator('.uid-video__loading').count()) throw new Error('spinner shown while playing smoothly')
+      return `letterbox luminance ${max}`
+    },
+  },
+  {
+    name: 'Rounded corners: no dark hairline over light video',
+    context: { deviceScaleFactor: 3 },
+    run: async (page) => {
+      await open(page, 'video-testsrc')
+      await sleep(1500)
+      const box = await page.locator('.uid-video').boundingBox()
+      // testsrc ends with a white column: the top-right corner has light video right up to the edge.
+      const px = await pixels(page, { x: box.x + box.width - 6, y: box.y, width: 6, height: 6 })
+      const min = Math.min(...px.lum)
+      if (min < 200) throw new Error(`dark pixels at the corner (luminance ${min})`)
+      return `corner min luminance ${min}`
+    },
+  },
+  {
+    name: 'Narrow players (280/320/390 px): every control inside, full screen visible',
+    run: async (page) => {
+      const notes = []
+      for (const w of [280, 320, 390]) {
+        await page.setViewportSize({ width: w + 40, height: 700 })
+        await open(page, 'video-narrow', `&w=${w}`)
+        await sleep(600)
+        const r = await page.evaluate(() => {
+          const root = document.querySelector('.uid-video').getBoundingClientRect()
+          const items = [...document.querySelectorAll('.uid-video__bar > *')].filter((e) => e.getBoundingClientRect().width > 0)
+          const outside = items.filter((e) => {
+            const b = e.getBoundingClientRect()
+            return b.left < root.left - 0.5 || b.right > root.right + 0.5 || b.top < root.top - 0.5 || b.bottom > root.bottom + 0.5
+          }).map((e) => e.getAttribute('aria-label') || e.className)
+          const visible = (sel) => {
+            const el = document.querySelector(sel)
+            if (!el) return false
+            const b = el.getBoundingClientRect()
+            return b.width > 0 && b.left >= root.left - 0.5 && b.right <= root.right + 0.5
+          }
+          return { outside, fs: visible('[aria-label="Full screen"]'), play: visible('.uid-video__bar [aria-label="Play"]'), settings: visible('[aria-label="Settings"]') }
+        })
+        if (r.outside.length) throw new Error(`${w}px: outside the player: ${r.outside.join(', ')}`)
+        if (!r.fs || !r.play || !r.settings) throw new Error(`${w}px: missing ${JSON.stringify(r)}`)
+        await page.click('[aria-label="Settings"]')
+        const groups = await page.locator('.uid-media-menu__group').evaluateAll((g) => g.map((x) => x.getAttribute('aria-label')))
+        if (!groups.includes('Subtitles')) throw new Error(`${w}px: subtitles not folded into settings (${groups})`)
+        notes.push(`${w}px ok`)
+      }
+      return notes.join(', ')
+    },
+  },
+  {
+    name: 'HLS quality menu: unique items, current level as a hint of Auto',
+    run: async (page) => {
+      await open(page, 'hls-fmp4', '&native=0')
+      await startVideo(page)
+      await page.mouse.move(200, 150)
+      await page.click('.uid-video [aria-label="Settings"]')
+      const items = await page.locator('.uid-media-menu__group[aria-label="Quality"] [role="menuitemradio"]').allTextContents()
+      const texts = items.map((x) => x.trim())
+      if (new Set(texts).size !== texts.length) throw new Error(`duplicates: ${texts.join(' | ')}`)
+      if (!/^Auto · \d+p$/.test(texts[0])) throw new Error(`auto item: ${texts[0]}`)
+      return texts.join(' | ')
+    },
+  },
+  {
     name: 'Broken audio → readable error',
     run: async (page) => {
       await open(page, 'audio-broken')
@@ -454,7 +553,7 @@ for (const b of browsers) {
   console.log(`\n## ${b.name} ${b.browser.version()}`)
   for (const test of tests) {
     if (only && !test.name.toLowerCase().includes(only.toLowerCase())) continue
-    const ctx = await b.browser.newContext({ viewport: test.viewport ?? { width: 1000, height: 800 } })
+    const ctx = await b.browser.newContext({ viewport: test.viewport ?? { width: 1000, height: 800 }, ...test.context })
     const page = await ctx.newPage()
     const errors = []
     page.on('pageerror', (e) => errors.push(e.message))

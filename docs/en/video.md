@@ -45,6 +45,7 @@ Events: `play`, `pause`, `ended`, `error` (`{ kind, detail? }`), `qualitychange`
 - **Volume** — the button mutes, the slider unfolds on hover or focus (on touch screens the hardware buttons do the job).
 - **Settings** — speed and, when there are several, quality (`Auto` follows the bandwidth for HLS) and, for an HLS stream with several audio renditions, the audio track. The menus live inside the player, so they work in full screen; in a small player they become a sheet over the video.
 - **Subtitles** — the kit draws the cues itself (position above the controls, readable on any video); iOS native full screen shows them through the system player.
+- **Narrow players** — the bar follows the player's own width: under 440 px subtitles and picture-in-picture move into the settings menu, under 360 px the time shows only the position. Play, settings and full screen always stay.
 - **Full screen** — the whole player; on iPhone, where only the `<video>` itself can go full screen, the native player opens.
 - **Picture-in-picture** — standard API or Safari's presentation mode.
 - **Live** streams show a `Live` badge instead of the time; it turns red at the live edge, a click jumps there.

@@ -406,8 +406,7 @@
   text-align: center;
 }
 
-.uid-media-menu__panel--sheet .uid-media-menu__check,
-.uid-media-menu__panel--sheet .uid-media-menu__hint {
+.uid-media-menu__panel--sheet .uid-media-menu__check {
   display: none;
 }
 
@@ -521,8 +520,12 @@
 }
 
 .uid-media-menu__hint {
-  opacity: 0.6;
-  font-size: var(--uid-font-size-xs, 12px);
+  font-weight: 400;
+  opacity: 0.65;
+}
+
+.uid-media-menu__item--action {
+  padding-left: 10px;
 }
 
 @media (hover: none) and (pointer: coarse) {

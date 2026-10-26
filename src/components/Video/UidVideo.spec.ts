@@ -105,8 +105,8 @@ describe('UidVideo', () => {
     expect(attachHls.mock.calls[0][1]).toBe('/live/master.m3u8')
     expect(attachHls.mock.calls[0][2]).toMatchObject({ maxBufferAhead: 10 })
     await w.find('[aria-label="Settings"]').trigger('click')
-    const items = w.findAll('[role="menuitemradio"]').map((i) => i.text())
-    expect(items).toEqual(expect.arrayContaining(['Auto360p', '720p', '360p']))
+    const items = w.findAll('[role="group"][aria-label="Quality"] [role="menuitemradio"]').map((i) => i.text())
+    expect(items).toEqual(['Auto · 360p', '720p', '360p'])
     await w.findAll('[role="menuitemradio"]').find((i) => i.text() === '720p')!.trigger('click')
     expect(setLevel).toHaveBeenCalledWith(1)
     delete (window as unknown as { MediaSource?: unknown }).MediaSource
@@ -129,6 +129,51 @@ describe('UidVideo', () => {
     expect(setAudioTrack).toHaveBeenCalledWith(1)
     expect(w.findComponent(UidVideo).emitted('audiotrackchange')?.[0]).toEqual(['Русский'])
     delete (window as unknown as { MediaSource?: unknown }).MediaSource
+  })
+
+  it('HLS: одинаковые метки уровней различаются битрейтом', async () => {
+    const attachHls = vi.fn((_el: HTMLMediaElement, _url: string, opts: { onLevels: (l: unknown[]) => void, onLevelSwitched: (i: number) => void }) => {
+      opts.onLevels([
+        { index: 0, bandwidth: 2_500_000, height: 720, label: '720p' },
+        { index: 1, bandwidth: 4_000_000, height: 720, label: '720p' },
+      ])
+      opts.onLevelSwitched(1)
+      return { setLevel: vi.fn(), setAudioTrack: vi.fn(), destroy: vi.fn() }
+    })
+    ;(window as unknown as { MediaSource: unknown }).MediaSource = function () {}
+    const w = mountVideo({ src: '/m.m3u8', hlsLoader: async () => ({ attachHls }) as never })
+    await flushPromises()
+    await w.find('[aria-label="Settings"]').trigger('click')
+    const items = w.findAll('[role="group"][aria-label="Quality"] [role="menuitemradio"]').map((i) => i.text())
+    expect(items).toEqual(['Auto · 720p · 4000 kbps', '720p · 4000 kbps', '720p · 2500 kbps'])
+    delete (window as unknown as { MediaSource?: unknown }).MediaSource
+  })
+
+  it('узкий плеер: субтитры и PiP уходят в настройки, время короче', async () => {
+    const observers: (() => void)[] = []
+    const RO = globalThis.ResizeObserver
+    globalThis.ResizeObserver = class {
+      constructor(cb: () => void) { observers.push(cb) }
+      observe() {}
+      disconnect() {}
+    } as unknown as typeof ResizeObserver
+    const width = vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockReturnValue(320)
+    const w = mountVideo({ src: '/a.mp4', tracks: [{ src: '/en.vtt', srclang: 'en', label: 'English' }] })
+    await flushPromises()
+    expect(w.find('.uid-video--folded').exists()).toBe(true)
+    expect(w.find('[aria-label="Subtitles"]').exists()).toBe(false)
+    expect(w.find('[aria-label="Full screen"]').exists() || w.find('[aria-label="Settings"]').exists()).toBe(true)
+    expect(w.find('.uid-media__time').text()).toBe('0:00')
+    await w.find('[aria-label="Settings"]').trigger('click')
+    expect(w.find('[role="group"][aria-label="Subtitles"]').exists()).toBe(true)
+    width.mockReturnValue(800)
+    observers.forEach((cb) => cb())
+    await flushPromises()
+    expect(w.find('.uid-video--folded').exists()).toBe(false)
+    expect(w.find('[aria-label="Subtitles"]').exists()).toBe(true)
+    expect(w.find('.uid-media__time').text()).toBe('0:00 / 0:00')
+    width.mockRestore()
+    globalThis.ResizeObserver = RO
   })
 
   it('ошибка HLS показывается локализованным текстом', async () => {

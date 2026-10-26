@@ -211,12 +211,24 @@ function retry(): void {
 
 const labelledSources = computed(() => candidates.value.filter((s) => s.label && !isHlsSource(s)))
 
+/** Level labels made unique: two `720p` levels become `720p · 2500 kbps` and `720p · 4000 kbps`. */
+function uniqueLevelLabels(levels: HlsLevel[]): Record<number, string> {
+  const count = new Map<string, number>()
+  for (const l of levels) count.set(l.label, (count.get(l.label) ?? 0) + 1)
+  const out: Record<number, string> = {}
+  for (const l of levels) {
+    out[l.index] = (count.get(l.label) ?? 0) > 1 && l.bandwidth ? `${l.label} · ${Math.round(l.bandwidth / 1000)} kbps` : l.label
+  }
+  return out
+}
+
 const qualityGroup = computed<UidMediaMenuGroup | null>(() => {
   if (hlsLevels.value.length > 1) {
-    const current = hlsLevels.value[hlsLevel.value]?.label
+    const labels = uniqueLevelLabels(hlsLevels.value)
+    const current = labels[hlsLevel.value]
     const options = [
       { value: -1, label: t.value.auto, hint: hlsAuto.value && current ? current : undefined },
-      ...hlsLevels.value.slice().reverse().map((l) => ({ value: l.index, label: l.label })),
+      ...hlsLevels.value.slice().reverse().map((l) => ({ value: l.index, label: labels[l.index] })),
     ]
     return { id: 'quality', label: t.value.quality, value: hlsAuto.value ? -1 : hlsLevel.value, options }
   }
@@ -356,13 +368,34 @@ const audioGroup = computed<UidMediaMenuGroup | null>(() => (audioTracks.value.l
     }
   : null))
 
+// The bar adapts to the player's own width (not the viewport): picture-in-picture and subtitles
+// fold into the settings menu, then the time drops the duration. Play, settings and full screen stay.
+const FOLD_WIDTH = 440
+const SHORT_TIME_WIDTH = 360
+const width = ref(0)
+let resizeObserver: ResizeObserver | null = null
+const folded = computed(() => width.value > 0 && width.value < FOLD_WIDTH)
+const shortTime = computed(() => width.value > 0 && width.value < SHORT_TIME_WIDTH)
+const pipAvailable = computed(() => ctrl.canPip.value && hasVideoSize.value)
+
+const pipGroup = computed<UidMediaMenuGroup | null>(() => (folded.value && pipAvailable.value
+  ? { id: 'pip', kind: 'action', value: null, options: [{ value: 'pip', label: state.pip ? t.value.exitPip : t.value.pip }] }
+  : null))
+
 const settingsGroups = computed(() =>
-  [rateGroup.value, qualityGroup.value, audioGroup.value].filter((g): g is UidMediaMenuGroup => !!g),
+  [
+    rateGroup.value,
+    qualityGroup.value,
+    audioGroup.value,
+    folded.value && textTracks.value.length ? captionsGroup.value : null,
+    pipGroup.value,
+  ].filter((g): g is UidMediaMenuGroup => !!g),
 )
 
 function onMenuSelect(group: string, value: string | number): void {
   if (group === 'rate') ctrl.setRate(Number(value))
   else if (group === 'quality') setQuality(Number(value))
+  else if (group === 'pip') ctrl.togglePip().catch(() => {})
   else if (group === 'audio') {
     hls.value?.setAudioTrack(Number(value))
     emit('audiotrackchange', audioTracks.value[Number(value)]?.label ?? '')
@@ -483,7 +516,9 @@ function onKeydown(e: KeyboardEvent): void {
 
 const volumeIcon = computed(() => (state.muted || state.volume === 0 ? VolumeX : state.volume < 0.5 ? Volume1 : Volume2))
 const showHours = computed(() => state.duration >= 3600)
-const timeText = computed(() => `${formatTime(state.currentTime, showHours.value)} / ${formatTime(state.duration, showHours.value)}`)
+const timeText = computed(() => (shortTime.value
+  ? formatTime(state.currentTime, showHours.value)
+  : `${formatTime(state.currentTime, showHours.value)} / ${formatTime(state.duration, showHours.value)}`))
 const atLiveEdge = computed(() => state.live && state.duration - state.currentTime < 8)
 const loadingVisible = computed(() => !state.error && (state.waiting || (state.seeking && !state.paused)))
 const coarse = ref(false)
@@ -514,9 +549,15 @@ onMounted(() => {
   if (props.muted && video.value) video.value.muted = true
   reset()
   applyCaptionModes()
+  if (root.value && typeof ResizeObserver !== 'undefined') {
+    width.value = root.value.clientWidth
+    resizeObserver = new ResizeObserver(() => { width.value = root.value?.clientWidth ?? 0 })
+    resizeObserver.observe(root.value)
+  }
 })
 
 onBeforeUnmount(() => {
+  resizeObserver?.disconnect()
   clearHide()
   if (flashTimer) clearTimeout(flashTimer)
   if (tapTimer) clearTimeout(tapTimer)
@@ -545,6 +586,7 @@ defineExpose({
       'uid-video--started': started,
       'uid-video--paused': state.paused,
       'uid-video--bare': !controls,
+      'uid-video--folded': folded,
     }"
     :style="{ aspectRatio: state.fullscreen ? undefined : aspectRatio }"
     role="region"
@@ -739,7 +781,7 @@ defineExpose({
           >{{ currentChapter }}</span>
           <span class="uid-video__spacer" />
           <UidMediaMenu
-            v-if="textTracks.length"
+            v-if="textTracks.length && !folded"
             :close-label="uidLocale.common.close"
             :label="t.captions"
             :groups="[captionsGroup]"
@@ -769,7 +811,7 @@ defineExpose({
             >{{ state.rate }}×</span>
           </UidMediaMenu>
           <button
-            v-if="ctrl.canPip.value && hasVideoSize"
+            v-if="pipAvailable && !folded"
             type="button"
             class="uid-media__button uid-video__pip"
             :aria-label="state.pip ? t.exitPip : t.pip"
