@@ -23,6 +23,7 @@
 - **i18n** — встроенные `ru` + `en` локали, `UidLocaleProvider` для частичных переопределений и кастомных локалей
 - **~1500 иконок** — `lucide-vue-next` под капотом + sub-export `@dskripchenko/ui/icons`
 - **Zero runtime chart deps** — встроенные SVG-примитивы (Sparkline, ProgressRing, Gauge, Heatmap)
+- **Медиаплееры без зависимостей** — видео и аудио на родных элементах, волна в браузере, HLS (fMP4 и MPEG-TS) в лениво загружаемом entry
 
 ## Установка
 
@@ -83,20 +84,22 @@ import { Check } from '@dskripchenko/ui/icons'
 
 **Графики:** Sparkline, ProgressRing, Gauge, Heatmap
 
+**Медиа:** Video, Audio (волна, mini, плейлист), HLS-адаптер (`@dskripchenko/ui/hls`)
+
 **Wizards:** Stepper, Wizard, WizardStep
 
 **Patterns:** Header, Footer, Sidebar, PageHeader, EmptyState, ErrorState, Result
 
 **Layouts:** SimpleLayout, SidebarLayout, AuthLayout, WizardLayout
 
-**Composables:** useTheme, useLocale, useField, useToast, useWizard, useSidebar, useCommandPalette, useFocusTrap, useScrollLock, usePopover
+**Composables:** useMediaController, useTheme, useLocale, useField, useToast, useWizard, useSidebar, useCommandPalette, useFocusTrap, useScrollLock, usePopover
 
 ## Документация
 
 Пользовательская документация переведена на 4 языка — выбери свой:
 
 - 🇬🇧 **English** (default): [docs/en/](../../docs/en/)
-- 🇷🇺 **Русский**: [getting-started](../../docs/ru/getting-started.md), [тема](../../docs/ru/theming.md), [токены](../../docs/ru/tokens.md), [иконки](../../docs/ru/icons.md), [патерны](../../docs/ru/patterns.md), [валидация](../../docs/ru/validation.md), [графики](../../docs/ru/charts.md), [markdown](../../docs/ru/markdown.md), [i18n](../../docs/ru/i18n.md)
+- 🇷🇺 **Русский**: [getting-started](../../docs/ru/getting-started.md), [тема](../../docs/ru/theming.md), [токены](../../docs/ru/tokens.md), [иконки](../../docs/ru/icons.md), [патерны](../../docs/ru/patterns.md), [валидация](../../docs/ru/validation.md), [графики](../../docs/ru/charts.md), [markdown](../../docs/ru/markdown.md), [видео](../../docs/ru/video.md), [аудио](../../docs/ru/audio.md), [i18n](../../docs/ru/i18n.md)
 - 🇩🇪 **Deutsch**: [docs/de/](../../docs/de/)
 - 🇨🇳 **中文**: [docs/zh/](../../docs/zh/)
 

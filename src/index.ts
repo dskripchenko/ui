@@ -174,6 +174,44 @@ export type {
 export { UidImage } from './components/Image/index.js'
 export type { UidImageProps, UidImageFit } from './components/Image/index.js'
 
+export { UidVideo } from './components/Video/index.js'
+export type { UidVideoProps, UidHlsModule } from './components/Video/index.js'
+
+export { UidAudio } from './components/Audio/index.js'
+export type { UidAudioProps, UidAudioTrack } from './components/Audio/index.js'
+
+export {
+  useMediaController,
+  formatTime,
+  parseVtt,
+  cueText,
+  cueAt,
+  parseThumbnail,
+  isHlsSource,
+  orderSources,
+  PLAYBACK_RATES,
+  computePeaks,
+  resamplePeaks,
+  normalizePeaks,
+  peaksToPath,
+  getWaveform,
+  clearWaveformCache,
+} from './components/Media/index.js'
+export type {
+  UseMediaControllerOptions,
+  UidMediaController,
+  UidMediaState,
+  UidMediaErrorInfo,
+  UidMediaErrorKind,
+  UidMediaSource,
+  UidMediaTrack,
+  UidMediaCue,
+  UidMediaRange,
+  UidMediaThumbnail,
+  ComputePeaksOptions,
+  WaveformOptions,
+} from './components/Media/index.js'
+
 export { UidRating } from './components/Rating/index.js'
 export type { UidRatingProps, RatingTone } from './components/Rating/index.js'
 
@@ -300,7 +338,7 @@ export { UidLocaleProvider } from './components/LocaleProvider/index.js'
 export type { UidLocaleProviderProps } from './components/LocaleProvider/index.js'
 
 export { ru, en } from './locales/index.js'
-export type { UidLocale, UidPartialLocale } from './locales/index.js'
+export type { UidLocale, UidPartialLocale, UidMediaLocale } from './locales/index.js'
 
 export { useTheme } from './composables/useTheme.js'
 export type { Theme } from './composables/useTheme.js'

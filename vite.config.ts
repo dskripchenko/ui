@@ -26,6 +26,7 @@ export default defineConfig({
       entry: {
         index: resolve(__dirname, 'src/index.ts'),
         'icons/index': resolve(__dirname, 'src/icons/index.ts'),
+        'hls/index': resolve(__dirname, 'src/hls/index.ts'),
       },
       formats: ['es', 'cjs'],
       fileName: (format, entryAlias) =>
