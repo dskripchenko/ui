@@ -5,6 +5,7 @@
 ## 思路
 
 - **来源** — `lucide-vue-next`(MIT)。作为常规 `dependency` 自动安装。
+- **组件库内部图标已内置。** 组件库自身组件使用的图标（约 45 个）已打包进主入口：`@dskripchenko/ui` 运行时不导入 `lucide-vue-next`，可从 ESM CDN 加载而无需为 lucide 配置 import map。只有 `@dskripchenko/ui/icons` 会导入 `lucide-vue-next`。
 - **不维护自有图标集。** 维护 ~1500 个 SVG 是不必要的负担。
 - **不打包。** 所有图标都可 tree-shake：未导入的不会进入 bundle。
 - **不用 CSS 类。** 图标是 Vue 组件，不是 sprite 或 webfont。DOM 中是内联 SVG，可完整 tree-shake。

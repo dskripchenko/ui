@@ -20,6 +20,12 @@ export interface UidMediaCue {
   text: string
 }
 
+export interface UidMediaChapter {
+  start: number
+  end: number
+  title: string
+}
+
 export type UidMediaRange = [number, number]
 
 export function formatTime(value: number, withHours = false): string {

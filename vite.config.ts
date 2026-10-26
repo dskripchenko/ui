@@ -1,3 +1,4 @@
+import { readFileSync } from 'fs'
 import { resolve } from 'path'
 import { defineConfig } from 'vitest/config'
 import vue from '@vitejs/plugin-vue'
@@ -5,6 +6,9 @@ import dts from 'vite-plugin-dts'
 import { visualizer } from 'rollup-plugin-visualizer'
 
 const analyze = process.env.ANALYZE === 'true'
+
+const lucideLicense = readFileSync(resolve(__dirname, 'node_modules/lucide-vue-next/LICENSE'), 'utf8').trim()
+const lucideBanner = `/*! Includes icons from lucide-vue-next (https://lucide.dev)\n${lucideLicense.replace(/\*\//g, '* /')}\n*/`
 
 export default defineConfig({
   plugins: [
@@ -33,9 +37,11 @@ export default defineConfig({
         `${entryAlias}.${format === 'es' ? 'mjs' : 'cjs'}`,
     },
     rollupOptions: {
-      external: ['vue', 'lucide-vue-next'],
+      external: (id, importer) =>
+        id === 'vue' || (id === 'lucide-vue-next' && !!importer?.replace(/\\/g, '/').endsWith('/src/icons/index.ts')),
       output: {
         assetFileNames: 'styles/[name][extname]',
+        postBanner: (chunk) => (chunk.isEntry && chunk.name === 'index' ? lucideBanner : ''),
         globals: { vue: 'Vue' },
       },
     },

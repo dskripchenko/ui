@@ -37,7 +37,31 @@
 | `hlsOptions` | `HlsOptions` | — | Werden an den HLS-Adapter übergeben (siehe unten) |
 | `hlsLoader` | `() => Promise<module>` | dynamischer Import | Woher der HLS-Adapter kommt |
 
-Events: `play`, `pause`, `ended`, `error` (`{ kind, detail? }`), `qualitychange` (Label), `audiotrackchange` (Label). Die Komponente stellt `play()`, `pause()`, `toggle()`, `seek(seconds)`, den reaktiven `state` und das Element `media` bereit.
+Events: `play`, `pause`, `ended`, `error` (`{ kind, detail? }`), `qualitychange` (Label), `audiotrackchange` (Label), `chapterchange` (Kapitel, Index). Die Komponente stellt `play()`, `pause()`, `toggle()`, `seek(seconds)`, `seekToChapter(index | title)`, `chapters`, `chapterIndex`, den reaktiven `state` und das Element `media` bereit.
+
+## Kapitel
+
+Kapitel stammen aus einem `tracks`-Eintrag mit `kind: 'chapters'` (WebVTT, ein Cue pro Kapitel). Nach dem Laden stehen sie über die Komponenten-Ref bereit:
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { UidVideo, type UidMediaChapter } from '@dskripchenko/ui'
+
+const player = ref<InstanceType<typeof UidVideo> | null>(null)
+function onChapter(chapter: UidMediaChapter | null, index: number) { /* … */ }
+</script>
+
+<template>
+  <UidVideo ref="player" :src="src" :tracks="tracks" @chapterchange="onChapter" />
+  <button v-for="(c, i) in player?.chapters" :key="i" @click="player?.seekToChapter(i)">{{ c.title }}</button>
+</template>
+```
+
+- `chapters` — `UidMediaChapter[]`, `{ start, end, title }` in Sekunden; leer, solange die VTT nicht geladen ist oder keine Kapitelspur existiert.
+- `chapterIndex` — Index des Kapitels an der aktuellen Position, `-1` außerhalb aller Kapitel.
+- `seekToChapter(index | title)` — springt zum Kapitelanfang. Ein Titel wird zuerst exakt, dann ohne Groß-/Kleinschreibung verglichen. Gibt `false` zurück, wenn kein Kapitel passt.
+- Event `chapterchange` — `(chapter | null, index)`, sobald die Wiedergabe in ein anderes Kapitel (oder aus allen heraus) wechselt.
 
 ## Bedienelemente
 
