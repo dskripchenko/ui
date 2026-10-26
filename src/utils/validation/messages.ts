@@ -1,6 +1,6 @@
 import type { FieldContext, ValidationMessages } from './types'
 import type { UidLocale } from '../../locales/types.js'
-import { ru } from '../../locales/ru.js'
+import { en } from '../../locales/en.js'
 
 type Bag = UidLocale['validation']
 
@@ -25,7 +25,7 @@ function defaultsFrom(v: Bag): Record<string, (ctx: FieldContext) => string> {
 }
 
 // The default messages follow the kit locale: provideLocale() switches them.
-let bag: Bag = ru.validation
+let bag: Bag = en.validation
 let defaults = defaultsFrom(bag)
 
 /** Switches the default messages to a locale's bag; called by provideLocale(). */
