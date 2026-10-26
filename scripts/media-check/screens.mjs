@@ -8,7 +8,7 @@ mkdirSync(out, { recursive: true })
 const pw = await import(process.env.PLAYWRIGHT ?? 'playwright')
 const server = await startServer(5198)
 const BASE = 'http://127.0.0.1:5198'
-const browser = await pw.chromium.launch()
+const browser = await pw.chromium.launch({ args: ['--mute-audio'] })
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 
 const devices = {
@@ -64,6 +64,10 @@ for (const theme of ['light', 'dark']) {
       await tap(page, d, '[aria-label="Settings"]')
       await sleep(300)
     }, { selector: '.uid-video', query: '&native=0' })
+    await shot('video-letterbox', device, theme, 'video-4x3', null, { selector: '.uid-video' })
+    await shot('video-narrow-320', device, theme, 'video-narrow', async (page, d) => {
+      await playVideo(page, d)
+    }, { selector: '.uid-video', query: '&w=320' })
     await shot('video-error', device, theme, 'video-broken', null, { selector: '.uid-video' })
     await shot('audio-playlist', device, theme, 'audio-playlist', async (page, d) => {
       await tap(page, d, '.uid-audio__play')

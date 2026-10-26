@@ -11,6 +11,8 @@ export interface UidMediaMenuOption {
 
 export interface UidMediaMenuGroup {
   id: string
+  /** `action` — plain commands (no checked state), e.g. picture-in-picture folded into the menu. */
+  kind?: 'radio' | 'action'
   label?: string
   value: string | number | null
   options: UidMediaMenuOption[]
@@ -44,7 +46,7 @@ const menuId = useId()
 watch(open, (v) => emit('update:open', v))
 
 function items(): HTMLElement[] {
-  return Array.from(panel.value?.querySelectorAll<HTMLElement>('[role="menuitemradio"]') ?? [])
+  return Array.from(panel.value?.querySelectorAll<HTMLElement>('[role="menuitemradio"], [role="menuitem"]') ?? [])
 }
 
 async function show(focus: 'checked' | 'first' | 'last' = 'checked'): Promise<void> {
@@ -228,20 +230,21 @@ defineExpose({ show, hide, open })
           :key="o.value"
           type="button"
           class="uid-media-menu__item"
-          role="menuitemradio"
+          :class="{ 'uid-media-menu__item--action': g.kind === 'action' }"
+          :role="g.kind === 'action' ? 'menuitem' : 'menuitemradio'"
           tabindex="-1"
-          :aria-checked="o.value === g.value"
+          :aria-checked="g.kind === 'action' ? undefined : o.value === g.value"
           @click="choose(g.id, o.value)"
         >
           <span
+            v-if="g.kind !== 'action'"
             class="uid-media-menu__check"
             aria-hidden="true"
           />
-          <span class="uid-media-menu__label">{{ sheet && o.short ? o.short : o.label }}</span>
-          <span
+          <span class="uid-media-menu__label">{{ sheet && o.short ? o.short : o.label }}<span
             v-if="o.hint"
             class="uid-media-menu__hint"
-          >{{ o.hint }}</span>
+          > · {{ o.hint }}</span></span>
         </button>
       </div>
     </div>
