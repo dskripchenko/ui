@@ -1,9 +1,9 @@
 import { computed, inject, provide, watchEffect, type ComputedRef, type InjectionKey } from 'vue'
 import type { UidLocale, UidPartialLocale } from '../locales/types.js'
-import { ru } from '../locales/ru.js'
+import { en } from '../locales/en.js'
 import { setValidationLocale } from '../utils/validation/messages.js'
 
-const localeKey: InjectionKey<ComputedRef<UidLocale>> = Symbol('UidLocale')
+export const localeKey: InjectionKey<ComputedRef<UidLocale>> = Symbol('UidLocale')
 
 function deepMerge<T>(base: T, override: unknown): T {
   if (typeof override !== 'object' || override === null) return base
@@ -23,8 +23,8 @@ function deepMerge<T>(base: T, override: unknown): T {
 export function provideLocale(source: ComputedRef<UidLocale | UidPartialLocale | undefined>): void {
   const merged = computed(() => {
     const v = source.value
-    if (!v) return ru
-    return deepMerge(ru, v)
+    if (!v) return en
+    return deepMerge(en, v)
   })
   provide(localeKey, merged)
   // Validation messages are produced outside components; they follow the app's locale.
@@ -34,6 +34,6 @@ export function provideLocale(source: ComputedRef<UidLocale | UidPartialLocale |
 export function useLocale(): ComputedRef<UidLocale> {
   const injected = inject(localeKey, null)
   if (injected) return injected
-  const fallback = computed(() => ru)
+  const fallback = computed(() => en)
   return fallback
 }

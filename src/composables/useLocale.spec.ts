@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { defineComponent, computed } from 'vue'
-import { provideLocale, useLocale } from './useLocale.js'
+import { localeKey, provideLocale, useLocale } from './useLocale.js'
 import { ru } from '../locales/ru.js'
 import { en } from '../locales/en.js'
 
@@ -22,23 +22,31 @@ const Provider = defineComponent({
   template: '<Consumer />',
 })
 
+// vitest.setup.ts provides ru for every spec; these mount without it.
+const noProvider = { global: { provide: { [localeKey as symbol]: undefined } } }
+
 describe('useLocale', () => {
-  it('возвращает ru по умолчанию без provider', () => {
-    const wrapper = mount(Consumer)
+  it('возвращает en по умолчанию без provider', () => {
+    const wrapper = mount(Consumer, noProvider)
+    expect(wrapper.text()).toBe(`${en.common.clear}|${en.tour.next}`)
+  })
+
+  it('переопределяется на ru через provideLocale', () => {
+    const wrapper = mount(Provider, { ...noProvider, props: { source: ru } })
     expect(wrapper.text()).toBe(`${ru.common.clear}|${ru.tour.next}`)
   })
 
   it('переопределяется через provideLocale полным набором', () => {
-    const wrapper = mount(Provider, { props: { source: en } })
+    const wrapper = mount(Provider, { ...noProvider, props: { source: en } })
     expect(wrapper.text()).toBe(`${en.common.clear}|${en.tour.next}`)
   })
 
-  it('частичный локаль мержится поверх дефолтного ru', () => {
+  it('частичный локаль мержится поверх дефолтного en', () => {
     const partial = {
       common: { clear: 'WIPE' },
       tour: { next: 'GO' },
     }
-    const wrapper = mount(Provider, { props: { source: partial } })
+    const wrapper = mount(Provider, { ...noProvider, props: { source: partial } })
     expect(wrapper.text()).toBe('WIPE|GO')
   })
 
@@ -58,7 +66,7 @@ describe('useLocale', () => {
       },
       template: '<Consumer2 />',
     })
-    const wrapper = mount(Wrapper, { props: { source: partial } })
-    expect(wrapper.text()).toBe(`${ru.tour.skip}|${ru.common.search}`)
+    const wrapper = mount(Wrapper, { ...noProvider, props: { source: partial } })
+    expect(wrapper.text()).toBe(`${en.tour.skip}|${en.common.search}`)
   })
 })
