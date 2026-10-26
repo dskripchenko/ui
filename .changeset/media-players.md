@@ -1,5 +1,0 @@
----
-"@dskripchenko/ui": minor
----
-
-Media players without dependencies. `UidVideo` — native `<video>` with the kit's controls: scrub bar with buffered ranges, chapters and sprite thumbnails, volume, speed and quality menus, WebVTT subtitles drawn by the player, full screen (iOS fallback), picture-in-picture, resume position, hotkeys, double-tap seek, auto-hiding controls. `UidAudio` — compact row, `mini` variant for tables, waveform decoded in the browser (chunked, cached, size-capped) or from `peaks`, playlist with auto-advance and Media Session. `useMediaController` is the shared core (one active player per page, normalised state, readable localised errors; `media` locale bag in `en`/`ru`). New lazily loaded entry `@dskripchenko/ui/hls`: native HLS where available, otherwise MSE with fMP4/CMAF and MPEG-TS (built-in H.264/AAC → fMP4 transmuxer), AES-128, live playlists, discontinuities, alternate audio renditions in their own SourceBuffer (fMP4, MPEG-TS or packed AAC; audio-track menu in UidVideo), ABR with manual quality selection, retries. UidAudio plays HLS sources too.
