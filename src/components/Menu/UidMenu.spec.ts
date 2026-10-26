@@ -402,3 +402,57 @@ describe('UidSubMenu', () => {
     wrapper.unmount()
   })
 })
+
+describe('UidMenu: управляемый режим и меню в точке', () => {
+  const items = '<UidMenuItem>Открыть</UidMenuItem><UidMenuItem>Удалить</UidMenuItem>'
+
+  it('openAt открывает меню без триггера и ставит его в точку', async () => {
+    const wrapper = mount(UidMenu, {
+      slots: { default: items },
+      global: { components: { UidMenuItem } },
+      attachTo: document.body,
+    })
+    expect(wrapper.find('.uid-menu-trigger').exists()).toBe(false)
+    ;(wrapper.vm as unknown as { openAt(x: number, y: number): void }).openAt(120, 80)
+    await flushPromises()
+    await new Promise((r) => requestAnimationFrame(() => r(null)))
+    const menu = document.querySelector<HTMLElement>('.uid-menu')
+    expect(menu).not.toBeNull()
+    // Below and to the right of the point (bottom-start), clamped to the viewport margin.
+    expect(parseFloat(menu!.style.left)).toBe(120)
+    expect(parseFloat(menu!.style.top)).toBe(88)
+    wrapper.unmount()
+  })
+
+  it('v-model:open управляет видимостью и сообщает о закрытии', async () => {
+    const wrapper = mount(UidMenu, {
+      props: { open: false, 'onUpdate:open': (v: boolean) => wrapper.setProps({ open: v }) },
+      slots: { trigger: '<button>Меню</button>', default: items },
+      global: { components: { UidMenuItem } },
+      attachTo: document.body,
+    })
+    await wrapper.setProps({ open: true })
+    await flushPromises()
+    expect(document.querySelector('.uid-menu')).not.toBeNull()
+
+    document.body.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }))
+    await flushPromises()
+    expect(wrapper.emitted('update:open')?.at(-1)).toEqual([false])
+    expect(document.querySelector('.uid-menu')).toBeNull()
+    wrapper.unmount()
+  })
+
+  it('клик вне меню в точке закрывает его, даже если это триггер', async () => {
+    const wrapper = mount(UidMenu, {
+      slots: { trigger: '<button>Меню</button>', default: items },
+      global: { components: { UidMenuItem } },
+      attachTo: document.body,
+    })
+    ;(wrapper.vm as unknown as { openAt(x: number, y: number): void }).openAt(10, 10)
+    await flushPromises()
+    wrapper.find('.uid-menu-trigger button').element.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }))
+    await flushPromises()
+    expect(document.querySelector('.uid-menu')).toBeNull()
+    wrapper.unmount()
+  })
+})

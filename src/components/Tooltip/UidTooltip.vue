@@ -23,7 +23,12 @@ const referenceRef = ref<HTMLElement | null>(null)
 const floatingRef = ref<HTMLElement | null>(null)
 const visible = ref(false)
 
-const { floatingStyle, update } = usePopover(referenceRef, floatingRef, {
+// The anchor is display: contents (an empty box); measure its first child.
+const anchorRef = computed<HTMLElement | null>(
+  () => (referenceRef.value?.firstElementChild as HTMLElement | null) ?? referenceRef.value,
+)
+
+const { floatingStyle, update } = usePopover(anchorRef, floatingRef, {
   placement: computed(() => props.placement),
 })
 

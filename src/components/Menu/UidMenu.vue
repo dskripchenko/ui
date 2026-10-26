@@ -4,15 +4,26 @@ import { ref, computed, provide, watch, nextTick, onMounted, onUnmounted, useId 
 import { usePopover } from '../../composables/usePopover.js'
 import { MENU_CLOSE_KEY, MENU_LEVEL_KEY, getLevelItems, moveFocus } from './context.js'
 
-defineSlots<{
-  trigger(): unknown
+const slots = defineSlots<{
+  trigger?(): unknown
   default(): unknown
 }>()
 
+// v-model:open makes the menu controlled (context menus, external triggers).
+const open = defineModel<boolean>('open', { default: false })
+
 const triggerRef = ref<HTMLElement | null>(null)
 const menuRef = ref<HTMLElement | null>(null)
-const open = ref(false)
 const menuId = useId()
+
+// openAt() point as a zero-size virtual element for usePopover.
+const point = ref<{ x: number; y: number } | null>(null)
+const pointAnchor = computed<HTMLElement | null>(() => {
+  const p = point.value
+  if (!p) return null
+  return { getBoundingClientRect: () => new DOMRect(p.x, p.y, 0, 0) } as unknown as HTMLElement
+})
+let returnFocus: HTMLElement | null = null
 
 // `.uid-menu-trigger` has `display: contents`, which means the root div itself
 // takes no place in the layout and its getBoundingClientRect() returns
@@ -23,7 +34,9 @@ const triggerAnchorRef = computed<HTMLElement | null>(() => {
   return (triggerRef.value?.firstElementChild as HTMLElement | null) ?? triggerRef.value
 })
 
-const { floatingStyle, update } = usePopover(triggerAnchorRef, menuRef, {
+const referenceRef = computed<HTMLElement | null>(() => pointAnchor.value ?? triggerAnchorRef.value)
+
+const { floatingStyle, update } = usePopover(referenceRef, menuRef, {
   placement: 'bottom-start',
 })
 
@@ -36,7 +49,7 @@ const delegatesToChild = ref(false)
 
 function syncTriggerRole(): void {
   const child = triggerRef.value?.firstElementChild as HTMLElement | null
-  delegatesToChild.value = child !== null && child.matches(INTERACTIVE)
+  delegatesToChild.value = child != null && child.matches(INTERACTIVE)
 
   if (!delegatesToChild.value) return
 
@@ -54,26 +67,51 @@ function getItems(): HTMLElement[] {
 
 function close(): void {
   open.value = false
-  triggerRef.value?.querySelector<HTMLElement>('button, [tabindex]')?.focus()
+  if (point.value) {
+    returnFocus?.focus?.()
+  } else {
+    triggerRef.value?.querySelector<HTMLElement>('button, [tabindex]')?.focus()
+  }
 }
 
 provide(MENU_CLOSE_KEY, close)
 
 const activeSubmenu = ref<string | null>(null)
 provide(MENU_LEVEL_KEY, { activeSubmenu })
-watch(open, (val) => { if (!val) activeSubmenu.value = null })
+watch(open, (val) => {
+  if (!val) {
+    activeSubmenu.value = null
+    point.value = null
+  }
+})
+
+async function settle(): Promise<void> {
+  await nextTick()
+  update()
+  requestAnimationFrame(() => {
+    update()
+    getItems()[0]?.focus()
+  })
+}
 
 async function toggle(): Promise<void> {
+  point.value = null
   open.value = !open.value
+}
+
+function openAt(x: number, y: number): void {
+  returnFocus = document.activeElement as HTMLElement | null
+  point.value = { x, y }
   if (open.value) {
-    await nextTick()
-    update()
-    requestAnimationFrame(() => {
-      update()
-      getItems()[0]?.focus()
-    })
+    void settle()
+  } else {
+    open.value = true
   }
 }
+
+watch(open, (val) => { if (val) void settle() })
+
+defineExpose({ openAt, close, toggle })
 
 function onTriggerKeydown(event: KeyboardEvent): void {
   if ((event.key === 'ArrowDown' || event.key === 'Enter' || event.key === ' ') && !open.value) {
@@ -96,7 +134,8 @@ function onMenuKeydown(event: KeyboardEvent): void {
 
 function onOutsideClick(event: MouseEvent): void {
   const target = event.target as Node
-  if (triggerRef.value?.contains(target) || menuRef.value?.contains(target)) return
+  if (menuRef.value?.contains(target)) return
+  if (!point.value && triggerRef.value?.contains(target)) return
   open.value = false
 }
 
@@ -115,6 +154,7 @@ onUnmounted(() => {
 
 <template>
   <div
+    v-if="slots.trigger"
     ref="triggerRef"
     class="uid-menu-trigger"
     :role="delegatesToChild ? undefined : 'button'"
