@@ -259,6 +259,8 @@ export type {
 export { UidCarousel } from './components/Carousel/index.js'
 export type { UidCarouselProps } from './components/Carousel/index.js'
 
+export { UidBoard } from './components/Board/index.js'
+export type { UidBoardProps, BoardCard, BoardCardTag, BoardColumn, BoardLane, BoardMove, BoardKey } from './components/Board/index.js'
 export { UidTransfer } from './components/Transfer/index.js'
 export type { UidTransferProps, TransferItem, TransferKey } from './components/Transfer/index.js'
 

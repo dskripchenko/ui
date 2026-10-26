@@ -198,6 +198,11 @@ export interface UidLocale {
     label: (current: number, total: number) => string
   }
 
+  board: {
+    label: string
+    empty: string
+    wipExceeded: string
+  }
   transfer: {
     available: string
     selected: string

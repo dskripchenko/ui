@@ -240,6 +240,12 @@ export const ru: UidLocale = {
     label: (current, total) => `Шаги (текущий: ${current} из ${total})`,
   },
 
+  board: {
+    label: 'Доска',
+    empty: 'Пусто',
+    wipExceeded: 'Превышен лимит незавершённой работы',
+  },
+
   transfer: {
     available: 'Доступно',
     selected: 'Выбрано',
