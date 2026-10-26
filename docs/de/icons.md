@@ -5,6 +5,7 @@ Das Kit liefert eine umfangreiche Ikonographie — ~1500 [Lucide](https://lucide
 ## Ansatz
 
 - **Quelle** — `lucide-vue-next` (MIT). Wird automatisch als reguläre `dependency` installiert.
+- **Kit-interne Icons sind mitgebündelt.** Die Icons, die die Kit-Komponenten selbst verwenden (~45), stecken im Haupteinstieg: `@dskripchenko/ui` importiert `lucide-vue-next` zur Laufzeit nicht und lädt von einem ESM-CDN ohne Import-Map-Eintrag für lucide. Nur `@dskripchenko/ui/icons` importiert `lucide-vue-next`.
 - **Kein eigenes Set.** ~1500 SVGs aktuell zu halten ist überflüssiger Aufwand.
 - **Kein Bundling.** Alle Icons sind tree-shakable: Was du nicht importierst, landet nicht im Bundle.
 - **Keine CSS-Klassen.** Icons sind Vue-Komponenten, kein Sprite oder Webfont. Inline-SVGs im DOM mit vollem Tree-Shaking.

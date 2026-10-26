@@ -37,7 +37,31 @@
 | `hlsOptions` | `HlsOptions` | — | 传给 HLS 适配器（见下文） |
 | `hlsLoader` | `() => Promise<module>` | 动态导入 | HLS 适配器的来源 |
 
-事件：`play`、`pause`、`ended`、`error`（`{ kind, detail? }`）、`qualitychange`（标签）、`audiotrackchange`（标签）。组件对外暴露 `play()`、`pause()`、`toggle()`、`seek(seconds)`、响应式的 `state` 以及 `media` 元素。
+事件：`play`、`pause`、`ended`、`error`（`{ kind, detail? }`）、`qualitychange`（标签）、`audiotrackchange`（标签）、`chapterchange`（章节、索引）。组件对外暴露 `play()`、`pause()`、`toggle()`、`seek(seconds)`、`seekToChapter(index | title)`、`chapters`、`chapterIndex`、响应式的 `state` 以及 `media` 元素。
+
+## 章节
+
+章节来自 `tracks` 中 `kind: 'chapters'` 的条目（WebVTT，每个 cue 对应一章）。加载后可通过组件 ref 访问：
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { UidVideo, type UidMediaChapter } from '@dskripchenko/ui'
+
+const player = ref<InstanceType<typeof UidVideo> | null>(null)
+function onChapter(chapter: UidMediaChapter | null, index: number) { /* … */ }
+</script>
+
+<template>
+  <UidVideo ref="player" :src="src" :tracks="tracks" @chapterchange="onChapter" />
+  <button v-for="(c, i) in player?.chapters" :key="i" @click="player?.seekToChapter(i)">{{ c.title }}</button>
+</template>
+```
+
+- `chapters` — `UidMediaChapter[]`，`{ start, end, title }`，单位为秒；VTT 未加载或没有章节轨道时为空。
+- `chapterIndex` — 当前时间所在章节的索引，不在任何章节内时为 `-1`。
+- `seekToChapter(index | title)` — 跳转到章节开头。标题先精确匹配，再忽略大小写匹配。没有匹配的章节时返回 `false`。
+- `chapterchange` 事件 — 播放进入另一章节（或离开所有章节）时触发，参数为 `(chapter | null, index)`。
 
 ## 控件
 

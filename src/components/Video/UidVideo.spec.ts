@@ -1,6 +1,6 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { h } from 'vue'
+import { h, ref } from 'vue'
 import UidVideo from './UidVideo.vue'
 import UidLocaleProvider from '../LocaleProvider/UidLocaleProvider.vue'
 import { en } from '../../locales/en'
@@ -209,6 +209,42 @@ describe('UidVideo', () => {
     await items[0].trigger('click')
     await w.find('[aria-label="Subtitles"]').trigger('click')
     expect(w.findAll('[role="menuitemradio"]')[0].attributes('aria-checked')).toBe('true')
+  })
+
+  it('главы: chapters, seekToChapter и событие chapterchange', async () => {
+    const player = ref<{
+      chapters: { start: number; end: number; title: string }[]
+      chapterIndex: number
+      seekToChapter(target: number | string): boolean
+    } | null>(null)
+    const w = mount(UidLocaleProvider, {
+      props: { locale: en },
+      slots: { default: () => h(UidVideo, { ref: player, src: '/a.mp4', tracks: [{ src: '/ch.vtt', kind: 'chapters' }] }) },
+      attachTo: document.body,
+    })
+    mounted.push(w)
+    await flushPromises()
+    const video = w.findComponent(UidVideo)
+    const api = player.value!
+    expect(api.chapters).toEqual([
+      { start: 0, end: 5, title: 'Intro' },
+      { start: 5, end: 10, title: 'Part 2' },
+    ])
+    const v = fakeMedia(w.find('video').element as HTMLVideoElement)
+    v.set({ duration: 10 })
+    v.fire('durationchange')
+    await flushPromises()
+    expect(api.chapterIndex).toBe(0)
+    expect(api.seekToChapter('part 2')).toBe(true)
+    await flushPromises()
+    expect(v.currentTime).toBe(5)
+    expect(api.chapterIndex).toBe(1)
+    expect(video.emitted('chapterchange')?.at(-1)).toEqual([{ start: 5, end: 10, title: 'Part 2' }, 1])
+    expect(api.seekToChapter(0)).toBe(true)
+    await flushPromises()
+    expect(v.currentTime).toBe(0)
+    expect(api.seekToChapter(5)).toBe(false)
+    expect(api.seekToChapter('Missing')).toBe(false)
   })
 
   it('горячие клавиши на корне и стрелки в меню не уходят в плеер', async () => {

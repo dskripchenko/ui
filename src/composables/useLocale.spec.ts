@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import { mount } from '@vue/test-utils'
-import { defineComponent, computed } from 'vue'
-import { localeKey, provideLocale, useLocale } from './useLocale.js'
+import { createApp, defineComponent, computed, h, ref, nextTick } from 'vue'
+import { localeKey, provideAppLocale, provideLocale, useLocale } from './useLocale.js'
+import { getMessage, setValidationLocale } from '../utils/validation/messages.js'
 import { ru } from '../locales/ru.js'
 import { en } from '../locales/en.js'
 
@@ -68,5 +69,48 @@ describe('useLocale', () => {
     })
     const wrapper = mount(Wrapper, { ...noProvider, props: { source: partial } })
     expect(wrapper.text()).toBe(`${en.tour.skip}|${en.common.search}`)
+  })
+})
+
+describe('provideAppLocale', () => {
+  function mountApp(setup: (app: ReturnType<typeof createApp>) => void) {
+    const el = document.createElement('div')
+    const app = createApp({ render: () => h(Consumer) })
+    setup(app)
+    app.mount(el)
+    return { app, el }
+  }
+
+  it('провайдит локаль на уровне приложения', () => {
+    const { app, el } = mountApp((a) => provideAppLocale(a, ru))
+    expect(el.textContent).toBe(`${ru.common.clear}|${ru.tour.next}`)
+    app.unmount()
+    setValidationLocale(ru)
+  })
+
+  it('реактивно переключает локаль и сообщения валидации', async () => {
+    const lang = ref<'ru' | 'en'>('en')
+    const { app, el } = mountApp((a) => provideAppLocale(a, () => (lang.value === 'ru' ? ru : en)))
+    expect(el.textContent).toBe(`${en.common.clear}|${en.tour.next}`)
+    expect(getMessage('email', {} as never)).toBe(en.validation.email)
+    lang.value = 'ru'
+    await nextTick()
+    expect(el.textContent).toBe(`${ru.common.clear}|${ru.tour.next}`)
+    expect(getMessage('email', {} as never)).toBe(ru.validation.email)
+    app.unmount()
+    setValidationLocale(ru)
+  })
+
+  it('частичная локаль мержится поверх en, stop останавливает синхронизацию валидации', () => {
+    setValidationLocale(en)
+    const source = ref<Record<string, unknown>>({ common: { clear: 'WIPE' } })
+    let stop = () => {}
+    const { app, el } = mountApp((a) => { stop = provideAppLocale(a, source) })
+    expect(el.textContent).toBe(`WIPE|${en.tour.next}`)
+    stop()
+    source.value = ru as never
+    expect(getMessage('email', {} as never)).toBe(en.validation.email)
+    app.unmount()
+    setValidationLocale(ru)
   })
 })

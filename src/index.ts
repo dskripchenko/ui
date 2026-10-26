@@ -206,6 +206,7 @@ export type {
   UidMediaSource,
   UidMediaTrack,
   UidMediaCue,
+  UidMediaChapter,
   UidMediaRange,
   UidMediaThumbnail,
   ComputePeaksOptions,
@@ -343,7 +344,8 @@ export type { UidLocale, UidPartialLocale, UidMediaLocale } from './locales/inde
 export { useTheme } from './composables/useTheme.js'
 export type { Theme } from './composables/useTheme.js'
 
-export { useLocale, provideLocale } from './composables/useLocale.js'
+export { useLocale, provideLocale, provideAppLocale, localeKey as uidLocaleKey } from './composables/useLocale.js'
+export type { UidLocaleSource } from './composables/useLocale.js'
 
 export { useField } from './composables/useField.js'
 export type { UseFieldOptions } from './composables/useField.js'

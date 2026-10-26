@@ -37,7 +37,31 @@
 | `hlsOptions` | `HlsOptions` | — | Passed to the HLS adapter (see below) |
 | `hlsLoader` | `() => Promise<module>` | dynamic import | Where the HLS adapter comes from |
 
-Events: `play`, `pause`, `ended`, `error` (`{ kind, detail? }`), `qualitychange` (label), `audiotrackchange` (label). The component exposes `play()`, `pause()`, `toggle()`, `seek(seconds)`, the reactive `state` and the `media` element.
+Events: `play`, `pause`, `ended`, `error` (`{ kind, detail? }`), `qualitychange` (label), `audiotrackchange` (label), `chapterchange` (chapter, index). The component exposes `play()`, `pause()`, `toggle()`, `seek(seconds)`, `seekToChapter(index | title)`, `chapters`, `chapterIndex`, the reactive `state` and the `media` element.
+
+## Chapters
+
+Chapters come from a `tracks` entry with `kind: 'chapters'` (WebVTT, one cue per chapter). Once loaded, they are available on the component ref:
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { UidVideo, type UidMediaChapter } from '@dskripchenko/ui'
+
+const player = ref<InstanceType<typeof UidVideo> | null>(null)
+function onChapter(chapter: UidMediaChapter | null, index: number) { /* … */ }
+</script>
+
+<template>
+  <UidVideo ref="player" :src="src" :tracks="tracks" @chapterchange="onChapter" />
+  <button v-for="(c, i) in player?.chapters" :key="i" @click="player?.seekToChapter(i)">{{ c.title }}</button>
+</template>
+```
+
+- `chapters` — `UidMediaChapter[]`, `{ start, end, title }` in seconds; empty until the VTT is loaded or when there is no chapters track.
+- `chapterIndex` — index of the chapter at the current time, `-1` outside all chapters.
+- `seekToChapter(index | title)` — seeks to the chapter start. A title is matched exactly first, then case-insensitively. Returns `false` when no chapter matches.
+- `chapterchange` event — `(chapter | null, index)` whenever playback crosses into another chapter (or out of all of them).
 
 ## Controls
 

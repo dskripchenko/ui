@@ -37,7 +37,31 @@
 | `hlsOptions` | `HlsOptions` | — | Передаются HLS-адаптеру (см. ниже) |
 | `hlsLoader` | `() => Promise<module>` | динамический импорт | Откуда берётся HLS-адаптер |
 
-События: `play`, `pause`, `ended`, `error` (`{ kind, detail? }`), `qualitychange` (метка), `audiotrackchange` (метка). Компонент отдаёт наружу `play()`, `pause()`, `toggle()`, `seek(seconds)`, реактивный `state` и элемент `media`.
+События: `play`, `pause`, `ended`, `error` (`{ kind, detail? }`), `qualitychange` (метка), `audiotrackchange` (метка), `chapterchange` (глава, индекс). Компонент отдаёт наружу `play()`, `pause()`, `toggle()`, `seek(seconds)`, `seekToChapter(index | title)`, `chapters`, `chapterIndex`, реактивный `state` и элемент `media`.
+
+## Главы
+
+Главы берутся из элемента `tracks` с `kind: 'chapters'` (WebVTT, одна реплика на главу). После загрузки они доступны через ref компонента:
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { UidVideo, type UidMediaChapter } from '@dskripchenko/ui'
+
+const player = ref<InstanceType<typeof UidVideo> | null>(null)
+function onChapter(chapter: UidMediaChapter | null, index: number) { /* … */ }
+</script>
+
+<template>
+  <UidVideo ref="player" :src="src" :tracks="tracks" @chapterchange="onChapter" />
+  <button v-for="(c, i) in player?.chapters" :key="i" @click="player?.seekToChapter(i)">{{ c.title }}</button>
+</template>
+```
+
+- `chapters` — `UidMediaChapter[]`, `{ start, end, title }` в секундах; пусто, пока VTT не загружен или если дорожки глав нет.
+- `chapterIndex` — индекс главы на текущей позиции, `-1` вне глав.
+- `seekToChapter(index | title)` — переходит к началу главы. Название сравнивается сначала точно, затем без учёта регистра. Возвращает `false`, если глава не найдена.
+- Событие `chapterchange` — `(chapter | null, index)` при переходе воспроизведения в другую главу (или за пределы всех глав).
 
 ## Элементы управления
 

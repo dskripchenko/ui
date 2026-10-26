@@ -16,7 +16,7 @@ import { useMediaLocale } from '../Media/useMediaLocale.js'
 import { useLocale } from '../../composables/useLocale.js'
 import {
   PLAYBACK_RATES, cueAt, cueText, formatTime, isHlsSource, orderSources, parseThumbnail, parseVtt,
-  type UidMediaCue, type UidMediaSource, type UidMediaTrack,
+  type UidMediaChapter, type UidMediaCue, type UidMediaSource, type UidMediaTrack,
 } from '../Media/mediaUtils.js'
 import type { HlsAudioTrack, HlsLevel, HlsOptions, HlsSession } from '../../hls/index.js'
 
@@ -86,6 +86,7 @@ const emit = defineEmits<{
   error: [error: UidMediaErrorInfo]
   qualitychange: [label: string]
   audiotrackchange: [label: string]
+  chapterchange: [chapter: UidMediaChapter | null, index: number]
 }>()
 
 const t = useMediaLocale()
@@ -260,7 +261,7 @@ function setQuality(value: number): void {
 
 const textTracks = computed(() => props.tracks.filter((tr) => tr.kind !== 'chapters'))
 const chapterTrack = computed(() => props.tracks.find((tr) => tr.kind === 'chapters'))
-const chapters = ref<UidMediaCue[]>([])
+const chapterCues = ref<UidMediaCue[]>([])
 const thumbCues = ref<UidMediaCue[]>([])
 const captionLines = ref<string[]>([])
 
@@ -274,7 +275,7 @@ async function fetchCues(url: string | undefined): Promise<UidMediaCue[]> {
   }
 }
 
-watch(() => chapterTrack.value?.src, async (url) => { chapters.value = await fetchCues(url) }, { immediate: true })
+watch(() => chapterTrack.value?.src, async (url) => { chapterCues.value = await fetchCues(url) }, { immediate: true })
 watch(() => props.thumbnails, async (url) => { thumbCues.value = await fetchCues(url) }, { immediate: true })
 
 function thumbnailAt(time: number) {
@@ -282,7 +283,30 @@ function thumbnailAt(time: number) {
   return cue && props.thumbnails ? parseThumbnail(cue.text, props.thumbnails) : null
 }
 
-const currentChapter = computed(() => cueAt(chapters.value, state.currentTime)?.text)
+const currentChapter = computed(() => cueAt(chapterCues.value, state.currentTime)?.text)
+
+const chapterList = computed<UidMediaChapter[]>(() =>
+  chapterCues.value.map((c) => ({ start: c.start, end: c.end, title: c.text })))
+const chapterIndex = computed(() =>
+  chapterCues.value.findIndex((c) => state.currentTime >= c.start && state.currentTime < c.end))
+
+watch(chapterIndex, (i) => emit('chapterchange', chapterList.value[i] ?? null, i))
+
+function seekToChapter(target: number | string): boolean {
+  const list = chapterList.value
+  let i = -1
+  if (typeof target === 'number') i = Number.isInteger(target) && target >= 0 && target < list.length ? target : -1
+  else {
+    i = list.findIndex((c) => c.title === target)
+    if (i < 0) {
+      const q = target.trim().toLowerCase()
+      i = list.findIndex((c) => c.title.trim().toLowerCase() === q)
+    }
+  }
+  if (i < 0) return false
+  ctrl.seek(list[i].start)
+  return true
+}
 
 watch(textTracks, (list) => {
   const def = list.findIndex((tr) => tr.default)
@@ -570,6 +594,9 @@ defineExpose({
   pause: ctrl.pause,
   toggle: ctrl.toggle,
   seek: ctrl.seek,
+  seekToChapter,
+  chapters: chapterList,
+  chapterIndex,
   state,
   media: video,
 })
@@ -707,7 +734,7 @@ defineExpose({
           :current-time="state.currentTime"
           :duration="state.duration"
           :buffered="state.buffered"
-          :chapters="chapters"
+          :chapters="chapterCues"
           :thumbnail-at="thumbCues.length ? thumbnailAt : undefined"
           :label="t.seek"
           :value-text="t.timeOf"

@@ -1,4 +1,4 @@
-import { computed, inject, provide, watchEffect, type ComputedRef, type InjectionKey } from 'vue'
+import { computed, effectScope, inject, provide, toValue, watchEffect, type App, type ComputedRef, type InjectionKey, type MaybeRefOrGetter } from 'vue'
 import type { UidLocale, UidPartialLocale } from '../locales/types.js'
 import { en } from '../locales/en.js'
 import { setValidationLocale } from '../utils/validation/messages.js'
@@ -20,15 +20,35 @@ function deepMerge<T>(base: T, override: unknown): T {
   return result as T
 }
 
-export function provideLocale(source: ComputedRef<UidLocale | UidPartialLocale | undefined>): void {
-  const merged = computed(() => {
-    const v = source.value
+export type UidLocaleSource = MaybeRefOrGetter<UidLocale | UidPartialLocale | undefined>
+
+function mergedLocale(source: UidLocaleSource): ComputedRef<UidLocale> {
+  return computed(() => {
+    const v = toValue(source)
     if (!v) return en
     return deepMerge(en, v)
   })
+}
+
+export function provideLocale(source: UidLocaleSource): void {
+  const merged = mergedLocale(source)
   provide(localeKey, merged)
   // Validation messages are produced outside components; they follow the app's locale.
   watchEffect(() => setValidationLocale(merged.value))
+}
+
+export function provideAppLocale(app: App, source: UidLocaleSource): () => void {
+  const scope = effectScope(true)
+  const merged = scope.run(() => {
+    const m = mergedLocale(source)
+    watchEffect(() => setValidationLocale(m.value))
+    return m
+  })!
+  app.provide(localeKey, merged)
+  const stop = () => scope.stop()
+  const onUnmount = (app as App & { onUnmount?: (fn: () => void) => void }).onUnmount
+  if (typeof onUnmount === 'function') onUnmount.call(app, stop)
+  return stop
 }
 
 export function useLocale(): ComputedRef<UidLocale> {
