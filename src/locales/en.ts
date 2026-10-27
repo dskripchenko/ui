@@ -240,6 +240,12 @@ export const en: UidLocale = {
     label: (current, total) => `Steps (current: ${current} of ${total})`,
   },
 
+  board: {
+    label: 'Board',
+    empty: 'Empty',
+    wipExceeded: 'Work-in-progress limit exceeded',
+  },
+
   transfer: {
     available: 'Available',
     selected: 'Selected',
