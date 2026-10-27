@@ -14,11 +14,11 @@ type Story = StoryObj<typeof meta>
 
 const initial: BoardColumn[] = [
   { key: 'todo', title: 'To do', cards: [
-    { key: 'GAL-1', title: 'Tenancy on schemas', subtitle: 'GAL-1 · Anna', tags: [{ label: 'backend', tone: 'info' }] },
-    { key: 'GAL-2', title: 'Board component', subtitle: 'GAL-2 · Boris', targets: ['doing'] },
+    { key: 'TASK-1', title: 'Sign-in page', subtitle: 'TASK-1 · Anna', tags: [{ label: 'backend', tone: 'info' }] },
+    { key: 'TASK-2', title: 'Export to CSV', subtitle: 'TASK-2 · Boris', targets: ['doing'] },
   ] },
   { key: 'doing', title: 'In progress', wip: 2, cards: [
-    { key: 'GAL-3', title: 'GQL', subtitle: 'GAL-3 · Vera', tags: [{ label: 'urgent', tone: 'danger' }] },
+    { key: 'TASK-3', title: 'Search filters', subtitle: 'TASK-3 · Vera', tags: [{ label: 'urgent', tone: 'danger' }] },
   ] },
   { key: 'review', title: 'Review', cards: [] },
   { key: 'done', title: 'Done', cards: [] },
