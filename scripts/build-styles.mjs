@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs'
+import { readFileSync, writeFileSync, existsSync, mkdirSync, cpSync } from 'node:fs'
 import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -45,6 +45,10 @@ write('reset.css', reset)
 
 const global = read('src/styles/global.css')
 write('global.css', global)
+
+// The typefaces are opt-in: fonts.css, with the files next to dist/styles.
+write('fonts.css', read('src/styles/fonts.css'))
+cpSync(resolve(root, 'src/fonts'), resolve(root, 'dist/fonts'), { recursive: true })
 
 const indexCssPath = resolve(distStyles, 'index.css')
 const components = existsSync(indexCssPath) ? readFileSync(indexCssPath, 'utf8').trim() : ''

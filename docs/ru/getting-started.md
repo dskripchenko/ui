@@ -21,11 +21,14 @@ import App from './App.vue'
 import '@dskripchenko/ui/styles/tokens.css'   // примитивные дизайн-токены
 import '@dskripchenko/ui/styles/themes.css'   // семантические токены: светлая и тёмная тема
 import '@dskripchenko/ui/styles/reset.css'    // минимальный reset, необязателен
+import '@dskripchenko/ui/styles/fonts.css'    // необязательно: Inter, Inter Display, IBM Plex Mono
 
 createApp(App).mount('#app')
 ```
 
 `reset.css` можно не подключать, если в приложении уже есть свой сброс стилей. `tokens.css` и `themes.css` обязательны.
+
+`fonts.css` подключает шрифты, которые называют токены (Inter для интерфейса, Inter Display для крупных заголовков через `--uid-font-family-display`, IBM Plex Mono для кода); без него используются системные замены.
 
 ## Первый компонент
 

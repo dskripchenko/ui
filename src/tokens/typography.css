@@ -1,5 +1,7 @@
 :root {
   --uid-font-family-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  /* Large headings: Inter Display where loaded (styles/fonts.css), else the sans. */
+  --uid-font-family-display: 'Inter Display', var(--uid-font-family-sans);
   --uid-font-family-mono: 'IBM Plex Mono', 'Fira Code', 'Cascadia Mono', 'Roboto Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Monaco, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', 'Courier New', monospace;
 
   --uid-font-size-xs:   12px;
