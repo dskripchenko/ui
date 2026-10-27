@@ -1,5 +1,16 @@
 # @dskripchenko/ui
 
+## 1.17.0
+
+### Minor Changes
+
+- 5102c7f: `UidBoard` — a Kanban board: columns with counts and work-in-progress limits,
+  swimlanes, drag and drop with the neighbours of the drop point for ranking,
+  per-card allowed target columns, and a keyboard alternative (Alt+←/→ moves a
+  card to the nearest allowed column, Enter opens it). The board never mutates
+  its props: it emits `move` and `open`, the host saves and re-renders.
+- 0fbd508: Bundled typefaces, opt-in: `@dskripchenko/ui/styles/fonts.css` brings Inter (variable, with italics), Inter Display and IBM Plex Mono (Latin and Cyrillic) — the families the typography tokens name. New token `--uid-font-family-display` for large headings.
+
 ## 1.16.0
 
 ### Minor Changes
