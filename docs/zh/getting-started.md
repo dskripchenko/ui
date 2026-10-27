@@ -21,11 +21,14 @@ import App from './App.vue'
 import '@dskripchenko/ui/styles/tokens.css'   // 原始设计 token
 import '@dskripchenko/ui/styles/themes.css'   // light + dark 语义 token
 import '@dskripchenko/ui/styles/reset.css'    // 可选：极简 reset
+import '@dskripchenko/ui/styles/fonts.css'    // 可选：Inter、Inter Display、IBM Plex Mono
 
 createApp(App).mount('#app')
 ```
 
 如果你的应用已有 CSS reset，可以省略 `reset.css`。`tokens.css` 和 `themes.css` 是必需的。
+
+`fonts.css` 提供 token 中引用的字体（界面用 Inter，大标题通过 `--uid-font-family-display` 使用 Inter Display，代码用 IBM Plex Mono）；不引入时使用系统后备字体。
 
 ## 第一个组件
 

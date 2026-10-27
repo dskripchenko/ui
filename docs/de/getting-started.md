@@ -21,11 +21,14 @@ import App from './App.vue'
 import '@dskripchenko/ui/styles/tokens.css'   // Primitive Design-Tokens
 import '@dskripchenko/ui/styles/themes.css'   // Light- und Dark-Tokens
 import '@dskripchenko/ui/styles/reset.css'    // optionaler Mini-Reset
+import '@dskripchenko/ui/styles/fonts.css'    // optional: Inter, Inter Display, IBM Plex Mono
 
 createApp(App).mount('#app')
 ```
 
 `reset.css` kannst du weglassen, wenn deine App bereits ein CSS-Reset hat. `tokens.css` und `themes.css` sind erforderlich.
+
+`fonts.css` bindet die Schriften ein, die die Tokens nennen (Inter für die Oberfläche, Inter Display für große Überschriften über `--uid-font-family-display`, IBM Plex Mono für Code); ohne sie greifen die Systemschriften.
 
 ## Erste Komponente
 

@@ -59,6 +59,7 @@
     "./styles/themes.css": "./dist/styles/themes.css",
     "./styles/reset.css": "./dist/styles/reset.css",
     "./styles/global.css": "./dist/styles/global.css",
+    "./styles/fonts.css": "./dist/styles/fonts.css",
     "./styles/all.css": "./dist/styles/all.css",
     "./styles/index.css": "./dist/styles/index.css",
     "./package.json": "./package.json"

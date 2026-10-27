@@ -53,6 +53,7 @@ import '@dskripchenko/ui/styles/tokens.css'   // primitives (colors, spacing, ra
 import '@dskripchenko/ui/styles/themes.css'   // :root[data-theme="light|dark"] + semantic aliases
 import '@dskripchenko/ui/styles/reset.css'    // optional: minimal HTML reset
 import '@dskripchenko/ui/styles/global.css'   // optional: :root font-family + base typography
+import '@dskripchenko/ui/styles/fonts.css'    // optional: the Inter, Inter Display and IBM Plex Mono files
 import '@dskripchenko/ui/styles/index.css'    // component styles
 ```
 
