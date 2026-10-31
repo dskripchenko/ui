@@ -135,15 +135,24 @@ function renderInline(escaped: string, opts: MarkdownOptions = {}): string {
   const slots: string[] = []
   const stash = (html: string): string => `${slots.push(html) - 1}`
 
-  let out = escaped.replace(/`([^`]+)`/g, (_m, code: string) => stash(`<code>${code}</code>`))
+  // Code spans: a run of backticks up to the same run; one space on both sides is padding.
+  let out = escaped.replace(/(?<![`\\])(`+)(?!`)([\s\S]*?[^`])\1(?!`)/g, (_m, _ticks: string, code: string) => {
+    const body = /^ [\s\S]* $/.test(code) && code.trim() !== '' ? code.slice(1, -1) : code
+    return stash(`<code>${body.replace(/\n/g, ' ')}</code>`)
+  })
+  // Hard breaks: a backslash or two spaces at the end of a line.
+  out = out.replace(/(?:\\| {2,})\n/g, () => stash('<br>'))
+  // Backslash escapes of ASCII punctuation (an HTML-escaped character counts as one).
+  out = out.replace(/\\(&(?:lt|gt|amp|quot|#39);|[!-/:-@[-`{-~])/g, (_m, ch: string) => stash(ch))
 
-  out = out.replace(/!\[([^\]]*)\]\(([^)\s]+)(?:\s+&quot;[^)]*&quot;)?\)/g, (m, alt: string, url: string) => {
+  const title = (t: string | undefined): string => (t ? ` title="${t}"` : '')
+  out = out.replace(/!\[([^\]]*)\]\(([^)\s]+)(?:\s+&quot;([^)]*?)&quot;)?\)/g, (m, alt: string, url: string, t?: string) => {
     let src = safeUrl(url)
     if (src === null) return m
     if (opts.imageBase && isRelative(src)) src = resolveAgainst(src, opts.imageBase)
-    return stash(`<img src="${src}" alt="${alt}" loading="lazy">`)
+    return stash(`<img src="${src}" alt="${alt}"${title(t)} loading="lazy">`)
   })
-  out = out.replace(/\[([^\]]+)\]\(([^)\s]+)(?:\s+&quot;[^)]*&quot;)?\)/g, (m, text: string, url: string) => {
+  out = out.replace(/\[([^\]]+)\]\(([^)\s]+)(?:\s+&quot;([^)]*?)&quot;)?\)/g, (m, text: string, url: string, t?: string) => {
     let href = safeUrl(url)
     if (href === null) return m
     const relative = isRelative(href)
@@ -154,8 +163,8 @@ function renderInline(escaped: string, opts: MarkdownOptions = {}): string {
     const inPlace = opts.internalLinksInPlace === true && !external
     return stash(
       inPlace
-        ? `<a href="${href}">${text}</a>`
-        : `<a href="${href}" target="_blank" rel="noopener noreferrer">${text}</a>`,
+        ? `<a href="${href}"${title(t)}>${text}</a>`
+        : `<a href="${href}"${title(t)} target="_blank" rel="noopener noreferrer">${text}</a>`,
     )
   })
 
@@ -167,7 +176,13 @@ function renderInline(escaped: string, opts: MarkdownOptions = {}): string {
     .replace(/(?<!\w)_(?=\S)(.+?)(?<=\S)_(?!\w)/g, '<em>$1</em>')
     .replace(/~~(?=\S)(.+?)(?<=\S)~~/g, '<del>$1</del>')
 
-  return out.replace(/(\d+)/g, (_m, i: string) => slots[Number(i)] ?? '')
+  // Slots inside slots (an escape inside a link's text) resolve too.
+  let prev = ''
+  while (prev !== out) {
+    prev = out
+    out = out.replace(/(\d+)/g, (_m, i: string) => slots[Number(i)] ?? '')
+  }
+  return out
 }
 
 /** The plain text of rendered inline HTML: for anchor ids and the table of contents. */
@@ -229,12 +244,18 @@ export function renderMarkdown(source: string | null | undefined, opts: Markdown
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i] ?? ''
 
-    const fence = /^\s*(```|~~~)\s*([\w+#.-]*)[^`]*$/.exec(line)
+    const fence = /^\s*(`{3,}|~{3,})\s*([\w+#.-]*)[^`]*$/.exec(line)
     if (fence) {
       flushParagraph()
       const body: string[] = []
+      const marker = fence[1] ?? '```'
+      // The closing fence: the same character, at least as long, nothing after it.
+      const closes = (l: string): boolean => {
+        const t = l.trim()
+        return t.length >= marker.length && t[0] === marker[0] && /^(`+|~+)$/.test(t)
+      }
       i++
-      while (i < lines.length && !(lines[i] ?? '').trim().startsWith(fence[1] ?? '```')) {
+      while (i < lines.length && !closes(lines[i] ?? '')) {
         body.push(lines[i] ?? '')
         i++
       }

@@ -168,4 +168,29 @@ describe('renderMarkdown — safety', () => {
   it('recognises Russian callout markers', () => {
     expect(renderMarkdown('> **Внимание** x')).toContain('uid-markdown__callout--warning')
   })
+
+  describe('CommonMark: экранирование, код, переносы, заголовки ссылок, длинные ограждения', () => {
+    it('обратный слеш экранирует пунктуацию и только её', () => {
+      expect(renderMarkdown('A \\*not bold\\* and \\_x\\_, \\[y\\], 2 \\< 3.')).toBe('<p>A *not bold* and _x_, [y], 2 &lt; 3.</p>')
+      expect(renderMarkdown('C:\\Users\\me')).toBe('<p>C:\\Users\\me</p>')
+      expect(renderMarkdown('\\# not a heading')).toBe('<p># not a heading</p>')
+    })
+    it('код из нескольких бэктиков и отступ пробелом', () => {
+      expect(renderMarkdown('Run ``a ` b`` now.')).toBe('<p>Run <code>a ` b</code> now.</p>')
+      expect(renderMarkdown('`` `x` ``')).toBe('<p><code>`x`</code></p>')
+      expect(renderMarkdown('`\\*`')).toBe('<p><code>\\*</code></p>')
+    })
+    it('жёсткий перенос: обратный слеш или два пробела в конце строки', () => {
+      expect(renderMarkdown('one\\\ntwo')).toBe('<p>one<br>two</p>')
+      expect(renderMarkdown('one  \ntwo')).toBe('<p>one<br>two</p>')
+    })
+    it('заголовок ссылки и картинки', () => {
+      expect(renderMarkdown('[a](https://x.example "T")')).toContain('<a href="https://x.example" title="T"')
+      expect(renderMarkdown('![p](/i.png "T")')).toContain('<img src="/i.png" alt="p" title="T"')
+    })
+    it('ограждение длиннее трёх закрывается только таким же или длиннее', () => {
+      expect(renderMarkdown('````md\n```js\ncode\n```\n````')).toBe('<pre><code class="language-md">```js\ncode\n```</code></pre>')
+    })
+  })
 })
+
