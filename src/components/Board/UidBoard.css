@@ -135,3 +135,7 @@
   font-size: var(--uid-font-size-xs, 11px);
   color: var(--uid-color-text-tertiary, var(--uid-color-text-secondary));
 }
+
+.uid-board--readonly .uid-board__card {
+  cursor: pointer;
+}
