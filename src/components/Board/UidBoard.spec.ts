@@ -2,6 +2,7 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import UidBoard from './UidBoard.vue'
 import type { BoardColumn } from './UidBoard.vue'
+import type { BoardAssignee, BoardCard, BoardMove, UidBoardProps } from '../../index.js'
 
 function columns(): BoardColumn[] {
   return [
@@ -140,6 +141,91 @@ describe('UidBoard', () => {
     expect(reached).toBe(0)
     expect(wrapper.emitted('move')).toHaveLength(1)
     wrapper.unmount()
+  })
+  it('total: the header count and the WIP check use the real count', () => {
+    const wrapper = mount(UidBoard, {
+      props: {
+        columns: [
+          { key: 'a', title: 'A', total: 40, wip: 10, cards: [{ key: 1, title: 'One' }] },
+          { key: 'b', title: 'B', total: 3, wip: 5, cards: [] },
+          { key: 'c', title: 'C', cards: [{ key: 2, title: 'Two' }] },
+        ],
+      },
+      slots: { 'column-header': '<template #column-header="{ column, count, over }"><i class="h">{{ column.key }}:{{ count }}:{{ over }}</i></template>' },
+    })
+    expect(wrapper.findAll('.h').map((h) => h.text())).toEqual(['a:40:true', 'b:3:false', 'c:1:false'])
+
+    const plain = mount(UidBoard, { props: { columns: [{ key: 'a', title: 'A', total: 40, wip: 10, cards: [{ key: 1, title: 'One' }] }, { key: 'b', title: 'B', total: 3, cards: [] }] } })
+    const sections = plain.findAll('.uid-board__column')
+    expect(sections[0]!.find('.uid-board__count').text()).toBe('40/10')
+    expect(sections[0]!.classes()).toContain('uid-board__column--over')
+    expect(sections[0]!.find('.uid-board__count').attributes('title')).toBe('Превышен лимит незавершённой работы')
+    // Unloaded cards are not "empty".
+    expect(sections[1]!.find('.uid-board__empty').exists()).toBe(false)
+  })
+
+  it('column-footer: rendered once per column, below the last lane', () => {
+    const wrapper = mount(UidBoard, {
+      props: {
+        columns: [
+          { key: 'a', title: 'A', cards: [{ key: 1, title: 'One', lane: 'x' }] },
+          { key: 'b', title: 'B', cards: [] },
+        ],
+        lanes: [{ key: 'x', title: 'X' }, { key: 'y', title: 'Y' }],
+      },
+      slots: { 'column-footer': '<template #column-footer="{ column }"><button class="more">more {{ column.key }}</button></template>' },
+    })
+    const lanes = wrapper.findAll('.uid-board__lane')
+    expect(lanes[0]!.findAll('.uid-board__footer')).toHaveLength(0)
+    expect(lanes[1]!.findAll('.uid-board__footer .more').map((b) => b.text())).toEqual(['more a', 'more b'])
+    // Without the slot there is no footer element at all.
+    expect(mount(UidBoard, { props: { columns: columns() } }).find('.uid-board__footer').exists()).toBe(false)
+  })
+
+  it('card fields: assignee, due, overdue and done', () => {
+    const cards: BoardCard[] = [
+      { key: 1, title: 'Late', due: '2026-03-01', assignee: 'Anna Petrova' },
+      { key: 2, title: 'Done late', due: '2026-03-01', done: true, assignee: { name: 'Boris', avatar: 'https://example.com/b.png' } },
+      { key: 3, title: 'Soon', due: '2026-03-20', assignee: { name: 'Vera', color: 'var(--uid-color-success)' } },
+      { key: 4, title: 'Next year', due: '2027-01-05' },
+      { key: 5, title: 'Plain' },
+    ]
+    const wrapper = mount(UidBoard, { props: { today: '2026-03-10', columns: [{ key: 'a', title: 'A', cards }] } })
+    const [late, doneLate, soon, nextYear, plain] = wrapper.findAll('.uid-board__card')
+
+    expect(late!.classes()).toContain('uid-board__card--overdue')
+    expect(late!.find('.uid-board__due--overdue').exists()).toBe(true)
+    expect(late!.find('.uid-board__due').text()).toContain('Просрочено')
+    expect(late!.find('time').attributes('datetime')).toBe('2026-03-01')
+    expect(late!.find('time').text()).toBe(new Intl.DateTimeFormat('ru-RU', { day: 'numeric', month: 'short' }).format(new Date(2026, 2, 1)))
+    expect(late!.find('.uid-board__assignee').text()).toBe('AP')
+    expect(late!.find('.uid-board__assignee').attributes('aria-label')).toBe('Исполнитель: Anna Petrova')
+
+    expect(doneLate!.classes()).toContain('uid-board__card--done')
+    expect(doneLate!.classes()).not.toContain('uid-board__card--overdue')
+    expect(doneLate!.find('.uid-board__due--overdue').exists()).toBe(false)
+    expect(doneLate!.find('.uid-board__assignee img').attributes('src')).toBe('https://example.com/b.png')
+
+    expect(soon!.find('.uid-board__due--overdue').exists()).toBe(false)
+    expect(soon!.find('.uid-board__assignee').attributes('style')).toContain('--uid-board-avatar-bg: var(--uid-color-success)')
+    expect(nextYear!.find('time').text()).toContain('2027')
+    expect(plain!.find('.uid-board__card-foot').exists()).toBe(false)
+  })
+
+  it('the card slot still replaces the whole card', () => {
+    const wrapper = mount(UidBoard, {
+      props: { today: '2026-03-10', columns: [{ key: 'a', title: 'A', cards: [{ key: 1, title: 'Late', due: '2026-03-01', assignee: 'Anna' }] }] },
+      slots: { card: '<template #card="{ card }"><b class="own">{{ card.title }}</b></template>' },
+    })
+    expect(wrapper.find('.own').text()).toBe('Late')
+    expect(wrapper.find('.uid-board__card-foot').exists()).toBe(false)
+  })
+
+  it('exports the payload types', () => {
+    const move: BoardMove = { card: { key: 1, title: 'x' }, from: 'a', to: 'b', beforeKey: null, afterKey: null, lane: null }
+    const who: BoardAssignee = { name: 'Anna', color: 'var(--uid-color-info)' }
+    const props: UidBoardProps = { columns: [{ key: 'a', title: 'A', total: 2, cards: [{ ...move.card, assignee: who, due: '2026-01-01', done: true }] }], today: '2026-01-02' }
+    expect(props.columns[0]!.total).toBe(2)
   })
 })
 

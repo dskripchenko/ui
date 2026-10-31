@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import UidBoard from './UidBoard.vue'
+import UidButton from '../Button/UidButton.vue'
 import type { BoardColumn, BoardMove } from './UidBoard.vue'
 
 const meta = {
@@ -53,4 +54,41 @@ export const Swimlanes: Story = {
     ],
     lanes: [{ key: 'anna', title: 'Anna' }, { key: 'boris', title: 'Boris' }],
   },
+}
+
+/** Cards with an assignee, a due date and done; columns with a real `total` and a «Load more» footer. */
+export const CardFieldsAndPaging: Story = {
+  args: { columns: [] },
+  render: () => ({
+    components: { UidBoard, UidButton },
+    setup() {
+      const today = '2026-11-10'
+      const all = Array.from({ length: 23 }, (_, i) => ({
+        key: `T-${i + 1}`,
+        title: `Task ${i + 1}`,
+        due: `2026-11-${String(5 + (i % 12)).padStart(2, '0')}`,
+        assignee: i % 3 === 0 ? 'Anna Smirnova' : i % 3 === 1 ? { name: 'Boris', color: 'var(--uid-color-success)' } : undefined,
+      }))
+      const loaded = ref(5)
+      const columns = computed<BoardColumn[]>(() => [
+        { key: 'todo', title: 'To do', total: all.length, wip: 20, cards: all.slice(0, loaded.value) },
+        { key: 'done', title: 'Done', cards: [
+          { key: 'D-1', title: 'Release notes', due: '2026-11-01', done: true, assignee: 'Vera Orlova' },
+        ] },
+      ])
+      return { columns, loaded, today, all }
+    },
+    template: `
+      <UidBoard :columns="columns" :today="today">
+        <template #column-footer="{ column }">
+          <UidButton
+            v-if="column.key === 'todo' && loaded < all.length"
+            variant="ghost"
+            size="sm"
+            style="width:100%"
+            @click="loaded += 5"
+          >Load more ({{ all.length - loaded }})</UidButton>
+        </template>
+      </UidBoard>`,
+  }),
 }

@@ -191,6 +191,8 @@ export interface UidLocale {
     more: (n: number) => string
     monthsGenitive: string[]
     weekdaysLong: string[]
+    /** The handle that stretches an event to change its end. */
+    resize: string
   }
 
   carousel: {
@@ -208,6 +210,12 @@ export interface UidLocale {
     label: string
     empty: string
     wipExceeded: string
+    /** The title of a card's due date. */
+    due: string
+    /** Added to a due date that has passed on a card not done. */
+    overdue: string
+    /** The title of a card's assignee: `Assignee: Anna`. */
+    assignee: (name: string) => string
   }
 
   /** UidKanban: the markup-driven board. */

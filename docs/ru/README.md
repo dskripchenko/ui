@@ -99,7 +99,7 @@ import { Check } from '@dskripchenko/ui/icons'
 Пользовательская документация переведена на 4 языка — выбери свой:
 
 - 🇬🇧 **English** (default): [docs/en/](../../docs/en/)
-- 🇷🇺 **Русский**: [getting-started](../../docs/ru/getting-started.md), [тема](../../docs/ru/theming.md), [токены](../../docs/ru/tokens.md), [иконки](../../docs/ru/icons.md), [патерны](../../docs/ru/patterns.md), [валидация](../../docs/ru/validation.md), [графики](../../docs/ru/charts.md), [markdown](../../docs/ru/markdown.md), [канбан](../../docs/ru/kanban.md), [календарь событий](../../docs/ru/event-calendar.md), [видео](../../docs/ru/video.md), [аудио](../../docs/ru/audio.md), [i18n](../../docs/ru/i18n.md)
+- 🇷🇺 **Русский**: [getting-started](../../docs/ru/getting-started.md), [тема](../../docs/ru/theming.md), [токены](../../docs/ru/tokens.md), [иконки](../../docs/ru/icons.md), [патерны](../../docs/ru/patterns.md), [валидация](../../docs/ru/validation.md), [графики](../../docs/ru/charts.md), [markdown](../../docs/ru/markdown.md), [доска](../../docs/ru/board.md), [календарь](../../docs/ru/calendar.md), [канбан](../../docs/ru/kanban.md), [календарь событий](../../docs/ru/event-calendar.md), [видео](../../docs/ru/video.md), [аудио](../../docs/ru/audio.md), [i18n](../../docs/ru/i18n.md)
 - 🇩🇪 **Deutsch**: [docs/de/](../../docs/de/)
 - 🇨🇳 **中文**: [docs/zh/](../../docs/zh/)
 

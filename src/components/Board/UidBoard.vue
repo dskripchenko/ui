@@ -11,11 +11,20 @@ export interface BoardCardTag {
   tone?: Tone | 'default'
 }
 
+/** Who a card is assigned to: a name, or a name with an avatar picture or colour. */
+export type BoardAssignee = string | { name: string; avatar?: string; color?: string }
+
 export interface BoardCard {
   key: BoardKey
   title: string
   subtitle?: string
   tags?: BoardCardTag[]
+  /** Shown in the card's footer as initials or the avatar picture. */
+  assignee?: BoardAssignee
+  /** `YYYY-MM-DD`: the due date, shown formatted; before `today` (and not `done`) it is overdue. */
+  due?: string
+  /** A finished card: muted, and never overdue. */
+  done?: boolean
   /** The swimlane the card sits in, when the board has lanes. */
   lane?: BoardKey
   /** Columns the card may move to; omitted — any column. */
@@ -26,6 +35,8 @@ export interface BoardColumn {
   key: BoardKey
   title: string
   cards: BoardCard[]
+  /** The real number of cards when only some are loaded; the count and WIP check use it. */
+  total?: number
   /** Work-in-progress limit; the header warns when the column holds more. */
   wip?: number | null
 }
@@ -51,12 +62,18 @@ export interface UidBoardProps {
   /** Freeze the board while a move is being saved. */
   busy?: boolean
   readonly?: boolean
+  /** `YYYY-MM-DD`: a card `due` before it is overdue. The local date by default. */
+  today?: string
 }
 
 const props = withDefaults(defineProps<UidBoardProps>(), {
   lanes: () => [],
   busy: false,
   readonly: false,
+  today: () => {
+    const d = new Date()
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+  },
 })
 
 const emit = defineEmits<{
@@ -67,9 +84,40 @@ const emit = defineEmits<{
 defineSlots<{
   card?(props: { card: BoardCard; column: BoardColumn }): unknown
   'column-header'?(props: { column: BoardColumn; count: number; over: boolean }): unknown
+  /** The bottom of a column, below its cards (with lanes — below the last lane). */
+  'column-footer'?(props: { column: BoardColumn }): unknown
 }>()
 
 const locale = useLocale()
+
+/** The card's assignee as a list of zero or one, for a `v-for` in the template. */
+function assigneesOf(card: BoardCard): { name: string; avatar?: string; color?: string }[] {
+  const a = card.assignee
+  if (a === undefined || a === null) return []
+  if (typeof a === 'string') return a.trim() ? [{ name: a }] : []
+  return a.name.trim() ? [a] : []
+}
+
+function initials(name: string): string {
+  return name.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]?.toUpperCase() ?? '').join('')
+}
+
+function isOverdue(card: BoardCard): boolean {
+  return !!card.due && !card.done && card.due.slice(0, 10) < props.today
+}
+
+const dueFormats = computed(() => ({
+  short: new Intl.DateTimeFormat(locale.value.code, { day: 'numeric', month: 'short' }),
+  long: new Intl.DateTimeFormat(locale.value.code, { day: 'numeric', month: 'short', year: 'numeric' }),
+}))
+
+/** The due date in the kit's locale; the year only when it is not the current one. */
+function formatDue(iso: string): string {
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso)
+  if (!m) return iso
+  const date = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]))
+  return (m[1] === props.today.slice(0, 4) ? dueFormats.value.short : dueFormats.value.long).format(date)
+}
 
 const dragging = ref<{ card: BoardCard; from: BoardKey } | null>(null)
 const hover = ref<{ column: BoardKey; lane: BoardKey | null; beforeKey: BoardKey | null } | null>(null)
@@ -81,7 +129,7 @@ function cardsOf(column: BoardColumn, lane: BoardLane | null): BoardCard[] {
 }
 
 function count(column: BoardColumn): number {
-  return column.cards.length
+  return column.total ?? column.cards.length
 }
 
 function isOver(column: BoardColumn): boolean {
@@ -241,6 +289,8 @@ function isBlocked(column: BoardColumn): boolean {
               :key="card.key"
               class="uid-board__card"
               :class="{
+                'uid-board__card--done': card.done,
+                'uid-board__card--overdue': isOverdue(card),
                 'uid-board__card--dragging': dragging?.card.key === card.key,
                 'uid-board__card--drop-before': hover?.beforeKey === card.key && hover?.column === column.key,
               }"
@@ -280,16 +330,62 @@ function isBlocked(column: BoardColumn): boolean {
                     :class="`uid-board__tag--${tag.tone ?? 'default'}`"
                   >{{ tag.label }}</span>
                 </div>
+                <div
+                  v-if="card.due || assigneesOf(card).length > 0"
+                  class="uid-board__card-foot"
+                >
+                  <span
+                    v-if="card.due"
+                    class="uid-board__due"
+                    :class="{ 'uid-board__due--overdue': isOverdue(card) }"
+                    :title="isOverdue(card) ? locale.board.overdue : locale.board.due"
+                  >
+                    <time :datetime="card.due">{{ formatDue(card.due) }}</time>
+                    <span
+                      v-if="isOverdue(card)"
+                      class="uid-board__sr"
+                    >, {{ locale.board.overdue }}</span>
+                  </span>
+                  <span
+                    v-for="who in assigneesOf(card)"
+                    :key="who.name"
+                    class="uid-board__assignee"
+                    role="img"
+                    :title="locale.board.assignee(who.name)"
+                    :aria-label="locale.board.assignee(who.name)"
+                    :style="who.color ? { '--uid-board-avatar-bg': who.color } : undefined"
+                  >
+                    <img
+                      v-if="who.avatar"
+                      class="uid-board__avatar-img"
+                      :src="who.avatar"
+                      alt=""
+                    >
+                    <span
+                      v-else
+                      aria-hidden="true"
+                    >{{ initials(who.name) }}</span>
+                  </span>
+                </div>
               </slot>
             </li>
             <li
-              v-if="cardsOf(column, lane).length === 0"
+              v-if="cardsOf(column, lane).length === 0 && (lane !== null || !column.total)"
               class="uid-board__empty"
               aria-hidden="true"
             >
               {{ locale.board.empty }}
             </li>
           </ul>
+          <footer
+            v-if="$slots['column-footer'] && laneIndex === laneRows.length - 1"
+            class="uid-board__footer"
+          >
+            <slot
+              name="column-footer"
+              :column="column"
+            />
+          </footer>
         </section>
       </div>
     </div>

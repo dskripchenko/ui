@@ -1,6 +1,6 @@
 # Terminkalender
 
-`UidEventCalendar` zeigt Termine, die als Klartext-Markup geschrieben sind, in `UidCalendar` an — Tages-, Wochen-, Monats-, Jahres- und Agenda-Ansicht. Wiederholungen werden nur für die sichtbaren Tage aufgelöst. Wie bei [`UidKanban`](./kanban.md) ist das Markup die einzige Quelle der Wahrheit: Jede Bearbeitung schreibt eine Zeile neu (zwei, wenn ein Vorkommen einer Wiederholung abgelöst wird) und wird als `change` mit dem gesamten neuen Text ausgegeben.
+`UidEventCalendar` zeigt Termine, die als Klartext-Markup geschrieben sind, in [`UidCalendar`](./calendar.md) an — Tages-, Wochen-, Monats-, Jahres- und Agenda-Ansicht. Wiederholungen werden nur für die sichtbaren Tage aufgelöst. Wie bei [`UidKanban`](./kanban.md) ist das Markup die einzige Quelle der Wahrheit: Jede Bearbeitung schreibt eine Zeile neu (zwei, wenn ein Vorkommen einer Wiederholung abgelöst wird) und wird als `change` mit dem gesamten neuen Text ausgegeben.
 
 ```vue
 <script setup lang="ts">

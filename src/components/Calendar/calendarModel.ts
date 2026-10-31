@@ -9,6 +9,8 @@ export interface CalendarEvent {
     endTime?: string
   title: string
   color?: string
+  /** `false` — never dragged or resized, even in an editable calendar; omitted — follows the calendar. */
+  editable?: boolean
 }
 
 export interface CalendarRange {
@@ -157,6 +159,14 @@ export function layoutDay(events: readonly CalendarEvent[], iso: string): TimedB
   }
   close()
   return timed
+}
+
+/** The event stretched to end on `end` (inclusive, never before the start), times kept. */
+export function resized(e: CalendarEvent, end: string): Pick<CalendarEvent, 'date' | 'endDate' | 'time' | 'endTime'> {
+  const out: Pick<CalendarEvent, 'date' | 'endDate' | 'time' | 'endTime'> = { date: e.date, endDate: end < e.date ? e.date : end }
+  if (e.time !== undefined) out.time = e.time
+  if (e.endTime !== undefined) out.endTime = e.endTime
+  return out
 }
 
 export function moved(e: CalendarEvent, date: string, time?: string): Pick<CalendarEvent, 'date' | 'endDate' | 'time' | 'endTime'> {

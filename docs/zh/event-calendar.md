@@ -1,6 +1,6 @@
 # 事件日历
 
-`UidEventCalendar` 在 `UidCalendar` 中显示以纯文本标记编写的事件 —— 提供日、周、月、年和日程（agenda）视图。重复事件只针对屏幕上显示的日期展开。与 [`UidKanban`](./kanban.md) 一样，标记是唯一的事实来源：每次编辑改写一行（当重复事件的某次发生被拆分出来时改写两行），并以 `change` 事件发出完整的新文本。
+`UidEventCalendar` 在 [`UidCalendar`](./calendar.md) 中显示以纯文本标记编写的事件 —— 提供日、周、月、年和日程（agenda）视图。重复事件只针对屏幕上显示的日期展开。与 [`UidKanban`](./kanban.md) 一样，标记是唯一的事实来源：每次编辑改写一行（当重复事件的某次发生被拆分出来时改写两行），并以 `change` 事件发出完整的新文本。
 
 ```vue
 <script setup lang="ts">

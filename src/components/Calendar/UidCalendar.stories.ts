@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
 import { ref } from 'vue'
-import UidCalendar, { type CalendarEvent } from './UidCalendar.vue'
+import UidCalendar, { type CalendarEvent, type CalendarEventMove, type CalendarSlot } from './UidCalendar.vue'
 
 const meta: Meta<typeof UidCalendar> = {
   title: 'Data Display/Calendar',
@@ -115,5 +115,41 @@ export const Editable: Story = {
       return { events, onMove, onSlot, views: ['day', 'week', 'month'], view: ref('week'), anchor: ref('2026-11-04') }
     },
     template: `<UidCalendar v-model:view="view" v-model:anchor="anchor" :views="views" :events="events" editable style="width:960px" @event-move="onMove" @slot-click="onSlot" />`,
+  }),
+}
+
+export const MonthResize: Story = {
+  name: 'Месяц: растягивание, закреплённое событие',
+  render: () => ({
+    components: { UidCalendar },
+    setup: () => {
+      const events = ref<CalendarEvent[]>([
+        { id: 1, date: '2026-11-03', title: 'Дежурство', color: '#3b82f6' },
+        { id: 2, date: '2026-11-10', endDate: '2026-11-12', title: 'Код-фриз', color: '#ef4444' },
+        { id: 3, date: '2026-11-18', title: 'Закреплено (editable: false)', editable: false, color: '#8b5cf6' },
+        { id: 4, date: '2026-11-20', time: '10:00', endTime: '11:00', title: 'Встреча' },
+      ])
+      const onMove = (m: CalendarEventMove) => {
+        events.value = events.value.map((e) => (e === m.event ? { ...e, date: m.date, endDate: m.endDate, time: m.time ?? e.time, endTime: m.endTime ?? e.endTime } : e))
+      }
+      return { events, onMove }
+    },
+    template: `<UidCalendar anchor="2026-11-04" :events="events" editable style="width:960px" @event-move="onMove" />`,
+  }),
+}
+
+export const SelectableReadOnly: Story = {
+  name: 'Только чтение, но «создать здесь» (selectable)',
+  render: () => ({
+    components: { UidCalendar },
+    setup: () => {
+      const clicked = ref<CalendarSlot | null>(null)
+      return { events: planning, clicked }
+    },
+    template: `
+      <div style="width:960px">
+        <p>slot-click: {{ clicked ? JSON.stringify(clicked) : '—' }}</p>
+        <UidCalendar view="week" anchor="2026-11-04" :views="['day', 'week', 'month']" :events="events" selectable @slot-click="clicked = $event" />
+      </div>`,
   }),
 }
