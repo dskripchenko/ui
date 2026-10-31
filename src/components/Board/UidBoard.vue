@@ -110,6 +110,7 @@ function onDragEnd(): void {
 
 function onDragOver(event: DragEvent, column: BoardColumn, lane: BoardLane | null, beforeKey: BoardKey | null): void {
   const drag = dragging.value
+  if (drag !== null) event.stopPropagation()
   if (drag === null || !allows(drag.card, column, drag.from)) return
   event.preventDefault()
   if (event.dataTransfer) event.dataTransfer.dropEffect = 'move'
@@ -118,6 +119,7 @@ function onDragOver(event: DragEvent, column: BoardColumn, lane: BoardLane | nul
 
 function onDrop(event: DragEvent, column: BoardColumn, lane: BoardLane | null): void {
   const drag = dragging.value
+  if (drag !== null) event.stopPropagation()
   if (drag === null || !allows(drag.card, column, drag.from)) return
   event.preventDefault()
   const beforeKey = hover.value?.column === column.key ? hover.value.beforeKey : null

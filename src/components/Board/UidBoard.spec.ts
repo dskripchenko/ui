@@ -115,4 +115,31 @@ describe('UidBoard', () => {
     await card.trigger('click')
     expect(wrapper.emitted('open')).toHaveLength(1)
   })
+
+  it('бросок карточки не уходит на страницу (её обработчики файлов его не видят)', async () => {
+    const wrapper = mount(UidBoard, {
+      attachTo: document.body,
+      props: {
+        columns: [
+          { key: 'a', title: 'A', cards: [{ key: 1, title: 'One' }] },
+          { key: 'b', title: 'B', cards: [] },
+        ],
+      },
+    })
+    let reached = 0
+    const onPage = (): void => { reached++ }
+    document.addEventListener('drop', onPage)
+    document.addEventListener('dragover', onPage)
+    await wrapper.find('.uid-board__card').trigger('dragstart', { dataTransfer: { setData: () => {}, effectAllowed: 'move' } })
+    const column = wrapper.findAll('.uid-board__column')[1]
+    const target = column.find('.uid-board__cards').exists() ? column.find('.uid-board__cards') : column
+    await target.trigger('dragover', { dataTransfer: { dropEffect: '' } })
+    await target.trigger('drop', { dataTransfer: {} })
+    document.removeEventListener('drop', onPage)
+    document.removeEventListener('dragover', onPage)
+    expect(reached).toBe(0)
+    expect(wrapper.emitted('move')).toHaveLength(1)
+    wrapper.unmount()
+  })
 })
+
