@@ -249,10 +249,13 @@ export function renderMarkdown(source: string | null | undefined, opts: Markdown
       flushParagraph()
       const body: string[] = []
       const marker = fence[1] ?? '```'
-      // The closing fence: the same character, at least as long, nothing after it.
+      const indent = line.length - line.trimStart().length
+      // The closing fence: the same character, at least as long, nothing after it, and indented
+      // at most three spaces more than the opening one — a deeper ``` is the content's own.
       const closes = (l: string): boolean => {
         const t = l.trim()
-        return t.length >= marker.length && t[0] === marker[0] && /^(`+|~+)$/.test(t)
+        const at = l.length - l.trimStart().length
+        return at <= indent + 3 && t.length >= marker.length && t[0] === marker[0] && /^(`+|~+)$/.test(t)
       }
       i++
       while (i < lines.length && !closes(lines[i] ?? '')) {
@@ -489,9 +492,14 @@ export function splitMarkdown(source: string | null | undefined): MarkdownSegmen
     }
     flushText()
     const marker = fence[1] ?? '```'
+    const indent = line.length - line.trimStart().length
+    const closes = (l: string): boolean => {
+      const t = l.trim()
+      return l.length - l.trimStart().length <= indent + 3 && t.length >= marker.length && t[0] === marker[0] && /^(`+|~+)$/.test(t)
+    }
     const body: string[] = []
     i++
-    while (i < lines.length && !(lines[i] ?? '').trim().startsWith(marker)) {
+    while (i < lines.length && !closes(lines[i] ?? '')) {
       body.push(lines[i] ?? '')
       i++
     }

@@ -192,5 +192,10 @@ describe('renderMarkdown — safety', () => {
       expect(renderMarkdown('````md\n```js\ncode\n```\n````')).toBe('<pre><code class="language-md">```js\ncode\n```</code></pre>')
     })
   })
+
+  it('ограждение внутри блока кода с отступом не закрывает внешний блок', () => {
+    const md = '```html\n<div>\n      ```mermaid\n      a --> b\n      ```\n</div>\n```\n\nafter'
+    expect(renderMarkdown(md)).toBe('<pre><code class="language-html">&lt;div&gt;\n      ```mermaid\n      a --&gt; b\n      ```\n&lt;/div&gt;</code></pre>\n<p>after</p>')
+  })
 })
 
