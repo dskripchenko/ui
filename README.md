@@ -111,7 +111,7 @@ A short selection — the full catalog is in [Storybook](https://dskripchenko.gi
 
 User docs are translated into four languages — pick yours:
 
-- 🇬🇧 **English** (default): [getting-started](./docs/en/getting-started.md), [theming](./docs/en/theming.md), [tokens](./docs/en/tokens.md), [icons](./docs/en/icons.md), [patterns](./docs/en/patterns.md), [validation](./docs/en/validation.md), [charts](./docs/en/charts.md), [markdown](./docs/en/markdown.md), [kanban](./docs/en/kanban.md), [event calendar](./docs/en/event-calendar.md), [video](./docs/en/video.md), [audio](./docs/en/audio.md), [i18n](./docs/en/i18n.md)
+- 🇬🇧 **English** (default): [getting-started](./docs/en/getting-started.md), [theming](./docs/en/theming.md), [tokens](./docs/en/tokens.md), [icons](./docs/en/icons.md), [patterns](./docs/en/patterns.md), [validation](./docs/en/validation.md), [charts](./docs/en/charts.md), [markdown](./docs/en/markdown.md), [board](./docs/en/board.md), [calendar](./docs/en/calendar.md), [kanban](./docs/en/kanban.md), [event calendar](./docs/en/event-calendar.md), [video](./docs/en/video.md), [audio](./docs/en/audio.md), [i18n](./docs/en/i18n.md)
 - 🇷🇺 **Русский**: [docs/ru/](./docs/ru/)
 - 🇩🇪 **Deutsch**: [docs/de/](./docs/de/)
 - 🇨🇳 **中文**: [docs/zh/](./docs/zh/)

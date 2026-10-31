@@ -20,6 +20,7 @@ import {
   minutes,
   moved,
   rangeOf,
+  resized,
   startOfWeek,
   step,
   toISO,
@@ -27,6 +28,7 @@ import {
 
 export type { CalendarEvent, CalendarRange, CalendarView } from './calendarModel'
 
+/** `event-move`: a move gives the new date (and times); a resize gives the new `endTime` (time grid) or inclusive `endDate` (month, all-day row). */
 export interface CalendarEventMove {
   event: CalendarEvent
   date: string
@@ -35,6 +37,7 @@ export interface CalendarEventMove {
   endTime?: string
 }
 
+/** The payload of `slot-click`: an empty slot — a time in the day/week grid, a day in the all-day row. */
 export interface CalendarSlot {
   date: string
   time?: string
@@ -49,6 +52,8 @@ export interface UidCalendarProps {
   todayLabel?: string
   views?: CalendarView[]
   editable?: boolean
+  /** Emit `slot-click` for clicks on empty slots. Defaults to `editable`. */
+  selectable?: boolean
   hourHeight?: number
   scrollToHour?: number
 }
@@ -59,6 +64,7 @@ const props = withDefaults(defineProps<UidCalendarProps>(), {
   maxEventsPerDay: 3,
   views: () => ['month'],
   editable: false,
+  selectable: undefined,
   hourHeight: 48,
   scrollToHour: 8,
 })
@@ -149,6 +155,24 @@ function selectDay(iso: string): void {
   emit('change', iso)
 }
 
+/** Year view: open the day first (anchor, view), then select it as in the month, so `date-click` sees the new view. */
+function pickYearDay(iso: string): void {
+  openDay(iso)
+  selectDay(iso)
+}
+
+const isSelectable = computed(() => props.selectable ?? props.editable)
+
+/** Whether an event can be dragged and resized: the calendar is editable and the event does not opt out. */
+function canEdit(e: CalendarEvent): boolean {
+  return props.editable && real(e).editable !== false
+}
+
+/** A month chip or an all-day-row chip on the event's last day gets the end handle. */
+function hasEndHandle(e: CalendarEvent, iso: string): boolean {
+  return canEdit(e) && (isAllDay(e) || isMultiDay(e)) && iso === lastDay(e)
+}
+
 const drag = ref<null | {
   event: CalendarEvent
   mode: 'move' | 'resize'
@@ -207,7 +231,8 @@ function chipClass(e: CalendarEvent, iso: string): Record<string, boolean> {
     'uid-calendar__event--from-prev': isMultiDay(e) && iso !== e.date,
     'uid-calendar__event--to-next': isMultiDay(e) && iso !== lastDay(e),
     'uid-calendar__event--dragging': !!drag.value?.active && real(e) === drag.value.event,
-    'uid-calendar__event--draggable': props.editable,
+    'uid-calendar__event--draggable': canEdit(e),
+    'uid-calendar__event--resizable': hasEndHandle(e, iso),
   }
 }
 
@@ -254,18 +279,18 @@ function minuteAt(column: HTMLElement, clientY: number): number {
 }
 
 function onSlotClick(e: MouseEvent, iso: string): void {
-  if (!props.editable || suppressClick) return
+  if (!isSelectable.value || suppressClick) return
   const min = Math.max(0, Math.min(23 * 60 + 30, Math.floor(minuteAt(e.currentTarget as HTMLElement, e.clientY) / 30) * 30))
   emit('slot-click', { date: iso, time: formatTime(min) })
 }
 
 function onAllDayClick(iso: string): void {
-  if (!props.editable || suppressClick) return
+  if (!isSelectable.value || suppressClick) return
   emit('slot-click', { date: iso })
 }
 
 function startDrag(e: PointerEvent, evt: CalendarEvent, mode: 'move' | 'resize', grid: boolean): void {
-  if (!props.editable || e.button !== 0) return
+  if (!canEdit(evt) || e.button !== 0) return
   e.stopPropagation()
   const event = real(evt)
   let grab = 0
@@ -289,7 +314,7 @@ function onDragMove(e: PointerEvent): void {
   const iso = cell?.dataset.date
   if (!iso) return
   if (!d.grid) {
-    d.preview = moved(d.event, iso)
+    d.preview = d.mode === 'resize' ? resized(d.event, iso) : moved(d.event, iso)
     return
   }
   const column = target?.closest<HTMLElement>('.uid-calendar__col')
@@ -389,7 +414,7 @@ defineExpose({ go, goToday, setView })
 <template>
   <div
     class="uid-calendar"
-    :class="[`uid-calendar--${view}`, { 'uid-calendar--compact': compact, 'uid-calendar--editable': editable }]"
+    :class="[`uid-calendar--${view}`, { 'uid-calendar--compact': compact, 'uid-calendar--editable': editable, 'uid-calendar--selectable': isSelectable }]"
   >
     <div class="uid-calendar__header">
       <span class="uid-calendar__title">{{ title }}</span>
@@ -492,6 +517,14 @@ defineExpose({ go, goToday, setView })
                 class="uid-calendar__event-time"
               >{{ evt.time }}</span>
               <span class="uid-calendar__event-label">{{ !isMultiDay(evt) || day.iso === evt.date || day.date.getDay() === 1 ? evt.title : '\u00a0' }}</span>
+              <span
+                v-if="hasEndHandle(evt, day.iso)"
+                class="uid-calendar__resize uid-calendar__resize--end"
+                :title="L.resize"
+                :aria-label="L.resize"
+                @pointerdown="startDrag($event, evt, 'resize', false)"
+                @click.stop
+              />
             </button>
             <button
               v-if="day.events.length > maxEventsPerDay"
@@ -546,6 +579,14 @@ defineExpose({ go, goToday, setView })
             @pointerdown="startDrag($event, evt, 'move', false)"
           >
             <span class="uid-calendar__event-label">{{ evt.title }}</span>
+            <span
+              v-if="hasEndHandle(evt, gridDays[i])"
+              class="uid-calendar__resize uid-calendar__resize--end"
+              :title="L.resize"
+              :aria-label="L.resize"
+              @pointerdown="startDrag($event, evt, 'resize', false)"
+              @click.stop
+            />
           </button>
         </div>
       </div>
@@ -581,6 +622,7 @@ defineExpose({ go, goToday, setView })
               :class="{
                 'uid-calendar__block--dragging': !!drag?.active && real(b.event) === drag.event,
                 'uid-calendar__block--short': b.end - b.start < 45,
+                'uid-calendar__block--draggable': canEdit(b.event),
               }"
               :style="blockStyle(b)"
               role="button"
@@ -593,8 +635,10 @@ defineExpose({ go, goToday, setView })
               <span class="uid-calendar__block-time">{{ timeLabel(b.event) }}</span>
               <span class="uid-calendar__block-title">{{ b.event.title }}</span>
               <span
-                v-if="editable"
+                v-if="canEdit(b.event)"
                 class="uid-calendar__resize"
+                :title="L.resize"
+                :aria-label="L.resize"
                 @pointerdown="startDrag($event, b.event, 'resize', true)"
                 @click.stop
               />
@@ -639,7 +683,7 @@ defineExpose({ go, goToday, setView })
             :tabindex="c.current ? 0 : -1"
             :aria-label="c.iso"
             :disabled="!c.current"
-            @click="openDay(c.iso); selectDay(c.iso)"
+            @click="pickYearDay(c.iso)"
           >
             {{ c.day }}
           </button>

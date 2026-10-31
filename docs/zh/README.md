@@ -103,7 +103,7 @@ import { Check } from '@dskripchenko/ui/icons'
 - 🇬🇧 **English**(default)：[docs/en/](../../docs/en/)
 - 🇷🇺 **Русский**：[docs/ru/](../../docs/ru/)
 - 🇩🇪 **Deutsch**：[docs/de/](../../docs/de/)
-- 🇨🇳 **中文**：[快速开始](../../docs/zh/getting-started.md)、[主题](../../docs/zh/theming.md)、[Tokens](../../docs/zh/tokens.md)、[图标](../../docs/zh/icons.md)、[Patterns](../../docs/zh/patterns.md)、[表单校验](../../docs/zh/validation.md)、[图表](../../docs/zh/charts.md)、[Markdown](../../docs/zh/markdown.md)、[看板](../../docs/zh/kanban.md)、[事件日历](../../docs/zh/event-calendar.md)、[视频](../../docs/zh/video.md)、[音频](../../docs/zh/audio.md)、[i18n](../../docs/zh/i18n.md)
+- 🇨🇳 **中文**：[快速开始](../../docs/zh/getting-started.md)、[主题](../../docs/zh/theming.md)、[Tokens](../../docs/zh/tokens.md)、[图标](../../docs/zh/icons.md)、[Patterns](../../docs/zh/patterns.md)、[表单校验](../../docs/zh/validation.md)、[图表](../../docs/zh/charts.md)、[Markdown](../../docs/zh/markdown.md)、[Board](../../docs/zh/board.md)、[日历](../../docs/zh/calendar.md)、[看板](../../docs/zh/kanban.md)、[事件日历](../../docs/zh/event-calendar.md)、[视频](../../docs/zh/video.md)、[音频](../../docs/zh/audio.md)、[i18n](../../docs/zh/i18n.md)
 
 贡献者文档(仅英文)：[Architecture](../internal/architecture.md)、[Component guidelines](../internal/component-guidelines.md)、[Contributing](../../.github/CONTRIBUTING.md)、[Roadmap](../internal/roadmap.md)。
 

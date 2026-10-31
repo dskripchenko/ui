@@ -426,7 +426,8 @@
   background-size: 100% var(--uid-cal-hour-h, 48px);
 }
 
-.uid-calendar--editable .uid-calendar__col {
+.uid-calendar--selectable .uid-calendar__col,
+.uid-calendar--selectable .uid-calendar__allday-cell {
   cursor: cell;
 }
 
@@ -473,7 +474,7 @@
   box-sizing: border-box;
 }
 
-.uid-calendar--editable .uid-calendar__block {
+.uid-calendar__block--draggable {
   touch-action: none;
 }
 
@@ -502,6 +503,39 @@
   bottom: 0;
   height: 6px;
   cursor: ns-resize;
+}
+
+/* The end handle of an all-day or multi-day chip: its right edge. */
+.uid-calendar__event--resizable {
+  position: relative;
+  padding-right: 10px;
+}
+
+.uid-calendar__resize--end {
+  left: auto;
+  top: 0;
+  width: 8px;
+  height: auto;
+  cursor: ew-resize;
+  touch-action: none;
+}
+
+.uid-calendar__resize--end::after {
+  content: '';
+  position: absolute;
+  top: 25%;
+  bottom: 25%;
+  right: 3px;
+  width: 2px;
+  border-radius: var(--uid-radius-full);
+  background: currentColor;
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+
+.uid-calendar__event--resizable:hover .uid-calendar__resize--end::after,
+.uid-calendar__event--dragging .uid-calendar__resize--end::after {
+  opacity: 0.6;
 }
 
 /* Year */

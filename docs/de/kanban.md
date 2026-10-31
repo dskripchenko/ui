@@ -1,6 +1,6 @@
 # Kanban
 
-`UidKanban` ist ein Kanban-Board, das als Klartext-Markup geschrieben und mit `UidBoard` gezeichnet wird. Das Markup ist die einzige Quelle der Wahrheit: Die Komponente liest es, und jede Bearbeitung (ein Verschieben, eine neue oder geänderte Karte) schreibt nur die betroffenen Zeilen neu und wird als `change` mit dem gesamten neuen Text ausgegeben. Kommentare, Leerzeilen und der übrige Text bleiben unverändert, sodass das Markup in einer Datei, einem Datenbankfeld oder auf einer Seite liegen kann.
+`UidKanban` ist ein Kanban-Board, das als Klartext-Markup geschrieben und mit [`UidBoard`](./board.md) gezeichnet wird. Das Markup ist die einzige Quelle der Wahrheit: Die Komponente liest es, und jede Bearbeitung (ein Verschieben, eine neue oder geänderte Karte) schreibt nur die betroffenen Zeilen neu und wird als `change` mit dem gesamten neuen Text ausgegeben. Kommentare, Leerzeilen und der übrige Text bleiben unverändert, sodass das Markup in einer Datei, einem Datenbankfeld oder auf einer Seite liegen kann.
 
 ```vue
 <script setup lang="ts">

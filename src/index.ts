@@ -260,7 +260,7 @@ export { UidCarousel } from './components/Carousel/index.js'
 export type { UidCarouselProps } from './components/Carousel/index.js'
 
 export { UidBoard } from './components/Board/index.js'
-export type { UidBoardProps, BoardCard, BoardCardTag, BoardColumn, BoardLane, BoardMove, BoardKey } from './components/Board/index.js'
+export type { UidBoardProps, BoardCard, BoardCardTag, BoardColumn, BoardLane, BoardMove, BoardKey, BoardAssignee } from './components/Board/index.js'
 export { UidTransfer } from './components/Transfer/index.js'
 export type { UidTransferProps, TransferItem, TransferKey } from './components/Transfer/index.js'
 
@@ -268,7 +268,7 @@ export { UidCascader } from './components/Cascader/index.js'
 export type { UidCascaderProps, CascaderOption, CascaderValue } from './components/Cascader/index.js'
 
 export { UidCalendar } from './components/Calendar/index.js'
-export type { UidCalendarProps, CalendarEvent } from './components/Calendar/index.js'
+export type { UidCalendarProps, CalendarEvent, CalendarEventMove, CalendarSlot, CalendarRange, CalendarView } from './components/Calendar/index.js'
 
 export {
   UidKanban,

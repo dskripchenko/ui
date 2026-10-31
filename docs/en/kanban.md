@@ -1,6 +1,6 @@
 # Kanban
 
-`UidKanban` is a kanban board written as plain-text markup and drawn with `UidBoard`. The markup is the single source of truth: the component reads it, and every edit (a move, a new or changed card) rewrites only the lines it touches and is emitted as `change` with the whole new text. Comments, blank lines and the rest of the text stay as they were, so the markup can be kept in a file, a database field or a page.
+`UidKanban` is a kanban board written as plain-text markup and drawn with [`UidBoard`](./board.md). The markup is the single source of truth: the component reads it, and every edit (a move, a new or changed card) rewrites only the lines it touches and is emitted as `change` with the whole new text. Comments, blank lines and the rest of the text stay as they were, so the markup can be kept in a file, a database field or a page.
 
 ```vue
 <script setup lang="ts">

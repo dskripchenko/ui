@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { eventsOn, layoutDay, moved, rangeOf, step } from './calendarModel'
+import { eventsOn, layoutDay, moved, rangeOf, resized, step } from './calendarModel'
 
 describe('calendarModel', () => {
   it('диапазоны видов', () => {
@@ -48,5 +48,11 @@ describe('calendarModel', () => {
       .toEqual({ date: '2026-11-17', endDate: '2026-11-21' })
     expect(moved({ date: '2026-11-03', time: '10:00', title: 'x' }, '2026-11-04'))
       .toEqual({ date: '2026-11-04', time: '10:00' })
+  })
+  it('растягивание меняет включительный конец и не уходит раньше начала', () => {
+    expect(resized({ date: '2026-11-03', title: 'x' }, '2026-11-05')).toEqual({ date: '2026-11-03', endDate: '2026-11-05' })
+    expect(resized({ date: '2026-11-10', endDate: '2026-11-14', title: 'x' }, '2026-11-01')).toEqual({ date: '2026-11-10', endDate: '2026-11-10' })
+    expect(resized({ date: '2026-11-03', endDate: '2026-11-04', time: '22:00', endTime: '02:00', title: 'x' }, '2026-11-06'))
+      .toEqual({ date: '2026-11-03', endDate: '2026-11-06', time: '22:00', endTime: '02:00' })
   })
 })

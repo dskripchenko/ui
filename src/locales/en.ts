@@ -236,6 +236,7 @@ export const en: UidLocale = {
       'July', 'August', 'September', 'October', 'November', 'December',
     ],
     weekdaysLong: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+    resize: 'Drag to change the end',
   },
 
   carousel: {
@@ -253,6 +254,9 @@ export const en: UidLocale = {
     label: 'Board',
     empty: 'Empty',
     wipExceeded: 'Work-in-progress limit exceeded',
+    due: 'Due date',
+    overdue: 'Overdue',
+    assignee: (name) => `Assignee: ${name}`,
   },
 
   kanban: {

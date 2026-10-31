@@ -1,6 +1,6 @@
 # Event calendar
 
-`UidEventCalendar` shows events written as plain-text markup in `UidCalendar` — day, week, month, year and agenda views. Repeats are expanded only for the days on screen. As with [`UidKanban`](./kanban.md), the markup is the single source of truth: every edit rewrites one line (two when one occurrence of a repeat is detached) and is emitted as `change` with the whole new text.
+`UidEventCalendar` shows events written as plain-text markup in [`UidCalendar`](./calendar.md) — day, week, month, year and agenda views. Repeats are expanded only for the days on screen. As with [`UidKanban`](./kanban.md), the markup is the single source of truth: every edit rewrites one line (two when one occurrence of a repeat is detached) and is emitted as `change` with the whole new text.
 
 ```vue
 <script setup lang="ts">
