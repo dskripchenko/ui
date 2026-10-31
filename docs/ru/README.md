@@ -78,7 +78,7 @@ import { Check } from '@dskripchenko/ui/icons'
 
 **Навигация:** Tabs, Breadcrumb, Link, Pagination (+ Cursor / LoadMore / InfiniteScroll / PageSize), BackTop, Affix, Anchor
 
-**Отображение данных:** Card, Avatar, AvatarGroup, Tag, Divider, Accordion, Table, VirtualList, Stat, DescriptionList, Timeline, TreeView, Code, Watermark, Carousel, Calendar, NotificationBadge
+**Отображение данных:** Card, Avatar, AvatarGroup, Tag, Divider, Accordion, Table, VirtualList, Stat, DescriptionList, Timeline, TreeView, Code, Watermark, Carousel, Calendar, EventCalendar, Board, Kanban, NotificationBadge
 
 **Layout-помощники:** Stack, Grid, Container, Splitter
 
@@ -99,7 +99,7 @@ import { Check } from '@dskripchenko/ui/icons'
 Пользовательская документация переведена на 4 языка — выбери свой:
 
 - 🇬🇧 **English** (default): [docs/en/](../../docs/en/)
-- 🇷🇺 **Русский**: [getting-started](../../docs/ru/getting-started.md), [тема](../../docs/ru/theming.md), [токены](../../docs/ru/tokens.md), [иконки](../../docs/ru/icons.md), [патерны](../../docs/ru/patterns.md), [валидация](../../docs/ru/validation.md), [графики](../../docs/ru/charts.md), [markdown](../../docs/ru/markdown.md), [видео](../../docs/ru/video.md), [аудио](../../docs/ru/audio.md), [i18n](../../docs/ru/i18n.md)
+- 🇷🇺 **Русский**: [getting-started](../../docs/ru/getting-started.md), [тема](../../docs/ru/theming.md), [токены](../../docs/ru/tokens.md), [иконки](../../docs/ru/icons.md), [патерны](../../docs/ru/patterns.md), [валидация](../../docs/ru/validation.md), [графики](../../docs/ru/charts.md), [markdown](../../docs/ru/markdown.md), [канбан](../../docs/ru/kanban.md), [календарь событий](../../docs/ru/event-calendar.md), [видео](../../docs/ru/video.md), [аудио](../../docs/ru/audio.md), [i18n](../../docs/ru/i18n.md)
 - 🇩🇪 **Deutsch**: [docs/de/](../../docs/de/)
 - 🇨🇳 **中文**: [docs/zh/](../../docs/zh/)
 
