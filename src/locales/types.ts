@@ -185,6 +185,12 @@ export interface UidLocale {
 
   calendar: {
     today: string
+    views: { day: string; week: string; month: string; year: string; agenda: string }
+    allDay: string
+    noEvents: string
+    more: (n: number) => string
+    monthsGenitive: string[]
+    weekdaysLong: string[]
   }
 
   carousel: {

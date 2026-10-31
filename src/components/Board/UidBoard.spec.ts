@@ -97,4 +97,22 @@ describe('UidBoard', () => {
     expect(lanes[0]!.findAll('.uid-board__column')[0]!.findAll('.uid-board__card')).toHaveLength(1)
     expect(lanes[1]!.findAll('.uid-board__header')).toHaveLength(0)
   })
+
+  it('readonly: карточки не перетаскиваются и не двигаются клавишами, но открываются', async () => {
+    const wrapper = mount(UidBoard, {
+      props: {
+        readonly: true,
+        columns: [
+          { key: 'a', title: 'A', cards: [{ key: 1, title: 'One' }] },
+          { key: 'b', title: 'B', cards: [] },
+        ],
+      },
+    })
+    const card = wrapper.find('.uid-board__card')
+    expect(card.attributes('draggable')).toBe('false')
+    await card.trigger('keydown', { key: 'ArrowRight', altKey: true })
+    expect(wrapper.emitted('move')).toBeUndefined()
+    await card.trigger('click')
+    expect(wrapper.emitted('open')).toHaveLength(1)
+  })
 })

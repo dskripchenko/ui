@@ -227,6 +227,15 @@ export const en: UidLocale = {
 
   calendar: {
     today: 'Today',
+    views: { day: 'Day', week: 'Week', month: 'Month', year: 'Year', agenda: 'Agenda' },
+    allDay: 'All day',
+    noEvents: 'No events',
+    more: (n) => `+${n}`,
+    monthsGenitive: [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December',
+    ],
+    weekdaysLong: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
   },
 
   carousel: {
@@ -264,7 +273,7 @@ export const en: UidLocale = {
   },
 
   avatarGroup: {
-    more: (n) => `${n} more`,
+    more: (n) => `+${n}`,
   },
 
   command: {

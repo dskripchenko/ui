@@ -50,11 +50,13 @@ export interface UidBoardProps {
   lanes?: BoardLane[]
   /** Freeze the board while a move is being saved. */
   busy?: boolean
+  readonly?: boolean
 }
 
 const props = withDefaults(defineProps<UidBoardProps>(), {
   lanes: () => [],
   busy: false,
+  readonly: false,
 })
 
 const emit = defineEmits<{
@@ -92,7 +94,7 @@ function allows(card: BoardCard, column: BoardColumn, from: BoardKey): boolean {
 }
 
 function onDragStart(event: DragEvent, card: BoardCard, column: BoardColumn): void {
-  if (props.busy) {
+  if (props.busy || props.readonly) {
     event.preventDefault()
     return
   }
@@ -154,7 +156,7 @@ function onKeydown(event: KeyboardEvent, card: BoardCard, column: BoardColumn, l
     emit('open', card)
     return
   }
-  if (!event.altKey || (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') || props.busy) return
+  if (!event.altKey || (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') || props.busy || props.readonly) return
   event.preventDefault()
   const step = event.key === 'ArrowRight' ? 1 : -1
   const index = props.columns.findIndex((c) => c.key === column.key)
@@ -181,7 +183,7 @@ function isBlocked(column: BoardColumn): boolean {
 <template>
   <div
     class="uid-board"
-    :class="{ 'uid-board--busy': busy, 'uid-board--dragging': dragging !== null }"
+    :class="{ 'uid-board--busy': busy, 'uid-board--readonly': readonly, 'uid-board--dragging': dragging !== null }"
     role="region"
     :aria-label="locale.board.label"
     :aria-busy="busy"
@@ -240,10 +242,10 @@ function isBlocked(column: BoardColumn): boolean {
                 'uid-board__card--dragging': dragging?.card.key === card.key,
                 'uid-board__card--drop-before': hover?.beforeKey === card.key && hover?.column === column.key,
               }"
-              :draggable="!busy"
+              :draggable="!busy && !readonly"
               tabindex="0"
               role="listitem"
-              :aria-keyshortcuts="'Alt+ArrowLeft Alt+ArrowRight Enter'"
+              :aria-keyshortcuts="readonly ? 'Enter' : 'Alt+ArrowLeft Alt+ArrowRight Enter'"
               @dragstart="onDragStart($event, card, column)"
               @dragend="onDragEnd"
               @dragover.stop="onDragOver($event, column, lane, card.key)"
