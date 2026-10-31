@@ -270,6 +270,59 @@ export type { UidCascaderProps, CascaderOption, CascaderValue } from './componen
 export { UidCalendar } from './components/Calendar/index.js'
 export type { UidCalendarProps, CalendarEvent } from './components/Calendar/index.js'
 
+export {
+  UidKanban,
+  parseKanban,
+  addKanbanCard,
+  moveKanbanCard,
+  updateKanbanCard,
+  removeKanbanCard,
+  addKanbanColumn,
+  serializeKanbanCard,
+  kanbanInlineMarkdown,
+  parseMarkupProps,
+  serializeMarkupProps,
+  splitMarkupProps,
+} from './components/Kanban/index.js'
+export type {
+  UidKanbanProps,
+  KanbanOpen,
+  KanbanDoc,
+  KanbanCard,
+  KanbanColumn,
+  KanbanProblem,
+  KanbanPriority,
+  KanbanCardFields,
+  MarkupProps,
+} from './components/Kanban/index.js'
+
+export {
+  UidEventCalendar,
+  parseEventCalendar,
+  parseEventLine,
+  parseEventRRule,
+  expandEventCalendar,
+  eventOccurrences,
+  eventRuleText,
+  serializeCalendarEvent,
+  addCalendarEvent,
+  updateCalendarEvent,
+  removeCalendarEvent,
+  detachCalendarOccurrence,
+} from './components/EventCalendar/index.js'
+export type {
+  UidEventCalendarProps,
+  EventCalendarOpen,
+  EventCalendarDoc,
+  EventCalendarItem,
+  EventCalendarProblem,
+  EventCalendarRule,
+  EventCalendarFreq,
+  EventCalendarByDay,
+  EventCalendarOccurrence,
+  EventCalendarFields,
+} from './components/EventCalendar/index.js'
+
 export { UidSparkline } from './components/Sparkline/index.js'
 export type { UidSparklineProps, SparklineType } from './components/Sparkline/index.js'
 

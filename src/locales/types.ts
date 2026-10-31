@@ -209,6 +209,76 @@ export interface UidLocale {
     empty: string
     wipExceeded: string
   }
+
+  /** UidKanban: the markup-driven board. */
+  kanban: {
+    board: string
+    source: string
+    lock: string
+    unlock: string
+    addCard: string
+    newCard: string
+    editCard: string
+    cardTitle: string
+    column: string
+    lane: string
+    tags: string
+    who: string
+    due: string
+    description: string
+    extra: string
+    priorityLabel: string
+    priority: { high: string; low: string; none: string }
+    save: string
+    cancel: string
+    delete: string
+    filterTag: string
+    everyone: string
+    line: string
+  }
+
+  /** UidEventCalendar: the markup-driven calendar and its event builder. */
+  eventCalendar: {
+    calendar: string
+    source: string
+    lock: string
+    unlock: string
+    addEvent: string
+    newEvent: string
+    event: string
+    title: string
+    allDay: string
+    date: string
+    endDate: string
+    start: string
+    end: string
+    repeat: string
+    freq: { none: string; daily: string; weekly: string; monthly: string; yearly: string }
+    every: string
+    units: { daily: string; weekly: string; monthly: string; yearly: string }
+    onDays: string
+    monthMode: { day: string; nth: string; last: string }
+    dayOfMonth: string
+    ordinals: Record<'1' | '2' | '3' | '4' | '-1', string>
+    ends: string
+    endsMode: { never: string; until: string; count: string }
+    times: string
+    skipped: string
+    scope: string
+    scopeOne: string
+    scopeAll: string
+    tags: string
+    where: string
+    extra: string
+    line: string
+    save: string
+    cancel: string
+    delete: string
+    skip: string
+    /** Monday first. */
+    weekdays: string[]
+    repeats: string
+  }
   transfer: {
     available: string
     selected: string
