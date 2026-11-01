@@ -366,6 +366,8 @@ export const ru: UidLocale = {
     caution: 'Осторожно',
     blockPending: 'Отрисовка…',
     blockError: 'Не удалось отрисовать блок',
+    taskDone: 'Выполнено',
+    taskOpen: 'Не выполнено',
   },
 
   heatmap: {

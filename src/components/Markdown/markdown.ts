@@ -83,6 +83,8 @@ export interface MarkdownOptions {
    * own links to navigate.
    */
   internalLinksInPlace?: boolean
+  /** Read-out names of task checkboxes; English when not given. */
+  taskLabels?: { done: string; open: string }
   /** Titles of `[!NOTE]`-style callouts; English when not given. */
   calloutTitles?: Partial<Record<UidMarkdownCalloutKind, string>>
 }
@@ -373,6 +375,7 @@ function renderList(lines: string[], start: number, opts: MarkdownOptions): { ht
   const indent = indentOf(first?.[1] ?? '')
   const ordered = /\d/.test(first?.[2] ?? '')
   const items: string[] = []
+  let tasks = 0
   let i = start
 
   while (i < lines.length) {
@@ -408,13 +411,21 @@ function renderList(lines: string[], start: number, opts: MarkdownOptions): { ht
       break
     }
 
+    // A GitHub task item: `[ ]` or `[x]` right after the marker.
+    const task = /^\[([ xX])\]\s+/.exec(text[0] ?? '')
+    if (task) text[0] = (text[0] ?? '').slice(task[0].length)
     let inner = renderInline(text.join('\n'), opts)
     if (body.some((l) => l.trim() !== '')) {
       const cut = Math.min(...body.filter((l) => l.trim() !== '').map(indentOf))
       const dedented = body.map((l) => l.replace(/\t/g, '    ').slice(cut))
       inner += renderEscapedBlocks(dedented, opts)
     }
-    items.push(`<li>${inner}</li>`)
+    items.push(
+      task
+        ? `<li class="uid-markdown__task"><input type="checkbox" disabled${task[1] === ' ' ? '' : ' checked'} aria-label="${escapeHtml(task[1] === ' ' ? (opts.taskLabels?.open ?? 'Not done') : (opts.taskLabels?.done ?? 'Done'))}"> ${inner}</li>`
+        : `<li>${inner}</li>`,
+    )
+    if (task) tasks++
 
     // Blank lines between the items of one list keep it going.
     let j = i
@@ -428,7 +439,9 @@ function renderList(lines: string[], start: number, opts: MarkdownOptions): { ht
   const tag = ordered ? 'ol' : 'ul'
   const startAt = ordered ? Number.parseInt(first?.[2] ?? '1', 10) : 1
   const startAttr = ordered && startAt !== 1 && Number.isFinite(startAt) ? ` start="${startAt}"` : ''
-  return { html: `<${tag}${startAttr}>${items.join('')}</${tag}>`, next: i }
+  // A list of tasks only goes without bullets: the checkboxes are its markers.
+  const classAttr = tasks > 0 && tasks === items.length ? ' class="uid-markdown__tasks"' : ''
+  return { html: `<${tag}${startAttr}${classAttr}>${items.join('')}</${tag}>`, next: i }
 }
 
 /**

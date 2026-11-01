@@ -167,6 +167,7 @@ export type {
   Slugger,
   UidMarkdownCalloutKind,
   UidMarkdownBlockRenderer,
+  UidMarkdownBlockRenderContext,
   UidMarkdownBlockRenderers,
   UidMarkdownBlockResult,
 } from './components/Markdown/index.js'

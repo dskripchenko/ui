@@ -366,6 +366,8 @@ export const en: UidLocale = {
     caution: 'Caution',
     blockPending: 'Rendering…',
     blockError: 'Could not render this block',
+    taskDone: 'Done',
+    taskOpen: 'Not done',
   },
 
   heatmap: {

@@ -63,6 +63,12 @@
 .uid-markdown__html ul,
 .uid-markdown__html ol { padding-left: 1.5em; }
 .uid-markdown__html li + li { margin-top: var(--uid-space-2xs); }
+.uid-markdown__html .uid-markdown__tasks { list-style: none; padding-left: 0.25em; }
+.uid-markdown__html .uid-markdown__task > input[type='checkbox'] {
+  margin: 0 0.4em 0 0;
+  vertical-align: -0.1em;
+  accent-color: var(--uid-markdown-link);
+}
 
 .uid-markdown__html a { color: var(--uid-markdown-link); }
 
