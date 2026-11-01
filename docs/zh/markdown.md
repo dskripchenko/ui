@@ -1,6 +1,6 @@
 # Markdown
 
-`UidMarkdown` 无依赖地渲染 Markdown 文档：带锚点的标题、强调、链接、图片、（嵌套）列表、带对齐的表格、引用、提示框和代码。顶层代码块由 `UidCode` 绘制（高亮、复制按钮）。
+`UidMarkdown` 无依赖地渲染 Markdown 文档：带锚点的标题、强调、链接、图片、（嵌套）列表、带对齐的表格、引用、提示框和代码。顶层代码块由 `UidCode` 绘制（由 `@dskripchenko/syntax` 高亮约 35 种语言和格式、复制按钮）。
 
 ```vue
 <UidMarkdown :source="text" toc link-base="/docs/zh/" />

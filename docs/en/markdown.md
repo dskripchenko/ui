@@ -1,6 +1,6 @@
 # Markdown
 
-`UidMarkdown` renders a markdown document with no dependencies: headings with anchors, emphasis, links, images, lists (nested), tables with alignment, block quotes, callouts and code. Top-level fenced code is drawn by `UidCode` (highlighting, copy button).
+`UidMarkdown` renders a markdown document with no dependencies: headings with anchors, emphasis, links, images, lists (nested), tables with alignment, block quotes, callouts and code. Top-level fenced code is drawn by `UidCode` (highlighting of some 35 languages and formats by `@dskripchenko/syntax`, copy button).
 
 ```vue
 <UidMarkdown :source="text" toc link-base="/docs/en/" />
