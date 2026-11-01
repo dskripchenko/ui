@@ -719,3 +719,9 @@
 .uid-calendar--compact .uid-calendar__more {
   display: none;
 }
+
+/* On paper: the period shown, not the switches and arrows that change it. */
+@media print {
+  .uid-calendar__views,
+  .uid-calendar__nav { display: none !important; }
+}

@@ -131,7 +131,7 @@ This doesn't break theming — the override only applies inside the selector.
 
 On paper (`@media print`) the components that live inside pages print as
 content, not as controls: the kanban's filters, actions, lock and add
-buttons, the event calendar's actions, the code block's copy button and the
+buttons, the calendar's view switch and arrows, the event calendar's actions, the code block's copy button and the
 video's controls are hidden; the board's columns share the page's width
 instead of scrolling sideways, and a card is not split across sheets; a
 markdown document prints in one column without its table of contents, a
