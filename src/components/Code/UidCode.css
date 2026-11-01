@@ -146,6 +146,11 @@
   --uid-code-tok-attr:        var(--uid-warning);
   --uid-code-tok-property:    var(--uid-info);
   --uid-code-tok-punctuation: var(--uid-text-secondary);
+  --uid-code-tok-type:        var(--uid-info);
+  --uid-code-tok-regex:       var(--uid-success);
+  --uid-code-tok-meta:        var(--uid-text-secondary);
+  --uid-code-tok-inserted:    var(--uid-success);
+  --uid-code-tok-deleted:     var(--uid-danger);
 }
 
 .uid-code__tok--comment     { color: var(--uid-code-tok-comment); font-style: italic; }
@@ -158,7 +163,24 @@
 .uid-code__tok--tag         { color: var(--uid-code-tok-tag); }
 .uid-code__tok--attr        { color: var(--uid-code-tok-attr); }
 .uid-code__tok--property    { color: var(--uid-code-tok-property); }
-.uid-code__tok--punctuation { color: var(--uid-code-tok-punctuation); }
+.uid-code__tok--punctuation,
+.uid-code__tok--operator    { color: var(--uid-code-tok-punctuation); }
+.uid-code__tok--type        { color: var(--uid-code-tok-type); }
+.uid-code__tok--regex,
+.uid-code__tok--escape      { color: var(--uid-code-tok-regex); }
+.uid-code__tok--meta        { color: var(--uid-code-tok-meta); }
+.uid-code__tok--heading,
+.uid-code__tok--strong      { font-weight: var(--uid-font-weight-semibold, 600); }
+.uid-code__tok--heading     { color: var(--uid-code-tok-keyword); }
+.uid-code__tok--emphasis    { font-style: italic; }
+.uid-code__tok--link        { color: var(--uid-code-tok-function); text-decoration: underline; }
+.uid-code__tok--inserted    { color: var(--uid-code-tok-inserted); }
+.uid-code__tok--deleted     { color: var(--uid-code-tok-deleted); }
+.uid-code__tok--date        { color: var(--uid-code-tok-number); }
+.uid-code__tok--error       { color: var(--uid-danger); font-weight: var(--uid-font-weight-semibold, 600); }
+.uid-code__tok--warning     { color: var(--uid-warning); }
+.uid-code__tok--info        { color: var(--uid-info); }
+.uid-code__tok--debug       { color: var(--uid-text-secondary); }
 
 /* On paper: every line, wrapped, nothing hidden behind a scroll; no copy button. */
 @media print {

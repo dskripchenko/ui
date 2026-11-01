@@ -1,6 +1,6 @@
 # Markdown
 
-`UidMarkdown` rendert ein Markdown-Dokument ohne Abhängigkeiten: Überschriften mit Ankern, Hervorhebungen, Links, Bilder, (verschachtelte) Listen, Tabellen mit Ausrichtung, Zitate, Hinweisboxen und Code. Codeblöcke der obersten Ebene zeichnet `UidCode` (Hervorhebung, Kopier-Button).
+`UidMarkdown` rendert ein Markdown-Dokument ohne Abhängigkeiten: Überschriften mit Ankern, Hervorhebungen, Links, Bilder, (verschachtelte) Listen, Tabellen mit Ausrichtung, Zitate, Hinweisboxen und Code. Codeblöcke der obersten Ebene zeichnet `UidCode` (Hervorhebung von rund 35 Sprachen und Formaten durch `@dskripchenko/syntax`, Kopier-Button).
 
 ```vue
 <UidMarkdown :source="text" toc link-base="/docs/de/" />

@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@dskripchenko/syntax':
+        specifier: ^0.3.1
+        version: 0.3.1
       lucide-vue-next:
         specifier: ^0.460.0
         version: 0.460.0(vue@3.5.33(typescript@6.0.3))
@@ -218,6 +221,10 @@ packages:
   '@csstools/css-tokenizer@4.0.0':
     resolution: {integrity: sha512-QxULHAm7cNu72w97JUNCBFODFaXpbDg+dP8b/oWFAZ2MTRppA3U00Y2L1HqaS4J6yBqxwa/Y3nMBaxVKbB/NsA==}
     engines: {node: '>=20.19.0'}
+
+  '@dskripchenko/syntax@0.3.1':
+    resolution: {integrity: sha512-TWRDf3erkWpSS+n+hoR2tSRhGSSgukmM8I2MeHZUIEGs5zczRi6wMN/Mn2EAiQykm/H/3kAknj6Urw/kTUU6Kw==}
+    engines: {node: '>=20'}
 
   '@emnapi/core@1.10.0':
     resolution: {integrity: sha512-yq6OkJ4p82CAfPl0u9mQebQHKPJkY7WrIuk205cTYnYe+k2Z8YBh11FrbRG/H6ihirqcacOgl2BIO8oyMQLeXw==}
@@ -2685,6 +2692,9 @@ packages:
   vue-component-type-helpers@3.2.7:
     resolution: {integrity: sha512-+gPp5YGmhfsj1IN+xUo7y0fb4clfnOiiUA39y07yW1VzCRjzVgwLbtmdWlghh7mXrPsEaYc7rrIir/HT6C8vYQ==}
 
+  vue-component-type-helpers@3.3.14:
+    resolution: {integrity: sha512-Pq3+OnbCiPCHk0R7KSZrx+j/XXaUn2kSQ1epxq60w8CPbByLjC1EJgV51n4WY851sTXUVzsNMuitywdkdVyKjA==}
+
   vue-docgen-api@4.79.2:
     resolution: {integrity: sha512-n9ENAcs+40awPZMsas7STqjkZiVlIjxIKgiJr5rSohDP0/JCrD9VtlzNojafsA1MChm/hz2h3PDtUedx3lbgfA==}
     peerDependencies:
@@ -3026,6 +3036,8 @@ snapshots:
       css-tree: 3.2.1
 
   '@csstools/css-tokenizer@4.0.0': {}
+
+  '@dskripchenko/syntax@0.3.1': {}
 
   '@emnapi/core@1.10.0':
     dependencies:
@@ -3568,7 +3580,7 @@ snapshots:
       ts-dedent: 2.2.0
       type-fest: 2.19.0
       vue: 3.5.33(typescript@6.0.3)
-      vue-component-type-helpers: 3.2.7
+      vue-component-type-helpers: 3.3.14
 
   '@testing-library/dom@10.4.0':
     dependencies:
@@ -5450,6 +5462,8 @@ snapshots:
   vue-component-type-helpers@2.2.12: {}
 
   vue-component-type-helpers@3.2.7: {}
+
+  vue-component-type-helpers@3.3.14: {}
 
   vue-docgen-api@4.79.2(vue@3.5.33(typescript@6.0.3)):
     dependencies:

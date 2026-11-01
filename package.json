@@ -90,6 +90,7 @@
     "vue": "^3.4.0"
   },
   "dependencies": {
+    "@dskripchenko/syntax": "^0.3.1",
     "lucide-vue-next": "^0.460.0"
   },
   "devDependencies": {

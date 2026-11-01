@@ -15,6 +15,8 @@ describe('tokenize', () => {
   })
 
   it('isHighlightable учитывает алиасы и регистр', () => {
+    expect(isHighlightable('curl')).toBe(true)
+    expect(isHighlightable('rust')).toBe(true)
     expect(isHighlightable('TypeScript')).toBe(true)
     expect(isHighlightable('sh')).toBe(true)
     expect(isHighlightable('text')).toBe(false)
@@ -37,7 +39,8 @@ describe('tokenize', () => {
   it('js/ts: keyword, string, number, comment, literal, function', () => {
     const code = 'const greet = (n) => format(`hi ${n}`, 42) // done\nreturn null'
     expect(typesOf(code, 'typescript', 'keyword')).toEqual(['const', 'return'])
-    expect(typesOf(code, 'ts', 'string')).toEqual(['`hi ${n}`'])
+    // A template string around its interpolation.
+    expect(typesOf(code, 'ts', 'string')).toEqual(['`hi ', '`'])
     expect(typesOf(code, 'js', 'number')).toEqual(['42'])
     expect(typesOf(code, 'js', 'comment')).toEqual(['// done'])
     expect(typesOf(code, 'js', 'literal')).toEqual(['null'])
@@ -50,7 +53,7 @@ describe('tokenize', () => {
 
   it('php: переменные, ключевые слова без учёта регистра, теги', () => {
     const code = "<?php\nFUNCTION f($x) { return 'a' . $x; } // c"
-    expect(typesOf(code, 'php', 'tag')).toEqual(['<?php'])
+    expect(typesOf(code, 'php', 'meta')).toEqual(['<?php'])
     expect(typesOf(code, 'php', 'variable')).toEqual(['$x', '$x'])
     expect(typesOf(code, 'php', 'keyword')).toEqual(['FUNCTION', 'return'])
     expect(typesOf(code, 'php', 'string')).toEqual(["'a'"])
@@ -77,16 +80,17 @@ describe('tokenize', () => {
   it('html/xml: теги, атрибуты, значения, комментарии, сущности', () => {
     const code = '<!-- c --><div class="a" hidden>"text" &amp;</div>'
     expect(typesOf(code, 'html', 'comment')).toEqual(['<!-- c -->'])
-    expect(typesOf(code, 'html', 'tag')).toEqual(['<div', '>', '</div>'])
+    expect(typesOf(code, 'html', 'tag')).toEqual(['div', 'div'])
+    expect(typesOf(code, 'html', 'punctuation')).toEqual(['<', '>', '</', '>'])
     expect(typesOf(code, 'xml', 'attr')).toEqual(['class', 'hidden'])
     expect(typesOf(code, 'vue', 'string')).toEqual(['"a"'])
-    expect(typesOf(code, 'html', 'literal')).toEqual(['&amp;'])
+    expect(typesOf(code, 'html', 'escape')).toEqual(['&amp;'])
   })
 
   it('css: селекторы, свойства, значения, at-правила', () => {
     const code = '@media screen {\n  .btn:hover { color: #fff; margin: 0 4px; width: calc(100% - 2px) }\n}'
     expect(typesOf(code, 'css', 'keyword')).toEqual(['@media'])
-    expect(typesOf(code, 'css', 'tag')).toEqual(['screen', '.btn', 'hover'])
+    expect(typesOf(code, 'css', 'type')).toEqual(['.btn'])
     expect(typesOf(code, 'css', 'property')).toEqual(['color', 'margin', 'width'])
     expect(typesOf(code, 'css', 'number')).toEqual(['#fff', '0', '4px', '100%', '2px'])
     expect(typesOf(code, 'css', 'function')).toEqual(['calc'])
@@ -95,8 +99,9 @@ describe('tokenize', () => {
   it('bash: переменные, строки, флаги, комментарии', () => {
     const code = 'if [ -n "$X" ]; then\n  rm -rf ${DIR} --force # cleanup\nfi'
     expect(typesOf(code, 'bash', 'keyword')).toEqual(['if', 'then', 'fi'])
-    expect(typesOf(code, 'sh', 'string')).toEqual(['"$X"'])
-    expect(typesOf(code, 'shell', 'variable')).toEqual(['${DIR}'])
+    // A variable inside a string keeps its colour.
+    expect(typesOf(code, 'sh', 'string')).toEqual(['"', '"'])
+    expect(typesOf(code, 'shell', 'variable')).toEqual(['$X', '${DIR}'])
     expect(typesOf(code, 'bash', 'attr')).toEqual(['-n', '-rf', '--force'])
     expect(typesOf(code, 'bash', 'comment')).toEqual(['# cleanup'])
   })
@@ -128,7 +133,7 @@ describe('tokenize', () => {
     expect(typesOf(code, 'python', 'literal')).toEqual(['None'])
     expect(typesOf(code, 'python', 'comment')).toEqual(['# done'])
     expect(typesOf(code, 'python', 'string')).toEqual(['f"hi"'])
-    expect(typesOf(code, 'python', 'attr')).toEqual(['@app.get'])
+    expect(typesOf(code, 'python', 'meta')).toEqual(['@app.get'])
   })
 
   it('go, java, csharp, kotlin, swift: keywords and literals', () => {
@@ -149,17 +154,18 @@ describe('tokenize', () => {
   it('http: method, version, header names', () => {
     const code = 'GET /pets?limit=10 HTTP/1.1\nAccept: application/json\nX-Trace-Id: 1'
     expect(typesOf(code, 'http', 'keyword')).toEqual(['GET'])
-    expect(typesOf(code, 'http', 'literal')).toEqual(['HTTP/1.1'])
+    expect(typesOf(code, 'http', 'meta')).toEqual(['HTTP/1.1'])
     expect(typesOf(code, 'http', 'property')).toEqual(['Accept', 'X-Trace-Id'])
   })
 
   it('yaml: keys, scalars, anchors, comments', () => {
     const code = "openapi: 3.1.0\ninfo:\n  title: 'Pets'  # name\n  x-flag: true\nbase: &b {a: 1}\nother: *b\n'quoted key': ~"
     expect(typesOf(code, 'yml', 'property')).toEqual(['openapi', 'info', 'title', 'x-flag', 'base', 'a', 'other', "'quoted key'"])
-    expect(typesOf(code, 'yaml', 'string')).toEqual(["'Pets'"])
+    // `3.1.0` is a string to YAML, not a number.
+    expect(typesOf(code, 'yaml', 'string')).toEqual(['3.1.0', "'Pets'"])
     expect(typesOf(code, 'yaml', 'comment')).toEqual(['# name'])
     expect(typesOf(code, 'yaml', 'literal')).toEqual(['true', '~'])
     expect(typesOf(code, 'yaml', 'variable')).toEqual(['&b', '*b'])
-    expect(typesOf(code, 'yaml', 'number')).toEqual(['3.1', '1'])
+    expect(typesOf(code, 'yaml', 'number')).toEqual(['1'])
   })
 })
