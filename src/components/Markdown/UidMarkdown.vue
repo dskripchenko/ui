@@ -13,6 +13,7 @@ import {
 } from './markdown.js'
 import {
   useMarkdownBlockRenderers,
+  type UidMarkdownBlockRenderContext,
   type UidMarkdownBlockRenderer,
   type UidMarkdownBlockResult,
 } from './blockRenderers.js'
@@ -134,7 +135,12 @@ function render(): void {
       }
     }
     const renderer = segment.language ? renderers[segment.language] : undefined
-    const ctx = { language: segment.language, index: codeIndex++ }
+    const ctx: UidMarkdownBlockRenderContext = {
+      language: segment.language,
+      index: codeIndex++,
+      ...(props.imageBase ? { imageBase: props.imageBase } : {}),
+      ...(props.linkBase ? { linkBase: props.linkBase } : {}),
+    }
     if (!renderer) {
       return { kind: 'code', code: segment.code, language: LANGUAGE_ALIASES[segment.language] ?? segment.language }
     }

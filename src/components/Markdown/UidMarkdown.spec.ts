@@ -81,6 +81,15 @@ describe('UidMarkdown', () => {
       expect(calls).toEqual([['graph', { language: 'mermaid', index: 0 }]])
     })
 
+    it("hands a block the markdown's image and link bases", () => {
+      const calls: unknown[] = []
+      const render: UidMarkdownBlockRenderer = (_code, ctx) => (calls.push(ctx), { html: '' })
+      mount(UidMarkdown, {
+        props: { source: fence('video', 'intro.mp4'), imageBase: '/files/42/', linkBase: '/docs/', blockRenderers: { video: render } },
+      })
+      expect(calls).toEqual([{ language: 'video', index: 0, imageBase: '/files/42/', linkBase: '/docs/' }])
+    })
+
     it('shows a placeholder while an async renderer works', async () => {
       let resolve!: (v: { html: string }) => void
       const render: UidMarkdownBlockRenderer = () => new Promise((r) => (resolve = r))

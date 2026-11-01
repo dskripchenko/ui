@@ -49,8 +49,22 @@ export interface UidMarkdownBlockMountHandle {
  */
 export type UidMarkdownBlockRenderer = (
   code: string,
-  ctx: { language: string; index: number },
+  ctx: UidMarkdownBlockRenderContext,
 ) => UidMarkdownBlockResult | Promise<UidMarkdownBlockResult>
+
+/** What a block renderer knows of the block and of the markdown around it. */
+export interface UidMarkdownBlockRenderContext {
+  language: string
+  /** The block's number among the markdown's code blocks, from 0. */
+  index: number
+  /**
+   * The markdown's `imageBase` and `linkBase`, when it has them: a block that
+   * names files (a ```video with `src: intro.mp4`) resolves relative paths
+   * against them, as the markdown's own images and links do.
+   */
+  imageBase?: string
+  linkBase?: string
+}
 
 /** Block renderers by fence language (lower case). */
 export type UidMarkdownBlockRenderers = Readonly<Record<string, UidMarkdownBlockRenderer>>
