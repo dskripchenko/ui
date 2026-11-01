@@ -125,7 +125,7 @@ Das bricht das Theming nicht — die Überschreibung gilt nur innerhalb des Sele
 
 Auf Papier (`@media print`) drucken sich die Komponenten, die in Seiten
 leben, als Inhalt, nicht als Bedienung: Filter, Aktionen, Sperre und
-Hinzufügen-Knöpfe des Kanbans, die Aktionen des Ereigniskalenders, der
+Hinzufügen-Knöpfe des Kanbans, Ansichtsumschalter und Pfeile des Kalenders, die Aktionen des Ereigniskalenders, der
 Kopierknopf des Codeblocks und die Steuerleiste des Videos sind ausgeblendet;
 die Spalten des Boards teilen sich die Seitenbreite statt seitlich zu
 scrollen, eine Karte wird nicht über Blätter getrennt; ein Markdown-Dokument
