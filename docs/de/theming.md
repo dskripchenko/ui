@@ -121,6 +121,17 @@ Jede Komponente hat lokale Variablen mit Fallback auf Semantik. Überschreibe si
 
 Das bricht das Theming nicht — die Überschreibung gilt nur innerhalb des Selektors.
 
+## Druck
+
+Auf Papier (`@media print`) drucken sich die Komponenten, die in Seiten
+leben, als Inhalt, nicht als Bedienung: Filter, Aktionen, Sperre und
+Hinzufügen-Knöpfe des Kanbans, die Aktionen des Ereigniskalenders, der
+Kopierknopf des Codeblocks und die Steuerleiste des Videos sind ausgeblendet;
+die Spalten des Boards teilen sich die Seitenbreite statt seitlich zu
+scrollen, eine Karte wird nicht über Blätter getrennt; ein Markdown-Dokument
+druckt einspaltig ohne Inhaltsverzeichnis, eine Überschrift bleibt beim
+folgenden Text; ein Codeblock zeigt jede Zeile, umbrochen.
+
 ## Storybook
 
 Die Toolbar von `@storybook/addon-themes` schaltet `data-theme` auf dem Story-iframe um:

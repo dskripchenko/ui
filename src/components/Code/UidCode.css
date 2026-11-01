@@ -159,3 +159,10 @@
 .uid-code__tok--attr        { color: var(--uid-code-tok-attr); }
 .uid-code__tok--property    { color: var(--uid-code-tok-property); }
 .uid-code__tok--punctuation { color: var(--uid-code-tok-punctuation); }
+
+/* On paper: every line, wrapped, nothing hidden behind a scroll; no copy button. */
+@media print {
+  .uid-code__copy { display: none !important; }
+  .uid-code__body { overflow: visible; max-height: none; }
+  .uid-code__pre { overflow: visible; white-space: pre-wrap; overflow-wrap: anywhere; }
+}

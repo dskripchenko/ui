@@ -208,3 +208,11 @@
   white-space: nowrap;
   border: 0;
 }
+
+/* On paper: every column within the page's width, no card split across sheets. */
+@media print {
+  .uid-board { overflow: visible; }
+  .uid-board__columns { grid-auto-columns: minmax(0, 1fr); }
+  .uid-board__column { min-height: 0; }
+  .uid-board__card { break-inside: avoid; }
+}

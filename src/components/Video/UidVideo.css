@@ -366,3 +366,8 @@
 .uid-video:has(.uid-media-scrubber__preview) .uid-video__captions {
   opacity: 0;
 }
+
+/* On paper: the picture, not the controls. */
+@media print {
+  .uid-video__controls { display: none !important; }
+}

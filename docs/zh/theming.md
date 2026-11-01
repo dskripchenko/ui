@@ -116,6 +116,12 @@ document.documentElement.dataset.theme = prefersDark ? 'dark' : 'light'
 
 这不会破坏主题——覆盖只在选择器范围内生效。
 
+## 打印
+
+在纸面上（`@media print`），嵌在页面中的组件按内容而非控件打印：看板的筛选、操作、锁定和添加按钮，
+事件日历的操作，代码块的复制按钮以及视频的控制栏都会隐藏；看板的列平分页面宽度而不是横向滚动，
+卡片不会被拆到两页；markdown 文档以单栏打印、不含目录，标题不会与其后的内容分开；代码块显示所有行并自动换行。
+
 ## Storybook
 
 `@storybook/addon-themes` 工具栏切换 story iframe 上的 `data-theme`：

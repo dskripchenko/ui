@@ -127,6 +127,16 @@ Every component has local variables that fall back to semantics. Override them i
 
 This doesn't break theming — the override only applies inside the selector.
 
+## Print
+
+On paper (`@media print`) the components that live inside pages print as
+content, not as controls: the kanban's filters, actions, lock and add
+buttons, the event calendar's actions, the code block's copy button and the
+video's controls are hidden; the board's columns share the page's width
+instead of scrolling sideways, and a card is not split across sheets; a
+markdown document prints in one column without its table of contents, a
+heading stays with what follows it; a code block shows every line, wrapped.
+
 ## Storybook
 
 The `@storybook/addon-themes` toolbar toggles `data-theme` on the story iframe's `<html>`:

@@ -226,3 +226,12 @@
     background: var(--uid-markdown-sunken);
   }
 }
+
+/* On paper: one column (no table of contents beside it); a block or a heading is not left alone at a sheet's end. */
+@media print {
+  .uid-markdown--toc { grid-template-columns: minmax(0, 1fr); }
+  .uid-markdown__toc { display: none !important; }
+  .uid-markdown__block--live,
+  .uid-markdown__block-error { break-inside: avoid; }
+  .uid-markdown h1, .uid-markdown h2, .uid-markdown h3, .uid-markdown h4 { break-after: avoid; }
+}

@@ -102,3 +102,9 @@
 .uid-event-calendar__props { display: grid; grid-template-columns: max-content 1fr; gap: 4px 12px; margin: 0; font-size: 13px; }
 .uid-event-calendar__props dt { color: var(--uid-color-text-secondary); }
 .uid-event-calendar__props dd { margin: 0; }
+
+/* On paper: the calendar, not its controls. */
+@media print {
+  .uid-event-calendar__actions,
+  .uid-event-calendar__lock { display: none !important; }
+}
