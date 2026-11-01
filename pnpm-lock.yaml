@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@dskripchenko/syntax':
-        specifier: ^0.3.1
-        version: 0.3.1
+        specifier: ^0.3.2
+        version: 0.3.2
       lucide-vue-next:
         specifier: ^0.460.0
         version: 0.460.0(vue@3.5.33(typescript@6.0.3))
@@ -222,8 +222,8 @@ packages:
     resolution: {integrity: sha512-QxULHAm7cNu72w97JUNCBFODFaXpbDg+dP8b/oWFAZ2MTRppA3U00Y2L1HqaS4J6yBqxwa/Y3nMBaxVKbB/NsA==}
     engines: {node: '>=20.19.0'}
 
-  '@dskripchenko/syntax@0.3.1':
-    resolution: {integrity: sha512-TWRDf3erkWpSS+n+hoR2tSRhGSSgukmM8I2MeHZUIEGs5zczRi6wMN/Mn2EAiQykm/H/3kAknj6Urw/kTUU6Kw==}
+  '@dskripchenko/syntax@0.3.2':
+    resolution: {integrity: sha512-IwbURY60JyHzZdYkzIOmmxHYi4VgJD5Md/j5Il7Mbot3q2ic/Rxad4U5eke2AqVIt4caPXoZAuqBttptQC/c2A==}
     engines: {node: '>=20'}
 
   '@emnapi/core@1.10.0':
@@ -3037,7 +3037,7 @@ snapshots:
 
   '@csstools/css-tokenizer@4.0.0': {}
 
-  '@dskripchenko/syntax@0.3.1': {}
+  '@dskripchenko/syntax@0.3.2': {}
 
   '@emnapi/core@1.10.0':
     dependencies:
