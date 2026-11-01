@@ -330,6 +330,9 @@ export interface UidLocale {
     blockPending: string
     /** Prefix of the notice when a block renderer fails; the message follows. */
     blockError: string
+    /** Read-out names of a task list's checkboxes. */
+    taskDone: string
+    taskOpen: string
   }
 
   heatmap: {

@@ -129,6 +129,7 @@ function render(): void {
           imageBase: props.imageBase ?? null,
           internalLinksInPlace: props.internalLinksInPlace,
           calloutTitles: titles,
+          taskLabels: { done: locale.value.markdown.taskDone, open: locale.value.markdown.taskOpen },
         }),
       }
     }

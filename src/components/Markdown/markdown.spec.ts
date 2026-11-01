@@ -199,3 +199,26 @@ describe('renderMarkdown — safety', () => {
   })
 })
 
+
+describe('renderMarkdown — task lists', () => {
+  it('renders GitHub task items as disabled checkboxes', () => {
+    const html = renderMarkdown('- [ ] write docs\n- [x] ship **it**\n- [X] done too')
+    expect(html).toContain('<ul class="uid-markdown__tasks">')
+    expect(html).toContain('<li class="uid-markdown__task"><input type="checkbox" disabled aria-label="Not done"> write docs</li>')
+    expect(html).toContain('<input type="checkbox" disabled checked aria-label="Done"> ship <strong>it</strong>')
+    expect(html.match(/checked/g)).toHaveLength(2)
+  })
+
+  it('keeps bullets on a list mixing tasks and plain items, and leaves `[ ]` elsewhere as text', () => {
+    const html = renderMarkdown('- [ ] task\n- plain\n\nA [ ] in text.')
+    expect(html).toContain('<ul><li class="uid-markdown__task">')
+    expect(html).toContain('<li>plain</li>')
+    expect(html).toContain('A [ ] in text.')
+  })
+
+  it('works in ordered and nested lists', () => {
+    const html = renderMarkdown('1. [x] first\n   - [ ] sub')
+    expect(html).toContain('<ol class="uid-markdown__tasks"><li class="uid-markdown__task"><input type="checkbox" disabled checked')
+    expect(html).toContain('<ul class="uid-markdown__tasks"><li class="uid-markdown__task"><input type="checkbox" disabled aria-label="Not done"> sub</li></ul>')
+  })
+})
