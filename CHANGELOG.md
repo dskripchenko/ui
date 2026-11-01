@@ -1,5 +1,11 @@
 # @dskripchenko/ui
 
+## 1.23.1
+
+### Patch Changes
+
+- fadbc65: UidCalendar on paper: the view switch and the navigation arrows are hidden, the period shown stays.
+
 ## 1.23.0
 
 ### Minor Changes
