@@ -121,6 +121,16 @@ describe('renderMarkdown — lists', () => {
     expect(renderMarkdown('- one\ntwo\n- three')).toBe('<ul><li>one\ntwo</li><li>three</li></ul>')
   })
 
+  it('joins an indented continuation line to the item: the same paragraph, not a new one', () => {
+    // A long item wrapped in the source, as editors and formatters wrap it.
+    expect(renderMarkdown('- **No installer.** A zip on Windows and macOS, an\n  AppImage on Linux.\n- Next\n  `code` too.')).toBe(
+      '<ul><li><strong>No installer.</strong> A zip on Windows and macOS, an\nAppImage on Linux.</li><li>Next\n<code>code</code> too.</li></ul>',
+    )
+    // After a blank line, an indented line is a paragraph of the item; a nested list stays nested.
+    expect(renderMarkdown('- a\n  b\n\n  c\n  - d')).toBe('<ul><li>a\nb<p>c</p>\n<ul><li>d</li></ul></li></ul>')
+    expect(renderMarkdown('1. x\n   y\n   ```js\n   z\n   ```')).toContain('<li>x\ny')
+  })
+
   it('starts an ordered list at its first number', () => {
     expect(renderMarkdown('3. c\n4. d')).toBe('<ol start="3"><li>c</li><li>d</li></ol>')
   })

@@ -397,14 +397,15 @@ function renderList(lines: string[], start: number, opts: MarkdownOptions): { ht
         }
         break
       }
-      if (indentOf(next) > indent + 1) {
-        body.push(next)
+      // The item's text going on: a line of text right under it — indented or not (lazy) —
+      // before any blank line or nested block; it is the same paragraph, as in CommonMark.
+      if (body.length === 0 && !LIST_ITEM.test(next) && !opensBlock(next)) {
+        text.push(next.trim())
         i++
         continue
       }
-      // A lazy continuation: plain text right under the item, before any nested block.
-      if (body.length === 0 && !LIST_ITEM.test(next) && !opensBlock(next)) {
-        text.push(next.trim())
+      if (indentOf(next) > indent + 1) {
+        body.push(next)
         i++
         continue
       }
