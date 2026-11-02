@@ -1,5 +1,11 @@
 # @dskripchenko/ui
 
+## 1.24.1
+
+### Patch Changes
+
+- d0e1e87: Markdown: a list item wrapped in the source — the next line indented under it, no blank line between — continues the item's paragraph, as in CommonMark; it used to start a paragraph of its own (and a list written back from it became a loose one).
+
 ## 1.24.0
 
 ### Minor Changes
