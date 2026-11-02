@@ -1,5 +1,11 @@
 # @dskripchenko/ui
 
+## 1.27.0
+
+### Minor Changes
+
+- cd91946: Markdown: `#tags` as `<span class="uid-markdown__tag" data-tag>` chips (`tags: false` turns them off), and a YAML front matter at the start of a document as a table of properties (`UidMarkdown` reads it; `renderMarkdown(source, { frontMatter: true })`; `readFrontMatter(source)` gives it as data).
+
 ## 1.26.1
 
 ### Patch Changes
