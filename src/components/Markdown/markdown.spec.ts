@@ -313,3 +313,12 @@ describe('renderMarkdown: tags and properties', () => {
     expect(renderMarkdown('---\nx: <b>y</b>\n---\n', { frontMatter: true })).toContain('&lt;b&gt;y&lt;/b&gt;')
   })
 })
+
+describe('renderMarkdown: embeds', () => {
+  it('![[note]] and ![[note#heading]] are embeds around their link; a picture stays a picture', () => {
+    expect(renderMarkdown('![[Plan#Goals]]')).toBe(
+      '<p><span class="uid-markdown__embed" data-embed="Plan#Goals"><a href="Plan.md#goals" class="uid-markdown__wikilink" data-wikilink="Plan#Goals">Plan › Goals</a></span></p>',
+    )
+    expect(renderMarkdown('![[map.png]]')).toContain('<img src="map.png"')
+  })
+})

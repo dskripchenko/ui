@@ -92,7 +92,10 @@ export interface MarkdownOptions {
   linkBase?: string | null
   /** Drops a trailing `.md` from relative links resolved through linkBase. */
   stripMdExtension?: boolean
-  /** Reads `[[note]]` internal links (on by default): links with `data-wikilink` for the host to resolve. */
+  /**
+   * Reads `[[note]]` internal links (on by default): links with `data-wikilink` for the host to resolve;
+   * `![[note]]` is an embed — `<span class="uid-markdown__embed" data-embed>` around the link, for the host to fill.
+   */
   wikiLinks?: boolean
   /**
    * Reads TeX math (on by default): `$…$` and `\(…\)` in a line, `$$…$$` and
@@ -208,7 +211,11 @@ function renderInline(escaped: string, opts: MarkdownOptions = {}): string {
       let href = file === '' ? anchor : `${file}${anchor}`
       if (opts.linkBase && file !== '' && isRelative(href)) href = resolveAgainst(href, opts.linkBase, opts.stripMdExtension ?? false)
       const text = alias ?? (heading ? `${name.trim() || ''}${name.trim() ? ' › ' : ''}${heading.trim()}` : name.trim())
-      return stash(`<a href="${href}" class="uid-markdown__wikilink" data-wikilink="${target.trim()}">${text}</a>`)
+      const link = `<a href="${href}" class="uid-markdown__wikilink" data-wikilink="${target.trim()}">${text}</a>`
+      // ![[note]], ![[note#heading]]: another note's text in this one. The host fills it in (data-embed);
+      // without a host it stays the link.
+      if (bang) return stash(`<span class="uid-markdown__embed" data-embed="${target.trim()}">${link}</span>`)
+      return stash(link)
     })
   }
   out = out.replace(/!\[([^\]]*)\]\(([^)\s]+)(?:\s+&quot;([^)]*?)&quot;)?\)/g, (m, alt: string, url: string, t?: string) => {

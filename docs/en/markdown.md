@@ -54,6 +54,8 @@ TeX math is drawn as MathML by `@dskripchenko/math`: `$…$` and `\(…\)` in a 
 
 `#todo`, `#work/urgent` are tags: `<span class="uid-markdown__tag" data-tag="…">` for the host to act on (a letter is needed — `#123` is not one; `C#` and a link's `#anchor` are not either). A YAML front matter at the start of the document (`---` lines around `key: value`) is shown as a table of properties — lists as `[a, b]` or `- a` lines, `tags:` as tags. `renderMarkdown` reads it with `{ frontMatter: true }`; `readFrontMatter(source)` gives it as data.
 
+`![[note]]` and `![[note#heading]]` embed another note: `<span class="uid-markdown__embed" data-embed="…">` around its link, for the host to fill with the note (and to give the class `is-filled`); without a host the link stays.
+
 ## Block renderers
 
 A fenced block whose language has a renderer is drawn by it instead of `UidCode` — this is how diagrams, charts or formulas plug in without the kit knowing about them.
