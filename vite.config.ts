@@ -38,7 +38,7 @@ export default defineConfig({
     },
     rollupOptions: {
       external: (id, importer) =>
-        id === 'vue' || id === '@dskripchenko/syntax' || (id === 'lucide-vue-next' && !!importer?.replace(/\\/g, '/').endsWith('/src/icons/index.ts')),
+        id === 'vue' || id === '@dskripchenko/syntax' || id === '@dskripchenko/math' || (id === 'lucide-vue-next' && !!importer?.replace(/\\/g, '/').endsWith('/src/icons/index.ts')),
       output: {
         assetFileNames: 'styles/[name][extname]',
         postBanner: (chunk) => (chunk.isEntry && chunk.name === 'index' ? lucideBanner : ''),

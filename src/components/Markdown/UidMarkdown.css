@@ -239,3 +239,11 @@
 /* An internal link ([[note]]): a document of one's own, underlined by dots; one the host found missing, dashed and muted. */
 .uid-markdown__html a.uid-markdown__wikilink { text-decoration: underline dotted; text-underline-offset: 3px; }
 .uid-markdown__html a.uid-markdown__wikilink.is-missing { color: var(--uid-text-tertiary, #8a8f98); text-decoration-style: dashed; }
+
+/* TeX math, drawn as MathML: a math font (fences and roots stretch only in one with a MATH table). */
+.uid-markdown math.dsk-math { font-family: "STIX Two Math", "Cambria Math", "Latin Modern Math", "Noto Sans Math", math; }
+.uid-markdown__math { overflow-x: auto; overflow-y: hidden; margin: 0.75em 0; }
+.uid-markdown__math math.dsk-math[display="block"] { margin: 0; }
+.uid-markdown .dsk-math-error { color: var(--uid-color-danger, #d1242f); font-family: var(--uid-font-family-mono, ui-monospace, monospace); border-bottom: 1px dotted; }
+/* ==Highlighted== text. */
+.uid-markdown__html mark { background: var(--uid-color-warning-subtle, #fff3bf); color: inherit; border-radius: 2px; padding: 0 0.1em; }

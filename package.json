@@ -90,6 +90,7 @@
     "vue": "^3.4.0"
   },
   "dependencies": {
+    "@dskripchenko/math": "^0.1.0",
     "@dskripchenko/syntax": "^0.3.2",
     "lucide-vue-next": "^0.460.0"
   },

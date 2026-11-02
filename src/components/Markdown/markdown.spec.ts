@@ -242,3 +242,44 @@ describe('renderMarkdown — task lists', () => {
     expect(html).toContain('<ul class="uid-markdown__tasks"><li class="uid-markdown__task"><input type="checkbox" disabled aria-label="Not done"> sub</li></ul>')
   })
 })
+
+describe('renderMarkdown: math and highlights', () => {
+  const tex = (html: string): string[] => [...html.matchAll(/<annotation encoding="application\/x-tex">([^<]*)<\/annotation>/g)].map((m) => m[1]!)
+
+  it('$…$ and \\(…\\) in a line, the TeX unescaped for the formula and escaped again in it', () => {
+    const html = renderMarkdown('Euler: $e^{i\\pi} + 1 = 0$ and \\(a < b\\).')
+    expect(tex(html)).toEqual(['e^{i\\pi} + 1 = 0', 'a &lt; b'])
+    expect(html).toContain('<math xmlns="http://www.w3.org/1998/Math/MathML" class="dsk-math"><semantics>')
+    expect(html).toContain('<mo>&lt;</mo>')
+  })
+
+  it('prices and spaced dollars stay text', () => {
+    expect(renderMarkdown('From $5 to $10, or $ 3 $.')).toBe('<p>From $5 to $10, or $ 3 $.</p>')
+    expect(renderMarkdown('An escaped \\$x\\$ too.')).toBe('<p>An escaped $x$ too.</p>')
+  })
+
+  it('$$…$$ and \\[…\\] on lines of their own, one line or several; unclosed is text', () => {
+    const one = renderMarkdown('Before\n\n$$\\sum_{i=1}^n i$$\n\nAfter')
+    expect(one).toMatch(/<p>Before<\/p>\n<div class="uid-markdown__math"><math [^>]*display="block">/)
+    expect(tex(one)).toEqual(['\\sum_{i=1}^n i'])
+    const many = renderMarkdown('$$\n\\begin{aligned}\na &= b \\\\\nc &= d\n\\end{aligned}\n$$')
+    expect(tex(many)).toEqual(['\\begin{aligned}\na &amp;= b \\\\\nc &amp;= d\n\\end{aligned}'])
+    expect(tex(renderMarkdown('\\[\nx^2\n\\]'))).toEqual(['x^2'])
+    expect(renderMarkdown('$$ not closed')).toBe('<p>$$ not closed</p>')
+  })
+
+  it('math inside code is code; TeX that cannot be read is shown as written', () => {
+    expect(renderMarkdown('`$x$`')).toBe('<p><code>$x$</code></p>')
+    expect(renderMarkdown('$\\nope$')).toContain('<span class="dsk-math-error" title="Unknown command \\nope">\\nope</span>')
+  })
+
+  it('math off: dollars are text', () => {
+    expect(renderMarkdown('$x$', { math: false })).toBe('<p>$x$</p>')
+  })
+
+  it('==highlighted== text; == between words is not', () => {
+    expect(renderMarkdown('A ==marked== word')).toBe('<p>A <mark>marked</mark> word</p>')
+    expect(renderMarkdown('a == b and a===b')).toBe('<p>a == b and a===b</p>')
+    expect(renderMarkdown('==**bold** inside==')).toBe('<p><mark><strong>bold</strong> inside</mark></p>')
+  })
+})

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { renderMath } from '@dskripchenko/math'
 import './UidMarkdown.css'
 import { computed, nextTick, onMounted, shallowRef, watch } from 'vue'
 import UidCode from '../Code/UidCode.vue'
@@ -133,6 +134,10 @@ function render(): void {
           taskLabels: { done: locale.value.markdown.taskDone, open: locale.value.markdown.taskOpen },
         }),
       }
+    }
+    // A ```math block (as GitHub writes a displayed formula): drawn here, unless the host renders it its own way.
+    if (segment.language === 'math' && !renderers.math) {
+      return { kind: 'html', html: `<div class="uid-markdown__math">${renderMath(segment.code, { display: true })}</div>` }
     }
     const renderer = segment.language ? renderers[segment.language] : undefined
     const ctx: UidMarkdownBlockRenderContext = {
