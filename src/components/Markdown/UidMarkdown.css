@@ -235,3 +235,7 @@
   .uid-markdown__block-error { break-inside: avoid; }
   .uid-markdown h1, .uid-markdown h2, .uid-markdown h3, .uid-markdown h4 { break-after: avoid; }
 }
+
+/* An internal link ([[note]]): a document of one's own, underlined by dots; one the host found missing, dashed and muted. */
+.uid-markdown__html a.uid-markdown__wikilink { text-decoration: underline dotted; text-underline-offset: 3px; }
+.uid-markdown__html a.uid-markdown__wikilink.is-missing { color: var(--uid-text-tertiary, #8a8f98); text-decoration-style: dashed; }
