@@ -124,6 +124,8 @@ function render(): void {
       return {
         kind: 'html',
         html: renderMarkdown(segment.source, {
+          // The document's properties: only at its very start.
+          frontMatter: index === 0,
           slugger,
           onHeading: (h) => found.push(h),
           linkBase: props.linkBase ?? null,

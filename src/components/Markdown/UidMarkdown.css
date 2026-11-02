@@ -247,3 +247,11 @@
 .uid-markdown .dsk-math-error { color: var(--uid-color-danger, #d1242f); font-family: var(--uid-font-family-mono, ui-monospace, monospace); border-bottom: 1px dotted; }
 /* ==Highlighted== text. */
 .uid-markdown__html mark { background: var(--uid-color-warning-subtle, #fff3bf); color: inherit; border-radius: 2px; padding: 0 0.1em; }
+/* #Tags: a chip; the host decides what a click on one does (data-tag). */
+.uid-markdown__html .uid-markdown__tag { display: inline-block; padding: 0 0.4em; border-radius: 999px; background: var(--uid-color-primary-subtle, #ddf4ff); color: var(--uid-color-primary, #0969da); font-size: 0.9em; line-height: 1.5; white-space: nowrap; cursor: pointer; }
+/* The document's properties (its front matter): a quiet table at the top. */
+.uid-markdown__html table.uid-markdown__props { width: auto; margin: 0 0 1.25em; border: 0; font-size: 0.9em; }
+.uid-markdown__html table.uid-markdown__props th, .uid-markdown__html table.uid-markdown__props td { border: 0; padding: 0.15em 0.75em 0.15em 0; background: none; vertical-align: top; }
+.uid-markdown__html table.uid-markdown__props th { color: var(--uid-text-secondary, #59636e); font-weight: 500; text-align: left; }
+.uid-markdown__html .uid-markdown__prop-value + .uid-markdown__prop-value::before { content: ', '; }
+.uid-markdown__html .uid-markdown__props .uid-markdown__tag { margin-right: 0.25em; }

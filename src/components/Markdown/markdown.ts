@@ -99,6 +99,14 @@ export interface MarkdownOptions {
    * `\[…\]` on lines of their own — drawn as MathML by @dskripchenko/math.
    */
   math?: boolean
+  /** Reads `#tags` (on by default): `<span class="uid-markdown__tag" data-tag="…">` for the host to act on. */
+  tags?: boolean
+  /**
+   * Reads a YAML front matter at the start of the source (`---` lines around
+   * `key: value`) as the document's properties, drawn as a table. Off by
+   * default: a caller rendering a piece of a document says when it is the start.
+   */
+  frontMatter?: boolean
   /** The base relative image paths resolve against. */
   imageBase?: string | null
   /**
@@ -225,6 +233,12 @@ function renderInline(escaped: string, opts: MarkdownOptions = {}): string {
     )
   })
 
+  // Tags, as note-taking apps write them: #word, #nested/tag — a letter somewhere in it (#123 is not one),
+  // at the start of a word (C# and links' #anchors are not).
+  if (opts.tags !== false) {
+    out = out.replace(TAG, (_m, tag: string) => stash(tagHtml(tag)))
+  }
+
   out = out
     .replace(/\*\*(?=\S)(.+?)(?<=\S)\*\*/g, '<strong>$1</strong>')
     .replace(/(?<!\w)__(?=\S)(.+?)(?<=\S)__(?!\w)/g, '<strong>$1</strong>')
@@ -242,6 +256,76 @@ function renderInline(escaped: string, opts: MarkdownOptions = {}): string {
     out = out.replace(/(\d+)/g, (_m, i: string) => slots[Number(i)] ?? '')
   }
   return out
+}
+
+/** A tag in text: `#` at the start of a word, then letters, digits, `_`, `-` and `/`, at least one of them a letter. */
+const TAG = /(?<![^\s(\[{,;])#((?=[\p{L}\p{N}_/-]*[\p{L}_])[\p{L}\p{N}_][\p{L}\p{N}_/-]*)/gu
+
+function tagHtml(tag: string): string {
+  const name = tag.replace(/[/-]+$/, '')
+  const rest = tag.slice(name.length)
+  return `<span class="uid-markdown__tag" data-tag="${name}">#${name}</span>${rest}`
+}
+
+/** A value of a document's property: text, or a list. */
+export type FrontMatterValue = string | string[]
+
+/** A document's YAML front matter: its properties, and how long it is in the source. */
+export interface FrontMatter {
+  data: Record<string, FrontMatterValue>
+  /** The characters it takes at the start of the source, its `---` lines included. */
+  length: number
+}
+
+/**
+ * The front matter at the start of a source, read as simple YAML: `key: value`,
+ * lists as `[a, b]` or `- a` lines, quoted strings; anything deeper is kept as
+ * its text. Null when the source does not start with one.
+ */
+export function readFrontMatter(source: string): FrontMatter | null {
+  const m = /^---[ \t]*\r?\n([\s\S]*?)\r?\n(?:---|\.\.\.)[ \t]*(?:\r?\n|$)/.exec(source)
+  if (!m) return null
+  const data: Record<string, FrontMatterValue> = {}
+  const unquote = (v: string): string => {
+    const t = v.trim()
+    return /^(["']).*\1$/.test(t) ? t.slice(1, -1) : t
+  }
+  let last: string | null = null
+  for (const line of (m[1] ?? '').split(/\r?\n/)) {
+    if (line.trim() === '' || line.trim().startsWith('#')) continue
+    const item = /^\s+-\s+(.*)$|^-\s+(.*)$/.exec(line)
+    if (item && last !== null) {
+      const prev = data[last]
+      const value = unquote(item[1] ?? item[2] ?? '')
+      data[last] = Array.isArray(prev) ? [...prev, value] : prev ? [prev, value] : [value]
+      continue
+    }
+    const pair = /^([^\s:#][^:]*?):(?:\s+(.*))?$/.exec(line)
+    if (pair && !/^\s/.test(line)) {
+      last = pair[1]!.trim()
+      const value = (pair[2] ?? '').trim()
+      data[last] = /^\[.*\]$/.test(value)
+        ? value.slice(1, -1).split(',').map(unquote).filter((v) => v !== '')
+        : unquote(value)
+      continue
+    }
+    // Deeper YAML: kept as the text of the property it belongs to.
+    if (last !== null && typeof data[last] === 'string') data[last] = `${data[last]}${data[last] ? '\n' : ''}${line.trim()}`
+  }
+  return { data, length: m[0].length }
+}
+
+/** The properties as a table; the tags among them as tags. */
+function propertiesHtml(data: Record<string, FrontMatterValue>, opts: MarkdownOptions): string {
+  const rows = Object.entries(data).map(([key, value]) => {
+    const tagsKey = /^tags?$/i.test(key) && opts.tags !== false
+    const items = (Array.isArray(value) ? value : tagsKey ? value.split(/[,\s]+/) : [value]).filter((v) => v !== '')
+    const cell = items
+      .map((v) => (tagsKey ? tagHtml(escapeHtml(v.replace(/^#/, ''))) : `<span class="uid-markdown__prop-value">${escapeHtml(v)}</span>`))
+      .join(tagsKey ? ' ' : '')
+    return `<tr><th scope="row">${escapeHtml(key)}</th><td>${cell}</td></tr>`
+  })
+  return `<table class="uid-markdown__props"><tbody>${rows.join('')}</tbody></table>`
 }
 
 /** The plain text of rendered inline HTML: for anchor ids and the table of contents. */
@@ -288,8 +372,13 @@ function calloutTitle(kind: string, opts: MarkdownOptions): string {
 
 export function renderMarkdown(source: string | null | undefined, opts: MarkdownOptions = {}): string {
   if (!source) return ''
-  const lines = escapeHtml(source.replace(/\r\n?/g, '\n')).split('\n')
   const html: string[] = []
+  const front = opts.frontMatter ? readFrontMatter(source) : null
+  if (front) {
+    if (Object.keys(front.data).length > 0) html.push(propertiesHtml(front.data, opts))
+    source = source.slice(front.length)
+  }
+  const lines = escapeHtml(source.replace(/\r\n?/g, '\n')).split('\n')
   let paragraph: string[] = []
   const inline = (text: string): string => renderInline(text, opts)
 
