@@ -50,6 +50,10 @@ TeX 公式由 `@dskripchenko/math` 绘制为 MathML：行内的 `$…$` 和 `\(�
 
 `==文字==` 会被高亮（`<mark>`）。`[[笔记]]`、`[[笔记#标题]]`、`[[笔记|文字]]` 是带有 `data-wikilink` 的链接，由宿主决定指向何处；`![[图片.png]]` 显示图片。
 
+## 标签与属性
+
+`#todo`、`#work/urgent` 是标签：`<span class="uid-markdown__tag" data-tag="…">`，由宿主决定如何响应（至少需要一个字母——`#123` 不是标签；`C#` 和链接中的 `#锚点` 也不是）。文档开头的 YAML front matter（由 `---` 行包围的 `键: 值`）显示为属性表——列表可写作 `[a, b]` 或 `- a` 行，`tags:` 显示为标签。`renderMarkdown` 通过 `{ frontMatter: true }` 读取它；`readFrontMatter(source)` 以数据形式返回。
+
 ## 代码块渲染器
 
 若某语言注册了渲染器，该语言的代码块由它绘制，而不是 `UidCode` —— 图表、示意图或公式由此接入，组件库本身无需了解它们。

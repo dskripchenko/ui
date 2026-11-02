@@ -3,11 +3,14 @@ export type { UidMarkdownProps } from './UidMarkdown.vue'
 export {
   createSlugger,
   escapeHtml,
+  readFrontMatter,
   renderMarkdown,
   resolveAgainst,
   splitMarkdown,
 } from './markdown.js'
 export type {
+  FrontMatter,
+  FrontMatterValue,
   MarkdownHeading,
   MarkdownOptions,
   MarkdownSegment,

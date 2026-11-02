@@ -152,6 +152,7 @@ export {
   UidMarkdown,
   createSlugger,
   escapeHtml,
+  readFrontMatter,
   renderMarkdown,
   resolveAgainst,
   splitMarkdown,
@@ -161,6 +162,8 @@ export {
 } from './components/Markdown/index.js'
 export type {
   UidMarkdownProps,
+  FrontMatter,
+  FrontMatterValue,
   MarkdownHeading,
   MarkdownOptions,
   MarkdownSegment,

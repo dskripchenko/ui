@@ -50,6 +50,10 @@ TeX-Formeln werden von `@dskripchenko/math` als MathML gezeichnet: `$…$` und `
 
 `==Text==` wird hervorgehoben (`<mark>`). `[[Notiz]]`, `[[Notiz#Überschrift]]`, `[[Notiz|Text]]` sind Links mit `data-wikilink`, die der Host auflöst; `![[bild.png]]` ist das Bild.
 
+## Tags und Eigenschaften
+
+`#todo`, `#work/urgent` sind Tags: `<span class="uid-markdown__tag" data-tag="…">`, auf die der Host reagiert (ein Buchstabe ist nötig — `#123` ist keiner; `C#` und der `#Anker` eines Links auch nicht). Ein YAML-Front-Matter am Anfang des Dokuments (`---`-Zeilen um `Schlüssel: Wert`) erscheint als Tabelle der Eigenschaften — Listen als `[a, b]` oder `- a`-Zeilen, `tags:` als Tags. `renderMarkdown` liest es mit `{ frontMatter: true }`; `readFrontMatter(source)` liefert es als Daten.
+
 ## Block-Renderer
 
 Ein Codeblock, für dessen Sprache ein Renderer existiert, wird von diesem statt von `UidCode` gezeichnet — so lassen sich Diagramme, Charts oder Formeln einbinden, ohne dass das Kit sie kennt.

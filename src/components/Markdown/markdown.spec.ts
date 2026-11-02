@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import {
   createSlugger,
+  readFrontMatter,
   renderMarkdown,
   resolveAgainst,
   splitMarkdown,
@@ -281,5 +282,34 @@ describe('renderMarkdown: math and highlights', () => {
     expect(renderMarkdown('A ==marked== word')).toBe('<p>A <mark>marked</mark> word</p>')
     expect(renderMarkdown('a == b and a===b')).toBe('<p>a == b and a===b</p>')
     expect(renderMarkdown('==**bold** inside==')).toBe('<p><mark><strong>bold</strong> inside</mark></p>')
+  })
+})
+
+describe('renderMarkdown: tags and properties', () => {
+  it('#tags at the start of a word, with a letter in them; not C#, #123, an anchor or a heading', () => {
+    expect(renderMarkdown('Work on #todo and #work/urgent, #задача.')).toBe(
+      '<p>Work on <span class="uid-markdown__tag" data-tag="todo">#todo</span> and <span class="uid-markdown__tag" data-tag="work/urgent">#work/urgent</span>, <span class="uid-markdown__tag" data-tag="задача">#задача</span>.</p>',
+    )
+    expect(renderMarkdown('C# and #123, see [here](#intro) or https://e.com/#x')).not.toContain('uid-markdown__tag')
+    expect(renderMarkdown('# Heading')).toContain('<h1')
+    expect(renderMarkdown('`#code`')).toBe('<p><code>#code</code></p>')
+    expect(renderMarkdown('#todo', { tags: false })).toBe('<p>#todo</p>')
+  })
+
+  it('front matter: only when asked, read as properties; tags among them as tags', () => {
+    const src = '---\ntitle: "The plan"\ntags: [work, q4]\naliases:\n  - Plan\n  - Roadmap\n---\n\n# Body'
+    expect(renderMarkdown(src)).toContain('<hr>')
+    const html = renderMarkdown(src, { frontMatter: true })
+    expect(html).toMatch(/^<table class="uid-markdown__props"><tbody><tr><th scope="row">title<\/th><td><span class="uid-markdown__prop-value">The plan<\/span><\/td><\/tr>/)
+    expect(html).toContain('<td><span class="uid-markdown__tag" data-tag="work">#work</span> <span class="uid-markdown__tag" data-tag="q4">#q4</span></td>')
+    expect(html).toContain('<span class="uid-markdown__prop-value">Plan</span><span class="uid-markdown__prop-value">Roadmap</span>')
+    expect(html).toContain('<h1>Body</h1>')
+    expect(html).not.toContain('<hr>')
+  })
+
+  it('readFrontMatter: simple YAML; none without the opening line; values escaped when drawn', () => {
+    expect(readFrontMatter('---\na: 1\nb: [x, "y"]\nc: \'z\'\n---\nrest')).toEqual({ data: { a: '1', b: ['x', 'y'], c: 'z' }, length: 32 })
+    expect(readFrontMatter('text\n---\na: 1\n---')).toBeNull()
+    expect(renderMarkdown('---\nx: <b>y</b>\n---\n', { frontMatter: true })).toContain('&lt;b&gt;y&lt;/b&gt;')
   })
 })
