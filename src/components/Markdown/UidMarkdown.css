@@ -255,3 +255,5 @@
 .uid-markdown__html table.uid-markdown__props th { color: var(--uid-text-secondary, #59636e); font-weight: 500; text-align: left; }
 .uid-markdown__html .uid-markdown__prop-value + .uid-markdown__prop-value::before { content: ', '; }
 .uid-markdown__html .uid-markdown__props .uid-markdown__tag { margin-right: 0.25em; }
+/* An embedded note (![[note]]): its text in a frame once the host fills it; until then the link. */
+.uid-markdown__html .uid-markdown__embed.is-filled { display: block; margin: 0.75em 0; padding: 0.5em 1em; border-left: 3px solid var(--uid-color-primary, #0969da); background: color-mix(in srgb, var(--uid-color-primary, #0969da) 5%, transparent); border-radius: 0 6px 6px 0; }
