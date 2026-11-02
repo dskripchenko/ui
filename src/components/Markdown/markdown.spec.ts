@@ -131,6 +131,16 @@ describe('renderMarkdown — lists', () => {
     expect(renderMarkdown('1. x\n   y\n   ```js\n   z\n   ```')).toContain('<li>x\ny')
   })
 
+  it('reads internal links: [[note]], a heading, a text of its own; ![[picture]] is the picture', () => {
+    expect(renderMarkdown('See [[Plans]].')).toBe('<p>See <a href="Plans.md" class="uid-markdown__wikilink" data-wikilink="Plans">Plans</a>.</p>')
+    expect(renderMarkdown('[[Road map#Next steps|what is next]]')).toBe('<p><a href="Road%20map.md#next-steps" class="uid-markdown__wikilink" data-wikilink="Road map#Next steps">what is next</a></p>')
+    expect(renderMarkdown('[[#Intro]] and [[notes/a.md]]')).toContain('<a href="#intro" class="uid-markdown__wikilink" data-wikilink="#Intro">Intro</a>')
+    expect(renderMarkdown('[[notes/a.md]]')).toContain('href="notes/a.md"')
+    expect(renderMarkdown('![[img/cat.png]]')).toBe('<p><img src="img/cat.png" alt="img/cat.png" loading="lazy"></p>')
+    expect(renderMarkdown('`[[not a link]]`')).toBe('<p><code>[[not a link]]</code></p>')
+    expect(renderMarkdown('[[x]]', { wikiLinks: false })).toBe('<p>[[x]]</p>')
+  })
+
   it('starts an ordered list at its first number', () => {
     expect(renderMarkdown('3. c\n4. d')).toBe('<ol start="3"><li>c</li><li>d</li></ol>')
   })

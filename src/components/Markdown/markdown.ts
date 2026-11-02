@@ -43,6 +43,19 @@ export interface MarkdownHeading {
   id: string
 }
 
+/** A heading's anchor as a link names it: the same rule as the headings' ids, without numbering. */
+function headingSlug(text: string): string {
+  return (
+    text
+      .toLowerCase()
+      .trim()
+      .replace(/[^\p{L}\p{N}\s_-]/gu, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '') || 'section'
+  )
+}
+
 /** Turns heading text into a unique anchor id; shared across the chunks of one document. */
 export type Slugger = (text: string) => string
 
@@ -75,6 +88,8 @@ export interface MarkdownOptions {
   linkBase?: string | null
   /** Drops a trailing `.md` from relative links resolved through linkBase. */
   stripMdExtension?: boolean
+  /** Reads `[[note]]` internal links (on by default): links with `data-wikilink` for the host to resolve. */
+  wikiLinks?: boolean
   /** The base relative image paths resolve against. */
   imageBase?: string | null
   /**
@@ -148,6 +163,28 @@ function renderInline(escaped: string, opts: MarkdownOptions = {}): string {
   out = out.replace(/\\(&(?:lt|gt|amp|quot|#39);|[!-/:-@[-`{-~])/g, (_m, ch: string) => stash(ch))
 
   const title = (t: string | undefined): string => (t ? ` title="${t}"` : '')
+  // Internal links, as note-taking apps write them: [[note]], [[note#heading]], [[note|text]];
+  // ![[picture.png]] is the picture. The host decides where a note is (`data-wikilink`);
+  // the address is a guess: the note's file beside the document.
+  if (opts.wikiLinks !== false) {
+    out = out.replace(/(!?)\[\[([^\]|\n]+?)(?:\|([^\]\n]+?))?\]\]/g, (m, bang: string, target: string, alias?: string) => {
+      const [name = '', heading] = target.trim().split('#')
+      const picture = /\.(?:png|jpe?g|gif|svg|webp|avif|bmp)$/i.test(name)
+      let file = name.trim() === '' ? '' : /\.\w+$/.test(name.trim()) ? name.trim() : `${name.trim()}.md`
+      file = file.replace(/ /g, '%20')
+      if (bang && picture) {
+        let src = safeUrl(file)
+        if (src === null) return m
+        if (opts.imageBase && isRelative(src)) src = resolveAgainst(src, opts.imageBase)
+        return stash(`<img src="${src}" alt="${alias ?? name}" loading="lazy">`)
+      }
+      const anchor = heading ? `#${headingSlug(unescapeHtml(heading))}` : ''
+      let href = file === '' ? anchor : `${file}${anchor}`
+      if (opts.linkBase && file !== '' && isRelative(href)) href = resolveAgainst(href, opts.linkBase, opts.stripMdExtension ?? false)
+      const text = alias ?? (heading ? `${name.trim() || ''}${name.trim() ? ' › ' : ''}${heading.trim()}` : name.trim())
+      return stash(`<a href="${href}" class="uid-markdown__wikilink" data-wikilink="${target.trim()}">${text}</a>`)
+    })
+  }
   out = out.replace(/!\[([^\]]*)\]\(([^)\s]+)(?:\s+&quot;([^)]*?)&quot;)?\)/g, (m, alt: string, url: string, t?: string) => {
     let src = safeUrl(url)
     if (src === null) return m
