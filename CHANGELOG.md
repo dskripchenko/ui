@@ -1,5 +1,11 @@
 # @dskripchenko/ui
 
+## 1.26.0
+
+### Minor Changes
+
+- 43da262: Markdown: TeX math — `$…$`, `\(…\)`, `$$…$$`, `\[…\]` and ```math blocks — drawn as MathML by `@dskripchenko/math`(a math font stack in the styles;`math: false`turns it off), and`==highlighted==`text as`<mark>`.
+
 ## 1.25.0
 
 ### Minor Changes
