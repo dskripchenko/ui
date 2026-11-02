@@ -1,5 +1,11 @@
 # @dskripchenko/ui
 
+## 1.26.1
+
+### Patch Changes
+
+- 15c05a9: `@dskripchenko/syntax` 0.4: code blocks in LaTeX (`latex`, `tex`, `math`), and TeX math and `==highlights==` in Markdown sources, are highlighted.
+
 ## 1.26.0
 
 ### Minor Changes
