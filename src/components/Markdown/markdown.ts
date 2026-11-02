@@ -11,8 +11,12 @@
  * HTML in the markdown is shown as text, never executed; link and image URLs
  * are limited to http(s), mailto, relative and anchor targets.
  *
+ * TeX math (`$…$`, `$$…$$`) is drawn as MathML by @dskripchenko/math, which
+ * escapes the TeX in the same way.
+ *
  * Ported from laravel-admin core, where it was born; the kit is now its home.
  */
+import { renderMath } from '@dskripchenko/math'
 
 const ESCAPES: Record<string, string> = {
   '&': '&amp;',
@@ -90,6 +94,11 @@ export interface MarkdownOptions {
   stripMdExtension?: boolean
   /** Reads `[[note]]` internal links (on by default): links with `data-wikilink` for the host to resolve. */
   wikiLinks?: boolean
+  /**
+   * Reads TeX math (on by default): `$…$` and `\(…\)` in a line, `$$…$$` and
+   * `\[…\]` on lines of their own — drawn as MathML by @dskripchenko/math.
+   */
+  math?: boolean
   /** The base relative image paths resolve against. */
   imageBase?: string | null
   /**
@@ -157,6 +166,15 @@ function renderInline(escaped: string, opts: MarkdownOptions = {}): string {
     const body = /^ [\s\S]* $/.test(code) && code.trim() !== '' ? code.slice(1, -1) : code
     return stash(`<code>${body.replace(/\n/g, ' ')}</code>`)
   })
+  // Math, before the escapes: TeX is full of backslashes. `$$…$$` in a line is displayed;
+  // `$…$` as Pandoc reads it — no space inside the dollars, no digit after the closing one,
+  // so prices ($5 and $10) stay text.
+  if (opts.math !== false) {
+    const tex = (s: string): string => unescapeHtml(s)
+    out = out.replace(/(?<![\\$])\$\$(?=\S)([\s\S]+?)(?<=\S)\$\$/g, (_m, t: string) => stash(renderMath(tex(t), { display: true })))
+    out = out.replace(/\\\(([\s\S]+?)\\\)/g, (_m, t: string) => stash(renderMath(tex(t))))
+    out = out.replace(/(?<![\\$\w])\$(?![\s$])((?:\\\$|[^$])+?)(?<![\s\\])\$(?![\d$])/g, (_m, t: string) => stash(renderMath(tex(t))))
+  }
   // Hard breaks: a backslash or two spaces at the end of a line.
   out = out.replace(/(?:\\| {2,})\n/g, () => stash('<br>'))
   // Backslash escapes of ASCII punctuation (an HTML-escaped character counts as one).
@@ -214,6 +232,8 @@ function renderInline(escaped: string, opts: MarkdownOptions = {}): string {
     // An underscore inside a word (snake_case) is not emphasis.
     .replace(/(?<!\w)_(?=\S)(.+?)(?<=\S)_(?!\w)/g, '<em>$1</em>')
     .replace(/~~(?=\S)(.+?)(?<=\S)~~/g, '<del>$1</del>')
+    // Highlighted text, as note-taking apps write it: ==marked==.
+    .replace(/(?<!=)==(?=[^\s=])(.+?)(?<=[^\s=])==(?!=)/g, '<mark>$1</mark>')
 
   // Slots inside slots (an escape inside a link's text) resolve too.
   let prev = ''
@@ -309,6 +329,32 @@ export function renderMarkdown(source: string | null | undefined, opts: Markdown
     if (line.trim() === '') {
       flushParagraph()
       continue
+    }
+
+    // A displayed formula: `$$` or `\[` opening a line, up to `$$` or `\]` closing one (the same line too).
+    const mathOpen = opts.math !== false ? /^\s*(\$\$|\\\[)/.exec(line) : null
+    if (mathOpen) {
+      const close = mathOpen[1] === '$$' ? '$$' : '\\]'
+      const first = line.trim().slice(2)
+      const body: string[] = []
+      let closed = first.trimEnd().endsWith(close)
+      if (closed) body.push(first.trimEnd().slice(0, -close.length))
+      else {
+        body.push(first)
+        let j = i + 1
+        while (j < lines.length && !(lines[j] ?? '').trimEnd().endsWith(close)) body.push(lines[j++] ?? '')
+        if (j < lines.length) {
+          body.push((lines[j] ?? '').trimEnd().slice(0, -close.length))
+          closed = true
+          i = j
+        }
+      }
+      // Without its closing line it is text, as written.
+      if (closed) {
+        flushParagraph()
+        html.push(`<div class="uid-markdown__math">${renderMath(unescapeHtml(body.join('\n').trim()), { display: true })}</div>`)
+        continue
+      }
     }
 
     const heading = /^(#{1,6})\s+(.*?)\s*#*\s*$/.exec(line)

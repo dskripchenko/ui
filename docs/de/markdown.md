@@ -1,6 +1,6 @@
 # Markdown
 
-`UidMarkdown` rendert ein Markdown-Dokument ohne Abhängigkeiten: Überschriften mit Ankern, Hervorhebungen, Links, Bilder, (verschachtelte) Listen, Tabellen mit Ausrichtung, Zitate, Hinweisboxen und Code. Codeblöcke der obersten Ebene zeichnet `UidCode` (Hervorhebung von rund 35 Sprachen und Formaten durch `@dskripchenko/syntax`, Kopier-Button).
+`UidMarkdown` rendert ein Markdown-Dokument ohne Abhängigkeiten: Überschriften mit Ankern, Hervorhebungen, Links, Bilder, (verschachtelte) Listen, Tabellen mit Ausrichtung, Zitate, Hinweisboxen, TeX-Formeln, Hervorhebungen, interne Links und Code. Codeblöcke der obersten Ebene zeichnet `UidCode` (Hervorhebung von rund 35 Sprachen und Formaten durch `@dskripchenko/syntax`, Kopier-Button).
 
 ```vue
 <UidMarkdown :source="text" toc link-base="/docs/de/" />
@@ -33,6 +33,22 @@ Der Quelltext wird **vor** jeder Auszeichnung HTML-maskiert: rohes HTML erschein
 ```
 
 Arten: `NOTE`, `TIP`, `IMPORTANT`, `WARNING`, `CAUTION`. Titel und die Beschriftung des Inhaltsverzeichnisses kommen aus der Locale (`markdown.*`, siehe [i18n](./i18n.md)).
+
+## Formeln, Hervorhebungen, interne Links
+
+```md
+Inline: $e^{i\pi} + 1 = 0$ or \(a^2 + b^2\). A price stays text: $5 and $10.
+
+$$
+\sum_{i=1}^{n} i = \frac{n(n+1)}{2}
+$$
+
+A ==highlighted== phrase. A link to a note: [[Plans#Goals|the goals]], a picture: ![[map.png]].
+```
+
+TeX-Formeln werden von `@dskripchenko/math` als MathML gezeichnet: `$…$` und `\(…\)` in einer Zeile (kein Leerzeichen innerhalb der Dollarzeichen, keine Ziffer nach dem schließenden — wie Pandoc liest), `$$…$$`, `\[…\]` und ein ` ```math `-Block auf eigenen Zeilen. TeX, das nicht gelesen werden kann, erscheint wie geschrieben, markiert, mit dem Grund im Tooltip. Klammern und Wurzeln strecken sich nur in einer Mathematikschrift; die Stile des Kits nennen STIX Two Math, Cambria Math, Latin Modern Math und Noto Sans Math. `renderMarkdown(source, { math: false })` liest Dollarzeichen als Text.
+
+`==Text==` wird hervorgehoben (`<mark>`). `[[Notiz]]`, `[[Notiz#Überschrift]]`, `[[Notiz|Text]]` sind Links mit `data-wikilink`, die der Host auflöst; `![[bild.png]]` ist das Bild.
 
 ## Block-Renderer
 

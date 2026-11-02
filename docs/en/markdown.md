@@ -1,6 +1,6 @@
 # Markdown
 
-`UidMarkdown` renders a markdown document with no dependencies: headings with anchors, emphasis, links, images, lists (nested), tables with alignment, block quotes, callouts and code. Top-level fenced code is drawn by `UidCode` (highlighting of some 35 languages and formats by `@dskripchenko/syntax`, copy button).
+`UidMarkdown` renders a markdown document with no dependencies: headings with anchors, emphasis, links, images, lists (nested), tables with alignment, block quotes, callouts, TeX math, highlights, internal links and code. Top-level fenced code is drawn by `UidCode` (highlighting of some 35 languages and formats by `@dskripchenko/syntax`, copy button).
 
 ```vue
 <UidMarkdown :source="text" toc link-base="/docs/en/" />
@@ -33,6 +33,22 @@ The source is HTML-escaped **before** any markup is produced: raw HTML is shown 
 ```
 
 Kinds: `NOTE`, `TIP`, `IMPORTANT`, `WARNING`, `CAUTION`. Titles and the table of contents caption come from the locale bag (`markdown.*`, see [i18n](./i18n.md)).
+
+## Math, highlights, internal links
+
+```md
+Inline: $e^{i\pi} + 1 = 0$ or \(a^2 + b^2\). A price stays text: $5 and $10.
+
+$$
+\sum_{i=1}^{n} i = \frac{n(n+1)}{2}
+$$
+
+A ==highlighted== phrase. A link to a note: [[Plans#Goals|the goals]], a picture: ![[map.png]].
+```
+
+TeX math is drawn as MathML by `@dskripchenko/math`: `$…$` and `\(…\)` in a line (no space inside the dollars, no digit after the closing one, as Pandoc reads it), `$$…$$`, `\[…\]` and a ` ```math ` block on lines of their own. TeX that cannot be read is shown as written, marked, with the reason in its title. Fences and roots stretch only in a math font; the kit's styles name STIX Two Math, Cambria Math, Latin Modern Math and Noto Sans Math. `renderMarkdown(source, { math: false })` reads dollars as text.
+
+`==text==` is highlighted (`<mark>`). `[[note]]`, `[[note#heading]]`, `[[note|text]]` are links with `data-wikilink` for the host to resolve; `![[picture.png]]` is the picture.
 
 ## Block renderers
 

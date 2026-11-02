@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@dskripchenko/math':
+        specifier: ^0.1.0
+        version: 0.1.0
       '@dskripchenko/syntax':
         specifier: ^0.3.2
         version: 0.3.2
@@ -221,6 +224,10 @@ packages:
   '@csstools/css-tokenizer@4.0.0':
     resolution: {integrity: sha512-QxULHAm7cNu72w97JUNCBFODFaXpbDg+dP8b/oWFAZ2MTRppA3U00Y2L1HqaS4J6yBqxwa/Y3nMBaxVKbB/NsA==}
     engines: {node: '>=20.19.0'}
+
+  '@dskripchenko/math@0.1.0':
+    resolution: {integrity: sha512-M87c5BAvDsYRZviaXHFkQWK/0a++xkVbidB+loqS5cHTXIyyD5yoHLMHFDqMLlLEyvMOOuJeMRPRjvoYyiilRw==}
+    engines: {node: '>=20'}
 
   '@dskripchenko/syntax@0.3.2':
     resolution: {integrity: sha512-IwbURY60JyHzZdYkzIOmmxHYi4VgJD5Md/j5Il7Mbot3q2ic/Rxad4U5eke2AqVIt4caPXoZAuqBttptQC/c2A==}
@@ -3036,6 +3043,8 @@ snapshots:
       css-tree: 3.2.1
 
   '@csstools/css-tokenizer@4.0.0': {}
+
+  '@dskripchenko/math@0.1.0': {}
 
   '@dskripchenko/syntax@0.3.2': {}
 

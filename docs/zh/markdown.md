@@ -1,6 +1,6 @@
 # Markdown
 
-`UidMarkdown` 无依赖地渲染 Markdown 文档：带锚点的标题、强调、链接、图片、（嵌套）列表、带对齐的表格、引用、提示框和代码。顶层代码块由 `UidCode` 绘制（由 `@dskripchenko/syntax` 高亮约 35 种语言和格式、复制按钮）。
+`UidMarkdown` 无依赖地渲染 Markdown 文档：带锚点的标题、强调、链接、图片、（嵌套）列表、带对齐的表格、引用、提示框、TeX 公式、高亮、内部链接和代码。顶层代码块由 `UidCode` 绘制（由 `@dskripchenko/syntax` 高亮约 35 种语言和格式、复制按钮）。
 
 ```vue
 <UidMarkdown :source="text" toc link-base="/docs/zh/" />
@@ -33,6 +33,22 @@
 ```
 
 类型：`NOTE`、`TIP`、`IMPORTANT`、`WARNING`、`CAUTION`。提示框标题和目录标题来自语言包（`markdown.*`，见 [i18n](./i18n.md)）。
+
+## 公式、高亮、内部链接
+
+```md
+Inline: $e^{i\pi} + 1 = 0$ or \(a^2 + b^2\). A price stays text: $5 and $10.
+
+$$
+\sum_{i=1}^{n} i = \frac{n(n+1)}{2}
+$$
+
+A ==highlighted== phrase. A link to a note: [[Plans#Goals|the goals]], a picture: ![[map.png]].
+```
+
+TeX 公式由 `@dskripchenko/math` 绘制为 MathML：行内的 `$…$` 和 `\(…\)`（美元符号内侧不能有空格，闭合符号后不能紧跟数字——与 Pandoc 的规则相同），以及独占一行的 `$$…$$`、`\[…\]` 和 ` ```math ` 代码块。无法解析的 TeX 按原样显示并加以标记，原因显示在提示中。括号和根号只有在数学字体中才能伸缩；组件库的样式列出了 STIX Two Math、Cambria Math、Latin Modern Math 和 Noto Sans Math。`renderMarkdown(source, { math: false })` 会把美元符号当作普通文本。
+
+`==文字==` 会被高亮（`<mark>`）。`[[笔记]]`、`[[笔记#标题]]`、`[[笔记|文字]]` 是带有 `data-wikilink` 的链接，由宿主决定指向何处；`![[图片.png]]` 显示图片。
 
 ## 代码块渲染器
 
