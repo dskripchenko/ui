@@ -193,19 +193,24 @@ function renderInline(escaped: string, opts: MarkdownOptions = {}): string {
 
   const title = (t: string | undefined): string => (t ? ` title="${t}"` : '')
   // Internal links, as note-taking apps write them: [[note]], [[note#heading]], [[note|text]];
-  // ![[picture.png]] is the picture. The host decides where a note is (`data-wikilink`);
-  // the address is a guess: the note's file beside the document.
+  // ![[picture.png]] is the picture, ![[picture.png|300]] (or |300x200) at that size. The host
+  // decides where a note or a picture is (`data-wikilink`, `data-embed`); the address is a guess:
+  // the file beside the document.
   if (opts.wikiLinks !== false) {
     out = out.replace(/(!?)\[\[([^\]|\n]+?)(?:\|([^\]\n]+?))?\]\]/g, (m, bang: string, target: string, alias?: string) => {
       const [name = '', heading] = target.trim().split('#')
-      const picture = /\.(?:png|jpe?g|gif|svg|webp|avif|bmp)$/i.test(name)
+      const picture = /\.(?:png|jpe?g|gif|svg|webp|avif|bmp|ico|apng)$/i.test(name)
+      // An embed's text that is a size (`300`, `300x200`) sizes it, as in Obsidian.
+      const size = bang && alias !== undefined ? /^\s*(\d+)\s*(?:x\s*(\d+))?\s*$/.exec(alias) : null
+      const sized = size ? ` data-size="${size[1]}${size[2] ? `x${size[2]}` : ''}"` : ''
       let file = name.trim() === '' ? '' : /\.\w+$/.test(name.trim()) ? name.trim() : `${name.trim()}.md`
       file = file.replace(/ /g, '%20')
       if (bang && picture) {
         let src = safeUrl(file)
         if (src === null) return m
         if (opts.imageBase && isRelative(src)) src = resolveAgainst(src, opts.imageBase)
-        return stash(`<img src="${src}" alt="${alias ?? name}" loading="lazy">`)
+        const dims = size ? ` width="${size[1]}"${size[2] ? ` height="${size[2]}"` : ''}` : ''
+        return stash(`<img src="${src}" alt="${size ? name.trim() : (alias ?? name)}"${dims} loading="lazy" class="uid-markdown__embed-image" data-embed="${name.trim()}"${sized}>`)
       }
       const anchor = heading ? `#${headingSlug(unescapeHtml(heading))}` : ''
       let href = file === '' ? anchor : `${file}${anchor}`
@@ -214,7 +219,7 @@ function renderInline(escaped: string, opts: MarkdownOptions = {}): string {
       const link = `<a href="${href}" class="uid-markdown__wikilink" data-wikilink="${target.trim()}">${text}</a>`
       // ![[note]], ![[note#heading]]: another note's text in this one. The host fills it in (data-embed);
       // without a host it stays the link.
-      if (bang) return stash(`<span class="uid-markdown__embed" data-embed="${target.trim()}">${link}</span>`)
+      if (bang) return stash(`<span class="uid-markdown__embed" data-embed="${target.trim()}"${sized}>${link}</span>`)
       return stash(link)
     })
   }
