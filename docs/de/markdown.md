@@ -48,7 +48,7 @@ A ==highlighted== phrase. A link to a note: [[Plans#Goals|the goals]], a picture
 
 TeX-Formeln werden von `@dskripchenko/math` als MathML gezeichnet: `$…$` und `\(…\)` in einer Zeile (kein Leerzeichen innerhalb der Dollarzeichen, keine Ziffer nach dem schließenden — wie Pandoc liest), `$$…$$`, `\[…\]` und ein ` ```math `-Block auf eigenen Zeilen. TeX, das nicht gelesen werden kann, erscheint wie geschrieben, markiert, mit dem Grund im Tooltip. Klammern und Wurzeln strecken sich nur in einer Mathematikschrift; die Stile des Kits nennen STIX Two Math, Cambria Math, Latin Modern Math und Noto Sans Math. `renderMarkdown(source, { math: false })` liest Dollarzeichen als Text.
 
-`==Text==` wird hervorgehoben (`<mark>`). `[[Notiz]]`, `[[Notiz#Überschrift]]`, `[[Notiz|Text]]` sind Links mit `data-wikilink`, die der Host auflöst; `![[bild.png]]` ist das Bild.
+`==Text==` wird hervorgehoben (`<mark>`). `[[Notiz]]`, `[[Notiz#Überschrift]]`, `[[Notiz|Text]]` sind Links mit `data-wikilink`, die der Host auflöst; `![[bild.png]]` ist das Bild (`class="uid-markdown__embed-image"`, sein Name in `data-embed`, damit der Host die Datei findet; `src` ist eine Vermutung neben dem Dokument), `![[bild.png|300]]` oder `|300x200` in dieser Größe (`width`/`height`, `data-size`) — die Einbettung einer Notiz oder eines Videos erhält `data-size` ebenfalls.
 
 ## Tags und Eigenschaften
 

@@ -48,7 +48,7 @@ A ==highlighted== phrase. A link to a note: [[Plans#Goals|the goals]], a picture
 
 TeX math is drawn as MathML by `@dskripchenko/math`: `$…$` and `\(…\)` in a line (no space inside the dollars, no digit after the closing one, as Pandoc reads it), `$$…$$`, `\[…\]` and a ` ```math ` block on lines of their own. TeX that cannot be read is shown as written, marked, with the reason in its title. Fences and roots stretch only in a math font; the kit's styles name STIX Two Math, Cambria Math, Latin Modern Math and Noto Sans Math. `renderMarkdown(source, { math: false })` reads dollars as text.
 
-`==text==` is highlighted (`<mark>`). `[[note]]`, `[[note#heading]]`, `[[note|text]]` are links with `data-wikilink` for the host to resolve; `![[picture.png]]` is the picture.
+`==text==` is highlighted (`<mark>`). `[[note]]`, `[[note#heading]]`, `[[note|text]]` are links with `data-wikilink` for the host to resolve; `![[picture.png]]` is the picture (`class="uid-markdown__embed-image"`, its name in `data-embed` for the host to find the file by; the `src` is a guess beside the document), `![[picture.png|300]]` or `|300x200` at that size (`width`/`height`, `data-size`) — an embed of a note or a video gets `data-size` too.
 
 ## Tags and properties
 

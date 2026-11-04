@@ -137,7 +137,7 @@ describe('renderMarkdown — lists', () => {
     expect(renderMarkdown('[[Road map#Next steps|what is next]]')).toBe('<p><a href="Road%20map.md#next-steps" class="uid-markdown__wikilink" data-wikilink="Road map#Next steps">what is next</a></p>')
     expect(renderMarkdown('[[#Intro]] and [[notes/a.md]]')).toContain('<a href="#intro" class="uid-markdown__wikilink" data-wikilink="#Intro">Intro</a>')
     expect(renderMarkdown('[[notes/a.md]]')).toContain('href="notes/a.md"')
-    expect(renderMarkdown('![[img/cat.png]]')).toBe('<p><img src="img/cat.png" alt="img/cat.png" loading="lazy"></p>')
+    expect(renderMarkdown('![[img/cat.png]]')).toBe('<p><img src="img/cat.png" alt="img/cat.png" loading="lazy" class="uid-markdown__embed-image" data-embed="img/cat.png"></p>')
     expect(renderMarkdown('`[[not a link]]`')).toBe('<p><code>[[not a link]]</code></p>')
     expect(renderMarkdown('[[x]]', { wikiLinks: false })).toBe('<p>[[x]]</p>')
   })
@@ -320,5 +320,15 @@ describe('renderMarkdown: embeds', () => {
       '<p><span class="uid-markdown__embed" data-embed="Plan#Goals"><a href="Plan.md#goals" class="uid-markdown__wikilink" data-wikilink="Plan#Goals">Plan › Goals</a></span></p>',
     )
     expect(renderMarkdown('![[map.png]]')).toContain('<img src="map.png"')
+  })
+
+  it('an embed sized as in Obsidian: ![[a.png|300]], |300x200; the host told the name to find it by', () => {
+    expect(renderMarkdown('![[cat.png|300]]')).toBe(
+      '<p><img src="cat.png" alt="cat.png" width="300" loading="lazy" class="uid-markdown__embed-image" data-embed="cat.png" data-size="300"></p>',
+    )
+    expect(renderMarkdown('![[cat.png|300x200]]')).toContain('width="300" height="200"')
+    // A text that is not a size stays the picture's text.
+    expect(renderMarkdown('![[cat.png|A cat]]')).toContain('alt="A cat"')
+    expect(renderMarkdown('![[clip.mp4|400]]')).toContain('<span class="uid-markdown__embed" data-embed="clip.mp4" data-size="400">')
   })
 })

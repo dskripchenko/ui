@@ -48,7 +48,7 @@ A ==highlighted== phrase. A link to a note: [[Plans#Goals|the goals]], a picture
 
 TeX 公式由 `@dskripchenko/math` 绘制为 MathML：行内的 `$…$` 和 `\(…\)`（美元符号内侧不能有空格，闭合符号后不能紧跟数字——与 Pandoc 的规则相同），以及独占一行的 `$$…$$`、`\[…\]` 和 ` ```math ` 代码块。无法解析的 TeX 按原样显示并加以标记，原因显示在提示中。括号和根号只有在数学字体中才能伸缩；组件库的样式列出了 STIX Two Math、Cambria Math、Latin Modern Math 和 Noto Sans Math。`renderMarkdown(source, { math: false })` 会把美元符号当作普通文本。
 
-`==文字==` 会被高亮（`<mark>`）。`[[笔记]]`、`[[笔记#标题]]`、`[[笔记|文字]]` 是带有 `data-wikilink` 的链接，由宿主决定指向何处；`![[图片.png]]` 显示图片。
+`==文字==` 会被高亮（`<mark>`）。`[[笔记]]`、`[[笔记#标题]]`、`[[笔记|文字]]` 是带有 `data-wikilink` 的链接，由宿主决定指向何处；`![[图片.png]]` 显示图片（`class="uid-markdown__embed-image"`，文件名在 `data-embed` 中，供宿主查找文件；`src` 是“在文档旁边”的猜测），`![[图片.png|300]]` 或 `|300x200` 按该尺寸显示（`width`/`height`、`data-size`）——笔记或视频的嵌入同样获得 `data-size`。
 
 ## 标签与属性
 
