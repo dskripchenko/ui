@@ -60,6 +60,21 @@ function headingSlug(text: string): string {
   )
 }
 
+/** ` ^id` at the very end of a line: a block id (see `MarkdownOptions.blockIds`). */
+const BLOCK_ID = /[ \t]+\^((?=[A-Za-z0-9-]*[A-Za-z])[A-Za-z0-9][A-Za-z0-9-]{0,31})[ \t]*$/
+
+/** Splits a block id off the end of a line: the line without it, and the id in lower case. */
+function takeBlockId(line: string, opts: MarkdownOptions): [string, string | null] {
+  if (opts.blockIds === false) return [line, null]
+  const m = BLOCK_ID.exec(line)
+  return m ? [line.slice(0, m.index), (m[1] ?? '').toLowerCase()] : [line, null]
+}
+
+/** The attributes a block with an id gets. */
+function blockIdAttrs(id: string | null): string {
+  return id === null ? '' : ` id="^${id}" data-block-id="${id}"`
+}
+
 /** Turns heading text into a unique anchor id; shared across the chunks of one document. */
 export type Slugger = (text: string) => string
 
@@ -104,6 +119,14 @@ export interface MarkdownOptions {
   math?: boolean
   /** Reads `#tags` (on by default): `<span class="uid-markdown__tag" data-tag="…">` for the host to act on. */
   tags?: boolean
+  /**
+   * Reads block ids (on by default), as Obsidian writes them: ` ^id` at the end of a paragraph's,
+   * a heading's or a list item's last line. The marker is hidden; the block gets the anchor `^id`
+   * (`id`, or an anchor element in a heading that has a slug id) and `data-block-id`, and
+   * `[[note#^id]]` links to it. An id has letters, digits and dashes, and at least one letter,
+   * so that ` ^2` stays text.
+   */
+  blockIds?: boolean
   /**
    * Reads a YAML front matter at the start of the source (`---` lines around
    * `key: value`) as the document's properties, drawn as a table. Off by
@@ -212,7 +235,10 @@ function renderInline(escaped: string, opts: MarkdownOptions = {}): string {
         const dims = size ? ` width="${size[1]}"${size[2] ? ` height="${size[2]}"` : ''}` : ''
         return stash(`<img src="${src}" alt="${size ? name.trim() : (alias ?? name)}"${dims} loading="lazy" class="uid-markdown__embed-image" data-embed="${name.trim()}"${sized}>`)
       }
-      const anchor = heading ? `#${headingSlug(unescapeHtml(heading))}` : ''
+      // `#^id` names a block (see blockIds); anything else after `#` is a heading.
+      const fragment = heading?.trim() ?? ''
+      const blockRef = opts.blockIds !== false && /^\^[A-Za-z0-9-]+$/.test(fragment)
+      const anchor = !heading ? '' : blockRef ? `#%5E${fragment.slice(1).toLowerCase()}` : `#${headingSlug(unescapeHtml(heading))}`
       let href = file === '' ? anchor : `${file}${anchor}`
       if (opts.linkBase && file !== '' && isRelative(href)) href = resolveAgainst(href, opts.linkBase, opts.stripMdExtension ?? false)
       const text = alias ?? (heading ? `${name.trim() || ''}${name.trim() ? ' › ' : ''}${heading.trim()}` : name.trim())
@@ -396,7 +422,9 @@ export function renderMarkdown(source: string | null | undefined, opts: Markdown
 
   const flushParagraph = (): void => {
     if (paragraph.length > 0) {
-      html.push(`<p>${inline(paragraph.join('\n'))}</p>`)
+      const [last, id] = takeBlockId(paragraph[paragraph.length - 1] ?? '', opts)
+      paragraph[paragraph.length - 1] = last
+      html.push(`<p${blockIdAttrs(id)}>${inline(paragraph.join('\n'))}</p>`)
       paragraph = []
     }
   }
@@ -462,14 +490,18 @@ export function renderMarkdown(source: string | null | undefined, opts: Markdown
     if (heading) {
       flushParagraph()
       const level = heading[1]?.length ?? 1
-      const content = inline(heading[2] ?? '')
+      const [title, blockId] = takeBlockId(heading[2] ?? '', opts)
+      const content = inline(title)
       if (opts.slugger) {
         const text = plainText(content)
         const id = opts.slugger(text)
         opts.onHeading?.({ level, text, id })
-        html.push(`<h${level} id="${escapeHtml(id)}">${content}</h${level}>`)
+        // The heading keeps its slug id; the block id gets an anchor of its own.
+        const anchor = blockId === null ? '' : `<a class="uid-markdown__block-anchor" id="^${blockId}" aria-hidden="true"></a>`
+        const data = blockId === null ? '' : ` data-block-id="${blockId}"`
+        html.push(`<h${level} id="${escapeHtml(id)}"${data}>${anchor}${content}</h${level}>`)
       } else {
-        html.push(`<h${level}>${content}</h${level}>`)
+        html.push(`<h${level}${blockIdAttrs(blockId)}>${content}</h${level}>`)
       }
       continue
     }
@@ -599,6 +631,8 @@ function renderList(lines: string[], start: number, opts: MarkdownOptions): { ht
     // A GitHub task item: `[ ]` or `[x]` right after the marker.
     const task = /^\[([ xX])\]\s+/.exec(text[0] ?? '')
     if (task) text[0] = (text[0] ?? '').slice(task[0].length)
+    const [lastLine, blockId] = takeBlockId(text[text.length - 1] ?? '', opts)
+    text[text.length - 1] = lastLine
     let inner = renderInline(text.join('\n'), opts)
     if (body.some((l) => l.trim() !== '')) {
       const cut = Math.min(...body.filter((l) => l.trim() !== '').map(indentOf))
@@ -607,8 +641,8 @@ function renderList(lines: string[], start: number, opts: MarkdownOptions): { ht
     }
     items.push(
       task
-        ? `<li class="uid-markdown__task"><input type="checkbox" disabled${task[1] === ' ' ? '' : ' checked'} aria-label="${escapeHtml(task[1] === ' ' ? (opts.taskLabels?.open ?? 'Not done') : (opts.taskLabels?.done ?? 'Done'))}"> ${inner}</li>`
-        : `<li>${inner}</li>`,
+        ? `<li class="uid-markdown__task"${blockIdAttrs(blockId)}><input type="checkbox" disabled${task[1] === ' ' ? '' : ' checked'} aria-label="${escapeHtml(task[1] === ' ' ? (opts.taskLabels?.open ?? 'Not done') : (opts.taskLabels?.done ?? 'Done'))}"> ${inner}</li>`
+        : `<li${blockIdAttrs(blockId)}>${inner}</li>`,
     )
     if (task) tasks++
 
