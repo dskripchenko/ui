@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, expectTypeOf, it, vi } from 'vitest'
 import { nextTick } from 'vue'
 import UidTable from './UidTable.vue'
 
@@ -307,5 +307,18 @@ describe('UidTable', () => {
       await scroll.trigger('scroll')
       expect(scroll.classes()).not.toContain('uid-table-scroll--ping-right')
     })
+  })
+
+  it('a cell slot receives the row as { row }, and is typed so', () => {
+    const wrapper = mount(UidTable, {
+      props: { columns: [{ key: 'name', label: 'Name' }], data: [{ id: 1, name: 'A' }] },
+      slots: {
+        name: (props: { row: Record<string, unknown> }) => `cell:${String(props.row.name)}`,
+      },
+    })
+    expect(wrapper.find('.uid-table__td').text()).toBe('cell:A')
+
+    type Slots = InstanceType<typeof UidTable>['$slots']
+    expectTypeOf<Parameters<NonNullable<Slots['name']>>[0]>().toEqualTypeOf<{ row: Record<string, unknown> }>()
   })
 })
