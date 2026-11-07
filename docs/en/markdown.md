@@ -50,6 +50,16 @@ TeX math is drawn as MathML by `@dskripchenko/math`: `$…$` and `\(…\)` in a 
 
 `==text==` is highlighted (`<mark>`). `[[note]]`, `[[note#heading]]`, `[[note|text]]` are links with `data-wikilink` for the host to resolve; `![[picture.png]]` is the picture (`class="uid-markdown__embed-image"`, its name in `data-embed` for the host to find the file by; the `src` is a guess beside the document), `![[picture.png|300]]` or `|300x200` at that size (`width`/`height`, `data-size`) — an embed of a note or a video gets `data-size` too.
 
+## Block ids
+
+` ^id` at the end of a paragraph, a heading, a list item or a quote's last line is a block id, as Obsidian writes it: the marker is hidden, the block gets the anchor `^id` (`id="^id"` and `data-block-id`; a heading with a slug id keeps it and gets an anchor element of its own), and `[[note#^id]]` links there (`#%5Eid`). An id has letters, digits and dashes and at least one letter, so `x ^2` stays text. `blockIds: false` turns it off.
+
+```md
+Pay by the fifth. ^pay-rule
+
+See [[Payments#^pay-rule|the rule]].
+```
+
 ## Tags and properties
 
 `#todo`, `#work/urgent` are tags: `<span class="uid-markdown__tag" data-tag="…">` for the host to act on (a letter is needed — `#123` is not one; `C#` and a link's `#anchor` are not either). A YAML front matter at the start of the document (`---` lines around `key: value`) is shown as a table of properties — lists as `[a, b]` or `- a` lines, `tags:` as tags. `renderMarkdown` reads it with `{ frontMatter: true }`; `readFrontMatter(source)` gives it as data.

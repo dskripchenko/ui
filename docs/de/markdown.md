@@ -50,6 +50,16 @@ TeX-Formeln werden von `@dskripchenko/math` als MathML gezeichnet: `$…$` und `
 
 `==Text==` wird hervorgehoben (`<mark>`). `[[Notiz]]`, `[[Notiz#Überschrift]]`, `[[Notiz|Text]]` sind Links mit `data-wikilink`, die der Host auflöst; `![[bild.png]]` ist das Bild (`class="uid-markdown__embed-image"`, sein Name in `data-embed`, damit der Host die Datei findet; `src` ist eine Vermutung neben dem Dokument), `![[bild.png|300]]` oder `|300x200` in dieser Größe (`width`/`height`, `data-size`) — die Einbettung einer Notiz oder eines Videos erhält `data-size` ebenfalls.
 
+## Block-IDs
+
+` ^id` am Ende der letzten Zeile eines Absatzes, einer Überschrift, eines Listenpunkts oder eines Zitats ist eine Block-ID, wie Obsidian sie schreibt: Die Markierung wird ausgeblendet, der Block erhält den Anker `^id` (`id="^id"` und `data-block-id`; eine Überschrift mit Slug-ID behält diese und bekommt ein eigenes Anker-Element), und `[[Notiz#^id]]` verlinkt dorthin (`#%5Eid`). Eine ID besteht aus Buchstaben, Ziffern und Bindestrichen und enthält mindestens einen Buchstaben, daher bleibt `x ^2` Text. `blockIds: false` schaltet das ab.
+
+```md
+Zahlung bis zum Fünften. ^pay-rule
+
+Siehe [[Zahlungen#^pay-rule|die Regel]].
+```
+
 ## Tags und Eigenschaften
 
 `#todo`, `#work/urgent` sind Tags: `<span class="uid-markdown__tag" data-tag="…">`, auf die der Host reagiert (ein Buchstabe ist nötig — `#123` ist keiner; `C#` und der `#Anker` eines Links auch nicht). Ein YAML-Front-Matter am Anfang des Dokuments (`---`-Zeilen um `Schlüssel: Wert`) erscheint als Tabelle der Eigenschaften — Listen als `[a, b]` oder `- a`-Zeilen, `tags:` als Tags. `renderMarkdown` liest es mit `{ frontMatter: true }`; `readFrontMatter(source)` liefert es als Daten.

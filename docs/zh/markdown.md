@@ -50,6 +50,16 @@ TeX 公式由 `@dskripchenko/math` 绘制为 MathML：行内的 `$…$` 和 `\(�
 
 `==文字==` 会被高亮（`<mark>`）。`[[笔记]]`、`[[笔记#标题]]`、`[[笔记|文字]]` 是带有 `data-wikilink` 的链接，由宿主决定指向何处；`![[图片.png]]` 显示图片（`class="uid-markdown__embed-image"`，文件名在 `data-embed` 中，供宿主查找文件；`src` 是“在文档旁边”的猜测），`![[图片.png|300]]` 或 `|300x200` 按该尺寸显示（`width`/`height`、`data-size`）——笔记或视频的嵌入同样获得 `data-size`。
 
+## 块 ID
+
+段落、标题、列表项或引用最后一行末尾的 ` ^id` 是块 ID，写法与 Obsidian 相同：标记被隐藏，块获得锚点 `^id`（`id="^id"` 与 `data-block-id`；带 slug ID 的标题保留原 ID，并另加一个锚点元素），`[[笔记#^id]]` 链接到该块（`#%5Eid`）。ID 由字母、数字和连字符组成，且至少含一个字母，因此 `x ^2` 仍是文本。设置 `blockIds: false` 可关闭。
+
+```md
+每月五号前付款。 ^pay-rule
+
+参见 [[付款#^pay-rule|该规则]]。
+```
+
 ## 标签与属性
 
 `#todo`、`#work/urgent` 是标签：`<span class="uid-markdown__tag" data-tag="…">`，由宿主决定如何响应（至少需要一个字母——`#123` 不是标签；`C#` 和链接中的 `#锚点` 也不是）。文档开头的 YAML front matter（由 `---` 行包围的 `键: 值`）显示为属性表——列表可写作 `[a, b]` 或 `- a` 行，`tags:` 显示为标签。`renderMarkdown` 通过 `{ frontMatter: true }` 读取它；`readFrontMatter(source)` 以数据形式返回。

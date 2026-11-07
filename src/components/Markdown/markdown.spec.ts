@@ -331,4 +331,38 @@ describe('renderMarkdown: embeds', () => {
     expect(renderMarkdown('![[cat.png|A cat]]')).toContain('alt="A cat"')
     expect(renderMarkdown('![[clip.mp4|400]]')).toContain('<span class="uid-markdown__embed" data-embed="clip.mp4" data-size="400">')
   })
+
+  describe('block ids', () => {
+    it('hides ^id at the end of a block and anchors the block', () => {
+      expect(renderMarkdown('Pay by the fifth. ^pay-rule')).toBe('<p id="^pay-rule" data-block-id="pay-rule">Pay by the fifth.</p>')
+      expect(renderMarkdown('Line one\nline two ^Two')).toBe('<p id="^two" data-block-id="two">Line one\nline two</p>')
+      expect(renderMarkdown('- first ^li-1\n- second')).toBe('<ul><li id="^li-1" data-block-id="li-1">first</li><li>second</li></ul>')
+      expect(renderMarkdown('- [ ] do it ^t1')).toContain('<li class="uid-markdown__task" id="^t1" data-block-id="t1"><input')
+      expect(renderMarkdown('> Quoted ^q1')).toBe('<blockquote><p id="^q1" data-block-id="q1">Quoted</p></blockquote>')
+      expect(renderMarkdown('## Goals ^goals')).toBe('<h2 id="^goals" data-block-id="goals">Goals</h2>')
+    })
+
+    it('gives a heading with a slug id an anchor of its own', () => {
+      expect(renderMarkdown('## Goals ^g1', { slugger: createSlugger() })).toBe(
+        '<h2 id="goals" data-block-id="g1"><a class="uid-markdown__block-anchor" id="^g1" aria-hidden="true"></a>Goals</h2>',
+      )
+    })
+
+    it('leaves text that only looks like an id', () => {
+      expect(renderMarkdown('x ^2')).toBe('<p>x ^2</p>')
+      expect(renderMarkdown('a ^b in the middle')).toBe('<p>a ^b in the middle</p>')
+      expect(renderMarkdown('no space^id')).toBe('<p>no space^id</p>')
+      expect(renderMarkdown('```\ncode ^id\n```')).toBe('<pre><code>code ^id</code></pre>')
+      expect(renderMarkdown('Kept ^id', { blockIds: false })).toBe('<p>Kept ^id</p>')
+    })
+
+    it('links [[note#^id]] to the block', () => {
+      expect(renderMarkdown('[[Plan#^Pay-Rule|the rule]]')).toBe(
+        '<p><a href="Plan.md#%5Epay-rule" class="uid-markdown__wikilink" data-wikilink="Plan#^Pay-Rule">the rule</a></p>',
+      )
+      expect(renderMarkdown('[[#^q1]]')).toContain('href="#%5Eq1"')
+      expect(renderMarkdown('[[Plan#Goals]]')).toContain('href="Plan.md#goals"')
+    })
+  })
 })
+
