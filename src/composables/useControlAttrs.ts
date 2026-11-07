@@ -29,3 +29,29 @@ export function useControlAttrs(): ControlAttrs {
     },
   }
 }
+
+/** Attributes that name or describe a control for assistive technology. */
+const NAMING_ATTRS = ['aria-label', 'aria-labelledby', 'aria-describedby'] as const
+
+export interface TriggerAttrs {
+  /** Everything but the naming attributes: bind to the component root with `v-bind="rootAttrs()"`. */
+  rootAttrs: () => Record<string, unknown>
+  /** `aria-label`, `aria-labelledby`, `aria-describedby`: bind to the element with the role. */
+  namingAttrs: () => Record<string, unknown>
+}
+
+/**
+ * For components with `inheritAttrs: false` whose root is a wrapper and whose
+ * focusable trigger carries the role (`combobox`). The name a consumer gives
+ * (`aria-label="Status"`) has to land on the trigger, or the control has no
+ * accessible name; every other attribute (`class`, `data-*`, listeners) stays
+ * on the root, where it always was.
+ */
+export function useTriggerAttrs(): TriggerAttrs {
+  const attrs = useAttrs()
+  const naming = (key: string): boolean => (NAMING_ATTRS as readonly string[]).includes(key)
+  return {
+    rootAttrs: () => Object.fromEntries(Object.entries(attrs).filter(([key]) => !naming(key))),
+    namingAttrs: () => Object.fromEntries(Object.entries(attrs).filter(([key]) => naming(key))),
+  }
+}

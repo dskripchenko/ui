@@ -6,6 +6,7 @@ import { Clock } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
 import { useLocale } from '../../composables/useLocale.js'
 import { useFloatingPanel } from '../../composables/useFloatingPanel.js'
+import { useTriggerAttrs } from '../../composables/useControlAttrs.js'
 
 export interface UidTimePickerProps {
   /** Control height of the shared size scale (`--uid-size-sm|md|lg`). */
@@ -26,6 +27,10 @@ const props = withDefaults(defineProps<UidTimePickerProps>(), {
   disabled: false,
   clearable: true,
 })
+
+// A name given to the control (aria-label) belongs on its trigger, the combobox.
+defineOptions({ inheritAttrs: false })
+const { rootAttrs, namingAttrs } = useTriggerAttrs()
 
 const locale = useLocale()
 const placeholderText = computed(() => props.placeholder ?? locale.value.timePicker.placeholder)
@@ -234,6 +239,7 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
 
 <template>
   <div
+    v-bind="rootAttrs()"
     ref="containerRef"
     class="uid-timepicker"
     :class="[`uid-timepicker--${size}`, { 'uid-timepicker--open': isOpen, 'uid-timepicker--disabled': disabled }]"
@@ -247,6 +253,7 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
       :aria-expanded="isOpen"
       :aria-label="placeholderText"
       :aria-disabled="disabled"
+      v-bind="namingAttrs()"
       @click="toggle"
       @keydown="onTriggerKeydown"
     >

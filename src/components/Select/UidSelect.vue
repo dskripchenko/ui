@@ -6,6 +6,7 @@ import { Check, ChevronDown, X } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
 import { useLocale } from '../../composables/useLocale.js'
 import { usePopover } from '../../composables/usePopover.js'
+import { useTriggerAttrs } from '../../composables/useControlAttrs.js'
 
 export interface SelectOption {
   value: string | number
@@ -57,6 +58,10 @@ const props = withDefaults(defineProps<UidSelectProps<M>>(), {
   multiple: undefined,
   maxTagCount: undefined,
 })
+
+// A name given to the control (aria-label) belongs on its trigger, the combobox.
+defineOptions({ inheritAttrs: false })
+const { rootAttrs, namingAttrs } = useTriggerAttrs()
 
 const locale = useLocale()
 const placeholderText = computed(() => props.placeholder ?? locale.value.select.placeholder)
@@ -303,6 +308,7 @@ onUnmounted(() => {
 
 <template>
   <div
+    v-bind="rootAttrs()"
     ref="containerRef"
     class="uid-select"
     :class="[`uid-select--${size}`, {
@@ -320,6 +326,7 @@ onUnmounted(() => {
       aria-haspopup="listbox"
       :aria-controls="listboxId"
       :aria-disabled="disabled"
+      v-bind="namingAttrs()"
       @click="toggle"
       @keydown="onTriggerKeydown"
     >
