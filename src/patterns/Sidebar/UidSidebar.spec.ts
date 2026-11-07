@@ -143,4 +143,13 @@ describe('UidSidebarItem to / RouterLink', () => {
     expect(base).toContain('border-style: solid')
     expect(base).toMatch(/border-width:\s*0/)
   })
+
+  // A <button> item would show the browser's own button: border, grey background, centred text.
+  it('a button item drops the browser button look', () => {
+    const rule = /button\.uid-sidebar-item \{([^}]*)\}/.exec(sidebarCss)?.[1] ?? ''
+    expect(rule).toMatch(/border:\s*0/)
+    expect(rule).toMatch(/background:\s*none/)
+    expect(rule).toContain('text-align: left')
+  })
 })
+

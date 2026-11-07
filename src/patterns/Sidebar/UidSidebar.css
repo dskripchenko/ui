@@ -64,6 +64,17 @@
               color var(--uid-duration-fast) var(--uid-ease-out);
 }
 
+/* An item rendered as a <button> (an action, not a page) looks like the links around it. */
+button.uid-sidebar-item {
+  width: calc(100% - 2 * var(--uid-space-sm));
+  border: 0;
+  background: none;
+  font-family: inherit;
+  line-height: inherit;
+  text-align: left;
+  appearance: none;
+}
+
 .uid-sidebar-item:hover:not(.uid-sidebar-item--disabled) {
   background: var(--uid-color-surface-hover);
   color: var(--uid-color-text-primary);
