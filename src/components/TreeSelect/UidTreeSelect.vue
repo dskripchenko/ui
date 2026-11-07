@@ -8,6 +8,7 @@ import UidIcon from '../../icons/UidIcon.vue'
 import UidTreeView from '../TreeView/UidTreeView.vue'
 import { useLocale } from '../../composables/useLocale.js'
 import type { TreeNode, TreeKey } from '../TreeView/context.js'
+import { useTriggerAttrs } from '../../composables/useControlAttrs.js'
 
 export interface UidTreeSelectProps {
   /** Control height of the shared size scale (`--uid-size-sm|md|lg`). */
@@ -40,6 +41,10 @@ const props = withDefaults(defineProps<UidTreeSelectProps>(), {
   required: false,
   maxTagCount: undefined,
 })
+
+// A name given to the control (aria-label) belongs on its trigger, the combobox.
+defineOptions({ inheritAttrs: false })
+const { rootAttrs, namingAttrs } = useTriggerAttrs()
 
 const locale = useLocale()
 const placeholderText = computed(() => props.placeholder ?? locale.value.treeSelect.placeholder)
@@ -205,6 +210,7 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
 
 <template>
   <div
+    v-bind="rootAttrs()"
     ref="containerRef"
     class="uid-tree-select"
     :class="[`uid-tree-select--${size}`, {
@@ -238,6 +244,7 @@ onUnmounted(() => document.removeEventListener('pointerdown', onOutsideClick))
       :aria-label="placeholderText"
       :aria-disabled="disabled"
       :aria-invalid="hasError ? 'true' : undefined"
+      v-bind="namingAttrs()"
       @click="toggle"
       @keydown="onTriggerKeydown"
     >

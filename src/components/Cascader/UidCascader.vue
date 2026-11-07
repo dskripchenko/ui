@@ -6,6 +6,7 @@ import { useFloatingPanel } from '../../composables/useFloatingPanel.js'
 import { ChevronDown, ChevronRight, X } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
 import { useLocale } from '../../composables/useLocale.js'
+import { useTriggerAttrs } from '../../composables/useControlAttrs.js'
 
 export type CascaderValue = string | number
 
@@ -53,6 +54,10 @@ const props = withDefaults(defineProps<UidCascaderProps>(), {
   changeOnSelect: false,
   searchPlaceholder: undefined,
 })
+
+// A name given to the control (aria-label) belongs on its trigger, the combobox.
+defineOptions({ inheritAttrs: false })
+const { rootAttrs, namingAttrs } = useTriggerAttrs()
 
 const emit = defineEmits<{
   change: [value: CascaderValue[], path: CascaderOption[]]
@@ -282,6 +287,7 @@ function isSelected(opt: CascaderOption, level: number): boolean {
 
 <template>
   <div
+    v-bind="rootAttrs()"
     ref="containerRef"
     class="uid-cascader"
     :class="[`uid-cascader--${size}`, {
@@ -305,6 +311,7 @@ function isSelected(opt: CascaderOption, level: number): boolean {
       :aria-expanded="isOpen"
       :aria-disabled="disabled"
       :aria-label="placeholderText"
+      v-bind="namingAttrs()"
       @click="toggle"
       @keydown="onTriggerKeydown"
     >
