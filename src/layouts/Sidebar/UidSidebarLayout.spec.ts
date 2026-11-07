@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { defineComponent, h, inject } from 'vue'
@@ -65,4 +67,14 @@ describe('UidSidebarLayout', () => {
 
     expect(toggleCalled).toBe(true)
   })
+
+  // Without it the sidebar ends where its content ends: half a window of border, the footer in the middle.
+  it('the sidebar spans the window and a UidSidebar in it fills it', () => {
+    const css = readFileSync(resolve(process.cwd(), 'src/layouts/Sidebar/UidSidebarLayout.css'), 'utf8')
+    const column = /\.uid-layout-sidebar__sidebar \{([^}]*)\}/.exec(css)?.[1] ?? ''
+    expect(column).toContain('position: sticky')
+    expect(column).toContain('height: 100vh')
+    expect(css).toMatch(/\.uid-layout-sidebar__sidebar > \.uid-pattern-sidebar \{\s*height: 100%;/)
+  })
 })
+

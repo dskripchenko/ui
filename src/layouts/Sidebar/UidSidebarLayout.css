@@ -9,6 +9,16 @@
   width: var(--uid-layout-sidebar-width, 240px);
   transition: width var(--uid-duration-base) var(--uid-ease-in-out);
   overflow: hidden;
+  /* The sidebar spans the window and stays while the page scrolls. */
+  position: sticky;
+  top: 0;
+  align-self: flex-start;
+  height: 100vh;
+}
+
+/* A UidSidebar in the slot fills it: its border and footer reach the bottom. */
+.uid-layout-sidebar__sidebar > .uid-pattern-sidebar {
+  height: 100%;
 }
 
 .uid-layout-sidebar--collapsed .uid-layout-sidebar__sidebar {
