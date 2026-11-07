@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import { nextTick } from 'vue'
 import UidCommand from './UidCommand.vue'
 import type { CommandItem } from './UidCommand.vue'
 
@@ -148,4 +149,27 @@ describe('UidCommand', () => {
     await wrapper.vm.$nextTick()
     expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([false])
   })
+
+  it('tells the host what is typed, and leaves filtering to it with filter=false', async () => {
+    const commands = [
+      { id: 'a', label: 'Alpha', action: () => {} },
+      { id: 'b', label: 'Beta', action: () => {} },
+    ]
+    const wrapper = mount(UidCommand, {
+      props: { modelValue: true, commands, filter: false, 'onUpdate:query': (q: string) => wrapper.setProps({ query: q }) },
+      attachTo: document.body,
+    })
+    await nextTick()
+    const input = document.body.querySelector('input') as HTMLInputElement
+    input.value = 'zz'
+    input.dispatchEvent(new Event('input'))
+    await nextTick()
+
+    expect(wrapper.emitted('update:query')?.at(-1)).toEqual(['zz'])
+    // Not filtered: both stay, as the host gave them.
+    expect(document.body.textContent).toContain('Alpha')
+    expect(document.body.textContent).toContain('Beta')
+    wrapper.unmount()
+  })
 })
+

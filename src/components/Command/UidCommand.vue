@@ -22,18 +22,25 @@ export interface UidCommandProps {
   commands: CommandItem[]
   placeholder?: string
   emptyText?: string
+  /**
+   * Filter `commands` by the typed text (default). `false` shows them as given: the host filters,
+   * e.g. with a server search on `v-model:query`, and passes the results back as `commands`.
+   */
+  filter?: boolean
 }
 
 const props = withDefaults(defineProps<UidCommandProps>(), {
   placeholder: undefined,
   emptyText: undefined,
+  filter: true,
 })
 
 const uidLocale = useLocale()
 
 const model = defineModel<boolean>({ default: false })
 
-const query = ref('')
+/** The typed text; `v-model:query` lets the host see it (and search with it). */
+const query = defineModel<string>('query', { default: '' })
 const activeIndex = ref(0)
 const panelRef = ref<HTMLElement | null>(null)
 const inputRef = ref<HTMLInputElement | null>(null)
@@ -45,7 +52,7 @@ const { lock, unlock } = useScrollLock()
 
 const filtered = computed(() => {
   const q = query.value.trim().toLowerCase()
-  if (!q) return props.commands
+  if (!q || !props.filter) return props.commands
   return props.commands.filter(c =>
     c.label.toLowerCase().includes(q) ||
     c.description?.toLowerCase().includes(q),
