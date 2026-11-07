@@ -71,7 +71,10 @@ const emit = defineEmits<{
 }>()
 
 defineSlots<{
-  [key: string]: (row?: Record<string, unknown>) => unknown
+  /** Shown when there are no rows. */
+  empty?: () => unknown
+  /** A cell of the column with this key: `<template #name="{ row }">`. */
+  [columnKey: string]: ((props: { row: Record<string, unknown> }) => unknown) | undefined
 }>()
 
 function rowId(row: Record<string, unknown>): string | number {
