@@ -387,6 +387,19 @@ export const en: UidLocale = {
     category: 'Category',
   },
 
+  dashboardGrid: {
+    label: 'Dashboard',
+    item: (n) => `Item ${n}`,
+    handleRole: 'movable item',
+    handle: (title, x, y, w, h) => `Move ${title}: column ${x}, row ${y}, ${w} × ${h}`,
+    resize: (title, w, h) => `Resize ${title}: ${w} × ${h}`,
+    hint: 'Arrow keys move the item by one cell; Shift with arrow keys, or arrow keys on the resize corner, change its size.',
+    dropHere: (w, h) => `Drop here · ${w} × ${h}`,
+    moved: (title, x, y) => `${title} moved to column ${x}, row ${y}`,
+    resized: (title, w, h) => `${title} resized to ${w} × ${h}`,
+    cancelled: (title) => `${title}: move cancelled`,
+  },
+
   validation: {
     value: 'value',
     required: (label) => `The ${label} field is required`,

@@ -387,6 +387,19 @@ export const ru: UidLocale = {
     category: 'Категория',
   },
 
+  dashboardGrid: {
+    label: 'Панель',
+    item: (n) => `Элемент ${n}`,
+    handleRole: 'перемещаемый элемент',
+    handle: (title, x, y, w, h) => `Переместить «${title}»: столбец ${x}, строка ${y}, ${w} × ${h}`,
+    resize: (title, w, h) => `Изменить размер «${title}»: ${w} × ${h}`,
+    hint: 'Стрелки перемещают элемент на одну клетку; Shift со стрелками или стрелки на угле размера меняют его размер.',
+    dropHere: (w, h) => `Отпустите здесь · ${w} × ${h}`,
+    moved: (title, x, y) => `«${title}» перемещён: столбец ${x}, строка ${y}`,
+    resized: (title, w, h) => `«${title}»: новый размер ${w} × ${h}`,
+    cancelled: (title) => `«${title}»: перемещение отменено`,
+  },
+
   validation: {
     value: 'значение',
     required: (label) => `Поле «${label}» обязательно`,

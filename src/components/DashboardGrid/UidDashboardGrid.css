@@ -1,0 +1,175 @@
+.uid-dashboard-grid {
+  /* Set from the props; the defaults match them. */
+  --uid-dashboard-grid-columns: 12;
+  --uid-dashboard-grid-row: 80px;
+  --uid-dashboard-grid-gap: 16px;
+  --uid-dashboard-grid-rows: 0;
+  --uid-dashboard-grid-placeholder-bg: var(--uid-accent-subtle);
+  --uid-dashboard-grid-placeholder-border: var(--uid-accent);
+
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  min-width: 0;
+  height: max(0px, calc(
+    var(--uid-dashboard-grid-rows) * (var(--uid-dashboard-grid-row) + var(--uid-dashboard-grid-gap))
+    - var(--uid-dashboard-grid-gap)
+  ));
+}
+
+/* One cell: the item's column, row and span on the grid. */
+.uid-dashboard-grid__item,
+.uid-dashboard-grid__placeholder {
+  --uid-dashboard-grid-x: 0;
+  --uid-dashboard-grid-y: 0;
+  --uid-dashboard-grid-w: 1;
+  --uid-dashboard-grid-h: 1;
+  --uid-dashboard-grid-dw: 0px;
+  --uid-dashboard-grid-dh: 0px;
+  --uid-dashboard-grid-col: calc(
+    (100% - (var(--uid-dashboard-grid-columns) - 1) * var(--uid-dashboard-grid-gap)) / var(--uid-dashboard-grid-columns)
+  );
+
+  position: absolute;
+  box-sizing: border-box;
+  left: calc(var(--uid-dashboard-grid-x) * (var(--uid-dashboard-grid-col) + var(--uid-dashboard-grid-gap)));
+  top: calc(var(--uid-dashboard-grid-y) * (var(--uid-dashboard-grid-row) + var(--uid-dashboard-grid-gap)));
+  width: calc(
+    var(--uid-dashboard-grid-w) * var(--uid-dashboard-grid-col)
+    + (var(--uid-dashboard-grid-w) - 1) * var(--uid-dashboard-grid-gap)
+    + var(--uid-dashboard-grid-dw)
+  );
+  height: calc(
+    var(--uid-dashboard-grid-h) * var(--uid-dashboard-grid-row)
+    + (var(--uid-dashboard-grid-h) - 1) * var(--uid-dashboard-grid-gap)
+    + var(--uid-dashboard-grid-dh)
+  );
+}
+
+.uid-dashboard-grid__item {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border-radius: var(--uid-radius-lg);
+  transition:
+    left var(--uid-duration-base) var(--uid-ease-out),
+    top var(--uid-duration-base) var(--uid-ease-out),
+    width var(--uid-duration-base) var(--uid-ease-out),
+    height var(--uid-duration-base) var(--uid-ease-out),
+    box-shadow var(--uid-duration-fast) var(--uid-ease-out);
+}
+
+.uid-dashboard-grid__item > :first-child {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.uid-dashboard-grid__item--dragging {
+  z-index: 2;
+  box-shadow: var(--uid-shadow-lg);
+  transition: box-shadow var(--uid-duration-fast) var(--uid-ease-out);
+}
+
+.uid-dashboard-grid__item--dragging:not(.uid-dashboard-grid__item--resizing) {
+  opacity: 0.92;
+  cursor: grabbing;
+}
+
+.uid-dashboard-grid--active {
+  user-select: none;
+}
+
+.uid-dashboard-grid__placeholder {
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--uid-space-sm);
+  border: 2px dashed var(--uid-dashboard-grid-placeholder-border);
+  border-radius: var(--uid-radius-lg);
+  background: var(--uid-dashboard-grid-placeholder-bg);
+  color: var(--uid-accent-text);
+  font-size: var(--uid-font-size-sm);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  pointer-events: none;
+  transition:
+    left var(--uid-duration-fast) var(--uid-ease-out),
+    top var(--uid-duration-fast) var(--uid-ease-out),
+    width var(--uid-duration-fast) var(--uid-ease-out),
+    height var(--uid-duration-fast) var(--uid-ease-out);
+}
+
+/* The host's drag handle. */
+.uid-dashboard-grid [data-uid-grid-handle] {
+  cursor: grab;
+  touch-action: none;
+}
+
+.uid-dashboard-grid [data-uid-grid-handle]:focus-visible,
+.uid-dashboard-grid__grip:focus-visible {
+  outline: 2px solid var(--uid-color-focus-ring);
+  outline-offset: 2px;
+}
+
+/* The resize corner at the bottom right of every item. */
+.uid-dashboard-grid__grip {
+  position: absolute;
+  right: 2px;
+  bottom: 2px;
+  z-index: 1;
+  width: 16px;
+  height: 16px;
+  border-radius: var(--uid-radius-sm);
+  color: var(--uid-color-text-tertiary);
+  background:
+    linear-gradient(135deg, transparent 0 55%, currentColor 55% 62%, transparent 62% 72%, currentColor 72% 79%, transparent 79%);
+  cursor: nwse-resize;
+  touch-action: none;
+  opacity: 0.7;
+  transition: opacity var(--uid-duration-fast) var(--uid-ease-out), color var(--uid-duration-fast) var(--uid-ease-out);
+}
+
+.uid-dashboard-grid__item:hover .uid-dashboard-grid__grip,
+.uid-dashboard-grid__grip:focus-visible,
+.uid-dashboard-grid__item--resizing .uid-dashboard-grid__grip {
+  opacity: 1;
+  color: var(--uid-accent);
+}
+
+/* Narrow containers: one column in reading order, each item its own height. */
+.uid-dashboard-grid--stacked {
+  display: flex;
+  flex-direction: column;
+  gap: var(--uid-dashboard-grid-gap);
+  height: auto;
+}
+
+.uid-dashboard-grid--stacked > .uid-dashboard-grid__item {
+  position: relative;
+  left: auto;
+  top: auto;
+  width: 100%;
+  height: calc(var(--uid-dashboard-grid-h) * var(--uid-dashboard-grid-row));
+  transition: none;
+}
+
+.uid-dashboard-grid__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .uid-dashboard-grid__item,
+  .uid-dashboard-grid__placeholder,
+  .uid-dashboard-grid__grip {
+    transition: none;
+  }
+}

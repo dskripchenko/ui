@@ -356,6 +356,30 @@ export interface UidLocale {
     category: string
   }
 
+  /** UidDashboardGrid: a grid of movable, resizable items. */
+  dashboardGrid: {
+    /** Default accessible name of the grid. */
+    label: string
+    /** Default item name by reading order: "Item 3". */
+    item: (n: number) => string
+    /** aria-roledescription of a drag handle. */
+    handleRole: string
+    /** A drag handle's label: "Move Sales: column 1, row 2, 4 × 3". */
+    handle: (title: string, x: number, y: number, w: number, h: number) => string
+    /** The resize corner's label: "Resize Sales: 4 × 3". */
+    resize: (title: string, w: number, h: number) => string
+    /** Keyboard help, read after a handle or a resize corner. */
+    hint: string
+    /** The placeholder where a dragged item lands: "Drop here · 4 × 3". */
+    dropHere: (w: number, h: number) => string
+    /** Announced after a move: "Sales moved to column 5, row 1". */
+    moved: (title: string, x: number, y: number) => string
+    /** Announced after a resize: "Sales resized to 6 × 3". */
+    resized: (title: string, w: number, h: number) => string
+    /** Announced when a drag is cancelled with Escape. */
+    cancelled: (title: string) => string
+  }
+
   validation: {
     value: string
     required: (label: string) => string
