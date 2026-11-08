@@ -134,7 +134,7 @@ Slots：`header`、`default`(内容)、`footer`。
 
 Slots：`sidebar`、`header?`、`default`、`footer?`。
 
-Props：`sidebarWidth?`、`sidebarCollapsed?`、`sidebarPosition?: 'left' \| 'right'`。
+Props：`sidebarWidth?`、`sidebarCollapsed?`、`sidebarPosition?: 'left' \| 'right'`、`stickyHeader?: boolean`（默认 `false`：整个 `header` 插槽——例如横幅加顶栏——在页面滚动时固定在顶部）。
 
 行为：
 - 移动端(断点以下，默认 768 px)，sidebar 折叠为 drawer，由 header 触发(via `useSidebar()`)。
