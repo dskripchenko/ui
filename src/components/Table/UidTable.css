@@ -25,7 +25,7 @@
 }
 
 .uid-table__th {
-  padding: 12px var(--uid-space-md);
+  padding: var(--uid-table-head-padding-y, 12px) var(--uid-table-cell-padding-x, var(--uid-space-md));
   font-size: var(--uid-font-size-xs, 11px);
   font-weight: 600;
   text-transform: uppercase;
@@ -94,7 +94,7 @@
 }
 
 .uid-table__td {
-  padding: 12px var(--uid-space-md);
+  padding: var(--uid-table-cell-padding-y, 12px) var(--uid-table-cell-padding-x, var(--uid-space-md));
   color: var(--uid-color-text-primary);
   vertical-align: middle;
 }

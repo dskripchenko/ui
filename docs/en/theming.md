@@ -127,6 +127,16 @@ Every component has local variables that fall back to semantics. Override them i
 
 This doesn't break theming — the override only applies inside the selector.
 
+A denser table, for example, takes smaller cell paddings:
+
+```css
+.issues .uid-table {
+  --uid-table-head-padding-y: 8px;
+  --uid-table-cell-padding-y: 6px;
+  --uid-table-cell-padding-x: 12px;
+}
+```
+
 ## Print
 
 On paper (`@media print`) the components that live inside pages print as
