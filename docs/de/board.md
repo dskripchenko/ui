@@ -93,6 +93,10 @@ Der Slot `card` ersetzt die ganze Karte, einschließlich des Fußes mit `assigne
 
 Typen: `UidBoardProps`, `BoardColumn`, `BoardCard`, `BoardCardTag`, `BoardAssignee`, `BoardLane`, `BoardMove`, `BoardKey`.
 
+## Gestaltung
+
+Spalten und Karten nehmen CSS-Variablen, sonst gilt das Theme: `--uid-board-column-bg`, `--uid-board-column-border`, `--uid-board-column-radius`, `--uid-board-card-bg`, `--uid-board-card-border`, `--uid-board-card-radius`, `--uid-board-card-padding`.
+
 ## Texte
 
 Beschriftungen kommen aus dem Locale, Abschnitt `board` (siehe [i18n](./i18n.md)): `label`, `empty`, `wipExceeded`, `due`, `overdue`, `assignee(name)`. Datumsangaben werden mit dem `code` des Locales formatiert.

@@ -93,6 +93,10 @@ function onMove(move: BoardMove): void {
 
 Типы: `UidBoardProps`, `BoardColumn`, `BoardCard`, `BoardCardTag`, `BoardAssignee`, `BoardLane`, `BoardMove`, `BoardKey`.
 
+## Оформление
+
+Колонки и карточки берут CSS-переменные, по умолчанию — из темы: `--uid-board-column-bg`, `--uid-board-column-border`, `--uid-board-column-radius`, `--uid-board-card-bg`, `--uid-board-card-border`, `--uid-board-card-radius`, `--uid-board-card-padding`.
+
 ## Тексты
 
 Подписи берутся из словаря локали, раздел `board` (см. [i18n](./i18n.md)): `label`, `empty`, `wipExceeded`, `due`, `overdue`, `assignee(name)`. Даты форматируются по `code` локали.

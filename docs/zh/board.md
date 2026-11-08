@@ -93,6 +93,10 @@ function onMove(move: BoardMove): void {
 
 类型：`UidBoardProps`、`BoardColumn`、`BoardCard`、`BoardCardTag`、`BoardAssignee`、`BoardLane`、`BoardMove`、`BoardKey`。
 
+## 样式
+
+列和卡片使用 CSS 变量，未设置时沿用主题：`--uid-board-column-bg`、`--uid-board-column-border`、`--uid-board-column-radius`、`--uid-board-card-bg`、`--uid-board-card-border`、`--uid-board-card-radius`、`--uid-board-card-padding`。
+
 ## 文本
 
 文案来自语言包的 `board` 部分（见 [i18n](./i18n.md)）：`label`、`empty`、`wipExceeded`、`due`、`overdue`、`assignee(name)`。日期按语言包的 `code` 格式化。
