@@ -1,5 +1,16 @@
 # @dskripchenko/ui
 
+## 1.32.0
+
+### Minor Changes
+
+- ec8ad6f: UidBoard: columns and cards take CSS variables for their look — `--uid-board-column-border`, `--uid-board-column-radius`, `--uid-board-card-bg`, `--uid-board-card-border`, `--uid-board-card-radius` and `--uid-board-card-padding`, next to the existing `--uid-board-column-bg`. The defaults are unchanged.
+- ec8ad6f: UidTable: cell paddings are CSS variables — `--uid-table-head-padding-y`, `--uid-table-cell-padding-y` and `--uid-table-cell-padding-x` — so a host can make a table denser without overriding its classes. The defaults are unchanged.
+
+### Patch Changes
+
+- ec8ad6f: UidCommand and the drawer mode of UidSidebarLayout dim the page behind them again. Their backdrop took `--uid-color-overlay`, which the themes map to an opaque surface, so the page behind turned white (or dark grey). They now use their own `--uid-command-overlay` and `--uid-layout-sidebar-overlay`, half-transparent black by default, like UidModal and UidDrawer.
+
 ## 1.31.2
 
 ### Patch Changes
