@@ -171,5 +171,27 @@ describe('UidCommand', () => {
     expect(document.body.textContent).toContain('Beta')
     wrapper.unmount()
   })
+
+  it('draws a row by the item slot and keeps it a button of the list', async () => {
+    wrapper = mount(UidCommand, {
+      props: { commands, modelValue: true },
+      slots: {
+        item: `<template #item="{ command, active }"><b class="row">{{ command.label }}{{ active ? ' *' : '' }}</b></template>`,
+        header: '<span class="facets">facets</span>',
+        footer: '<span class="keys">keys</span>',
+      },
+      attachTo: document.body,
+    })
+    await nextTick()
+
+    const rows = qq('.uid-command__item .row').map((el) => el.textContent)
+    expect(rows).toEqual(['Создать проект *', 'Открыть настройки', 'Выйти из аккаунта'])
+    expect(qq('.uid-command__item')[0]?.getAttribute('role')).toBe('option')
+    expect(q('.uid-command__header .facets')).not.toBeNull()
+    expect(q('.uid-command__footer .keys')).not.toBeNull()
+
+    q<HTMLButtonElement>('.uid-command__item')?.click()
+    expect(commands[0]?.action).toHaveBeenCalled()
+  })
 })
 
