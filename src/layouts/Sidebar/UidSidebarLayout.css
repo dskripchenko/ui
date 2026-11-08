@@ -69,7 +69,7 @@
     display: none;
     position: fixed;
     inset: 0;
-    background: var(--uid-color-overlay, rgba(0, 0, 0, 0.5));
+    background: var(--uid-layout-sidebar-overlay, rgba(0, 0, 0, 0.5));
     z-index: calc(var(--uid-z-drawer, 400) - 1);
     cursor: pointer;
   }
