@@ -92,3 +92,17 @@ export const CardFieldsAndPaging: Story = {
       </UidBoard>`,
   }),
 }
+
+/** WIP on a chip, a faded done column, the drop hint and the reason a column is closed to a card. */
+export const LimitsAndReasons: Story = {
+  args: {
+    columns: [
+      { key: 'todo', title: 'To do', cards: [
+        { key: 'T-1', title: 'Retry webhooks on gateway timeout', targets: ['doing', 'review'], reasons: { done: 'No move from To do to Done. Review and test first.' } },
+      ] },
+      { key: 'doing', title: 'In progress', wip: 20, total: 18, cards: [{ key: 'T-2', title: 'Partition the transactions table' }] },
+      { key: 'review', title: 'Review', wip: 8, total: 9, cards: [{ key: 'T-3', title: 'Redis Streams retry queue' }] },
+      { key: 'done', title: 'Done', muted: true, cards: [{ key: 'T-4', title: 'Document gateway error codes', done: true }] },
+    ],
+  },
+}

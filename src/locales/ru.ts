@@ -257,6 +257,9 @@ export const ru: UidLocale = {
     due: 'Срок',
     overdue: 'Просрочено',
     assignee: (name) => `Исполнитель: ${name}`,
+
+    dropHere: (title) => `Отпустите: → ${title}`,
+    overWip: (limit) => `сверх лимита ${limit}`,
   },
 
   kanban: {

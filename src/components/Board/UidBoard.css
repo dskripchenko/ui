@@ -39,8 +39,73 @@
   background: var(--uid-color-primary-subtle, var(--uid-color-surface-raised));
 }
 
+.uid-board__column {
+  position: relative;
+}
+
 .uid-board__column--blocked {
   opacity: 0.55;
+}
+
+.uid-board__column--blocked:has(.uid-board__reason) {
+  opacity: 1;
+}
+
+.uid-board__column--blocked:has(.uid-board__reason) > :not(.uid-board__reason) {
+  opacity: 0.45;
+}
+
+.uid-board__column--muted > .uid-board__header,
+.uid-board__column--muted > .uid-board__cards,
+.uid-board__column--muted > .uid-board__footer {
+  opacity: var(--uid-board-muted-opacity, 0.5);
+}
+
+.uid-board__column--target-over {
+  border-color: var(--uid-color-warning);
+}
+
+.uid-board__reason {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: var(--uid-space-sm);
+  right: var(--uid-space-sm);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--uid-space-xs);
+  padding: var(--uid-space-sm) var(--uid-space-md);
+  transform: translateY(-50%);
+  background: var(--uid-board-reason-bg, var(--uid-color-surface));
+  border: 1px solid var(--uid-color-border);
+  border-radius: var(--uid-board-card-radius, var(--uid-radius-sm, 6px));
+  box-shadow: var(--uid-shadow-md, 0 4px 12px rgb(0 0 0 / 0.12));
+  color: var(--uid-color-text-secondary);
+  font-size: var(--uid-font-size-xs, 12px);
+  line-height: 1.5;
+  text-align: center;
+  pointer-events: none;
+}
+
+.uid-board__reason-icon {
+  flex: none;
+}
+
+.uid-board__drop {
+  padding: var(--uid-space-sm);
+  border: 1px dashed var(--uid-color-primary);
+  border-radius: var(--uid-board-card-radius, var(--uid-radius-sm, 6px));
+  background: var(--uid-color-primary-subtle, transparent);
+  color: var(--uid-color-primary);
+  font-size: var(--uid-font-size-xs, 12px);
+  text-align: center;
+}
+
+.uid-board__column--target-over .uid-board__drop {
+  border-color: var(--uid-color-warning);
+  background: transparent;
+  color: var(--uid-color-warning);
 }
 
 .uid-board__header {
@@ -64,6 +129,16 @@
 .uid-board__column--over .uid-board__count {
   color: var(--uid-color-danger);
   font-weight: 700;
+}
+
+.uid-board__count--wip {
+  padding: 0 6px;
+  border-radius: var(--uid-radius-sm, 4px);
+  background: var(--uid-board-wip-bg, var(--uid-color-surface-raised, var(--uid-color-surface)));
+}
+
+.uid-board__column--over .uid-board__count--wip {
+  background: var(--uid-board-wip-over-bg, var(--uid-color-danger-subtle, transparent));
 }
 
 .uid-board__cards {

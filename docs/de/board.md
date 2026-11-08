@@ -48,7 +48,8 @@ function onMove(move: BoardMove): void {
 | `title` | `string` | Die Überschrift. |
 | `cards` | `BoardCard[]` | Die angezeigten Karten, in Reihenfolge. |
 | `total` | `number` | Die tatsächliche Kartenzahl der Spalte, wenn nur ein Teil geladen ist. Der Zähler im Kopf, die WIP-Prüfung, die Hervorhebung bei Überschreitung und `count` des Slots `column-header` verwenden ihn; fehlt er — `cards.length`. Eine Spalte mit `total` über null ohne geladene Karten wird nicht als leer angezeigt. |
-| `wip` | `number \| null` | Das WIP-Limit: darüber wird der Zähler rot und erhält den Hinweis „Limit überschritten“. |
+| `wip` | `number \| null` | Das WIP-Limit: der Standardkopf zeigt den Zähler als `count/wip` auf einem Chip, über dem Limit rot mit dem Hinweis „Limit überschritten“. Während eine Karte gezogen wird, ist eine Spalte, die der Abwurf über das Limit bringt, in der Warnfarbe umrandet, und ihr Abwurfhinweis sagt es. |
+| `muted` | `boolean` | Eine Spalte erledigter Arbeit: Kopf, Karten und Fuß sind abgeblendet (`--uid-board-muted-opacity`, 0.5). |
 
 ## Karten
 
@@ -63,8 +64,13 @@ function onMove(move: BoardMove): void {
 | `done` | `boolean` | Eine erledigte Karte: gedämpft (Titel durchgestrichen) und nie überfällig. |
 | `lane` | `string \| number` | Die Swimlane der Karte. |
 | `targets` | `(string \| number)[]` | Die Spalten, in die die Karte darf; fehlt es — jede. |
+| `reasons` | `Record<string \| number, string>` | Warum die Karte nicht in eine Spalte darf, nach Spaltenschlüssel. Während die Karte gezogen wird, zeigt eine gesperrte Spalte mit Grund ihn über den Karten mit einem Schloss (die Spalte selbst bleibt abgeblendet). |
 
 Der Slot `card` ersetzt die ganze Karte, einschließlich des Fußes mit `assignee` und `due`.
+
+## Ziehen
+
+Während eine Karte gezogen wird, sind die Spalten, in die sie darf, in der Akzentfarbe umrandet, die anderen abgeblendet. Die Spalte unter dem Zeiger zeigt oben einen gestrichelten Hinweis — „Drop: → Review“ — mit dem Zusatz „über dem Limit von 8“, wenn der Abwurf sie über `wip` bringt; ein Abwurf auf den Hinweis setzt die Karte an den Anfang. Eine gesperrte Spalte zeigt den Grund der Karte, wenn `reasons` einen hat.
 
 ## Props
 
@@ -95,8 +101,8 @@ Typen: `UidBoardProps`, `BoardColumn`, `BoardCard`, `BoardCardTag`, `BoardAssign
 
 ## Gestaltung
 
-Spalten und Karten nehmen CSS-Variablen, sonst gilt das Theme: `--uid-board-column-bg`, `--uid-board-column-border`, `--uid-board-column-radius`, `--uid-board-card-bg`, `--uid-board-card-border`, `--uid-board-card-radius`, `--uid-board-card-padding`.
+Spalten und Karten nehmen CSS-Variablen, sonst gilt das Theme: `--uid-board-column-bg`, `--uid-board-column-border`, `--uid-board-column-radius`, `--uid-board-card-bg`, `--uid-board-card-border`, `--uid-board-card-radius`, `--uid-board-card-padding`, `--uid-board-muted-opacity`, `--uid-board-reason-bg`, `--uid-board-wip-bg`, `--uid-board-wip-over-bg`.
 
 ## Texte
 
-Beschriftungen kommen aus dem Locale, Abschnitt `board` (siehe [i18n](./i18n.md)): `label`, `empty`, `wipExceeded`, `due`, `overdue`, `assignee(name)`. Datumsangaben werden mit dem `code` des Locales formatiert.
+Beschriftungen kommen aus dem Locale, Abschnitt `board` (siehe [i18n](./i18n.md)): `label`, `empty`, `wipExceeded`, `due`, `overdue`, `assignee(name)`, `dropHere(title)`, `overWip(limit)`. Datumsangaben werden mit dem `code` des Locales formatiert.

@@ -257,6 +257,9 @@ export const en: UidLocale = {
     due: 'Due date',
     overdue: 'Overdue',
     assignee: (name) => `Assignee: ${name}`,
+
+    dropHere: (title) => `Drop: → ${title}`,
+    overWip: (limit) => `over the limit of ${limit}`,
   },
 
   kanban: {

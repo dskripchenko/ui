@@ -216,6 +216,10 @@ export interface UidLocale {
     overdue: string
     /** The title of a card's assignee: `Assignee: Anna`. */
     assignee: (name: string) => string
+    /** The placeholder where a dragged card lands: `Drop: → Review`. */
+    dropHere: (title: string) => string
+    /** Added to the placeholder when the drop takes the column over its limit. */
+    overWip: (limit: number) => string
   }
 
   /** UidKanban: the markup-driven board. */
