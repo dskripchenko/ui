@@ -349,6 +349,19 @@ export type {
   HeatmapColorScaleName,
 } from './components/Heatmap/index.js'
 
+export { UidChart, niceTicks } from './components/Chart/index.js'
+export type {
+  UidChartProps,
+  ChartSeries,
+  ChartSeriesType,
+  ChartTone,
+  ChartReference,
+  ChartLegendPosition,
+  ChartTooltipItem,
+  ChartTooltipContext,
+  NiceTicks,
+} from './components/Chart/index.js'
+
 export { UidStepper } from './components/Stepper/index.js'
 export type { UidStepperProps, StepperStep } from './components/Stepper/index.js'
 

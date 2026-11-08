@@ -347,6 +347,15 @@ export interface UidLocale {
     noData: string
   }
 
+  chart: {
+    /** Default accessible name: "Chart: 2 series, 10 points". */
+    summary: (series: number, points: number) => string
+    /** The empty state: no categories or every value is null. */
+    noData: string
+    /** Header of the category column in the hidden data table. */
+    category: string
+  }
+
   validation: {
     value: string
     required: (label: string) => string
