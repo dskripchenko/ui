@@ -156,7 +156,7 @@ interface ChartReference {
 
 Series without `color` or `tone` take palette slots in the order of the `series` array: `--uid-chart-1` … `--uid-chart-6`. The slot belongs to the series' position, so hiding another series never repaints it. More than six such series repeat the palette — fold the tail into "Other" instead. Tones map to the theme: `accent`, `info`, `warning`, `danger`, `success` to `--uid-accent`, `--uid-info`, … and `neutral` to `--uid-chart-neutral` (plans, baselines). The palette has separate light and dark values (`:root[data-theme='dark']`) and can be overridden like any token. `--uid-chart-surface` (default `--uid-color-surface`) is the colour of the gaps between stacked bars and the ring around dots: set it to the background the chart sits on.
 
-Marks: 2 px lines with round joins, `4 4` dashes, areas at 15 % opacity, 8 px dots with a 2 px ring, bars with a 4 px rounded data end and 2 px gaps. Text always uses the text colours, never a series colour.
+Marks: 2 px lines with round joins, `4 4` dashes, areas at 15 % opacity (stacked areas — bands at 70 % with a 1 px top edge), 8 px dots with a 2 px ring, bars with a 4 px rounded data end and 2 px gaps. Text always uses the text colours, never a series colour.
 
 ### Accessibility
 
