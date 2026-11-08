@@ -244,8 +244,12 @@ describe('UidBoard', () => {
     expect(b!.find('.uid-board__reason').exists()).toBe(false)
     expect(c!.classes()).toContain('uid-board__column--blocked')
     expect(c!.find('.uid-board__reason').exists()).toBe(false)
+    await b!.trigger('dragover', { dataTransfer: dataTransfer() })
+    expect(b!.find('.uid-board__drop').exists()).toBe(true)
     await c!.trigger('dragover', { dataTransfer: dataTransfer() })
     expect(c!.find('.uid-board__reason').text()).toBe('No move from A to C. Go through B.')
+    // The hint leaves the column the pointer left for a closed one.
+    expect(b!.find('.uid-board__drop').exists()).toBe(false)
     await wrapper.find('.uid-board__card').trigger('dragend')
     expect(wrapper.find('.uid-board__reason').exists()).toBe(false)
   })

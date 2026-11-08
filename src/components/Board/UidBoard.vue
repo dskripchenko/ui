@@ -169,7 +169,11 @@ function onDragOver(event: DragEvent, column: BoardColumn, lane: BoardLane | nul
     event.stopPropagation()
     pointed.value = column.key
   }
-  if (drag === null || !allows(drag.card, column, drag.from)) return
+  if (drag === null) return
+  if (!allows(drag.card, column, drag.from)) {
+    hover.value = null
+    return
+  }
   event.preventDefault()
   if (event.dataTransfer) event.dataTransfer.dropEffect = 'move'
   hover.value = { column: column.key, lane: lane?.key ?? null, beforeKey }
