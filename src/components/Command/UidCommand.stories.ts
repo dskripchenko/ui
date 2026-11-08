@@ -98,3 +98,32 @@ export const WithoutGroups: Story = {
     `,
   }),
 }
+
+export const WithSlots: Story = {
+  render: () => ({
+    components: { UidCommand, UidButton },
+    setup() {
+      const open = ref(true)
+      const rows: CommandItem[] = [
+        { id: 'ISS-12', label: 'Retry the webhook after a timeout', group: 'Issues', action: () => {} },
+        { id: 'ISS-14', label: 'Limit retries per merchant', group: 'Issues', action: () => {} },
+        { id: 'new', label: 'Create an issue', shortcut: ['C'], group: 'Actions', action: () => {} },
+      ]
+      return { open, commands: rows }
+    },
+    template: `
+      <div style="height: 500px;">
+        <UidCommand v-model="open" :commands="commands" placeholder="Search…">
+          <template #header>
+            <span style="font-size: 12px; color: var(--uid-color-text-secondary)">All · Issues · Actions</span>
+          </template>
+          <template #item="{ command }">
+            <code v-if="command.group === 'Issues'" style="font-size: 12px; color: var(--uid-color-text-secondary)">{{ command.id }}</code>
+            <span style="flex: 1">{{ command.label }}</span>
+          </template>
+          <template #footer>↑↓ choose · ↵ open</template>
+        </UidCommand>
+      </div>
+    `,
+  }),
+}

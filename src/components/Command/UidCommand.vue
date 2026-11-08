@@ -29,6 +29,15 @@ export interface UidCommandProps {
   filter?: boolean
 }
 
+defineSlots<{
+  /** The inside of a row: the command and whether it is the active one. The row stays a button of the list. */
+  item?(props: { command: CommandItem; active: boolean }): unknown
+  /** Below the search field: filters, tabs, a hint. */
+  header?(): unknown
+  /** Below the list: keys, links. */
+  footer?(): unknown
+}>()
+
 const props = withDefaults(defineProps<UidCommandProps>(), {
   placeholder: undefined,
   emptyText: undefined,
@@ -185,6 +194,13 @@ onUnmounted(() => {
           </div>
 
           <div
+            v-if="$slots.header"
+            class="uid-command__header"
+          >
+            <slot name="header" />
+          </div>
+
+          <div
             ref="listRef"
             class="uid-command__list"
             role="listbox"
@@ -212,23 +228,29 @@ onUnmounted(() => {
                   @click="select(cmd)"
                   @mouseenter="activeIndex = filtered.indexOf(cmd)"
                 >
-                  <div class="uid-command__item-text">
-                    <span class="uid-command__item-label">{{ cmd.label }}</span>
-                    <span
-                      v-if="cmd.description"
-                      class="uid-command__item-desc"
-                    >{{ cmd.description }}</span>
-                  </div>
-                  <div
-                    v-if="cmd.shortcut"
-                    class="uid-command__item-shortcut"
+                  <slot
+                    name="item"
+                    :command="cmd"
+                    :active="filtered.indexOf(cmd) === activeIndex"
                   >
-                    <kbd
-                      v-for="key in cmd.shortcut"
-                      :key="key"
-                      class="uid-command__kbd"
-                    >{{ key }}</kbd>
-                  </div>
+                    <div class="uid-command__item-text">
+                      <span class="uid-command__item-label">{{ cmd.label }}</span>
+                      <span
+                        v-if="cmd.description"
+                        class="uid-command__item-desc"
+                      >{{ cmd.description }}</span>
+                    </div>
+                    <div
+                      v-if="cmd.shortcut"
+                      class="uid-command__item-shortcut"
+                    >
+                      <kbd
+                        v-for="key in cmd.shortcut"
+                        :key="key"
+                        class="uid-command__kbd"
+                      >{{ key }}</kbd>
+                    </div>
+                  </slot>
                 </button>
               </template>
             </template>
@@ -239,6 +261,13 @@ onUnmounted(() => {
             >
               {{ emptyText ?? uidLocale.command.empty }}
             </div>
+          </div>
+
+          <div
+            v-if="$slots.footer"
+            class="uid-command__footer"
+          >
+            <slot name="footer" />
           </div>
         </div>
       </div>
