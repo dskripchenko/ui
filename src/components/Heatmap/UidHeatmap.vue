@@ -223,6 +223,7 @@ const accessibleLabel = computed(() => {
             :width="cellSize"
             :height="cellSize"
             :fill="colorForLevel(cell.level)"
+            :style="{ fill: colorForLevel(cell.level) }"
           >
             <title>{{ tooltipFor(cell) }}</title>
           </rect>

@@ -43,6 +43,8 @@ describe('UidHeatmap', () => {
     const cells = wrapper.findAll('.uid-heatmap__cell')
     const colors = cells.map(c => c.attributes('fill'))
     expect(new Set(colors).size).toBeGreaterThan(1)
+    // The level's colour is inline too: the cell's CSS (the empty colour) must not win over it.
+    expect(cells.map(c => c.attributes('style'))).toEqual(colors.map(c => `fill: ${c};`))
   })
 
   it('кастомный color через CSS-переменную', () => {
