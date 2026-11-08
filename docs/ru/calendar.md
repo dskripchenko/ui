@@ -77,6 +77,10 @@ function onSlot(s: CalendarSlot): void {
 | `todayLabel` | `string` | из локали | Подпись кнопки «Сегодня». |
 | `hourHeight` | `number` | `48` | Пикселей на час в сетке дня и недели. |
 | `scrollToHour` | `number` | `8` | К какому часу прокручивается сетка дня и недели. |
+| `dayClass` | `(iso: string) => CalendarDayClass` | — | Классы ячейки дня в сетке месяца по её `YYYY-MM-DD` (всё, что принимает `:class`): выходные, праздники, переносы. |
+| `todayButton` | `boolean` | `true` | Показывать кнопку «Сегодня» между стрелками. |
+
+Слот `title` (`{ title, view, range }`) заменяет текст заголовка; стрелки и переключатель видов остаются.
 
 `v-model` — выбранная дата, `v-model:view` — вид, `v-model:anchor` — дата, вокруг которой строится вид.
 

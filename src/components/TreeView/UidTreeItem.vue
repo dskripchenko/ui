@@ -173,6 +173,10 @@ function onFocus(): void {
       </span>
 
       <span class="uid-tree-item__label">{{ node.label }}</span>
+      <span
+        v-if="node.suffix !== undefined && node.suffix !== ''"
+        class="uid-tree-item__suffix"
+      >{{ node.suffix }}</span>
     </div>
 
     <ul

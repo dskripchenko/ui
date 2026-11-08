@@ -298,5 +298,25 @@ describe('UidCalendar', () => {
     const props: UidCalendarProps = { selectable: true, editable: false, events: [move.event] }
     expect(props.events).toHaveLength(1)
   })
-})
 
+  it('добавляет классы дня из dayClass, только в сетке месяца', () => {
+    const wrapper = mount(UidCalendar, {
+      props: {
+        modelValue: '2026-11-01',
+        dayClass: (iso: string) => (iso === '2026-11-04' ? 'holiday' : iso === '2026-11-03' ? { short: true } : undefined),
+      },
+    })
+    expect(wrapper.find('[data-date="2026-11-04"]').classes()).toContain('holiday')
+    expect(wrapper.find('[data-date="2026-11-03"]').classes()).toContain('short')
+    expect(wrapper.find('[data-date="2026-11-05"]').classes()).not.toContain('holiday')
+  })
+
+  it('заменяет заголовок слотом title и прячет «Сегодня» по todayButton', () => {
+    const wrapper = mount(UidCalendar, {
+      props: { anchor: '2026-11-10', todayButton: false },
+      slots: { title: '<template #title="{ title, range }">Calendar · {{ title }} · {{ range.start }}</template>' },
+    })
+    expect(wrapper.find('.uid-calendar__title').text()).toMatch(/^Calendar · Ноябрь 2026 · 2026-10-26$/)
+    expect(wrapper.findAll('.uid-calendar__nav button')).toHaveLength(2)
+  })
+})

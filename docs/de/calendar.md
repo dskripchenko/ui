@@ -77,6 +77,10 @@ Ein Klick auf einen Tag in der Monatsansicht wählt ihn aus: `update:modelValue`
 | `todayLabel` | `string` | Locale | Die Beschriftung der Heute-Schaltfläche. |
 | `hourHeight` | `number` | `48` | Pixel pro Stunde im Tages- und Wochenraster. |
 | `scrollToHour` | `number` | `8` | Die Stunde, zu der das Tages- und Wochenraster scrollt. |
+| `dayClass` | `(iso: string) => CalendarDayClass` | — | Klassen für eine Tageszelle des Monatsrasters nach ihrem `YYYY-MM-DD` (alles, was `:class` annimmt): Wochenenden, Feiertage, freie Tage. |
+| `todayButton` | `boolean` | `true` | Die Heute-Schaltfläche zwischen den Pfeilen anzeigen. |
+
+Der Slot `title` (`{ title, view, range }`) ersetzt den Text des Kopftitels; Pfeile und Ansichtsumschalter bleiben.
 
 `v-model` ist das gewählte Datum, `v-model:view` die Ansicht, `v-model:anchor` das Datum, um das die Ansicht aufgebaut wird.
 

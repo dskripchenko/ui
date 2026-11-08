@@ -77,6 +77,10 @@ A click on a day in the month view selects it: `update:modelValue`, `date-click`
 | `todayLabel` | `string` | locale | The caption of the Today button. |
 | `hourHeight` | `number` | `48` | Pixels per hour in the day and week grid. |
 | `scrollToHour` | `number` | `8` | The hour the day and week grid scrolls to. |
+| `dayClass` | `(iso: string) => CalendarDayClass` | — | Classes for a day cell of the month grid by its `YYYY-MM-DD` (anything `:class` takes): weekends, holidays, days off. |
+| `todayButton` | `boolean` | `true` | Show the Today button between the arrows. |
+
+Slot `title` (`{ title, view, range }`) replaces the text of the header's title; the arrows and the view switcher stay.
 
 `v-model` is the selected date, `v-model:view` the view, `v-model:anchor` the date the view is built around.
 

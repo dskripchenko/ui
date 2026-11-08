@@ -174,3 +174,26 @@ export const Multiple: Story = {
     `,
   }),
 }
+
+export const Suffix: Story = {
+  render: () => ({
+    components: { UidTreeView },
+    setup: () => ({
+      nodes: [
+        { key: 'org', label: 'Organization', suffix: 312, children: [
+          { key: 'dev', label: 'Development', suffix: 96, children: [{ key: 'core', label: 'Core', suffix: 9 }] },
+          { key: 'support', label: 'Support', suffix: 64 },
+        ] },
+      ] as TreeNode[],
+      expanded: ref<TreeKey[]>(['org', 'dev']),
+    }),
+    template: `
+      <UidTreeView
+        :nodes="nodes"
+        v-model:expandedKeys="expanded"
+        style="width:320px"
+      />
+    `,
+  }),
+}
+

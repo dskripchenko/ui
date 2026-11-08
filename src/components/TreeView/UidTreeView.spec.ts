@@ -189,4 +189,11 @@ describe('UidTreeView', () => {
     expect(keys).toEqual(expect.arrayContaining(['p', 'x']))
     expect(keys).not.toContain('y')
   })
+
+  it('показывает suffix узла справа от названия', () => {
+    const wrapper = mount(UidTreeView, { props: { nodes: [{ key: 'a', label: 'A', suffix: 12 }, { key: 'b', label: 'B' }] } })
+    const suffixes = wrapper.findAll('.uid-tree-item__suffix')
+    expect(suffixes).toHaveLength(1)
+    expect(suffixes[0]?.text()).toBe('12')
+  })
 })
