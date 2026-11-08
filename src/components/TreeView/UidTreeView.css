@@ -130,6 +130,14 @@
   white-space: nowrap;
 }
 
+.uid-tree-item__suffix {
+  flex: none;
+  margin-left: var(--uid-space-sm);
+  color: var(--uid-text-tertiary);
+  font-size: var(--uid-font-size-xs);
+  font-variant-numeric: tabular-nums;
+}
+
 .uid-tree-item__children {
   list-style: none;
   margin: 0;

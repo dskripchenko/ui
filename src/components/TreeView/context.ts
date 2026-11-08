@@ -9,6 +9,8 @@ export interface TreeNode {
   disabled?: boolean
   selectable?: boolean
   icon?: unknown
+  /** A quiet note at the row's right edge: a count, a size, a status. */
+  suffix?: string | number
 }
 
 export type TreeSelectable = 'single' | 'multiple' | false

@@ -56,7 +56,14 @@ export interface UidCalendarProps {
   selectable?: boolean
   hourHeight?: number
   scrollToHour?: number
+  /** Classes for a day cell of the month grid by its `YYYY-MM-DD`: weekends, holidays, days off. */
+  dayClass?: (iso: string) => CalendarDayClass
+  /** Show the Today button between the arrows. */
+  todayButton?: boolean
 }
+
+/** What `dayClass` returns: anything Vue's `:class` takes, or nothing. */
+export type CalendarDayClass = string | string[] | Record<string, boolean> | null | undefined
 
 const props = withDefaults(defineProps<UidCalendarProps>(), {
   events: () => [],
@@ -67,6 +74,8 @@ const props = withDefaults(defineProps<UidCalendarProps>(), {
   selectable: undefined,
   hourHeight: 48,
   scrollToHour: 8,
+  dayClass: undefined,
+  todayButton: true,
 })
 
 const emit = defineEmits<{
@@ -417,7 +426,12 @@ defineExpose({ go, goToday, setView })
     :class="[`uid-calendar--${view}`, { 'uid-calendar--compact': compact, 'uid-calendar--editable': editable, 'uid-calendar--selectable': isSelectable }]"
   >
     <div class="uid-calendar__header">
-      <span class="uid-calendar__title">{{ title }}</span>
+      <span class="uid-calendar__title"><slot
+        name="title"
+        :title="title"
+        :view="view"
+        :range="range"
+      >{{ title }}</slot></span>
       <div class="uid-calendar__tools">
         <div
           v-if="views.length > 1"
@@ -449,6 +463,7 @@ defineExpose({ go, goToday, setView })
             />
           </button>
           <button
+            v-if="todayButton"
             type="button"
             class="uid-calendar__btn"
             @click="goToday"
@@ -483,12 +498,12 @@ defineExpose({ go, goToday, setView })
           v-for="day in days"
           :key="day.iso"
           class="uid-calendar__day"
-          :class="{
+          :class="[{
             'uid-calendar__day--other': !day.current,
             'uid-calendar__day--today': day.iso === todayISO,
             'uid-calendar__day--selected': day.iso === model,
             'uid-calendar__day--disabled': isDisabled(day.iso),
-          }"
+          }, dayClass?.(day.iso)]"
           :data-date="day.iso"
           :tabindex="!isDisabled(day.iso) ? 0 : -1"
           role="button"

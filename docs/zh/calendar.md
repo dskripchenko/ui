@@ -77,6 +77,10 @@ function onSlot(s: CalendarSlot): void {
 | `todayLabel` | `string` | 来自语言包 | “今天”按钮的文字。 |
 | `hourHeight` | `number` | `48` | 日视图和周视图网格中每小时的像素数。 |
 | `scrollToHour` | `number` | `8` | 日视图和周视图网格滚动到的小时。 |
+| `dayClass` | `(iso: string) => CalendarDayClass` | — | 按 `YYYY-MM-DD` 为月视图的日单元格添加类（`:class` 接受的任意值）：周末、节假日、调休。 |
+| `todayButton` | `boolean` | `true` | 在箭头之间显示“今天”按钮。 |
+
+插槽 `title`（`{ title, view, range }`）替换标题文本；箭头和视图切换保留。
 
 `v-model` 是选中的日期，`v-model:view` 是视图，`v-model:anchor` 是构建视图所围绕的日期。
 

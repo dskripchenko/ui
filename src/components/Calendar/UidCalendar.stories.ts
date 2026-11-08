@@ -153,3 +153,31 @@ export const SelectableReadOnly: Story = {
       </div>`,
   }),
 }
+
+export const WorkingDays: Story = {
+  name: 'Рабочий календарь (dayClass, слот title)',
+  render: () => ({
+    components: { UidCalendar },
+    setup: () => {
+      const off = new Set(['2026-11-04'])
+      const short = new Set(['2026-11-03'])
+      const dayClass = (iso: string) => {
+        const day = new Date(`${iso}T00:00:00`).getDay()
+        return { 'is-off': off.has(iso) || day === 0 || day === 6, 'is-short': short.has(iso) }
+      }
+      const events = [
+        { id: 1, date: '2026-11-03', title: 'Сокращённый · 7 ч', color: '#b45309' },
+        { id: 2, date: '2026-11-04', title: 'Праздник', color: '#dc2626' },
+      ]
+      return { dayClass, events }
+    },
+    template: `
+      <div style="width:960px">
+        <UidCalendar anchor="2026-11-10" :events="events" :day-class="dayClass" :today-button="false">
+          <template #title="{ title }">Календарь «Офис» · {{ title }}</template>
+        </UidCalendar>
+        <component is="style">.is-off { background: var(--uid-color-surface-hover); } .is-short { background: var(--uid-warning-subtle); }</component>
+      </div>`,
+  }),
+}
+

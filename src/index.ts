@@ -272,7 +272,7 @@ export { UidCascader } from './components/Cascader/index.js'
 export type { UidCascaderProps, CascaderOption, CascaderValue } from './components/Cascader/index.js'
 
 export { UidCalendar } from './components/Calendar/index.js'
-export type { UidCalendarProps, CalendarEvent, CalendarEventMove, CalendarSlot, CalendarRange, CalendarView } from './components/Calendar/index.js'
+export type { UidCalendarProps, CalendarEvent, CalendarEventMove, CalendarSlot, CalendarRange, CalendarView, CalendarDayClass } from './components/Calendar/index.js'
 
 export {
   UidKanban,
