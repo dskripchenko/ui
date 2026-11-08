@@ -229,3 +229,19 @@
   --_uid-table-fixed-shadow: rgb(0 0 0 / 0.5);
 }
 
+
+.uid-table__group > .uid-table__td--group {
+  padding-top: var(--uid-space-sm);
+  padding-bottom: var(--uid-space-xs);
+  background: var(--uid-color-bg-subtle);
+  color: var(--uid-color-text-secondary);
+  font-size: var(--uid-font-size-xs);
+  font-weight: var(--uid-font-weight-medium);
+  letter-spacing: 0.02em;
+}
+
+.uid-table__group-count {
+  margin-left: var(--uid-space-xs);
+  color: var(--uid-color-text-tertiary);
+  font-weight: var(--uid-font-weight-regular);
+}

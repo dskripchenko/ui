@@ -52,6 +52,12 @@ export interface UidTableProps {
    * or calls the exposed `toggleExpanded()`.
    */
   expanded?: Set<string | number>
+  /**
+   * Rows in groups: a row whose group differs from the row above starts a
+   * group with a header row across the table. The data comes sorted by the
+   * group; the table does not reorder it. A column key or a function.
+   */
+  groupBy?: string | ((row: Record<string, unknown>) => string | number | null)
 }
 
 const props = withDefaults(defineProps<UidTableProps>(), {
@@ -66,6 +72,7 @@ const props = withDefaults(defineProps<UidTableProps>(), {
   selection: () => new Set(),
   rowKey: 'id',
   expanded: () => new Set(),
+  groupBy: undefined,
 })
 
 const uidLocale = useLocale()
@@ -84,6 +91,11 @@ const slots = defineSlots<{
   empty?: () => unknown
   /** The content of an expanded row, below it across the whole table. */
   expanded?: (props: { row: Record<string, unknown> }) => unknown
+  /**
+   * The header of a group (with `groupBy`): `row` holds the group's
+   * `value`, its `rows` on this page and their `count`.
+   */
+  group?: (props: { row: Record<string, unknown> }) => unknown
   /** The footer cell of the column with this key: `<template #footer-name>`. */
   [footerSlot: `footer-${string}`]: (() => unknown) | undefined
   /** A cell of the column with this key: `<template #name="{ row }">`. */
@@ -108,6 +120,31 @@ function toggleExpanded(id: string | number): void {
 }
 
 defineExpose({ toggleExpanded })
+
+function groupOf(row: Record<string, unknown>): string | number | null {
+  const by = props.groupBy
+  if (by === undefined) return null
+  if (typeof by === 'function') return by(row)
+  const value = row[by]
+  return typeof value === 'string' || typeof value === 'number' ? value : null
+}
+
+/** For each row index that starts a group: the group's value and its rows on this page. */
+const groupStarts = computed(() => {
+  const starts = new Map<number, { value: string | number | null; rows: Record<string, unknown>[]; count: number }>()
+  if (props.groupBy === undefined) return starts
+  let current: { value: string | number | null; rows: Record<string, unknown>[]; count: number } | null = null
+  props.data.forEach((row, index) => {
+    const value = groupOf(row)
+    if (current === null || current.value !== value) {
+      current = { value, rows: [], count: 0 }
+      starts.set(index, current)
+    }
+    current.rows.push(row)
+    current.count += 1
+  })
+  return starts
+})
 
 /** The footer row appears once any column has a `footer-<key>` slot. */
 function hasFooter(): boolean {
@@ -444,6 +481,23 @@ onBeforeUnmount(() => resizeObserver?.disconnect())
             v-else
             :key="idx"
           >
+            <tr
+              v-if="groupStarts.has(idx)"
+              class="uid-table__group"
+            >
+              <td
+                :colspan="totalCols"
+                class="uid-table__td uid-table__td--group"
+              >
+                <slot
+                  name="group"
+                  :row="(groupStarts.get(idx) as Record<string, unknown>)"
+                >
+                  {{ groupStarts.get(idx)?.value ?? '—' }}
+                  <span class="uid-table__group-count">{{ groupStarts.get(idx)?.count }}</span>
+                </slot>
+              </td>
+            </tr>
             <tr
               class="uid-table__row"
               :class="{

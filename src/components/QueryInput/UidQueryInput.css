@@ -1,0 +1,159 @@
+.uid-query-input {
+  --uid-query-input-font: var(--uid-font-family-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+  --uid-query-input-font-size: var(--uid-font-size-sm);
+  --uid-query-input-height: 36px;
+
+  display: flex;
+  align-items: center;
+  gap: var(--uid-space-sm);
+  min-width: 0;
+  height: var(--uid-query-input-height);
+  padding: 0 var(--uid-space-sm) 0 12px;
+  border: 1px solid var(--uid-color-border);
+  border-radius: var(--uid-radius-md);
+  background: var(--uid-surface-raised);
+  transition:
+    border-color var(--uid-duration-fast) var(--uid-ease-out),
+    box-shadow var(--uid-duration-fast) var(--uid-ease-out);
+}
+
+.uid-query-input:focus-within {
+  border-color: var(--uid-color-primary);
+  box-shadow: 0 0 0 3px var(--uid-color-primary-subtle);
+}
+
+.uid-query-input--invalid {
+  border-color: var(--uid-danger);
+}
+
+.uid-query-input--disabled {
+  opacity: 0.5;
+  background: var(--uid-surface-base);
+}
+
+.uid-query-input__prefix {
+  flex: none;
+  color: var(--uid-text-tertiary);
+  font-family: var(--uid-query-input-font);
+  font-size: var(--uid-font-size-xs);
+  letter-spacing: 0.04em;
+}
+
+.uid-query-input__suffix {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--uid-space-2xs);
+  font-size: var(--uid-font-size-xs);
+  white-space: nowrap;
+}
+
+.uid-query-input__box {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+}
+
+.uid-query-input__mirror,
+.uid-query-input__field {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-family: var(--uid-query-input-font);
+  font-size: var(--uid-query-input-font-size);
+  line-height: var(--uid-query-input-height);
+  letter-spacing: normal;
+  white-space: pre;
+}
+
+.uid-query-input__mirror {
+  overflow: hidden;
+  color: var(--uid-color-text);
+  pointer-events: none;
+}
+
+.uid-query-input__field {
+  background: transparent;
+  color: transparent;
+  caret-color: var(--uid-color-text);
+  outline: none;
+}
+
+.uid-query-input__field::placeholder {
+  color: var(--uid-color-text-tertiary);
+  font-family: var(--uid-font-family-sans, inherit);
+}
+
+.uid-query-input__field::selection {
+  background: var(--uid-color-primary-subtle);
+  color: transparent;
+}
+
+.uid-query-input__error {
+  text-decoration: underline wavy var(--uid-danger);
+  text-decoration-skip-ink: none;
+  text-underline-offset: 3px;
+}
+
+.uid-query-input__panel {
+  /* Teleported to the body; position and coordinates come from useFloatingPanel. */
+  z-index: var(--uid-z-popover, 450);
+  min-width: 220px;
+  max-height: 280px;
+  overflow-y: auto;
+  padding: var(--uid-space-2xs);
+  border: 1px solid var(--uid-color-border);
+  border-radius: var(--uid-radius-md);
+  background: var(--uid-color-bg);
+  box-shadow: var(--uid-shadow-md);
+}
+
+.uid-query-input__option {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--uid-space-md);
+  width: 100%;
+  padding: 6px var(--uid-space-sm);
+  border: none;
+  border-radius: var(--uid-radius-sm);
+  background: none;
+  color: var(--uid-color-text);
+  font-size: var(--uid-font-size-sm);
+  text-align: left;
+  cursor: pointer;
+}
+
+.uid-query-input__option:hover,
+.uid-query-input__option--active {
+  background: var(--uid-color-bg-subtle);
+}
+
+.uid-query-input__option-label {
+  font-family: var(--uid-query-input-font);
+}
+
+.uid-query-input__option-hint {
+  overflow: hidden;
+  color: var(--uid-color-text-secondary);
+  font-size: var(--uid-font-size-xs);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Tokens, in the colours of UidCode; semantic tokens switch with the theme. */
+.uid-query-input__tok--keyword  { color: var(--uid-text-primary, var(--uid-color-text)); font-weight: var(--uid-font-weight-semibold, 600); }
+.uid-query-input__tok--property { color: var(--uid-info); }
+.uid-query-input__tok--operator,
+.uid-query-input__tok--punctuation { color: var(--uid-text-secondary); }
+.uid-query-input__tok--string,
+.uid-query-input__tok--function { color: var(--uid-warning); }
+.uid-query-input__tok--number,
+.uid-query-input__tok--date,
+.uid-query-input__tok--literal  { color: var(--uid-accent-text, var(--uid-color-primary)); }
+.uid-query-input__tok--comment  { color: var(--uid-text-tertiary); }
+.uid-query-input__tok--error    { color: var(--uid-danger); }

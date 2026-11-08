@@ -409,4 +409,27 @@ describe('UidTable: footer', () => {
     expect(cells.map((c) => c.text())).toEqual(['', 'Total', '', '2'])
     expect(cells[3].classes()).toContain('uid-table__td--center')
   })
+
+  it('starts a group where the group of a row changes, with a header across the table', () => {
+    const rows = [
+      { id: 1, name: 'A', status: 'todo' },
+      { id: 2, name: 'B', status: 'todo' },
+      { id: 3, name: 'C', status: 'done' },
+    ]
+    const wrapper = mount(UidTable, {
+      props: { columns: [{ key: 'name', label: 'Name' }], data: rows, groupBy: 'status', selectable: true },
+      slots: { group: '<template #group="{ row }"><b>{{ row.value }}:{{ row.count }}</b></template>' },
+    })
+    const headers = wrapper.findAll('.uid-table__group')
+    expect(headers.map((h) => h.text())).toEqual(['todo:2', 'done:1'])
+    expect(headers[0].find('td').attributes('colspan')).toBe('2')
+    expect(wrapper.findAll('tbody tr').map((r) => r.classes().includes('uid-table__group'))).toEqual([true, false, false, true, false])
+  })
+
+  it('groups by a function and shows the value with its count by default', () => {
+    const wrapper = mount(UidTable, {
+      props: { columns: [{ key: 'n', label: 'N' }], data: [{ id: 1, n: 1 }, { id: 2, n: 3 }], groupBy: (row: Record<string, unknown>) => (Number(row.n) > 2 ? 'big' : 'small') },
+    })
+    expect(wrapper.findAll('.uid-table__group').map((h) => h.text().replace(/\s+/g, ' '))).toEqual(['small 1', 'big 1'])
+  })
 })

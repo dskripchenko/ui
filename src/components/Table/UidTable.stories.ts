@@ -202,3 +202,25 @@ export const Footer: Story = {
     `,
   }),
 }
+
+export const Grouped: Story = {
+  render: () => ({
+    components: { UidTable },
+    setup: () => ({
+      columns: [
+        { key: 'name', label: 'Task' },
+        { key: 'status', label: 'Status' },
+      ],
+      rows: [
+        { id: 1, name: 'Retry webhooks', status: 'In progress' },
+        { id: 2, name: 'Sign payloads', status: 'In progress' },
+        { id: 3, name: 'Export to CSV', status: 'To do' },
+      ],
+    }),
+    template: `
+      <UidTable :columns="columns" :data="rows" group-by="status" bordered>
+        <template #group="{ row }">{{ row.value }} · {{ row.count }}</template>
+      </UidTable>
+    `,
+  }),
+}
