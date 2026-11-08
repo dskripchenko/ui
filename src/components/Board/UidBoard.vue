@@ -126,6 +126,7 @@ function formatDue(iso: string): string {
 
 const dragging = ref<{ card: BoardCard; from: BoardKey } | null>(null)
 const hover = ref<{ column: BoardKey; lane: BoardKey | null; beforeKey: BoardKey | null } | null>(null)
+const pointed = ref<BoardKey | null>(null)
 
 const laneRows = computed<(BoardLane | null)[]>(() => (props.lanes.length > 0 ? props.lanes : [null]))
 
@@ -159,11 +160,15 @@ function onDragStart(event: DragEvent, card: BoardCard, column: BoardColumn): vo
 function onDragEnd(): void {
   dragging.value = null
   hover.value = null
+  pointed.value = null
 }
 
 function onDragOver(event: DragEvent, column: BoardColumn, lane: BoardLane | null, beforeKey: BoardKey | null): void {
   const drag = dragging.value
-  if (drag !== null) event.stopPropagation()
+  if (drag !== null) {
+    event.stopPropagation()
+    pointed.value = column.key
+  }
   if (drag === null || !allows(drag.card, column, drag.from)) return
   event.preventDefault()
   if (event.dataTransfer) event.dataTransfer.dropEffect = 'move'
@@ -236,7 +241,7 @@ function isBlocked(column: BoardColumn): boolean {
 
 function reasonFor(column: BoardColumn): string | undefined {
   const drag = dragging.value
-  if (drag === null || !isBlocked(column)) return undefined
+  if (drag === null || pointed.value !== column.key || !isBlocked(column)) return undefined
   const reason = drag.card.reasons?.[column.key]
   return reason !== undefined && reason.trim() !== '' ? reason : undefined
 }

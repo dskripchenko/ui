@@ -228,7 +228,7 @@ describe('UidBoard', () => {
     expect(props.columns[0]!.total).toBe(2)
   })
 
-  it('reasons: a blocked column tells why while the card is dragged', async () => {
+  it('reasons: a blocked column tells why while the card is dragged over it', async () => {
     const wrapper = mount(UidBoard, {
       props: {
         columns: [
@@ -243,6 +243,8 @@ describe('UidBoard', () => {
     const [, b, c] = wrapper.findAll('.uid-board__column')
     expect(b!.find('.uid-board__reason').exists()).toBe(false)
     expect(c!.classes()).toContain('uid-board__column--blocked')
+    expect(c!.find('.uid-board__reason').exists()).toBe(false)
+    await c!.trigger('dragover', { dataTransfer: dataTransfer() })
     expect(c!.find('.uid-board__reason').text()).toBe('No move from A to C. Go through B.')
     await wrapper.find('.uid-board__card').trigger('dragend')
     expect(wrapper.find('.uid-board__reason').exists()).toBe(false)
