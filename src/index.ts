@@ -62,7 +62,7 @@ export { UidPopover } from './components/Popover/index.js'
 export type { UidPopoverProps } from './components/Popover/index.js'
 
 export { UidMenu, UidMenuItem, UidMenuSeparator, UidSubMenu } from './components/Menu/index.js'
-export type { UidMenuItemProps, UidSubMenuProps } from './components/Menu/index.js'
+export type { UidMenuProps, UidMenuItemProps, UidSubMenuProps } from './components/Menu/index.js'
 
 export { UidTabs, UidTab, UidTabPanel } from './components/Tabs/index.js'
 export type { UidTabsProps, UidTabProps, UidTabPanelProps, TabValue } from './components/Tabs/index.js'

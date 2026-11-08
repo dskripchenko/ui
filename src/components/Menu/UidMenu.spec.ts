@@ -65,6 +65,54 @@ describe('UidMenu', () => {
   })
 })
 
+// The trigger spans x 100..200; the menu is 80px wide.
+function mockRects(): () => void {
+  const spy = vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (this: HTMLElement) {
+    return this.classList.contains('uid-menu')
+      ? new DOMRect(0, 0, 80, 120)
+      : new DOMRect(100, 20, 100, 30)
+  })
+  return () => spy.mockRestore()
+}
+
+const menuLeft = (): string => document.querySelector<HTMLElement>('.uid-menu')!.style.left
+
+describe('UidMenu: placement', () => {
+  it('opens at the trigger\'s left edge by default', async () => {
+    const restore = mockRects()
+    const wrapper = buildMenu()
+    await wrapper.find('.uid-menu-trigger').trigger('click')
+    await flushPromises()
+    expect(menuLeft()).toBe('100px')
+    wrapper.unmount()
+    restore()
+  })
+
+  it('bottom-end aligns the menu to the trigger\'s right edge', async () => {
+    const restore = mockRects()
+    const wrapper = buildMenu()
+    await wrapper.setProps({ placement: 'bottom-end' })
+    await wrapper.find('.uid-menu-trigger').trigger('click')
+    await flushPromises()
+    expect(menuLeft()).toBe('120px')
+    wrapper.unmount()
+    restore()
+  })
+
+  it('an open menu follows a changed placement', async () => {
+    const restore = mockRects()
+    const wrapper = buildMenu()
+    await wrapper.find('.uid-menu-trigger').trigger('click')
+    await flushPromises()
+    expect(menuLeft()).toBe('100px')
+    await wrapper.setProps({ placement: 'bottom-end' })
+    await flushPromises()
+    expect(menuLeft()).toBe('120px')
+    wrapper.unmount()
+    restore()
+  })
+})
+
 describe('UidMenuItem', () => {
   it('рендерит slot-контент', () => {
     const wrapper = mount(UidMenuItem, { slots: { default: 'Редактировать' } })
