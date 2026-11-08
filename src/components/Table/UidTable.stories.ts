@@ -224,3 +224,31 @@ export const Grouped: Story = {
     `,
   }),
 }
+
+export const HeaderSlots: Story = {
+  render: () => ({
+    components: { UidTable },
+    setup: () => ({
+      columns: [
+        { key: 'name', label: 'Person' },
+        { key: 'mon', label: 'Mon 26', align: 'right' },
+        { key: 'tue', label: 'Tue 27', align: 'right' },
+        { key: 'total', label: 'Total', align: 'right' },
+      ],
+      rows: [
+        { id: 1, name: 'Olga', mon: '8 h', tue: '6.5 h', total: '14.5 h' },
+        { id: 2, name: 'Denis', mon: '8.5 h', tue: '8 h', total: '16.5 h' },
+      ],
+    }),
+    template: `
+      <UidTable :columns="columns" :data="rows" :bordered="true">
+        <template #header-mon="{ column }">
+          <span style="display:flex;flex-direction:column;align-items:flex-end">{{ column.label.split(' ')[0] }}<small>{{ column.label.split(' ')[1] }}</small></span>
+        </template>
+        <template #header-tue="{ column }">
+          <span style="display:flex;flex-direction:column;align-items:flex-end">{{ column.label.split(' ')[0] }}<small>{{ column.label.split(' ')[1] }}</small></span>
+        </template>
+      </UidTable>
+    `,
+  }),
+}

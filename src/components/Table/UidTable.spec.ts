@@ -433,3 +433,29 @@ describe('UidTable: footer', () => {
     expect(wrapper.findAll('.uid-table__group').map((h) => h.text().replace(/\s+/g, ' '))).toEqual(['small 1', 'big 1'])
   })
 })
+
+describe('UidTable: header slots', () => {
+  it('renders header-<key> in place of the label, with the column', () => {
+    const wrapper = mount(UidTable, {
+      props: { columns: [{ key: 'name', label: 'Name' }, { key: 'mon', label: 'Mon 26', align: 'right' as const }], data: [] },
+      slots: { 'header-mon': `<template #header-mon="{ column }"><span class="day">{{ column.label.split(' ')[0] }}</span><b>26</b></template>` },
+    })
+    const heads = wrapper.findAll('thead th')
+    expect(heads[0].text()).toBe('Name')
+    expect(heads[1].find('.day').text()).toBe('Mon')
+    expect(heads[1].find('b').text()).toBe('26')
+  })
+
+  it('keeps the sort icon next to a header slot', async () => {
+    const wrapper = mount(UidTable, {
+      props: { columns: [{ key: 'name', label: 'Name', sortable: true }], data: [] },
+      slots: { 'header-name': '<em>Who</em>' },
+    })
+    const head = wrapper.find('thead th')
+    expect(head.find('em').text()).toBe('Who')
+    expect(head.find('.uid-table__sort-icon').exists()).toBe(true)
+    await head.trigger('click')
+    expect(wrapper.emitted('update:sortKey')?.[0]).toEqual(['name'])
+  })
+})
+
