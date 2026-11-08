@@ -98,8 +98,14 @@ const slots = defineSlots<{
   group?: (props: { row: Record<string, unknown> }) => unknown
   /** The footer cell of the column with this key: `<template #footer-name>`. */
   [footerSlot: `footer-${string}`]: (() => unknown) | undefined
-  /** A cell of the column with this key: `<template #name="{ row }">`. */
-  [columnKey: string]: ((props: { row: Record<string, unknown> }) => unknown) | undefined
+  /**
+   * The header of the column with this key, instead of its label:
+   * `<template #header-name="{ column }">` — two lines, a hint, a mark.
+   * The sort icon of a sortable column stays next to it.
+   */
+  [headerSlot: `header-${string}`]: ((props: { column: UidTableColumn }) => unknown) | undefined
+  /** A cell of the column with this key: `<template #name="{ row, column }">`. */
+  [columnKey: string]: ((props: { row: Record<string, unknown>; column: UidTableColumn }) => unknown) | undefined
 }>()
 
 function rowId(row: Record<string, unknown>): string | number {
@@ -439,7 +445,10 @@ onBeforeUnmount(() => resizeObserver?.disconnect())
               @keydown.space.prevent="onSort(col)"
             >
               <span class="uid-table__th-content">
-                {{ col.label }}
+                <slot
+                  :name="`header-${col.key}`"
+                  :column="col"
+                >{{ col.label }}</slot>
                 <UidIcon
                   v-if="col.sortable"
                   :icon="sortIcon(col)!"
@@ -530,6 +539,7 @@ onBeforeUnmount(() => resizeObserver?.disconnect())
                 <slot
                   :name="col.key"
                   :row="row"
+                  :column="col"
                 >
                   {{ row[col.key] }}
                 </slot>
