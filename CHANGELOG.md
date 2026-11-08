@@ -1,5 +1,12 @@
 # @dskripchenko/ui
 
+## 1.36.0
+
+### Minor Changes
+
+- bdf0b96: UidQueryInput: a one-line field for a query language — coloured tokens from a `tokenize` function, words offered at the caret from `suggest` (arrows, Enter or Tab to take one), an underlined error with its reason, a prefix and a suffix slot, `submit` on Enter.
+- bdf0b96: UidTable: `groupBy` (a column key or a function) puts a header row across the table wherever the group of a row changes, with a `group` slot (`row.value`, `row.rows`, `row.count`); the data comes sorted by the group.
+
 ## 1.35.1
 
 ### Patch Changes
