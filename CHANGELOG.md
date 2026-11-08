@@ -1,5 +1,11 @@
 # @dskripchenko/ui
 
+## 1.33.0
+
+### Minor Changes
+
+- b1146df: UidCommand: slots `item` (`{ command, active }`) for the inside of a row — the row stays an option of the list, with the keyboard and the click as before — and `header` / `footer` for what goes below the search field and below the list (filters, key hints).
+
 ## 1.32.0
 
 ### Minor Changes
