@@ -1,5 +1,11 @@
 # @dskripchenko/ui
 
+## 1.39.0
+
+### Minor Changes
+
+- 63f3813: UidTable: a `header-<key>` slot puts any content in a column's header instead of its label — a weekday over a date, a hint, a mark; it gets the `column`, and a sortable column keeps its sort icon next to it. Cell slots get their `column` too.
+
 ## 1.38.0
 
 ### Minor Changes
