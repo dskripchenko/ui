@@ -70,7 +70,7 @@ The `card` slot replaces the whole card, including the footer with `assignee` an
 
 ## Dragging
 
-While a card is dragged, the columns it may go to are outlined in the accent colour and the others are dimmed. The column under the pointer shows a dashed hint at the top of its cards — "Drop: → Review" — with "over the limit of 8" added when the drop takes it above its `wip`; dropping on the hint puts the card first. A blocked column shows the card's reason for it, if `reasons` has one.
+While a card is dragged, the columns it may go to are outlined in the accent colour and the others are dimmed. The column under the pointer shows a dashed hint at the top of its cards — "Drop: → Review" — with "over the limit of 8" added when the drop takes it above its `wip`; dropping on the hint puts the card first. A blocked column under the pointer shows the card's reason for it, if `reasons` has one.
 
 ## Props
 

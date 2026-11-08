@@ -70,7 +70,7 @@ function onMove(move: BoardMove): void {
 
 ## 拖动
 
-拖动卡片时，可放入的列以强调色描边，其余列变暗。指针下的列在卡片上方显示虚线提示——“Drop: → Review”，若放入后超过 `wip`，会追加“over the limit of 8”；放在提示上会把卡片放在最前。禁止的列若在 `reasons` 中有原因，则显示该原因。
+拖动卡片时，可放入的列以强调色描边，其余列变暗。指针下的列在卡片上方显示虚线提示——“Drop: → Review”，若放入后超过 `wip`，会追加“over the limit of 8”；放在提示上会把卡片放在最前。指针下的禁止列若在 `reasons` 中有原因，则显示该原因。
 
 ## Props
 

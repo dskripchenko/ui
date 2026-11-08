@@ -70,7 +70,7 @@ Der Slot `card` ersetzt die ganze Karte, einschließlich des Fußes mit `assigne
 
 ## Ziehen
 
-Während eine Karte gezogen wird, sind die Spalten, in die sie darf, in der Akzentfarbe umrandet, die anderen abgeblendet. Die Spalte unter dem Zeiger zeigt oben einen gestrichelten Hinweis — „Drop: → Review“ — mit dem Zusatz „über dem Limit von 8“, wenn der Abwurf sie über `wip` bringt; ein Abwurf auf den Hinweis setzt die Karte an den Anfang. Eine gesperrte Spalte zeigt den Grund der Karte, wenn `reasons` einen hat.
+Während eine Karte gezogen wird, sind die Spalten, in die sie darf, in der Akzentfarbe umrandet, die anderen abgeblendet. Die Spalte unter dem Zeiger zeigt oben einen gestrichelten Hinweis — „Drop: → Review“ — mit dem Zusatz „über dem Limit von 8“, wenn der Abwurf sie über `wip` bringt; ein Abwurf auf den Hinweis setzt die Karte an den Anfang. Eine gesperrte Spalte unter dem Zeiger zeigt den Grund der Karte, wenn `reasons` einen hat.
 
 ## Props
 
