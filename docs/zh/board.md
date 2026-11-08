@@ -48,7 +48,8 @@ function onMove(move: BoardMove): void {
 | `title` | `string` | 标题。 |
 | `cards` | `BoardCard[]` | 显示的卡片，按顺序。 |
 | `total` | `number` | 只加载了部分卡片时该列的真实卡片数。标题中的计数、WIP 检查、超限样式以及 `column-header` 插槽的 `count` 都使用它；省略时为 `cards.length`。`total` 大于零但没有已加载卡片的列不会显示为空。 |
-| `wip` | `number \| null` | 在制品（WIP）上限：超过时计数变红，并带有“已超限”提示。 |
+| `wip` | `number \| null` | 在制品（WIP）上限：默认标题以徽标显示 `count/wip`，超限时变红并带有“已超限”提示。拖动卡片时，放入后会超限的列以警告色描边，放置提示也会说明。 |
+| `muted` | `boolean` | 已完成工作的列：标题、卡片和底部变淡（`--uid-board-muted-opacity`，0.5）。 |
 
 ## 卡片
 
@@ -63,8 +64,13 @@ function onMove(move: BoardMove): void {
 | `done` | `boolean` | 已完成的卡片：弱化显示（标题加删除线），且永不逾期。 |
 | `lane` | `string \| number` | 卡片所在的泳道。 |
 | `targets` | `(string \| number)[]` | 卡片可移入的列；省略时为任意列。 |
+| `reasons` | `Record<string \| number, string>` | 卡片不能移入某列的原因，按列的 key。拖动卡片时，有原因的禁止列会在卡片上方显示原因和锁图标（列本身仍变暗）。 |
 
 `card` 插槽会替换整张卡片，包括带有 `assignee` 和 `due` 的底部。
+
+## 拖动
+
+拖动卡片时，可放入的列以强调色描边，其余列变暗。指针下的列在卡片上方显示虚线提示——“Drop: → Review”，若放入后超过 `wip`，会追加“over the limit of 8”；放在提示上会把卡片放在最前。指针下的禁止列若在 `reasons` 中有原因，则显示该原因。
 
 ## Props
 
@@ -95,8 +101,8 @@ function onMove(move: BoardMove): void {
 
 ## 样式
 
-列和卡片使用 CSS 变量，未设置时沿用主题：`--uid-board-column-bg`、`--uid-board-column-border`、`--uid-board-column-radius`、`--uid-board-card-bg`、`--uid-board-card-border`、`--uid-board-card-radius`、`--uid-board-card-padding`。
+列和卡片使用 CSS 变量，未设置时沿用主题：`--uid-board-column-bg`、`--uid-board-column-border`、`--uid-board-column-radius`、`--uid-board-card-bg`、`--uid-board-card-border`、`--uid-board-card-radius`、`--uid-board-card-padding`、`--uid-board-muted-opacity`、`--uid-board-reason-bg`、`--uid-board-reason-top`、`--uid-board-wip-bg`、`--uid-board-wip-over-bg`。
 
 ## 文本
 
-文案来自语言包的 `board` 部分（见 [i18n](./i18n.md)）：`label`、`empty`、`wipExceeded`、`due`、`overdue`、`assignee(name)`。日期按语言包的 `code` 格式化。
+文案来自语言包的 `board` 部分（见 [i18n](./i18n.md)）：`label`、`empty`、`wipExceeded`、`due`、`overdue`、`assignee(name)`、`dropHere(title)`、`overWip(limit)`。日期按语言包的 `code` 格式化。

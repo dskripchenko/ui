@@ -227,5 +227,53 @@ describe('UidBoard', () => {
     const props: UidBoardProps = { columns: [{ key: 'a', title: 'A', total: 2, cards: [{ ...move.card, assignee: who, due: '2026-01-01', done: true }] }], today: '2026-01-02' }
     expect(props.columns[0]!.total).toBe(2)
   })
-})
 
+  it('reasons: a blocked column tells why while the card is dragged over it', async () => {
+    const wrapper = mount(UidBoard, {
+      props: {
+        columns: [
+          { key: 'a', title: 'A', cards: [{ key: 1, title: 'One', targets: ['b'], reasons: { c: 'No move from A to C. Go through B.' } }] },
+          { key: 'b', title: 'B', cards: [] },
+          { key: 'c', title: 'C', cards: [] },
+        ],
+      },
+    })
+    expect(wrapper.find('.uid-board__reason').exists()).toBe(false)
+    await wrapper.find('.uid-board__card').trigger('dragstart', { dataTransfer: dataTransfer() })
+    const [, b, c] = wrapper.findAll('.uid-board__column')
+    expect(b!.find('.uid-board__reason').exists()).toBe(false)
+    expect(c!.classes()).toContain('uid-board__column--blocked')
+    expect(c!.find('.uid-board__reason').exists()).toBe(false)
+    await b!.trigger('dragover', { dataTransfer: dataTransfer() })
+    expect(b!.find('.uid-board__drop').exists()).toBe(true)
+    await c!.trigger('dragover', { dataTransfer: dataTransfer() })
+    expect(c!.find('.uid-board__reason').text()).toBe('No move from A to C. Go through B.')
+    // The hint leaves the column the pointer left for a closed one.
+    expect(b!.find('.uid-board__drop').exists()).toBe(false)
+    await wrapper.find('.uid-board__card').trigger('dragend')
+    expect(wrapper.find('.uid-board__reason').exists()).toBe(false)
+  })
+
+  it('drop hint: the hovered column names itself and warns over its limit', async () => {
+    const wrapper = mount(UidBoard, {
+      props: {
+        columns: [
+          { key: 'a', title: 'A', cards: [{ key: 1, title: 'One' }] },
+          { key: 'b', title: 'Review', wip: 1, cards: [{ key: 2, title: 'Two' }] },
+          { key: 'c', title: 'Done', muted: true, cards: [] },
+        ],
+      },
+    })
+    const dt = dataTransfer()
+    await wrapper.find('.uid-board__card').trigger('dragstart', { dataTransfer: dt })
+    const [, review, done] = wrapper.findAll('.uid-board__column')
+    expect(done!.classes()).toContain('uid-board__column--muted')
+    expect(review!.classes()).toContain('uid-board__column--target-over')
+    expect(review!.find('.uid-board__drop').exists()).toBe(false)
+    await review!.trigger('dragover', { dataTransfer: dt })
+    expect(review!.find('.uid-board__drop').text()).toBe('Отпустите: → Review · сверх лимита 1')
+    await review!.find('.uid-board__drop').trigger('dragover', { dataTransfer: dt })
+    await review!.find('.uid-board__drop').trigger('drop', { dataTransfer: dt })
+    expect(wrapper.emitted('move')?.[0]?.[0]).toMatchObject({ to: 'b', beforeKey: 2, afterKey: null })
+  })
+})

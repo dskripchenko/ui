@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import './UidBoard.css'
 import { computed, ref } from 'vue'
+import { Lock } from 'lucide-vue-next'
 import { useLocale } from '../../composables/useLocale.js'
 import type { Tone } from '../../types/index.js'
 
@@ -29,6 +30,8 @@ export interface BoardCard {
   lane?: BoardKey
   /** Columns the card may move to; omitted — any column. */
   targets?: BoardKey[]
+  /** Why the card may not move to a column, by column key: shown on that column while the card is dragged. */
+  reasons?: Partial<Record<BoardKey, string>>
 }
 
 export interface BoardColumn {
@@ -39,6 +42,8 @@ export interface BoardColumn {
   total?: number
   /** Work-in-progress limit; the header warns when the column holds more. */
   wip?: number | null
+  /** A column of finished work: shown faded. */
+  muted?: boolean
 }
 
 export interface BoardLane {
@@ -121,6 +126,7 @@ function formatDue(iso: string): string {
 
 const dragging = ref<{ card: BoardCard; from: BoardKey } | null>(null)
 const hover = ref<{ column: BoardKey; lane: BoardKey | null; beforeKey: BoardKey | null } | null>(null)
+const pointed = ref<BoardKey | null>(null)
 
 const laneRows = computed<(BoardLane | null)[]>(() => (props.lanes.length > 0 ? props.lanes : [null]))
 
@@ -154,12 +160,20 @@ function onDragStart(event: DragEvent, card: BoardCard, column: BoardColumn): vo
 function onDragEnd(): void {
   dragging.value = null
   hover.value = null
+  pointed.value = null
 }
 
 function onDragOver(event: DragEvent, column: BoardColumn, lane: BoardLane | null, beforeKey: BoardKey | null): void {
   const drag = dragging.value
-  if (drag !== null) event.stopPropagation()
-  if (drag === null || !allows(drag.card, column, drag.from)) return
+  if (drag !== null) {
+    event.stopPropagation()
+    pointed.value = column.key
+  }
+  if (drag === null) return
+  if (!allows(drag.card, column, drag.from)) {
+    hover.value = null
+    return
+  }
   event.preventDefault()
   if (event.dataTransfer) event.dataTransfer.dropEffect = 'move'
   hover.value = { column: column.key, lane: lane?.key ?? null, beforeKey }
@@ -228,6 +242,22 @@ function isBlocked(column: BoardColumn): boolean {
   const drag = dragging.value
   return drag !== null && !allows(drag.card, column, drag.from)
 }
+
+function reasonFor(column: BoardColumn): string | undefined {
+  const drag = dragging.value
+  if (drag === null || pointed.value !== column.key || !isBlocked(column)) return undefined
+  const reason = drag.card.reasons?.[column.key]
+  return reason !== undefined && reason.trim() !== '' ? reason : undefined
+}
+
+function isHovered(column: BoardColumn, lane: BoardLane | null): boolean {
+  const drag = dragging.value
+  return drag !== null && column.key !== drag.from && hover.value?.column === column.key && hover.value.lane === (lane?.key ?? null)
+}
+
+function willExceed(column: BoardColumn): boolean {
+  return column.wip != null && column.wip > 0 && count(column) + 1 > column.wip
+}
 </script>
 
 <template>
@@ -256,7 +286,9 @@ function isBlocked(column: BoardColumn): boolean {
           class="uid-board__column"
           :class="{
             'uid-board__column--over': isOver(column),
+            'uid-board__column--muted': column.muted,
             'uid-board__column--target': isDropTarget(column),
+            'uid-board__column--target-over': isDropTarget(column) && willExceed(column),
             'uid-board__column--blocked': isBlocked(column),
           }"
           :aria-label="column.title"
@@ -276,14 +308,38 @@ function isBlocked(column: BoardColumn): boolean {
               <span class="uid-board__title">{{ column.title }}</span>
               <span
                 class="uid-board__count"
+                :class="{ 'uid-board__count--wip': column.wip }"
                 :title="isOver(column) ? locale.board.wipExceeded : undefined"
               >{{ count(column) }}<template v-if="column.wip">/{{ column.wip }}</template></span>
             </slot>
           </header>
+          <div
+            v-if="laneIndex === 0 && reasonFor(column)"
+            class="uid-board__reason"
+            role="note"
+          >
+            <Lock
+              class="uid-board__reason-icon"
+              :size="14"
+              aria-hidden="true"
+            />
+            <span>{{ reasonFor(column) }}</span>
+          </div>
           <ul
             class="uid-board__cards"
             role="list"
           >
+            <li
+              v-if="isHovered(column, lane)"
+              class="uid-board__drop"
+              aria-hidden="true"
+              @dragover.stop="onDragOver($event, column, lane, cardsOf(column, lane)[0]?.key ?? null)"
+              @drop.stop="onDrop($event, column, lane)"
+            >
+              {{ locale.board.dropHere(column.title) }}<template v-if="willExceed(column)">
+                · {{ locale.board.overWip(column.wip ?? 0) }}
+              </template>
+            </li>
             <li
               v-for="card in cardsOf(column, lane)"
               :key="card.key"

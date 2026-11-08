@@ -48,7 +48,8 @@ function onMove(move: BoardMove): void {
 | `title` | `string` | The header. |
 | `cards` | `BoardCard[]` | The cards shown, in order. |
 | `total` | `number` | The column's real number of cards when only some of them are loaded. The header count, the WIP check, the over-limit styling and the `count` of the `column-header` slot use it; omitted — `cards.length`. A column with `total` above zero and no cards loaded is not shown as empty. |
-| `wip` | `number \| null` | The work-in-progress limit: above it the count turns red and gets the "limit exceeded" title. |
+| `wip` | `number \| null` | The work-in-progress limit: the default header shows the count as `count/wip` on a chip, red above the limit with the "limit exceeded" title. While a card is dragged, a column it would take over the limit is outlined in the warning colour and its drop hint says so. |
+| `muted` | `boolean` | A column of finished work: its header, cards and footer are faded (`--uid-board-muted-opacity`, 0.5). |
 
 ## Cards
 
@@ -63,8 +64,13 @@ function onMove(move: BoardMove): void {
 | `done` | `boolean` | A finished card: muted (the title struck through) and never overdue. |
 | `lane` | `string \| number` | The swimlane the card sits in. |
 | `targets` | `(string \| number)[]` | The columns the card may move to; omitted — any. |
+| `reasons` | `Record<string \| number, string>` | Why the card may not move to a column, by column key. While the card is dragged, a blocked column with a reason shows it over its cards with a lock icon (the column itself stays dimmed). |
 
 The `card` slot replaces the whole card, including the footer with `assignee` and `due`.
+
+## Dragging
+
+While a card is dragged, the columns it may go to are outlined in the accent colour and the others are dimmed. The column under the pointer shows a dashed hint at the top of its cards — "Drop: → Review" — with "over the limit of 8" added when the drop takes it above its `wip`; dropping on the hint puts the card first. A blocked column under the pointer shows the card's reason for it, if `reasons` has one.
 
 ## Props
 
@@ -95,8 +101,8 @@ Types: `UidBoardProps`, `BoardColumn`, `BoardCard`, `BoardCardTag`, `BoardAssign
 
 ## Styling
 
-Columns and cards take CSS variables, falling back to the theme: `--uid-board-column-bg`, `--uid-board-column-border`, `--uid-board-column-radius`, `--uid-board-card-bg`, `--uid-board-card-border`, `--uid-board-card-radius`, `--uid-board-card-padding`.
+Columns and cards take CSS variables, falling back to the theme: `--uid-board-column-bg`, `--uid-board-column-border`, `--uid-board-column-radius`, `--uid-board-card-bg`, `--uid-board-card-border`, `--uid-board-card-radius`, `--uid-board-card-padding`, `--uid-board-muted-opacity`, `--uid-board-reason-bg`, `--uid-board-reason-top`, `--uid-board-wip-bg`, `--uid-board-wip-over-bg`.
 
 ## Texts
 
-Captions come from the locale bag, section `board` (see [i18n](./i18n.md)): `label`, `empty`, `wipExceeded`, `due`, `overdue`, `assignee(name)`. Dates are formatted with the locale's `code`.
+Captions come from the locale bag, section `board` (see [i18n](./i18n.md)): `label`, `empty`, `wipExceeded`, `due`, `overdue`, `assignee(name)`, `dropHere(title)`, `overWip(limit)`. Dates are formatted with the locale's `code`.
