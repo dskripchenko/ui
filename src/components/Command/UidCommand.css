@@ -1,7 +1,7 @@
 .uid-command-overlay {
   position: fixed;
   inset: 0;
-  background: var(--uid-color-overlay, rgba(0, 0, 0, 0.5));
+  background: var(--uid-command-overlay, rgba(0, 0, 0, 0.5));
   display: flex;
   align-items: flex-start;
   justify-content: center;

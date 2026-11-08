@@ -153,6 +153,16 @@ document.documentElement.dataset.theme = prefersDark ? 'dark' : 'light'
 
 Это не ломает темизацию — переопределение действует только в скоупе селектора.
 
+Например, плотная таблица — с меньшими отступами ячеек:
+
+```css
+.issues .uid-table {
+  --uid-table-head-padding-y: 8px;
+  --uid-table-cell-padding-y: 6px;
+  --uid-table-cell-padding-x: 12px;
+}
+```
+
 ## Печать
 
 На бумаге (`@media print`) компоненты, живущие внутри страниц, печатаются как

@@ -93,6 +93,10 @@ The `card` slot replaces the whole card, including the footer with `assignee` an
 
 Types: `UidBoardProps`, `BoardColumn`, `BoardCard`, `BoardCardTag`, `BoardAssignee`, `BoardLane`, `BoardMove`, `BoardKey`.
 
+## Styling
+
+Columns and cards take CSS variables, falling back to the theme: `--uid-board-column-bg`, `--uid-board-column-border`, `--uid-board-column-radius`, `--uid-board-card-bg`, `--uid-board-card-border`, `--uid-board-card-radius`, `--uid-board-card-padding`.
+
 ## Texts
 
 Captions come from the locale bag, section `board` (see [i18n](./i18n.md)): `label`, `empty`, `wipExceeded`, `due`, `overdue`, `assignee(name)`. Dates are formatted with the locale's `code`.

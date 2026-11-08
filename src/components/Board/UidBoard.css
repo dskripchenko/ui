@@ -29,8 +29,8 @@
   flex-direction: column;
   min-height: 120px;
   background: var(--uid-board-column-bg, var(--uid-color-surface-sunken, var(--uid-color-surface-raised)));
-  border: 1px solid var(--uid-color-border);
-  border-radius: var(--uid-radius-md, 8px);
+  border: 1px solid var(--uid-board-column-border, var(--uid-color-border));
+  border-radius: var(--uid-board-column-radius, var(--uid-radius-md, 8px));
   transition: border-color 120ms ease, background 120ms ease;
 }
 
@@ -77,10 +77,10 @@
 }
 
 .uid-board__card {
-  padding: var(--uid-space-sm) var(--uid-space-md);
-  background: var(--uid-color-surface);
-  border: 1px solid var(--uid-color-border);
-  border-radius: var(--uid-radius-sm, 6px);
+  padding: var(--uid-board-card-padding, var(--uid-space-sm) var(--uid-space-md));
+  background: var(--uid-board-card-bg, var(--uid-color-surface));
+  border: 1px solid var(--uid-board-card-border, var(--uid-color-border));
+  border-radius: var(--uid-board-card-radius, var(--uid-radius-sm, 6px));
   cursor: grab;
   outline: none;
 }

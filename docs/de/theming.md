@@ -121,6 +121,16 @@ Jede Komponente hat lokale Variablen mit Fallback auf Semantik. Überschreibe si
 
 Das bricht das Theming nicht — die Überschreibung gilt nur innerhalb des Selektors.
 
+Eine dichtere Tabelle zum Beispiel bekommt kleinere Zellabstände:
+
+```css
+.issues .uid-table {
+  --uid-table-head-padding-y: 8px;
+  --uid-table-cell-padding-y: 6px;
+  --uid-table-cell-padding-x: 12px;
+}
+```
+
 ## Druck
 
 Auf Papier (`@media print`) drucken sich die Komponenten, die in Seiten

@@ -116,6 +116,16 @@ document.documentElement.dataset.theme = prefersDark ? 'dark' : 'light'
 
 这不会破坏主题——覆盖只在选择器范围内生效。
 
+例如，更紧凑的表格可以缩小单元格内边距：
+
+```css
+.issues .uid-table {
+  --uid-table-head-padding-y: 8px;
+  --uid-table-cell-padding-y: 6px;
+  --uid-table-cell-padding-x: 12px;
+}
+```
+
 ## 打印
 
 在纸面上（`@media print`），嵌在页面中的组件按内容而非控件打印：看板的筛选、操作、锁定和添加按钮，
