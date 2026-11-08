@@ -362,6 +362,24 @@ export type {
   NiceTicks,
 } from './components/Chart/index.js'
 
+export {
+  UidDashboardGrid,
+  collides,
+  clampItem,
+  compactLayout,
+  moveItem,
+  resizeItem,
+  layoutHeight,
+  sortByPosition,
+  sameLayout,
+} from './components/DashboardGrid/index.js'
+export type {
+  UidDashboardGridProps,
+  DashboardGridItem,
+  DashboardGridHandleBindings,
+  DashboardGridItemSlotProps,
+} from './components/DashboardGrid/index.js'
+
 export { UidStepper } from './components/Stepper/index.js'
 export type { UidStepperProps, StepperStep } from './components/Stepper/index.js'
 
