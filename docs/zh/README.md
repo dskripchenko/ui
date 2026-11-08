@@ -22,7 +22,7 @@
 - **无障碍** — `:focus-visible`、ARIA 属性、所有交互组件支持键盘
 - **i18n** — 内置 `ru` + `en` locale，`UidLocaleProvider` 支持部分覆盖与自定义 locale
 - **~1500 图标** — 底层使用 `lucide-vue-next` + 子导出 `@dskripchenko/ui/icons`
-- **零图表运行时依赖** — 内置 SVG 原语(Sparkline、ProgressRing、Gauge、Heatmap)
+- **零图表运行时依赖** — 内置 SVG 图表(Chart、Sparkline、ProgressRing、Gauge、Heatmap)
 - **无依赖的媒体播放器** — 基于原生元素的视频与音频、浏览器内生成波形、按需加载的 HLS 入口（fMP4 与 MPEG-TS）
 
 ## 安装
@@ -84,7 +84,7 @@ import { Check } from '@dskripchenko/ui/icons'
 
 **布局辅助：** Stack、Grid、Container、Splitter
 
-**图表：** Sparkline、ProgressRing、Gauge、Heatmap
+**图表：** Chart、Sparkline、ProgressRing、Gauge、Heatmap
 
 **媒体：** Video、Audio（波形、mini、播放列表）、HLS 适配器（`@dskripchenko/ui/hls`）
 

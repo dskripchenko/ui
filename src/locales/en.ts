@@ -381,6 +381,12 @@ export const en: UidLocale = {
     noData: 'No data',
   },
 
+  chart: {
+    summary: (series, points) => `Chart: ${series} series, ${points} ${points === 1 ? 'point' : 'points'}`,
+    noData: 'No data',
+    category: 'Category',
+  },
+
   validation: {
     value: 'value',
     required: (label) => `The ${label} field is required`,

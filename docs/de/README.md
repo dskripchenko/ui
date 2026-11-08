@@ -22,7 +22,7 @@ Eine Bibliothek aus Vue-3-Komponenten, Tokens und Themes auf Basis von CSS Custo
 - **A11y** — `:focus-visible`, ARIA-Attribute, Tastatur-Navigation in allen interaktiven Komponenten
 - **i18n** — eingebaute `ru` + `en` Locales, `UidLocaleProvider` für partielle Überschreibungen und eigene Locales
 - **~1500 Icons** — `lucide-vue-next` unter der Haube + Sub-Export `@dskripchenko/ui/icons`
-- **Keine Runtime-Chart-Deps** — eingebaute SVG-Primitive (Sparkline, ProgressRing, Gauge, Heatmap)
+- **Keine Runtime-Chart-Deps** — eingebaute SVG-Diagramme (Chart, Sparkline, ProgressRing, Gauge, Heatmap)
 - **Mediaplayer ohne Abhängigkeiten** — Video und Audio auf den nativen Elementen, Wellenform im Browser, HLS (fMP4 und MPEG-TS) in einem bei Bedarf geladenen Entry
 
 ## Installation
@@ -84,7 +84,7 @@ Kurze Auswahl — vollständiger Katalog im [Storybook](https://dskripchenko.git
 
 **Layout-Helfer:** Stack, Grid, Container, Splitter
 
-**Charts:** Sparkline, ProgressRing, Gauge, Heatmap
+**Charts:** Chart, Sparkline, ProgressRing, Gauge, Heatmap
 
 **Medien:** Video, Audio (Wellenform, Mini, Playlist), HLS-Adapter (`@dskripchenko/ui/hls`)
 

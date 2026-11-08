@@ -1,9 +1,10 @@
 # Diagramme
 
-Das Kit liefert bewusst keine vollständige Chart-Engine. Stattdessen:
+Das Kit bringt eigene SVG-Diagramme und keine Chart-Bibliothek mit:
 
-1. **SVG-Primitive** — `UidSparkline`, `UidProgressRing`, `UidGauge`, `UidHeatmap`, `UidHeatmapMatrix`. Ohne Abhängigkeiten, ~1 KB pro Stück, decken die meisten Dashboard-Szenarien ab.
-2. **Vollständige Diagramme (Line/Bar/Pie/Area)** — empfohlenes Muster: paaren mit der Chart-Bibliothek deiner Wahl.
+1. **`UidChart`** — das eingebaute allgemeine Diagramm: Linien, Flächen, Balken (gruppiert oder gestapelt) und Punkte über einer gemeinsamen Kategorienachse, mit Referenzlinien, Tooltip, Tastaturnavigation und einer versteckten Datentabelle. Reines SVG, ohne Abhängigkeiten.
+2. **SVG-Primitive** — `UidSparkline`, `UidProgressRing`, `UidGauge`, `UidHeatmap`, `UidHeatmapMatrix`. Ohne Abhängigkeiten, ~1 KB pro Stück, decken die meisten Dashboard-Kacheln ab.
+3. **Was `UidChart` nicht zeichnet** (Kreis, Radar, Karten, Zehntausende Punkte, Zoom) — paaren mit der Chart-Bibliothek deiner Wahl.
 
 ## Eingebaute Primitive
 
@@ -14,6 +15,7 @@ Das Kit liefert bewusst keine vollständige Chart-Engine. Stattdessen:
 | **`UidGauge`** | Halbkreis-Skala mit Bereichen | Tachometer, CPU/Disk-Auslastung |
 | **`UidHeatmap`** | Kalender-Heatmap (GitHub-Stil) | Aktivität pro Tag, Beiträge |
 | **`UidHeatmapMatrix`** | Matrix-Heatmap: Zeilen × Spalten mit Achsenbeschriftung | Bestellungen nach Wochentag × Monat, Last nach Stunde |
+| **`UidChart`** | Linien-, Flächen-, Balken-, Stapel- und Punktdiagramme über Kategorien | Burndown, Velocity, Trends, Verteilungen über die Zeit |
 
 Alle Primitive:
 - Reines SVG, kein `canvas`, keine Runtime-Bibs
@@ -48,9 +50,126 @@ Alle Primitive:
 
 Der Slot `#tooltip="{ cell, formatted }"` ersetzt den Tooltip-Inhalt. Das Raster hat `role="grid"`-Semantik: Zeilen- und Spaltenköpfe, ein `aria-label` „Zeile × Spalte: Wert“ an jeder Zelle und Pfeiltasten-Navigation (Home/End, Strg+Home/End, PageUp/PageDown). Exportierte Helfer: `heatmapColorScales`, `resolveHeatmapStops`, `heatmapColorAt`.
 
-## Vollständige Diagramme
+## UidChart
 
-Für Line/Bar/Pie/Area-Diagramme: paaren mit einer dedizierten Bibliothek. Wir bündeln keine, um das Gewicht für Projekte gering zu halten, die sie nicht brauchen.
+Eine Komponente für Kategoriediagramme: Jede Serie hat einen Wert pro Kategorie, und der Serientyp bestimmt die Markierung. Typen lassen sich frei mischen — Balken nutzen das Kategorieband, Linien und Punkte die Bandmitte.
+
+```vue
+<script setup lang="ts">
+import { UidChart, type ChartSeries, type ChartReference } from '@dskripchenko/ui'
+
+const days = ['Mo 3', 'Di 4', 'Mi 5', 'Do 6', 'Fr 7', 'Mo 10', 'Di 11', 'Mi 12']
+const series: ChartSeries[] = [
+  { key: 'remaining', label: 'Verbleibend', data: [40, 38, 35, 41, 36, 30, null, null] },
+  { key: 'ideal', label: 'Ideal', tone: 'neutral', dashed: true, data: [40, 34.3, 28.6, 22.9, 17.1, 11.4, 5.7, 0] },
+  { key: 'added', label: 'Umfang ergänzt', type: 'dots', tone: 'warning', data: [null, null, null, 41, null, null, null, null] },
+]
+const references: ChartReference[] = [{ axis: 'x', value: 5, label: 'Heute', dashed: true }]
+</script>
+
+<template>
+  <!-- Ein Burndown: verbleibende Arbeit, Ideallinie, Umfangserweiterungen und heute. -->
+  <UidChart
+    :categories="days"
+    :series="series"
+    :references="references"
+    :format-value="(v) => `${Math.round(v)} SP`"
+    aria-label="Burndown"
+  />
+</template>
+```
+
+Gruppierte Balken — Balkenserien ohne `stack` stehen innerhalb einer Kategorie nebeneinander:
+
+```vue
+<UidChart
+  :categories="['Q1', 'Q2', 'Q3', 'Q4']"
+  :series="[
+    { key: 'plan', label: 'Geplant', type: 'bar', tone: 'neutral', data: [34, 36, 30, 40] },
+    { key: 'done', label: 'Erledigt', type: 'bar', tone: 'accent', data: [30, 37, 28, null] },
+  ]"
+/>
+```
+
+Gestapelte Balken — Serien mit derselben `stack`-ID stapeln sich (Flächen stapeln sich genauso):
+
+```vue
+<UidChart
+  :categories="['Jan', 'Feb', 'Mär']"
+  :series="[
+    { key: 'bugs', label: 'Bugs', type: 'bar', stack: 'kind', data: [12, 9, 14] },
+    { key: 'features', label: 'Features', type: 'bar', stack: 'kind', data: [20, 24, 18] },
+  ]"
+  legend="top"
+/>
+```
+
+### Props
+
+| Prop | Typ | Standard | |
+|---|---|---|---|
+| `categories` | `string[]` | — | Die x-Achse, gleichmäßig verteilt. |
+| `series` | `ChartSeries[]` | — | Siehe unten. |
+| `references` | `ChartReference[]` | `[]` | Vertikale und horizontale Referenzlinien. y-Referenzen fließen in den automatischen y-Bereich ein. |
+| `height` | `number` | `240` | Höhe in px. Die Breite folgt dem Container (`ResizeObserver`); 600 px, wenn sie nicht messbar ist. |
+| `yMin` | `number` | `min(0, Datenminimum)` | |
+| `yMax` | `number` | ein „runder“ Datenmaximalwert | Stapel werden summiert. |
+| `yTicks` | `number` | `4` | Ungefähre Anzahl der Intervalle; Teilstriche sind „runde“ Zahlen (1, 2, 2,5, 5 × 10ⁿ). |
+| `formatValue` | `(v: number) => string` | `Intl.NumberFormat` der Locale | y-Teilstriche, Tooltip und Datentabelle. |
+| `formatCategory` | `(category: string, index: number) => string` | die Kategorie | x-Beschriftungen, Tooltip-Titel und Datentabelle. |
+| `legend` | `boolean \| 'top' \| 'bottom'` | `'bottom'` bei 2+ Legendenserien, sonst ausgeblendet | `true` bedeutet `'bottom'`. |
+| `grid` | `boolean` | `true` | Horizontale Gitterlinien. |
+| `tooltip` | `boolean` | `true` | |
+| `xLabels` | `'auto' \| 'all' \| 'none'` | `'auto'` | `auto` dünnt die Beschriftungen aus, damit sie sich nie überlappen. |
+| `ariaLabel` | `string` | Zusammenfassung aus der Locale („Chart: 2 series, 10 points“) | |
+
+Ereignis `hover(index: number | null)` — die aktive Kategorie wechselt (Zeiger oder Tastatur). Der Slot `#tooltip="{ index, category, items }"` ersetzt den Tooltip-Inhalt; jedes Element ist `{ series, value, formatted, color }`.
+
+### Serien und Referenzlinien
+
+```ts
+interface ChartSeries {
+  key: string
+  label: string
+  type?: 'line' | 'area' | 'bar' | 'dots'   // Standard 'line'
+  data: (number | null)[]                   // ein Wert pro Kategorie; null = kein Wert
+  color?: string                            // beliebige CSS-Farbe; hat Vorrang vor tone und Palette
+  tone?: 'accent' | 'info' | 'warning' | 'danger' | 'success' | 'neutral'
+  dashed?: boolean                          // line / area: gestrichelt (Pläne, Ideallinien)
+  stack?: string                            // bar- / area-Serien mit derselben ID stapeln sich
+  legend?: boolean                          // Standard true
+}
+
+interface ChartReference {
+  axis: 'x' | 'y'
+  value: number      // y: ein Wert; x: ein Kategorieindex, Brüche erlaubt (3.5 = zwischen 3 und 4)
+  label?: string     // x: oben; y: am rechten Ende
+  tone?: ChartTone
+  color?: string
+  dashed?: boolean
+}
+```
+
+`null` bedeutet „kein Wert“: eine Lücke in Linie oder Fläche, kein Balken, kein Punkt; Tooltip und Tabelle zeigen „—“. Ein einzelner Wert zwischen Lücken wird als kleiner Punkt gezeichnet.
+
+### Farben
+
+Serien ohne `color` oder `tone` belegen Palettenplätze in der Reihenfolge des `series`-Arrays: `--uid-chart-1` … `--uid-chart-6`. Der Platz gehört zur Position der Serie, daher färbt das Ausblenden einer anderen Serie sie nie um. Mehr als sechs solcher Serien wiederholen die Palette — fasse den Rest besser zu „Sonstige“ zusammen. Töne kommen aus dem Theme: `accent`, `info`, `warning`, `danger`, `success` entsprechen `--uid-accent`, `--uid-info`, …, und `neutral` entspricht `--uid-chart-neutral` (Pläne, Basislinien). Die Palette hat eigene Werte für hell und dunkel (`:root[data-theme='dark']`) und lässt sich wie jedes Token überschreiben. `--uid-chart-surface` (Standard `--uid-color-surface`) ist die Farbe der Lücken zwischen gestapelten Balken und des Rings um Punkte: setze sie auf den Hintergrund, auf dem das Diagramm steht.
+
+Markierungen: 2-px-Linien mit runden Verbindungen, Striche `4 4`, Flächen mit 15 % Deckkraft, 8-px-Punkte mit 2-px-Ring, Balken mit 4 px gerundetem Datenende und 2-px-Lücken. Text nutzt immer die Textfarben, nie eine Serienfarbe.
+
+### Barrierefreiheit
+
+- Die Wurzel ist `role="figure"` mit dem `ariaLabel` (oder der Zusammenfassung aus der Locale); das SVG ist `aria-hidden`.
+- Eine visuell versteckte `<table>` enthält die Daten: Kategorien als Zeilen, Serien als Spalten, formatierte Werte.
+- Der Plot ist fokussierbar: ←/→ bewegen die aktive Kategorie, Home/End springen an die Enden, Esc blendet den Tooltip aus. Die aktiven Werte werden zusätzlich über eine höfliche Live-Region angesagt.
+- Die Legende ist Text mit einem Farbschlüssel, dessen Form der Markierung folgt (Linie, gestrichelte Linie, Punkt, Quadrat) — die Zuordnung hängt nie allein an der Farbe.
+
+Der reine Helfer `niceTicks(min, max, count)` → `{ min, max, ticks }` wird für eigene Achsen exportiert.
+
+## Kreis, Radar, Karten und große Datenmengen
+
+Für das, was `UidChart` nicht zeichnet — Kreis- und Ringdiagramme, Radar, Karten, Zoom und Brushing, Zehntausende Punkte oder Echtzeit-Streams — paaren mit einer dedizierten Bibliothek. Wir bündeln keine, um das Gewicht für Projekte gering zu halten, die sie nicht brauchen.
 
 ### Mit Chart.js
 
@@ -135,6 +254,7 @@ const chartColors = computed(() => ({
 - **Tachometer, schwellenwertbasierte Last** → `UidGauge` mit `ranges`
 - **Aktivität über Zeit (Jahr/Monate)** → `UidHeatmap`
 - **Eine Matrix Zeilen × Spalten (Wochentag × Stunde, Region × Quartal)** → `UidHeatmapMatrix`
-- **Multi-Serien, Achsen, Legenden, Zoom** → externe Bibliothek
+- **Trends, Plan vs. Ist, Burndown, gestapelte Verteilungen über Kategorien** → `UidChart`
+- **Kreis, Radar, Karten, Zoom, riesige Serien** → externe Bibliothek
 - **Echtzeit-Stream (WebSocket)** → ECharts (beste Performance)
 - **Einfacher statischer Bericht** → Chart.js (leichter, einfachere API)

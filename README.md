@@ -22,7 +22,7 @@ A Vue 3 component, token, and theme library on CSS custom properties.
 - **A11y** — `:focus-visible`, ARIA attributes, keyboard navigation across every interactive component
 - **i18n** — built-in `ru` + `en` locales, `UidLocaleProvider` for partial overrides or custom locales
 - **~1500 icons** — `lucide-vue-next` under the hood + `@dskripchenko/ui/icons` sub-export
-- **Zero runtime chart deps** — built-in SVG primitives (Sparkline, ProgressRing, Gauge, Heatmap)
+- **Zero runtime chart deps** — built-in SVG charts (Chart, Sparkline, ProgressRing, Gauge, Heatmap)
 - **Media players without dependencies** — video and audio on the native elements, in-browser waveform, HLS (fMP4 and MPEG-TS) in a lazily loaded entry
 
 ## Install
@@ -95,7 +95,7 @@ A short selection — the full catalog is in [Storybook](https://dskripchenko.gi
 
 **Layout helpers:** Stack, Grid, Container, Splitter
 
-**Charts:** Sparkline, ProgressRing, Gauge, Heatmap
+**Charts:** Chart, Sparkline, ProgressRing, Gauge, Heatmap
 
 **Media:** Video, Audio (waveform, mini, playlist), HLS adapter (`@dskripchenko/ui/hls`)
 

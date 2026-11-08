@@ -381,6 +381,12 @@ export const ru: UidLocale = {
     noData: 'Нет данных',
   },
 
+  chart: {
+    summary: (series, points) => `График: рядов — ${series}, точек — ${points}`,
+    noData: 'Нет данных',
+    category: 'Категория',
+  },
+
   validation: {
     value: 'значение',
     required: (label) => `Поле «${label}» обязательно`,

@@ -22,7 +22,7 @@
 - **A11y** — `:focus-visible`, ARIA-атрибуты, keyboard-навигация во всех интерактивных компонентах
 - **i18n** — встроенные `ru` + `en` локали, `UidLocaleProvider` для частичных переопределений и кастомных локалей
 - **~1500 иконок** — `lucide-vue-next` под капотом + sub-export `@dskripchenko/ui/icons`
-- **Zero runtime chart deps** — встроенные SVG-примитивы (Sparkline, ProgressRing, Gauge, Heatmap)
+- **Zero runtime chart deps** — встроенные SVG-графики (Chart, Sparkline, ProgressRing, Gauge, Heatmap)
 - **Медиаплееры без зависимостей** — видео и аудио на родных элементах, волна в браузере, HLS (fMP4 и MPEG-TS) в лениво загружаемом entry
 
 ## Установка
@@ -82,7 +82,7 @@ import { Check } from '@dskripchenko/ui/icons'
 
 **Layout-помощники:** Stack, Grid, Container, Splitter
 
-**Графики:** Sparkline, ProgressRing, Gauge, Heatmap
+**Графики:** Chart, Sparkline, ProgressRing, Gauge, Heatmap
 
 **Медиа:** Video, Audio (волна, mini, плейлист), HLS-адаптер (`@dskripchenko/ui/hls`)
 
