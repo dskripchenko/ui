@@ -150,3 +150,55 @@ export const Empty: Story = {
     template: `<UidTable :columns="columns" :data="data" :bordered="true" empty-text="Записи не найдены" />`,
   }),
 }
+
+// The host decides what expands: here a click on a row toggles it.
+export const ExpandableRows: Story = {
+  render: () => ({
+    components: { UidTable },
+    setup: () => {
+      const data = rawData.map((row, i) => ({ id: i + 1, ...row }))
+      const expanded = ref(new Set<string | number>([1]))
+      function onRowClick(row: Record<string, unknown>): void {
+        const id = row.id as number
+        const next = new Set(expanded.value)
+        if (next.has(id)) next.delete(id)
+        else next.add(id)
+        expanded.value = next
+      }
+      return { columns, data, expanded, onRowClick }
+    },
+    template: `
+      <UidTable
+        :columns="columns"
+        :data="data"
+        v-model:expanded="expanded"
+        :bordered="true"
+        @row-click="onRowClick"
+      >
+        <template #expanded="{ row }">
+          <div style="display: grid; gap: 4px;">
+            <strong>{{ row.name }}</strong>
+            <span>{{ row.role }} · {{ row.email }}</span>
+          </div>
+        </template>
+      </UidTable>
+    `,
+  }),
+}
+
+// A totals row: one footer-<column key> slot per column that has something to show.
+export const Footer: Story = {
+  render: () => ({
+    components: { UidTable },
+    setup: () => {
+      const active = rawData.filter((row) => row.status.startsWith('Актив')).length
+      return { columns, data: rawData, active }
+    },
+    template: `
+      <UidTable :columns="columns" :data="data" :bordered="true">
+        <template #footer-name>Итого: {{ data.length }}</template>
+        <template #footer-status>{{ active }}</template>
+      </UidTable>
+    `,
+  }),
+}
