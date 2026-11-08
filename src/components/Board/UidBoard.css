@@ -68,7 +68,7 @@
 .uid-board__reason {
   position: absolute;
   z-index: 1;
-  top: 50%;
+  top: min(50%, var(--uid-board-reason-top, 200px));
   left: var(--uid-space-sm);
   right: var(--uid-space-sm);
   display: flex;

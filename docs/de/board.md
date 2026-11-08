@@ -101,7 +101,7 @@ Typen: `UidBoardProps`, `BoardColumn`, `BoardCard`, `BoardCardTag`, `BoardAssign
 
 ## Gestaltung
 
-Spalten und Karten nehmen CSS-Variablen, sonst gilt das Theme: `--uid-board-column-bg`, `--uid-board-column-border`, `--uid-board-column-radius`, `--uid-board-card-bg`, `--uid-board-card-border`, `--uid-board-card-radius`, `--uid-board-card-padding`, `--uid-board-muted-opacity`, `--uid-board-reason-bg`, `--uid-board-wip-bg`, `--uid-board-wip-over-bg`.
+Spalten und Karten nehmen CSS-Variablen, sonst gilt das Theme: `--uid-board-column-bg`, `--uid-board-column-border`, `--uid-board-column-radius`, `--uid-board-card-bg`, `--uid-board-card-border`, `--uid-board-card-radius`, `--uid-board-card-padding`, `--uid-board-muted-opacity`, `--uid-board-reason-bg`, `--uid-board-reason-top`, `--uid-board-wip-bg`, `--uid-board-wip-over-bg`.
 
 ## Texte
 

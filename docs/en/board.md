@@ -101,7 +101,7 @@ Types: `UidBoardProps`, `BoardColumn`, `BoardCard`, `BoardCardTag`, `BoardAssign
 
 ## Styling
 
-Columns and cards take CSS variables, falling back to the theme: `--uid-board-column-bg`, `--uid-board-column-border`, `--uid-board-column-radius`, `--uid-board-card-bg`, `--uid-board-card-border`, `--uid-board-card-radius`, `--uid-board-card-padding`, `--uid-board-muted-opacity`, `--uid-board-reason-bg`, `--uid-board-wip-bg`, `--uid-board-wip-over-bg`.
+Columns and cards take CSS variables, falling back to the theme: `--uid-board-column-bg`, `--uid-board-column-border`, `--uid-board-column-radius`, `--uid-board-card-bg`, `--uid-board-card-border`, `--uid-board-card-radius`, `--uid-board-card-padding`, `--uid-board-muted-opacity`, `--uid-board-reason-bg`, `--uid-board-reason-top`, `--uid-board-wip-bg`, `--uid-board-wip-over-bg`.
 
 ## Texts
 

@@ -101,7 +101,7 @@ function onMove(move: BoardMove): void {
 
 ## 样式
 
-列和卡片使用 CSS 变量，未设置时沿用主题：`--uid-board-column-bg`、`--uid-board-column-border`、`--uid-board-column-radius`、`--uid-board-card-bg`、`--uid-board-card-border`、`--uid-board-card-radius`、`--uid-board-card-padding`、`--uid-board-muted-opacity`、`--uid-board-reason-bg`、`--uid-board-wip-bg`、`--uid-board-wip-over-bg`。
+列和卡片使用 CSS 变量，未设置时沿用主题：`--uid-board-column-bg`、`--uid-board-column-border`、`--uid-board-column-radius`、`--uid-board-card-bg`、`--uid-board-card-border`、`--uid-board-card-radius`、`--uid-board-card-padding`、`--uid-board-muted-opacity`、`--uid-board-reason-bg`、`--uid-board-reason-top`、`--uid-board-wip-bg`、`--uid-board-wip-over-bg`。
 
 ## 文本
 
