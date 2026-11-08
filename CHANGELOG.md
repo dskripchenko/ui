@@ -1,5 +1,12 @@
 # @dskripchenko/ui
 
+## 1.35.0
+
+### Minor Changes
+
+- baf4170: UidCalendar: a `dayClass` prop (`(iso) => CalendarDayClass`, anything `:class` takes) adds classes to a day cell of the month grid — weekends, holidays, days off of a working calendar; a `title` slot (`{ title, view, range }`) replaces the text of the header's title, the arrows and the view switcher stay; a `todayButton` prop (default `true`) hides the Today button. The `CalendarDayClass` type is exported.
+- baf4170: UidTreeView: a node's `suffix` (`string | number`) is shown quietly at the right edge of its row (`uid-tree-item__suffix`) — the number of people in a department, the size of a folder.
+
 ## 1.34.0
 
 ### Minor Changes
