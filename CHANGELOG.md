@@ -1,5 +1,11 @@
 # @dskripchenko/ui
 
+## 1.35.1
+
+### Patch Changes
+
+- 4cdf753: UidHeatmap: a day's level colour shows — the cell's CSS fill (the empty colour) no longer covers it.
+
 ## 1.35.0
 
 ### Minor Changes
