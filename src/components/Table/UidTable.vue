@@ -45,6 +45,13 @@ export interface UidTableProps {
   selection?: Set<string | number>
   /** The row's id field. `id` by default. */
   rowKey?: string | ((row: Record<string, unknown>) => string | number)
+  /**
+   * The set of ids of the expanded rows (`v-model:expanded`). An expanded row
+   * shows the `expanded` slot in a full-width row right below it. The table
+   * never toggles rows itself: the host updates the set (on `row-click`, say)
+   * or calls the exposed `toggleExpanded()`.
+   */
+  expanded?: Set<string | number>
 }
 
 const props = withDefaults(defineProps<UidTableProps>(), {
@@ -58,6 +65,7 @@ const props = withDefaults(defineProps<UidTableProps>(), {
   selectionFixed: undefined,
   selection: () => new Set(),
   rowKey: 'id',
+  expanded: () => new Set(),
 })
 
 const uidLocale = useLocale()
@@ -66,13 +74,18 @@ const emit = defineEmits<{
   'update:sortKey': [key: string | null]
   'update:sortDirection': [dir: SortDirection]
   'update:selection': [selection: Set<string | number>]
+  'update:expanded': [expanded: Set<string | number>]
   /** The click event comes second, for hosts that need the target or modifiers. */
   'row-click': [row: Record<string, unknown>, event: MouseEvent]
 }>()
 
-defineSlots<{
+const slots = defineSlots<{
   /** Shown when there are no rows. */
   empty?: () => unknown
+  /** The content of an expanded row, below it across the whole table. */
+  expanded?: (props: { row: Record<string, unknown> }) => unknown
+  /** The footer cell of the column with this key: `<template #footer-name>`. */
+  [footerSlot: `footer-${string}`]: (() => unknown) | undefined
   /** A cell of the column with this key: `<template #name="{ row }">`. */
   [columnKey: string]: ((props: { row: Record<string, unknown> }) => unknown) | undefined
 }>()
@@ -80,6 +93,25 @@ defineSlots<{
 function rowId(row: Record<string, unknown>): string | number {
   if (typeof props.rowKey === 'function') return props.rowKey(row)
   return (row[props.rowKey] ?? '') as string | number
+}
+
+function isExpanded(row: Record<string, unknown>): boolean {
+  return props.expanded.has(rowId(row))
+}
+
+/** Expands a collapsed row and collapses an expanded one, through `update:expanded`. */
+function toggleExpanded(id: string | number): void {
+  const next = new Set<string | number>(props.expanded)
+  if (next.has(id)) next.delete(id)
+  else next.add(id)
+  emit('update:expanded', next)
+}
+
+defineExpose({ toggleExpanded })
+
+/** The footer row appears once any column has a `footer-<key>` slot. */
+function hasFooter(): boolean {
+  return props.columns.some((col) => slots[`footer-${col.key}`] !== undefined)
 }
 
 const totalCols = computed<number>(() => props.columns.length + (props.selectable ? 1 : 0))
@@ -407,12 +439,18 @@ onBeforeUnmount(() => resizeObserver?.disconnect())
             </tr>
           </template>
 
-          <template v-else>
+          <template
+            v-for="(row, idx) in data"
+            v-else
+            :key="idx"
+          >
             <tr
-              v-for="(row, idx) in data"
-              :key="idx"
               class="uid-table__row"
-              :class="{ 'uid-table__row--selected': selectable && selection.has(rowId(row)) }"
+              :class="{
+                'uid-table__row--selected': selectable && selection.has(rowId(row)),
+                'uid-table__row--expanded': !!$slots.expanded && isExpanded(row),
+              }"
+              :aria-expanded="$slots.expanded ? isExpanded(row) : undefined"
               @click="onRowClick(row, $event)"
             >
               <td
@@ -443,8 +481,45 @@ onBeforeUnmount(() => resizeObserver?.disconnect())
                 </slot>
               </td>
             </tr>
+            <tr
+              v-if="$slots.expanded && isExpanded(row)"
+              class="uid-table__row-expansion"
+            >
+              <td
+                :colspan="totalCols"
+                class="uid-table__td uid-table__td--expansion"
+              >
+                <slot
+                  name="expanded"
+                  :row="row"
+                />
+              </td>
+            </tr>
           </template>
         </tbody>
+
+        <tfoot
+          v-if="hasFooter()"
+          class="uid-table__foot"
+        >
+          <tr class="uid-table__foot-row">
+            <td
+              v-if="selectable"
+              class="uid-table__td uid-table__td--foot uid-table__td--select"
+              :class="selectCellClass"
+              :style="selectCellStyle"
+            />
+            <td
+              v-for="col in columns"
+              :key="col.key"
+              class="uid-table__td uid-table__td--foot"
+              :class="[`uid-table__td--${col.align ?? 'left'}`, fixedClass(col)]"
+              :style="fixedStyle(col)"
+            >
+              <slot :name="`footer-${col.key}`" />
+            </td>
+          </tr>
+        </tfoot>
       </table>
     </div>
   </div>

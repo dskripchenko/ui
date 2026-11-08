@@ -134,7 +134,7 @@ Two-column template: fixed sidebar on the left, content on the right. Optional h
 
 Slots: `sidebar`, `header?`, `default`, `footer?`.
 
-Props: `sidebarWidth?`, `sidebarCollapsed?`, `sidebarPosition?: 'left' \| 'right'`.
+Props: `sidebarWidth?`, `sidebarCollapsed?`, `sidebarPosition?: 'left' \| 'right'`, `stickyHeader?: boolean` (default `false`: the whole `header` slot — a banner plus a top bar, say — stays at the top while the page scrolls).
 
 Behaviour:
 - On mobile (below the breakpoint, default 768px) the sidebar collapses into a drawer toggled from the header (via the `useSidebar()` composable).

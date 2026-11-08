@@ -75,6 +75,30 @@ export const WithDisabled: Story = {
   }),
 }
 
+// A row menu at the right edge of a table: 'bottom-end' aligns the menu to the
+// trigger's right edge, so it does not run past the table.
+export const PlacementEnd: Story = {
+  render: () => ({
+    components: { UidMenu, UidMenuItem, UidMenuSeparator },
+    template: `
+      <div style="padding:24px">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border:1px solid var(--uid-color-border);border-radius:8px">
+          <span>Строка таблицы</span>
+          <UidMenu placement="bottom-end">
+            <template #trigger>
+              <button style="padding:4px 10px;cursor:pointer" aria-label="Действия">⋯</button>
+            </template>
+            <UidMenuItem>Открыть</UidMenuItem>
+            <UidMenuItem>Дублировать</UidMenuItem>
+            <UidMenuSeparator />
+            <UidMenuItem variant="danger">Удалить</UidMenuItem>
+          </UidMenu>
+        </div>
+      </div>
+    `,
+  }),
+}
+
 export const MultipleMenus: Story = {
   render: () => ({
     components: { UidMenu, UidMenuItem, UidMenuSeparator },

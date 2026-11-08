@@ -184,7 +184,7 @@ Layout = «коробка» страницы. Принимает крупные 
 
 Слоты: `sidebar`, `header?`, `default`, `footer?`.
 
-Пропсы: `sidebarWidth?: string`, `sidebarCollapsed?: boolean`, `sidebarPosition?: 'left' \| 'right'`.
+Пропсы: `sidebarWidth?: string`, `sidebarCollapsed?: boolean`, `sidebarPosition?: 'left' \| 'right'`, `stickyHeader?: boolean` (по умолчанию `false`: весь слот `header` — например, баннер и верхняя панель — остаётся вверху при прокрутке страницы).
 
 Поведение:
 

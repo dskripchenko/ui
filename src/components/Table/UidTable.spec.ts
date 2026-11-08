@@ -322,3 +322,91 @@ describe('UidTable', () => {
     expectTypeOf<Parameters<NonNullable<Slots['name']>>[0]>().toEqualTypeOf<{ row: Record<string, unknown> }>()
   })
 })
+
+describe('UidTable: expandable rows', () => {
+  const rows = [
+    { id: 1, name: 'Ivan', role: 'Developer', status: 'Active' },
+    { id: 2, name: 'Maria', role: 'Designer', status: 'Active' },
+  ]
+  const expandedSlot = { expanded: '<template #expanded="{ row }"><p class="details">Details of {{ row.name }}</p></template>' }
+
+  it('renders the expansion right after an expanded row, across all columns', () => {
+    const wrapper = mount(UidTable, {
+      props: { columns, data: rows, selectable: true, expanded: new Set([1]) },
+      slots: expandedSlot,
+    })
+    const trs = wrapper.findAll('tbody tr')
+    expect(trs).toHaveLength(3)
+    expect(trs[0].classes()).toContain('uid-table__row--expanded')
+    expect(trs[1].classes()).toContain('uid-table__row-expansion')
+    const cell = trs[1].find('td')
+    expect(cell.classes()).toContain('uid-table__td--expansion')
+    expect(cell.attributes('colspan')).toBe('4')
+    expect(cell.find('.details').text()).toBe('Details of Ivan')
+    expect(trs[2].classes()).not.toContain('uid-table__row--expanded')
+  })
+
+  it('sets aria-expanded on rows only when the expanded slot is given', () => {
+    const withSlot = mount(UidTable, {
+      props: { columns, data: rows, expanded: new Set([2]) },
+      slots: expandedSlot,
+    })
+    const rowEls = withSlot.findAll('.uid-table__row')
+    expect(rowEls[0].attributes('aria-expanded')).toBe('false')
+    expect(rowEls[1].attributes('aria-expanded')).toBe('true')
+
+    const withoutSlot = mount(UidTable, { props: { columns, data: rows, expanded: new Set([2]) } })
+    expect(withoutSlot.find('.uid-table__row').attributes('aria-expanded')).toBeUndefined()
+    expect(withoutSlot.find('.uid-table__row-expansion').exists()).toBe(false)
+    expect(withoutSlot.find('.uid-table__row--expanded').exists()).toBe(false)
+  })
+
+  it('a row click does not expand a row by itself', async () => {
+    const wrapper = mount(UidTable, { props: { columns, data: rows }, slots: expandedSlot })
+    await wrapper.find('.uid-table__row').trigger('click')
+    expect(wrapper.emitted('update:expanded')).toBeUndefined()
+    expect(wrapper.find('.uid-table__row-expansion').exists()).toBe(false)
+  })
+
+  it('toggleExpanded() emits the next set', () => {
+    const wrapper = mount(UidTable, {
+      props: { columns, data: rows, expanded: new Set([1]) },
+      slots: expandedSlot,
+    })
+    const vm = wrapper.vm as unknown as { toggleExpanded: (id: string | number) => void }
+    vm.toggleExpanded(2)
+    vm.toggleExpanded(1)
+    const emitted = wrapper.emitted('update:expanded') as Set<string | number>[][]
+    expect([...emitted[0][0]]).toEqual([1, 2])
+    expect([...emitted[1][0]]).toEqual([])
+  })
+
+  it('follows a new expanded set', async () => {
+    const wrapper = mount(UidTable, { props: { columns, data: rows }, slots: expandedSlot })
+    expect(wrapper.find('.uid-table__row-expansion').exists()).toBe(false)
+    await wrapper.setProps({ expanded: new Set([2]) })
+    expect(wrapper.find('.uid-table__row-expansion .details').text()).toBe('Details of Maria')
+  })
+})
+
+describe('UidTable: footer', () => {
+  it('no footer without footer-* slots', () => {
+    const wrapper = mount(UidTable, { props: { columns, data } })
+    expect(wrapper.find('tfoot').exists()).toBe(false)
+  })
+
+  it('renders footer-<key> slots in their columns, other cells empty', () => {
+    const wrapper = mount(UidTable, {
+      props: { columns, data, selectable: true },
+      slots: { 'footer-name': 'Total', 'footer-status': '2' },
+    })
+    const foot = wrapper.find('tfoot.uid-table__foot')
+    expect(foot.exists()).toBe(true)
+    const cells = foot.findAll('.uid-table__foot-row td')
+    expect(cells).toHaveLength(4)
+    expect(cells.every((c) => c.classes().includes('uid-table__td--foot'))).toBe(true)
+    expect(cells[0].classes()).toContain('uid-table__td--select')
+    expect(cells.map((c) => c.text())).toEqual(['', 'Total', '', '2'])
+    expect(cells[3].classes()).toContain('uid-table__td--center')
+  })
+})

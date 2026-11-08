@@ -134,7 +134,7 @@ Zwei-Spalten-Vorlage: feste Sidebar links, Inhalt rechts. Optional Header oben u
 
 Slots: `sidebar`, `header?`, `default`, `footer?`.
 
-Props: `sidebarWidth?`, `sidebarCollapsed?`, `sidebarPosition?: 'left' \| 'right'`.
+Props: `sidebarWidth?`, `sidebarCollapsed?`, `sidebarPosition?: 'left' \| 'right'`, `stickyHeader?: boolean` (Standard `false`: der ganze `header`-Slot — etwa ein Banner und eine obere Leiste — bleibt beim Scrollen oben).
 
 Verhalten:
 - Auf Mobile (unter Breakpoint, Default 768 px) klappt die Sidebar zu einem Drawer, der vom Header aus geöffnet wird (über `useSidebar()`).

@@ -36,6 +36,16 @@
   flex-shrink: 0;
 }
 
+/*
+ * The wrapper sticks, not what is inside it: a sticky child of the header slot
+ * cannot stick, since its parent is only as tall as itself.
+ */
+.uid-layout-sidebar--sticky-header .uid-layout-sidebar__main-header {
+  position: sticky;
+  top: 0;
+  z-index: var(--uid-z-sticky, 100);
+}
+
 .uid-layout-sidebar__main-content {
   flex: 1;
   min-width: 0;

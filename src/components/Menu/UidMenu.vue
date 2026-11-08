@@ -1,8 +1,20 @@
 <script setup lang="ts">
 import './UidMenu.css'
 import { ref, computed, provide, watch, nextTick, onMounted, onUnmounted, useId } from 'vue'
-import { usePopover } from '../../composables/usePopover.js'
+import { usePopover, type Placement } from '../../composables/usePopover.js'
 import { MENU_CLOSE_KEY, MENU_LEVEL_KEY, getLevelItems, moveFocus } from './context.js'
+
+export interface UidMenuProps {
+  /**
+   * Where the menu opens relative to the trigger. A row menu at the right edge
+   * of a table opens with 'bottom-end' so it aligns to the trigger's right edge.
+   */
+  placement?: Placement
+}
+
+const props = withDefaults(defineProps<UidMenuProps>(), {
+  placement: 'bottom-start',
+})
 
 const slots = defineSlots<{
   trigger?(): unknown
@@ -36,9 +48,15 @@ const triggerAnchorRef = computed<HTMLElement | null>(() => {
 
 const referenceRef = computed<HTMLElement | null>(() => pointAnchor.value ?? triggerAnchorRef.value)
 
-const { floatingStyle, update } = usePopover(referenceRef, menuRef, {
-  placement: 'bottom-start',
-})
+// usePopover reads the placement on every update, so a computed keeps it in
+// sync with the prop.
+const placement = computed<Placement>(() => props.placement)
+
+const { floatingStyle, update } = usePopover(referenceRef, menuRef, { placement })
+
+// An open menu moves at once when the placement changes.
+watch(placement, () => { if (open.value) void nextTick(update) })
+
 
 // A button inside a button is an accessibility violation: a screen reader
 // announces two nested controls and the keyboard lands now on one, now on the

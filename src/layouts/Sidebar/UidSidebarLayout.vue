@@ -5,10 +5,16 @@ import { SIDEBAR_LAYOUT_KEY } from '../../composables/useSidebar.js'
 
 export interface UidSidebarLayoutProps {
   sidebarWidth?: string
+  /**
+   * Keeps the whole header slot (a banner plus a top bar, say) at the top of
+   * the window while the page scrolls.
+   */
+  stickyHeader?: boolean
 }
 
 const props = withDefaults(defineProps<UidSidebarLayoutProps>(), {
   sidebarWidth: undefined,
+  stickyHeader: false,
 })
 
 const collapsed = defineModel<boolean>({ default: false })
@@ -27,7 +33,10 @@ const rootStyle = computed(() =>
 <template>
   <div
     class="uid-layout-sidebar"
-    :class="{ 'uid-layout-sidebar--collapsed': collapsed }"
+    :class="{
+      'uid-layout-sidebar--collapsed': collapsed,
+      'uid-layout-sidebar--sticky-header': stickyHeader,
+    }"
     :style="rootStyle"
   >
     <aside class="uid-layout-sidebar__sidebar">
