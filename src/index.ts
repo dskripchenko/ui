@@ -431,6 +431,8 @@ export type { UidErrorStateProps } from './patterns/ErrorState/index.js'
 export { UidSimpleLayout } from './layouts/Simple/index.js'
 export type { UidSimpleLayoutProps } from './layouts/Simple/index.js'
 
+export { UidProductSwitcher } from './patterns/ProductSwitcher/index.js'
+export type { UidProductSwitcherItem, UidProductSwitcherProps } from './patterns/ProductSwitcher/index.js'
 export { UidSidebarLayout } from './layouts/Sidebar/index.js'
 export type { UidSidebarLayoutProps } from './layouts/Sidebar/index.js'
 

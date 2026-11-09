@@ -61,6 +61,19 @@ Props：`collapsed?`、`width?`、`position?: 'left' \| 'right'`。
 
 子组件：`UidSidebarItem`、`UidSidebarGroup`、`UidSidebarDivider`。
 
+### `UidProductSwitcher` — 产品切换
+
+在同一系列的相邻应用之间切换；若另一应用中有同一对象，则直接打开它。放在侧边栏的 `header` 插槽中、品牌旁边。
+
+| Prop | 用途 |
+|---|---|
+| `items` | `{ key, label, href, icon?, current? }[]` — 产品列表；`current` 标记当前产品 |
+| `compact` | 只显示一个 ⇄ 按钮，指向下一个产品（侧边栏折叠时） |
+| `label` | 分组的无障碍名称 |
+| `hint` | `(item) => string` — 链接标题，例如 `Open KB-12 in Docs` |
+
+当前产品带有 `aria-current="page"`，不是链接。
+
 ### `UidPageHeader` — 页面标题
 
 页面内容头部，带标题、描述、面包屑和操作。
