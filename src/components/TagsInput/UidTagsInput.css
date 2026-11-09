@@ -46,7 +46,7 @@
   gap: var(--uid-space-2xs);
   padding: 2px var(--uid-space-xs);
   background: var(--uid-color-primary-subtle);
-  color: var(--uid-color-primary);
+  color: var(--uid-color-primary-text);
   border-radius: var(--uid-radius-sm);
   font-size: var(--uid-font-size-sm);
   line-height: 1.4;

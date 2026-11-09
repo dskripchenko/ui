@@ -41,7 +41,7 @@
 
 .uid-tree-item--selected > .uid-tree-item__row {
   background: var(--uid-color-primary-subtle);
-  color: var(--uid-color-primary);
+  color: var(--uid-color-primary-text);
   font-weight: 500;
 }
 
@@ -116,7 +116,7 @@
 }
 
 .uid-tree-item__icon--branch {
-  color: var(--uid-color-primary);
+  color: var(--uid-color-primary-text);
 }
 
 .uid-tree-item__icon--leaf {

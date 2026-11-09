@@ -4,7 +4,7 @@
   --uid-switch-thumb-size:   14px;
   --uid-switch-thumb-offset: 3px;
   --uid-switch-track-bg:     var(--uid-border-default);
-  --uid-switch-track-on-bg:  var(--uid-accent);
+  --uid-switch-track-on-bg:  var(--uid-accent-solid);
   --uid-switch-thumb-bg:     var(--uid-color-white);
   --uid-switch-gap:          var(--uid-space-sm);
 

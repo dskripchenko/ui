@@ -36,7 +36,7 @@
 }
 
 .uid-anchor__link--active {
-  color: var(--uid-color-primary);
+  color: var(--uid-color-primary-text);
   border-left-color: var(--uid-color-primary);
   font-weight: var(--uid-font-weight-medium);
 }

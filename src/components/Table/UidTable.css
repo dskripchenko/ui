@@ -50,7 +50,7 @@
 }
 
 .uid-table__th--active {
-  color: var(--uid-color-primary);
+  color: var(--uid-color-primary-text);
 }
 
 .uid-table__th-content {

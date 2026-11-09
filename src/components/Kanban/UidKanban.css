@@ -38,7 +38,7 @@
 .uid-kanban__filter--on, .uid-kanban__tab--on {
   border-color: var(--uid-color-primary);
   background: var(--uid-color-primary-subtle);
-  color: var(--uid-color-primary);
+  color: var(--uid-color-primary-text);
 }
 .uid-kanban__people { min-width: 180px; }
 .uid-kanban__actions { display: flex; align-items: center; gap: var(--uid-space-sm); margin-left: auto; }

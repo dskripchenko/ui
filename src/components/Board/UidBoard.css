@@ -97,7 +97,7 @@
   border: 1px dashed var(--uid-color-primary);
   border-radius: var(--uid-board-card-radius, var(--uid-radius-sm, 6px));
   background: var(--uid-color-primary-subtle, transparent);
-  color: var(--uid-color-primary);
+  color: var(--uid-color-primary-text);
   font-size: var(--uid-font-size-xs, 12px);
   text-align: center;
 }

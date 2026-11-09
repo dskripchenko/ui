@@ -157,7 +157,7 @@
 
 .uid-cascader__highlight {
   background: none;
-  color: var(--uid-color-primary);
+  color: var(--uid-color-primary-text);
   font-weight: var(--uid-font-weight-medium);
 }
 
@@ -202,7 +202,7 @@
 
 .uid-cascader__option--active {
   background: var(--uid-color-primary-subtle);
-  color: var(--uid-color-primary);
+  color: var(--uid-color-primary-text);
 }
 
 .uid-cascader__option--selected {

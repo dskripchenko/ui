@@ -65,7 +65,7 @@
   position: relative;
   background: var(--uid-color-primary-subtle);
   border-color: var(--uid-color-primary);
-  color: var(--uid-color-primary);
+  color: var(--uid-color-primary-text);
 }
 
 .uid-calendar__btn:focus-visible {
@@ -600,7 +600,7 @@
 
 .uid-calendar__mini-day--busy {
   font-weight: var(--uid-font-weight-semibold);
-  color: var(--uid-color-primary);
+  color: var(--uid-color-primary-text);
 }
 
 .uid-calendar__mini-day--busy::after {
@@ -657,7 +657,7 @@
 }
 
 .uid-calendar__agenda-day--today .uid-calendar__agenda-date {
-  color: var(--uid-color-primary);
+  color: var(--uid-color-primary-text);
 }
 
 .uid-calendar__agenda-item {

@@ -77,6 +77,18 @@ const pairs: [string, string][] = [
   ['--uid-neutral-text', '--uid-neutral-text@0.08/--uid-surface-base'],
   ['--uid-neutral-text', '--uid-surface-base'],
   ['--uid-text-secondary', '--uid-surface-raised'],
+  ['--uid-accent-text', '--uid-surface-raised'],
+  ['--uid-accent-text', '--uid-surface-base'],
+  ['--uid-accent-text', '--uid-surface-overlay'],
+]
+
+// Controls and their state (checkbox, radio, switch, play button) against the
+// surface next to them: 3:1 (WCAG 1.4.11).
+const controls: [string, string][] = [
+  ['--uid-accent-solid', '--uid-surface-raised'],
+  ['--uid-accent-solid', '--uid-surface-base'],
+  ['--uid-accent-solid', '--uid-surface-overlay'],
+  ['--uid-text-on-accent', '--uid-accent-solid'],
 ]
 
 const color = (theme: 'light' | 'dark', spec: string): number[] => {
@@ -95,4 +107,29 @@ describe('text on fills and tints reaches 4.5:1', () => {
       expect(failing).toEqual([])
     })
   }
+})
+
+describe('controls reach 3:1 against their surface', () => {
+  for (const theme of ['light', 'dark'] as const) {
+    it(theme, () => {
+      const failing = controls
+        .map(([fg, bg]) => ({ pair: `${fg} on ${bg}`, ratio: ratio(color(theme, fg), color(theme, bg)) }))
+        .filter((r) => r.ratio < 3)
+        .map((r) => `${r.pair}: ${r.ratio.toFixed(2)}`)
+      expect(failing).toEqual([])
+    })
+  }
+})
+
+describe('white initials on every avatar fill reach 4.5:1', () => {
+  it('in the palette of UidAvatar.vue', async () => {
+    const fs = (await import('node:fs' as string)) as Fs
+    const src = `${(globalThis as unknown as { process: { cwd(): string } }).process.cwd()}/src`
+    const code = fs.readFileSync(`${src}/components/Avatar/UidAvatar.vue`, 'utf8')
+    const block = code.slice(code.indexOf('const PALETTE'), code.indexOf(']', code.indexOf('const PALETTE')))
+    const fills = [...block.matchAll(/'(#[0-9a-f]{6})'/gi)].map((m) => m[1]!)
+    expect(fills.length).toBe(8)
+    const failing = fills.filter((f) => ratio(rgb('#ffffff'), rgb(f)) < 4.5)
+    expect(failing).toEqual([])
+  })
 })

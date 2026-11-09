@@ -1,5 +1,5 @@
 .uid-link {
-  color: var(--uid-link-color, var(--uid-color-primary));
+  color: var(--uid-link-color, var(--uid-color-primary-text));
   text-decoration: var(--uid-link-decoration, underline);
   text-underline-offset: 2px;
   cursor: pointer;
@@ -8,7 +8,7 @@
 }
 
 .uid-link:hover:not(.uid-link--disabled) {
-  color: var(--uid-link-color-hover, var(--uid-color-primary-hover));
+  color: var(--uid-link-color-hover, var(--uid-color-primary-text));
 }
 
 .uid-link:focus-visible {

@@ -76,7 +76,7 @@
 }
 
 .uid-tab--active {
-  color: var(--uid-tab-color-active, var(--uid-color-primary));
+  color: var(--uid-tab-color-active, var(--uid-color-primary-text));
 }
 
 .uid-tab--active::after {

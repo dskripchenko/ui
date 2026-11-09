@@ -6,7 +6,7 @@
   overflow: hidden;
   font-weight: 600;
   color: #fff;
-  background: var(--uid-avatar-bg, var(--uid-color-primary));
+  background: var(--uid-avatar-bg, var(--uid-color-teal-700));
   user-select: none;
 }
 
