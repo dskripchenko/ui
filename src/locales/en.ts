@@ -112,6 +112,12 @@ export const en: UidLocale = {
     noResults: 'No matches',
   },
 
+  messageFeed: {
+    today: 'Today',
+    yesterday: 'Yesterday',
+    newMessages: 'New messages',
+  },
+
   modal: {
     close: 'Close',
   },

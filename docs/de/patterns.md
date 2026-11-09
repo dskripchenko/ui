@@ -59,7 +59,7 @@ Vertikales App-Menü.
 
 Props: `collapsed?`, `width?`, `position?: 'left' \| 'right'`.
 
-Sub-Komponenten: `UidSidebarItem`, `UidSidebarGroup`, `UidSidebarDivider`.
+Sub-Komponenten: `UidSidebarItem`, `UidSidebarGroup`, `UidSidebarDivider`. Der Slot `action` einer Gruppe setzt ein Bedienelement neben ihren Titel — etwa eine Schaltfläche „Hinzufügen“; in der eingeklappten Sidebar wird es mit den Titeln ausgeblendet.
 
 ### `UidProductSwitcher` — Wechsel zwischen Produkten
 

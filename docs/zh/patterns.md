@@ -59,7 +59,7 @@ Props：`variant?: 'minimal' \| 'columns'`。
 
 Props：`collapsed?`、`width?`、`position?: 'left' \| 'right'`。
 
-子组件：`UidSidebarItem`、`UidSidebarGroup`、`UidSidebarDivider`。
+子组件：`UidSidebarItem`、`UidSidebarGroup`、`UidSidebarDivider`。分组的 `action` 插槽在标题旁放置操作控件（例如“添加”按钮）；侧边栏折叠时它与标题一同隐藏。
 
 ### `UidProductSwitcher` — 产品切换
 
