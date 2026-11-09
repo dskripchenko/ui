@@ -254,6 +254,8 @@ export type { UidTourProps, TourStep, TourPlacement } from './components/Tour/in
 
 export { UidMention } from './components/Mention/index.js'
 export type { UidMentionProps, MentionOption } from './components/Mention/index.js'
+export { UidMessageFeed } from './components/MessageFeed/index.js'
+export type { UidMessageFeedProps, UidMessageFeedKey } from './components/MessageFeed/index.js'
 
 export { UidQueryInput } from './components/QueryInput/index.js'
 export type { UidQueryInputProps, QuerySuggestion, QuerySuggestions, QueryInputError } from './components/QueryInput/index.js'

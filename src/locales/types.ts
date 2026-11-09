@@ -109,6 +109,13 @@ export interface UidLocale {
     noResults: string
   }
 
+  /** UidMessageFeed: a chat-like list of messages. */
+  messageFeed: {
+    today: string
+    yesterday: string
+    newMessages: string
+  }
+
   modal: {
     close: string
   }

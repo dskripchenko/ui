@@ -1,0 +1,88 @@
+.uid-message-feed {
+  position: relative;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-anchor: none;
+  overscroll-behavior: contain;
+}
+
+.uid-message-feed__spacer {
+  position: relative;
+}
+
+.uid-message-feed__content {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+}
+
+/* A row holds its children's margins, so its measured height is the space it takes. */
+.uid-message-feed__row {
+  display: flow-root;
+}
+
+.uid-message-feed__day {
+  display: flex;
+  align-items: center;
+  gap: var(--uid-space-md);
+  padding: var(--uid-space-sm) var(--uid-space-md);
+  color: var(--uid-text-secondary);
+  font-size: var(--uid-font-size-xs);
+}
+
+.uid-message-feed__day::before,
+.uid-message-feed__day::after {
+  flex: 1;
+  height: 1px;
+  background: var(--uid-border-subtle);
+  content: '';
+}
+
+.uid-message-feed__day-label {
+  padding: var(--uid-space-2xs) var(--uid-space-sm);
+  border: 1px solid var(--uid-border-default);
+  border-radius: var(--uid-radius-full);
+  background: var(--uid-surface-base);
+}
+
+.uid-message-feed__new {
+  display: flex;
+  align-items: center;
+  gap: var(--uid-space-sm);
+  padding: var(--uid-space-sm) var(--uid-space-md);
+  color: var(--uid-danger-text);
+  font-size: var(--uid-font-size-xs);
+  font-weight: 500;
+}
+
+.uid-message-feed__new::before {
+  flex: 1;
+  height: 1px;
+  background: currentColor;
+  content: '';
+}
+
+.uid-message-feed__edge {
+  position: sticky;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  height: 0;
+  overflow: visible;
+}
+
+.uid-message-feed__edge--before {
+  top: var(--uid-space-sm);
+}
+
+.uid-message-feed__edge--after {
+  bottom: var(--uid-space-lg);
+}
+
+.uid-message-feed__empty {
+  display: flex;
+  min-height: 100%;
+  align-items: center;
+  justify-content: center;
+}

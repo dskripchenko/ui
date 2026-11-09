@@ -112,6 +112,12 @@ export const ru: UidLocale = {
     noResults: 'Никого не найдено',
   },
 
+  messageFeed: {
+    today: 'Сегодня',
+    yesterday: 'Вчера',
+    newMessages: 'Новые сообщения',
+  },
+
   modal: {
     close: 'Закрыть',
   },
