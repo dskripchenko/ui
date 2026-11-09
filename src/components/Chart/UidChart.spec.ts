@@ -333,4 +333,19 @@ describe('UidChart', () => {
     const firstY = Number(second.split(' ')[1]!.replace(/[^\d.].*$/, ''))
     expect(firstY).toBeCloseTo(yBottom - (yBottom - yTop) / 2, 1)
   })
+
+  it('draws stacked areas as solid bands and a lone area as a light fill', () => {
+    const stacked = make({
+      series: [
+        { key: 'a', label: 'A', type: 'area', stack: 's', data: [5, 5, 5, 5, 5] },
+        { key: 'b', label: 'B', type: 'area', stack: 's', data: [5, 5, 5, 5, 5] },
+      ],
+    })
+    expect(stacked.findAll('.uid-chart__area--stacked')).toHaveLength(2)
+    expect(stacked.findAll('.uid-chart__line--edge')).toHaveLength(2)
+
+    const lone = make({ series: [{ key: 'a', label: 'A', type: 'area', data: [5, 5, 5, 5, 5] }] })
+    expect(lone.find('.uid-chart__area--stacked').exists()).toBe(false)
+    expect(lone.find('.uid-chart__line--edge').exists()).toBe(false)
+  })
 })

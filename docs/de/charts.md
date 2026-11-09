@@ -156,7 +156,7 @@ interface ChartReference {
 
 Serien ohne `color` oder `tone` belegen Palettenplätze in der Reihenfolge des `series`-Arrays: `--uid-chart-1` … `--uid-chart-6`. Der Platz gehört zur Position der Serie, daher färbt das Ausblenden einer anderen Serie sie nie um. Mehr als sechs solcher Serien wiederholen die Palette — fasse den Rest besser zu „Sonstige“ zusammen. Töne kommen aus dem Theme: `accent`, `info`, `warning`, `danger`, `success` entsprechen `--uid-accent`, `--uid-info`, …, und `neutral` entspricht `--uid-chart-neutral` (Pläne, Basislinien). Die Palette hat eigene Werte für hell und dunkel (`:root[data-theme='dark']`) und lässt sich wie jedes Token überschreiben. `--uid-chart-surface` (Standard `--uid-color-surface`) ist die Farbe der Lücken zwischen gestapelten Balken und des Rings um Punkte: setze sie auf den Hintergrund, auf dem das Diagramm steht.
 
-Markierungen: 2-px-Linien mit runden Verbindungen, Striche `4 4`, Flächen mit 15 % Deckkraft, 8-px-Punkte mit 2-px-Ring, Balken mit 4 px gerundetem Datenende und 2-px-Lücken. Text nutzt immer die Textfarben, nie eine Serienfarbe.
+Markierungen: 2-px-Linien mit runden Verbindungen, Striche `4 4`, Flächen mit 15 % Deckkraft (gestapelte Flächen — Bänder mit 70 % und 1 px Oberkante), 8-px-Punkte mit 2-px-Ring, Balken mit 4 px gerundetem Datenende und 2-px-Lücken. Text nutzt immer die Textfarben, nie eine Serienfarbe.
 
 ### Barrierefreiheit
 

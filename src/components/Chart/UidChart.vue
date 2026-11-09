@@ -377,6 +377,8 @@ interface LineMark {
   series: number
   d: string
   area: string
+  /** An area in a stack: a solid band with a thin top edge. */
+  stacked: boolean
   color: string
   dashed: boolean
   singles: ChartPoint[]
@@ -409,6 +411,7 @@ const lines = computed<LineMark[]>(() =>
         series: s.index,
         d: linePath(top),
         area,
+        stacked: s.type === 'area' && stackKey(s) !== null,
         color: s.color,
         dashed: !!s.def.dashed,
         singles: segments(top).filter(run => run.length === 1).map(run => run[0] as ChartPoint),
@@ -723,6 +726,7 @@ const tooltipId = `uid-chart-tip-${uid}`
             <path
               v-if="l.area"
               class="uid-chart__area"
+              :class="{ 'uid-chart__area--stacked': l.stacked }"
               :d="l.area"
               :data-series="l.series"
               :style="{ fill: l.color }"
@@ -745,7 +749,7 @@ const tooltipId = `uid-chart-tip-${uid}`
           >
             <path
               class="uid-chart__line"
-              :class="{ 'uid-chart__line--dashed': l.dashed }"
+              :class="{ 'uid-chart__line--dashed': l.dashed, 'uid-chart__line--edge': l.stacked }"
               :d="l.d"
               :data-series="l.series"
               :stroke-dasharray="l.dashed ? '4 4' : undefined"

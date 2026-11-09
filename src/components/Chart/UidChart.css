@@ -81,6 +81,15 @@
   stroke: none;
 }
 
+/* Stacked areas read as bands (a cumulative flow): solid fills, a thin edge on top. */
+.uid-chart__area--stacked {
+  fill-opacity: 0.7;
+}
+
+.uid-chart__line--edge {
+  stroke-width: 1;
+}
+
 .uid-chart__dot {
   stroke: var(--uid-chart-surface);
   stroke-width: 2;

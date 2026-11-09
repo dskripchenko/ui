@@ -156,7 +156,7 @@ interface ChartReference {
 
 没有 `color` 或 `tone` 的系列按 `series` 数组的顺序占用调色板槽位：`--uid-chart-1` … `--uid-chart-6`。槽位属于系列的位置，因此隐藏其他系列不会让它变色。超过六个这样的系列会重复调色板 — 建议把尾部合并为"其他"。tone 取自主题：`accent`、`info`、`warning`、`danger`、`success` 对应 `--uid-accent`、`--uid-info`……，`neutral` 对应 `--uid-chart-neutral`(计划、基准线)。调色板在浅色和深色主题(`:root[data-theme='dark']`)下各有取值，可像任何 token 一样覆盖。`--uid-chart-surface`(默认 `--uid-color-surface`)是堆叠柱形之间缝隙和散点外圈的颜色：请设为图表所在的背景色。
 
-标记：2 px 圆角连接的线条，`4 4` 虚线，15 % 不透明度的面积，带 2 px 外圈的 8 px 散点，数据端 4 px 圆角、间隔 2 px 的柱形。文字始终使用文本颜色，从不使用系列颜色。
+标记：2 px 圆角连接的线条，`4 4` 虚线，15 % 不透明度的面积(堆叠面积为 70 % 的色带，顶部 1 px 边线)，带 2 px 外圈的 8 px 散点，数据端 4 px 圆角、间隔 2 px 的柱形。文字始终使用文本颜色，从不使用系列颜色。
 
 ### 无障碍
 
