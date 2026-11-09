@@ -92,6 +92,15 @@ describe('UidSidebarGroup', () => {
     expect(wrapper.find('.uid-sidebar-group__title').text()).toBe('Настройки')
   })
 
+  it('puts an action next to the title', () => {
+    const wrapper = mount(UidSidebarGroup, {
+      props: { title: 'Lists' },
+      slots: { default: '', action: '<button class="add">+</button>' },
+    })
+    expect(wrapper.find('.uid-sidebar-group__head .uid-sidebar-group__title').text()).toBe('Lists')
+    expect(wrapper.find('.uid-sidebar-group__action .add').exists()).toBe(true)
+  })
+
   it('не рендерит title без prop', () => {
     const wrapper = mount(UidSidebarGroup, { slots: { default: '' } })
     expect(wrapper.find('.uid-sidebar-group__title').exists()).toBe(false)

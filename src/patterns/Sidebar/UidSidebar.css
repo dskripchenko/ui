@@ -142,6 +142,28 @@ button.uid-sidebar-item {
   color: var(--uid-color-text-disabled);
 }
 
+.uid-sidebar-group__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-right: 12px;
+}
+
+.uid-sidebar-group__head .uid-sidebar-group__title {
+  flex: 1;
+  min-width: 0;
+}
+
+.uid-sidebar-group__action {
+  display: inline-flex;
+  align-items: center;
+  color: var(--uid-color-text-secondary);
+}
+
+.uid-pattern-sidebar--collapsed .uid-sidebar-group__head {
+  display: none;
+}
+
 /* Divider */
 .uid-sidebar-divider {
   height: 1px;
