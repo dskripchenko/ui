@@ -1,5 +1,12 @@
 # @dskripchenko/ui
 
+## 1.42.0
+
+### Minor Changes
+
+- ba8f16b: UidCodeInput: a one-time-code field of separate cells with `v-model`, `length` (default 6), `mode` (`numeric` with a numeric keypad, or `alphanumeric`, uppercased), `size`, `disabled`, `invalid` (error styling and `aria-invalid`), `autofocus`, `name` (a hidden input with the whole value) and `label`. Typing moves to the next cell, Backspace on an empty cell clears the previous one and moves there, arrows, Home and End move between cells; a pasted or autofilled code is spread from the first cell, dropping spaces, dashes and characters the mode does not allow. The first cell has `autocomplete="one-time-code"`. Emits `complete` once per distinct full value; exposes `focus()` and `clear()`. A labelled `role="group"`, each cell labelled "Character 2 of 6", the accent focus ring, light and dark themes. No dependencies. Also exports the `codeInput` locale strings (en, ru).
+- ba8f16b: UidQrCode: a QR code drawn as one SVG (`role="img"`, one `<path>` for the dark modules, `shape-rendering="crispEdges"`) from `value`, with `size`, `errorCorrection` (L, M, Q, H; default M), `margin` (quiet zone, default 4 modules) and `label`. Dark modules on a white ground in both themes, set by `--uid-qr-code-dark` and `--uid-qr-code-light`; an `error` event when the value does not fit version 40. The encoder is the library's own, after ISO/IEC 18004: numeric, alphanumeric and UTF-8 byte modes, versions 1–40, Reed–Solomon error correction with block interleaving, all eight masks scored by the standard penalty rules. No dependencies. Also exports `encodeQr` (with the `QrCode`, `QrEncodeOptions`, `QrErrorCorrection` types) and the `qrCode` locale strings (en, ru).
+
 ## 1.41.0
 
 ### Minor Changes
