@@ -21,7 +21,7 @@
 
 ## Safety
 
-The source is HTML-escaped **before** any markup is produced: raw HTML is shown as text, never executed. Links and images accept only `http(s)`, `mailto`, relative and anchor targets — `javascript:`, `data:` and other schemes stay plain text.
+The source is HTML-escaped **before** any markup is produced: raw HTML is shown as text, never executed. Links and images accept only `http(s)`, `mailto`, relative and anchor targets — `javascript:`, `data:` and other schemes stay plain text. The same holds for `[[internal links]]` and `![[embeds]]`. A URL is judged on its final value: backslash escapes restored, character references decoded, whitespace, control characters and letter case ignored — so `javascript\:`, `&#106;avascript:` or `[[javascript:…]]` do not become links.
 
 ## Callouts
 

@@ -8,8 +8,10 @@
  * its own `markdown` field, entry or layout.
  *
  * Safety: the source is HTML-escaped BEFORE any markup is produced, so raw
- * HTML in the markdown is shown as text, never executed; link and image URLs
- * are limited to http(s), mailto, relative and anchor targets.
+ * HTML in the markdown is shown as text, never executed; link, image and
+ * internal-link URLs are limited to http(s), mailto, relative and anchor
+ * targets, judged on the final value (backslash escapes restored, character
+ * references decoded).
  *
  * TeX math (`$…$`, `$$…$$`) is drawn as MathML by @dskripchenko/math, which
  * escapes the TeX in the same way.
@@ -157,11 +159,50 @@ const DEFAULT_CALLOUT_TITLES: Record<UidMarkdownCalloutKind, string> = {
   caution: 'Caution',
 }
 
-/** A URL is allowed when it has no scheme, or one of the harmless ones. */
+/** Named character references that matter for reading a scheme. */
+const NAMED_ENTITIES: Record<string, string> = {
+  amp: '&',
+  lt: '<',
+  gt: '>',
+  quot: '"',
+  apos: "'",
+  colon: ':',
+  tab: '\t',
+  newline: '\n',
+  nbsp: ' ',
+}
+
+/** Decodes numeric and the named character references above, repeatedly, so no layer of encoding hides a scheme. */
+function decodeEntities(text: string): string {
+  let prev = ''
+  let out = text
+  for (let round = 0; round < 8 && prev !== out; round++) {
+    prev = out
+    out = out.replace(/&(?:#(\d+)|#x([0-9a-f]+)|([a-z]+));?/gi, (m, dec?: string, hex?: string, name?: string) => {
+      if (name !== undefined) return NAMED_ENTITIES[name.toLowerCase()] ?? m
+      const code = dec !== undefined ? Number.parseInt(dec, 10) : Number.parseInt(hex ?? '', 16)
+      return Number.isFinite(code) && code > 0 && code <= 0x10ffff ? String.fromCodePoint(code) : ''
+    })
+  }
+  return out
+}
+
+/**
+ * A URL is allowed when it has no scheme, or one of the harmless ones.
+ *
+ * The URL is the escaped text as it will stand in the attribute, with the
+ * inline placeholders (backslash escapes and the like) already put back: the
+ * check sees the final value. Markup or a placeholder left in it means it is
+ * not a plain URL, and it is refused. The scheme is judged as a browser would
+ * read it, and stricter: character references decoded, whitespace and control
+ * characters dropped, letter case ignored.
+ */
 function safeUrl(url: string): string | null {
   const trimmed = url.trim()
-  // Entities were escaped already; decode the colon tricks before testing.
-  const probe = trimmed.replace(/&#0*58;|&colon;/gi, ':').replace(/\s+/g, '').toLowerCase()
+  if (/[<>"]/.test(trimmed)) return null
+  const probe = decodeEntities(trimmed)
+    .replace(/[\u0000- \u007f- \s]+/g, '')
+    .toLowerCase()
   const scheme = /^([a-z][a-z0-9+.-]*):/.exec(probe)
   if (scheme && !['http', 'https', 'mailto'].includes(scheme[1] ?? '')) return null
   return trimmed
@@ -214,7 +255,22 @@ function renderInline(escaped: string, opts: MarkdownOptions = {}): string {
   // Backslash escapes of ASCII punctuation (an HTML-escaped character counts as one).
   out = out.replace(/\\(&(?:lt|gt|amp|quot|#39);|[!-/:-@[-`{-~])/g, (_m, ch: string) => stash(ch))
 
-  const title = (t: string | undefined): string => (t ? ` title="${t}"` : '')
+  // Puts the stashed pieces back into a part of the line; slots inside slots resolve too.
+  const restore = (text: string): string => {
+    let prev = ''
+    let res = text
+    while (prev !== res) {
+      prev = res
+      res = res.replace(/(\d+)/g, (_m, i: string) => slots[Number(i)] ?? '')
+    }
+    return res
+  }
+  // A URL is judged as it will stand in the attribute: escapes restored first, so that
+  // `javascript\:` or an escaped letter cannot hide a scheme from safeUrl.
+  const checkUrl = (raw: string): string | null => safeUrl(restore(raw))
+  // Text for an attribute: restored, without markup a stashed piece (code, math) would bring.
+  const attr = (text: string): string => restore(text).replace(/<[^>]*>/g, '').replace(/"/g, '&quot;')
+  const title = (t: string | undefined): string => (t ? ` title="${attr(t)}"` : '')
   // Internal links, as note-taking apps write them: [[note]], [[note#heading]], [[note|text]];
   // ![[picture.png]] is the picture, ![[picture.png|300]] (or |300x200) at that size. The host
   // decides where a note or a picture is (`data-wikilink`, `data-embed`); the address is a guess:
@@ -229,34 +285,36 @@ function renderInline(escaped: string, opts: MarkdownOptions = {}): string {
       let file = name.trim() === '' ? '' : /\.\w+$/.test(name.trim()) ? name.trim() : `${name.trim()}.md`
       file = file.replace(/ /g, '%20')
       if (bang && picture) {
-        let src = safeUrl(file)
+        let src = checkUrl(file)
         if (src === null) return m
         if (opts.imageBase && isRelative(src)) src = resolveAgainst(src, opts.imageBase)
         const dims = size ? ` width="${size[1]}"${size[2] ? ` height="${size[2]}"` : ''}` : ''
-        return stash(`<img src="${src}" alt="${size ? name.trim() : (alias ?? name)}"${dims} loading="lazy" class="uid-markdown__embed-image" data-embed="${name.trim()}"${sized}>`)
+        return stash(`<img src="${src}" alt="${attr(size ? name.trim() : (alias ?? name))}"${dims} loading="lazy" class="uid-markdown__embed-image" data-embed="${attr(name.trim())}"${sized}>`)
       }
       // `#^id` names a block (see blockIds); anything else after `#` is a heading.
       const fragment = heading?.trim() ?? ''
       const blockRef = opts.blockIds !== false && /^\^[A-Za-z0-9-]+$/.test(fragment)
       const anchor = !heading ? '' : blockRef ? `#%5E${fragment.slice(1).toLowerCase()}` : `#${headingSlug(unescapeHtml(heading))}`
-      let href = file === '' ? anchor : `${file}${anchor}`
+      // The guessed address goes through the same check as any link: [[javascript:…]] is no link, it stays text.
+      let href = checkUrl(file === '' ? anchor : `${file}${anchor}`)
+      if (href === null) return m
       if (opts.linkBase && file !== '' && isRelative(href)) href = resolveAgainst(href, opts.linkBase, opts.stripMdExtension ?? false)
       const text = alias ?? (heading ? `${name.trim() || ''}${name.trim() ? ' › ' : ''}${heading.trim()}` : name.trim())
-      const link = `<a href="${href}" class="uid-markdown__wikilink" data-wikilink="${target.trim()}">${text}</a>`
+      const link = `<a href="${href}" class="uid-markdown__wikilink" data-wikilink="${attr(target.trim())}">${text}</a>`
       // ![[note]], ![[note#heading]]: another note's text in this one. The host fills it in (data-embed);
       // without a host it stays the link.
-      if (bang) return stash(`<span class="uid-markdown__embed" data-embed="${target.trim()}"${sized}>${link}</span>`)
+      if (bang) return stash(`<span class="uid-markdown__embed" data-embed="${attr(target.trim())}"${sized}>${link}</span>`)
       return stash(link)
     })
   }
   out = out.replace(/!\[([^\]]*)\]\(([^)\s]+)(?:\s+&quot;([^)]*?)&quot;)?\)/g, (m, alt: string, url: string, t?: string) => {
-    let src = safeUrl(url)
+    let src = checkUrl(url)
     if (src === null) return m
     if (opts.imageBase && isRelative(src)) src = resolveAgainst(src, opts.imageBase)
-    return stash(`<img src="${src}" alt="${alt}"${title(t)} loading="lazy">`)
+    return stash(`<img src="${src}" alt="${attr(alt)}"${title(t)} loading="lazy">`)
   })
   out = out.replace(/\[([^\]]+)\]\(([^)\s]+)(?:\s+&quot;([^)]*?)&quot;)?\)/g, (m, text: string, url: string, t?: string) => {
-    let href = safeUrl(url)
+    let href = checkUrl(url)
     if (href === null) return m
     const relative = isRelative(href)
     if (opts.linkBase && relative) {
@@ -288,12 +346,7 @@ function renderInline(escaped: string, opts: MarkdownOptions = {}): string {
     .replace(/(?<!=)==(?=[^\s=])(.+?)(?<=[^\s=])==(?!=)/g, '<mark>$1</mark>')
 
   // Slots inside slots (an escape inside a link's text) resolve too.
-  let prev = ''
-  while (prev !== out) {
-    prev = out
-    out = out.replace(/(\d+)/g, (_m, i: string) => slots[Number(i)] ?? '')
-  }
-  return out
+  return restore(out)
 }
 
 /** A tag in text: `#` at the start of a word, then letters, digits, `_`, `-` and `/`, at least one of them a letter. */
