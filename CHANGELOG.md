@@ -1,5 +1,11 @@
 # @dskripchenko/ui
 
+## 1.44.0
+
+### Minor Changes
+
+- f0d908e: `UidProductSwitcher`: a pattern for moving between sibling applications of one family — segments with the current product marked, or one ⇄ button in a collapsed sidebar; a hint names where a link leads.
+
 ## 1.43.1
 
 ### Patch Changes
