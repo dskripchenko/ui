@@ -173,6 +173,95 @@ describe('renderMarkdown — safety', () => {
     }
   })
 
+  describe('URLs are judged on their final value', () => {
+    const optionSets = [{}, { internalLinksInPlace: true }, { linkBase: '/docs/', imageBase: '/media/' }]
+    // Every attribute that can carry a URL, read from the parsed HTML.
+    const urls = (html: string): string[] => {
+      const dom = new DOMParser().parseFromString(html, 'text/html')
+      return [...dom.querySelectorAll('[href], [src]')].map((el) => el.getAttribute('href') ?? el.getAttribute('src') ?? '')
+    }
+    const unsafe = (value: string): boolean =>
+      /^(javascript|vbscript|data|file):/i.test(value.replace(/[\u0000- \u007f- ]+/g, ''))
+
+    const attacks = [
+      // A backslash escape used to hide the colon (or a letter) until after the check.
+      '[x](javascript\\:alert%28document.domain%29)',
+      '[x](j\\avascript:alert(1))',
+      '[x](javascript\\&#58;alert(1))',
+      '![x](javascript\\:alert(1))',
+      '![x](data\\:image/svg+xml,x)',
+      '[x](vbscript\\:msgbox(1))',
+      '[x](data\\:text/html,x)',
+      '[x](JaVaScRiPt\\:alert(1))',
+      // Character references, mixed case, whitespace and control characters around the scheme.
+      '[x](&#106;avascript:alert(1))',
+      '[x](&#x6A;avascript\\:alert(1))',
+      '[x](&#0000106;avascript:alert(1))',
+      '[x](java&#9;script:alert(1))',
+      '[x](java&Tab;script:alert(1))',
+      '[x](\u0001javascript:alert(1))',
+      '[x]( javascript:alert(1))',
+      '[x](JAVASCRIPT:alert(1))',
+      '[x](vbscript:msgbox(1))',
+      '[x](data:text/html;base64,PHNjcmlwdD4=)',
+      '![x](data:image/png;base64,AAAA)',
+      // Internal links: the guessed address is a URL like any other.
+      '[[javascript:alert(document.domain)//x.y]]',
+      '[[javascript:alert(1)]]',
+      '[[JavaScript:alert(1)//a.md|click]]',
+      '[[javascript\\:alert(1)//x.y]]',
+      '[[vbscript:msgbox(1)//x.y]]',
+      '[[data:text/html,x//x.y]]',
+      '![[javascript:alert(1)//x.y]]',
+      '![[javascript:alert(1)//a.png]]',
+      '![[data:image/svg+xml,x//a.svg]]',
+    ]
+
+    for (const opts of optionSets) {
+      it(`refuses hidden schemes with ${JSON.stringify(opts)}`, () => {
+        for (const source of attacks) {
+          const html = renderMarkdown(source, opts)
+          expect(urls(html).filter(unsafe), `${source} → ${html}`).toEqual([])
+          expect(html, source).not.toMatch(/(href|src)="\s*(javascript|vbscript|data):/i)
+        }
+      })
+    }
+
+    it('leaves a refused link as its text', () => {
+      expect(renderMarkdown('[x](javascript\\:alert%28document.domain%29)', { internalLinksInPlace: true })).toBe(
+        '<p>[x](javascript:alert%28document.domain%29)</p>',
+      )
+      expect(renderMarkdown('[[javascript:alert(document.domain)//x.y]]')).toBe('<p>[[javascript:alert(document.domain)//x.y]]</p>')
+    })
+
+    it('does not let a stashed piece (code, math) into a URL or an attribute', () => {
+      const html = renderMarkdown('[a](`x`) [b]($y$) [c](/p "$z$") ![`d`](e.png)')
+      const dom = new DOMParser().parseFromString(html, 'text/html')
+      expect(urls(html).some((u) => u.includes('<'))).toBe(false)
+      for (const el of dom.querySelectorAll('a, img')) {
+        expect([...el.attributes].map((a) => a.name).every((n) => ['href', 'src', 'alt', 'title', 'target', 'rel', 'loading'].includes(n))).toBe(true)
+      }
+    })
+
+    it('still renders ordinary links, images and internal links', () => {
+      expect(renderMarkdown('[a](https://example.com/a\\_b)')).toBe(
+        '<p><a href="https://example.com/a_b" target="_blank" rel="noopener noreferrer">a</a></p>',
+      )
+      expect(renderMarkdown('[a](guide.md#setup)', { internalLinksInPlace: true })).toBe('<p><a href="guide.md#setup">a</a></p>')
+      expect(renderMarkdown('[a](/x?a=1&b=2)', { internalLinksInPlace: true })).toBe('<p><a href="/x?a=1&amp;b=2">a</a></p>')
+      expect(renderMarkdown('[mail](mailto:a@example.com)')).toContain('href="mailto:a@example.com"')
+      expect(renderMarkdown('![p](img/cat.png "A cat")')).toBe('<p><img src="img/cat.png" alt="p" title="A cat" loading="lazy"></p>')
+      for (const opts of optionSets.slice(0, 2)) {
+        expect(renderMarkdown('See [[Plans]].', opts)).toBe(
+          '<p>See <a href="Plans.md" class="uid-markdown__wikilink" data-wikilink="Plans">Plans</a>.</p>',
+        )
+        expect(renderMarkdown('[[Road map#Next steps|what is next]]', opts)).toContain('href="Road%20map.md#next-steps"')
+        expect(renderMarkdown('![[img/cat.png]]', opts)).toContain('<img src="img/cat.png"')
+      }
+      expect(renderMarkdown('[[Plans]]', { linkBase: '/docs/' })).toContain('href="/docs/Plans.md"')
+    })
+  })
+
   it('cannot break out of an attribute through alt or title', () => {
     const html = renderMarkdown('![x" onerror="alert(1)](a.png "t\\" onload=\\"x") [y" onclick="z](b.md)')
     const dom = new DOMParser().parseFromString(html, 'text/html')

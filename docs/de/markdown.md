@@ -21,7 +21,7 @@
 
 ## Sicherheit
 
-Der Quelltext wird **vor** jeder Auszeichnung HTML-maskiert: rohes HTML erscheint als Text und wird nie ausgeführt. Links und Bilder akzeptieren nur `http(s)`, `mailto`, relative Adressen und Anker — `javascript:`, `data:` und andere Schemata bleiben Text.
+Der Quelltext wird **vor** jeder Auszeichnung HTML-maskiert: rohes HTML erscheint als Text und wird nie ausgeführt. Links und Bilder akzeptieren nur `http(s)`, `mailto`, relative Adressen und Anker — `javascript:`, `data:` und andere Schemata bleiben Text. Das gilt ebenso für `[[interne Links]]` und `![[Einbettungen]]`. Eine URL wird nach ihrem endgültigen Wert beurteilt: Backslash-Maskierungen aufgelöst, Zeichenreferenzen dekodiert, Leerraum, Steuerzeichen und Groß-/Kleinschreibung ignoriert — `javascript\:`, `&#106;avascript:` oder `[[javascript:…]]` werden also keine Links.
 
 ## Hinweisboxen
 
