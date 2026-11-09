@@ -1,5 +1,11 @@
 # @dskripchenko/ui
 
+## 1.41.0
+
+### Minor Changes
+
+- f7b7fb2: UidChart: stacked areas read as bands — a solid fill (70 %) with a thin top edge, as a cumulative flow diagram needs; a lone area keeps its light fill.
+
 ## 1.40.0
 
 ### Minor Changes
