@@ -67,7 +67,7 @@
   max-width: 100%;
   padding: 2px var(--uid-space-xs);
   background: var(--uid-select-tag-bg, var(--uid-color-primary-subtle));
-  color: var(--uid-select-tag-color, var(--uid-color-primary));
+  color: var(--uid-select-tag-color, var(--uid-color-primary-text));
   border-radius: var(--uid-radius-sm, 4px);
   font-size: var(--uid-font-size-sm, 14px);
   line-height: 1.4;
@@ -215,7 +215,7 @@
 }
 
 .uid-select__option--selected {
-  color: var(--uid-color-primary);
+  color: var(--uid-color-primary-text);
   font-weight: 500;
 }
 
@@ -227,7 +227,7 @@
 
 .uid-select__check {
   flex-shrink: 0;
-  color: var(--uid-color-primary);
+  color: var(--uid-color-primary-text);
 }
 
 .uid-select__empty {

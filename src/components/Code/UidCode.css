@@ -119,7 +119,7 @@
 
 .uid-code--inline.uid-code--inline-strong {
   font-weight: var(--uid-font-weight-medium);
-  color: var(--uid-color-primary);
+  color: var(--uid-color-primary-text);
 }
 
 /* No-header variant */

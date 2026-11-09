@@ -103,10 +103,10 @@ Text the components put on a fill or a tint keeps WCAG AA contrast (4.5:1) in bo
 
 | Token | Use | Light | Dark |
 |---|---|---|---|
-| `--uid-accent` | borders, focus rings, charts, checkbox and switch fills — no text on it | teal-500 | teal-400 |
-| `--uid-accent-solid` (`-hover`) | fills that carry text: primary buttons, counters, selected days | teal-700 / teal-800 | teal-400 / teal-300 |
+| `--uid-accent` | borders, focus rings, charts — no text on it, not a control's state | teal-500 | teal-400 |
+| `--uid-accent-solid` (`-hover`) | fills that carry text (primary buttons, counters, selected days) and control states (checked checkbox and radio, switch on, play button) | teal-700 / teal-800 | teal-400 / teal-300 |
 | `--uid-text-on-accent` | text on any `-solid` fill | white | zinc-900 |
-| `--uid-accent-text` | accent text on `--uid-accent-subtle` or a 15% accent tint | teal-700 | teal-300 |
+| `--uid-accent-text` (`--uid-color-primary-text`) | accent-coloured text anywhere: links, active tabs, selected options, accent text on `--uid-accent-subtle` or a 15% accent tint | teal-700 | teal-300 |
 | `--uid-{success,warning,danger,info}-text` | text of a status pill, tag or alert on its `-subtle` tint | `#04704f` / `#985304` / `#bf193d` / blue-700 | emerald-400 / amber-400 / rose-400 / blue-400 |
 | `--uid-{success,warning,danger,info}-solid` | status fills that carry text: counters, timeline markers, danger button | emerald-700 / amber-700 / rose-600 / blue-600 | the `-400` steps |
 | `--uid-neutral-text` | text of a neutral pill on a grey tint (up to 8% of itself) | zinc-600 | zinc-300 |
@@ -123,6 +123,10 @@ Computed ratios:
 | `info-text` on `info-subtle` | 6.16 | 5.78 |
 | `text-on-accent` on `success-solid` / `warning-solid` / `danger-solid` / `info-solid` | 5.48 / 5.02 / 4.70 / 5.17 | 9.22 / 10.61 / 6.58 / 6.97 |
 | `neutral-text` on itself at 8% over `surface-raised` | 7.03 | 7.79 |
+| `accent-text` on `surface-raised` / `surface-base` | 5.47 / 5.24 | 9.42 / 11.50 |
+| `accent-solid` against `surface-raised` / `surface-base` (controls, 3:1 needed) | 5.47 / 5.24 | 7.49 / 9.14 |
+
+Avatar initials are white on a fill picked from the name: the palette is the 700 steps of indigo, violet, pink, orange, green, teal, blue and red, 5.02:1 (green) to 7.90:1 (indigo), the same in both themes.
 
 `--uid-text-tertiary` stays below 4.5:1 on purpose (placeholders, disabled text, decoration). Text that carries meaning uses `--uid-text-secondary` or stronger.
 

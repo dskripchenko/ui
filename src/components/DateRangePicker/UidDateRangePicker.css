@@ -182,7 +182,7 @@
 
 .uid-daterange__day--today {
   font-weight: 700;
-  color: var(--uid-color-primary);
+  color: var(--uid-color-primary-text);
 }
 
 .uid-daterange__day--start,

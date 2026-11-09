@@ -124,6 +124,7 @@
   --uid-color-primary-hover:   var(--uid-accent-hover);
   --uid-color-primary-subtle:  var(--uid-accent-subtle);
   --uid-color-primary-solid:   var(--uid-accent-solid);
+  --uid-color-primary-text:    var(--uid-accent-text);
   --uid-color-primary-solid-hover: var(--uid-accent-solid-hover);
   /* The halo of a focused field (box-shadow). */
   --uid-focus-ring:            0 0 0 3px var(--uid-color-primary-subtle);

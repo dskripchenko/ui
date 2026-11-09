@@ -134,7 +134,7 @@
 .uid-dashboard-grid__grip:focus-visible,
 .uid-dashboard-grid__item--resizing .uid-dashboard-grid__grip {
   opacity: 1;
-  color: var(--uid-accent);
+  color: var(--uid-accent-text);
 }
 
 /* Narrow containers: one column in reading order, each item its own height. */

@@ -20,7 +20,7 @@
 .uid-slider__value {
   font-size: var(--uid-font-size-sm, 14px);
   font-weight: 600;
-  color: var(--uid-color-primary);
+  color: var(--uid-color-primary-text);
   min-width: 2ch;
   text-align: right;
 }
@@ -132,7 +132,7 @@
 }
 
 .uid-slider__mark:hover:not([disabled]) {
-  color: var(--uid-slider-fill-color, var(--uid-color-primary));
+  color: var(--uid-slider-fill-color, var(--uid-color-primary-text));
 }
 
 .uid-slider__mark[disabled] {

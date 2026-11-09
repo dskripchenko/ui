@@ -142,7 +142,7 @@
 
 .uid-combobox__option--selected {
   font-weight: 600;
-  color: var(--uid-color-primary);
+  color: var(--uid-color-primary-text);
 }
 
 .uid-combobox__option--disabled {
@@ -165,11 +165,11 @@
 
 .uid-combobox__check {
   flex-shrink: 0;
-  color: var(--uid-color-primary);
+  color: var(--uid-color-primary-text);
 }
 
 .uid-combobox__create {
-  color: var(--uid-color-primary);
+  color: var(--uid-color-primary-text);
 }
 
 .uid-combobox__empty {

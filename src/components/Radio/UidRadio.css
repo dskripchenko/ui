@@ -2,8 +2,8 @@
   --uid-radio-size:           16px;
   --uid-radio-border:         var(--uid-border-default);
   --uid-radio-bg:             var(--uid-surface-raised);
-  --uid-radio-checked-border: var(--uid-accent);
-  --uid-radio-dot:            var(--uid-accent);
+  --uid-radio-checked-border: var(--uid-accent-solid);
+  --uid-radio-dot:            var(--uid-accent-solid);
   --uid-radio-gap:            var(--uid-space-sm);
 
   display: inline-flex;

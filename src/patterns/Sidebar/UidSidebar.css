@@ -82,7 +82,7 @@ button.uid-sidebar-item {
 
 .uid-sidebar-item--active {
   background: var(--uid-sidebar-item-bg-active, var(--uid-color-primary-subtle, color-mix(in srgb, var(--uid-color-primary) 10%, transparent)));
-  color: var(--uid-sidebar-item-color-active, var(--uid-color-primary));
+  color: var(--uid-sidebar-item-color-active, var(--uid-color-primary-text));
 }
 
 .uid-sidebar-item--disabled {

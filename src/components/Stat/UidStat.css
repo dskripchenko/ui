@@ -33,7 +33,7 @@
   flex-shrink: 0;
   border-radius: var(--uid-radius-md);
   background: var(--uid-color-primary-subtle);
-  color: var(--uid-color-primary);
+  color: var(--uid-color-primary-text);
 }
 
 .uid-stat--success .uid-stat__icon { background: var(--uid-color-success-subtle); color: var(--uid-color-success); }

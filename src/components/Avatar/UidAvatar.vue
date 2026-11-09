@@ -32,9 +32,11 @@ const colorIndex = computed<number>(() => {
   return props.name.split('').reduce((acc, ch) => acc + ch.charCodeAt(0), 0) % PALETTE.length
 })
 
+// The 700 steps of indigo, violet, pink, orange, green, teal, blue and red:
+// white initials stay at 4.5:1 or more on each, in both themes.
 const PALETTE = [
-  '#6366f1', '#8b5cf6', '#ec4899', '#f97316',
-  '#22c55e', '#14b8a6', '#3b82f6', '#ef4444',
+  '#4338ca', '#6d28d9', '#be185d', '#c2410c',
+  '#15803d', '#0f766e', '#1d4ed8', '#b91c1c',
 ]
 
 const bgColor = computed(() => PALETTE[colorIndex.value])
