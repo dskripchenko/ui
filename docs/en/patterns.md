@@ -61,6 +61,19 @@ Props: `collapsed?`, `width?`, `position?: 'left' \| 'right'`.
 
 Sub-components: `UidSidebarItem`, `UidSidebarGroup`, `UidSidebarDivider`.
 
+### `UidProductSwitcher` — switching between products
+
+Moves between sibling applications of one family, opening the same object in the other one when it has it. Put it in the sidebar's `header` slot next to the brand.
+
+| Prop | Purpose |
+|---|---|
+| `items` | `{ key, label, href, icon?, current? }[]` — the products; `current` marks this one |
+| `compact` | One ⇄ button to the next product (a collapsed sidebar) |
+| `label` | Accessible name of the group |
+| `hint` | `(item) => string` — the link's title, e.g. `Open KB-12 in Docs` |
+
+The current product has `aria-current="page"` and is not a link.
+
 ### `UidPageHeader` — page header
 
 Page-content header with title, description, breadcrumbs, and actions.
