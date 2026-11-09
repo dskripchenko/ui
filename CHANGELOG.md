@@ -1,5 +1,16 @@
 # @dskripchenko/ui
 
+## 1.45.0
+
+### Minor Changes
+
+- a0c5ff4: `UidMessageFeed`: a chat-like list of messages — virtualized with measured heights, day dividers, author groups, a "new" divider, loading older messages without moving the reader, and following the bottom.
+- a0c5ff4: `UidSidebarGroup`: an `action` slot next to the title, for a control such as "add".
+
+### Patch Changes
+
+- a0c5ff4: `UidMention`: keys the open list takes (arrows, Enter, Tab, Escape) no longer reach the host's `keydown` first, so a host that sends on Enter does not send while an option is being picked. It exposes `focus()`, `field` and `isOpen`.
+
 ## 1.44.0
 
 ### Minor Changes
