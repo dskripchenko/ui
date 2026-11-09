@@ -400,6 +400,10 @@ export const ru: UidLocale = {
     cancelled: (title) => `«${title}»: перемещение отменено`,
   },
 
+  qrCode: {
+    label: 'QR-код',
+  },
+
   validation: {
     value: 'значение',
     required: (label) => `Поле «${label}» обязательно`,

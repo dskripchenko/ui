@@ -400,6 +400,10 @@ export const en: UidLocale = {
     cancelled: (title) => `${title}: move cancelled`,
   },
 
+  qrCode: {
+    label: 'QR code',
+  },
+
   validation: {
     value: 'value',
     required: (label) => `The ${label} field is required`,

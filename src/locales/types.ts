@@ -380,6 +380,12 @@ export interface UidLocale {
     cancelled: (title: string) => string
   }
 
+  /** UidQrCode: a QR code drawn as SVG. */
+  qrCode: {
+    /** Default accessible name of the code. */
+    label: string
+  }
+
   validation: {
     value: string
     required: (label: string) => string

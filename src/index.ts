@@ -380,6 +380,14 @@ export type {
   DashboardGridItemSlotProps,
 } from './components/DashboardGrid/index.js'
 
+export { UidQrCode, encodeQr } from './components/QrCode/index.js'
+export type {
+  UidQrCodeProps,
+  QrCode,
+  QrEncodeOptions,
+  QrErrorCorrection,
+} from './components/QrCode/index.js'
+
 export { UidStepper } from './components/Stepper/index.js'
 export type { UidStepperProps, StepperStep } from './components/Stepper/index.js'
 

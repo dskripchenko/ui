@@ -80,7 +80,7 @@ Kurze Auswahl — vollständiger Katalog im [Storybook](https://dskripchenko.git
 
 **Navigation:** Tabs, Breadcrumb, Link, Pagination (+ Cursor / LoadMore / InfiniteScroll / PageSize), BackTop, Affix, Anchor
 
-**Datenanzeige:** Card, Avatar, AvatarGroup, Tag, Divider, Accordion, Table, VirtualList, Stat, DescriptionList, Timeline, TreeView, Code, Watermark, Carousel, Calendar, EventCalendar, Board, Kanban, NotificationBadge
+**Datenanzeige:** Card, Avatar, AvatarGroup, Tag, Divider, Accordion, Table, VirtualList, Stat, DescriptionList, Timeline, TreeView, Code, Watermark, Carousel, Calendar, EventCalendar, Board, Kanban, NotificationBadge, QrCode
 
 **Layout-Helfer:** Stack, Grid, Container, Splitter, DashboardGrid
 
@@ -102,7 +102,7 @@ Anwender-Dokumentation in vier Sprachen — wähle deine:
 
 - 🇬🇧 **English** (default): [docs/en/](../../docs/en/)
 - 🇷🇺 **Русский**: [docs/ru/](../../docs/ru/)
-- 🇩🇪 **Deutsch**: [Erste Schritte](../../docs/de/getting-started.md), [Theming](../../docs/de/theming.md), [Tokens](../../docs/de/tokens.md), [Icons](../../docs/de/icons.md), [Patterns](../../docs/de/patterns.md), [Validation](../../docs/de/validation.md), [Charts](../../docs/de/charts.md), [Dashboard-Raster](../../docs/de/dashboard-grid.md), [Markdown](../../docs/de/markdown.md), [Board](../../docs/de/board.md), [Kalender](../../docs/de/calendar.md), [Kanban](../../docs/de/kanban.md), [Terminkalender](../../docs/de/event-calendar.md), [Video](../../docs/de/video.md), [Audio](../../docs/de/audio.md), [i18n](../../docs/de/i18n.md)
+- 🇩🇪 **Deutsch**: [Erste Schritte](../../docs/de/getting-started.md), [Theming](../../docs/de/theming.md), [Tokens](../../docs/de/tokens.md), [Icons](../../docs/de/icons.md), [Patterns](../../docs/de/patterns.md), [Validation](../../docs/de/validation.md), [Charts](../../docs/de/charts.md), [Dashboard-Raster](../../docs/de/dashboard-grid.md), [QR-Code](../../docs/de/qr-code.md), [Markdown](../../docs/de/markdown.md), [Board](../../docs/de/board.md), [Kalender](../../docs/de/calendar.md), [Kanban](../../docs/de/kanban.md), [Terminkalender](../../docs/de/event-calendar.md), [Video](../../docs/de/video.md), [Audio](../../docs/de/audio.md), [i18n](../../docs/de/i18n.md)
 - 🇨🇳 **中文**: [docs/zh/](../../docs/zh/)
 
 Mitwirkenden-Dokumentation (nur Englisch): [Architecture](../internal/architecture.md), [Component guidelines](../internal/component-guidelines.md), [Contributing](../../.github/CONTRIBUTING.md), [Roadmap](../internal/roadmap.md).
