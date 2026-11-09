@@ -27,12 +27,12 @@
 
 .uid-tag--info {
   background: var(--uid-tag-bg-info, var(--uid-color-info-subtle));
-  color: var(--uid-tag-color-info, var(--uid-color-info));
+  color: var(--uid-tag-color-info, var(--uid-color-info-text));
 }
 
 .uid-tag--success {
   background: var(--uid-tag-bg-success, var(--uid-color-success-subtle));
-  color: var(--uid-tag-color-success, var(--uid-color-success));
+  color: var(--uid-tag-color-success, var(--uid-color-success-text));
 }
 
 .uid-tag--warning {
@@ -42,7 +42,7 @@
 
 .uid-tag--danger {
   background: var(--uid-tag-bg-danger, var(--uid-color-danger-subtle));
-  color: var(--uid-tag-color-danger, var(--uid-color-danger));
+  color: var(--uid-tag-color-danger, var(--uid-color-danger-text));
 }
 
 /* Dismiss button */

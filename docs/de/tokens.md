@@ -71,8 +71,8 @@ Komponenten-spezifische Stellschrauben. Mit Fallback auf semantische Tokens. Üb
 
 ```css
 .uid-button {
-  --uid-button-bg:       var(--uid-accent);
-  --uid-button-bg-hover: var(--uid-accent-hover);
+  --uid-button-bg:       var(--uid-accent-solid);
+  --uid-button-bg-hover: var(--uid-accent-solid-hover);
   --uid-button-color:    var(--uid-text-on-accent);
   --uid-button-radius:   var(--uid-radius-md);
 }

@@ -150,7 +150,7 @@
 }
 
 .uid-transfer__op:hover:not(:disabled) {
-  background: var(--uid-color-primary);
+  background: var(--uid-color-primary-solid);
   color: var(--uid-color-text-on-primary);
   border-color: var(--uid-color-primary);
 }

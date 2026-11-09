@@ -156,7 +156,7 @@
 }
 
 .uid-calendar__day--today .uid-calendar__date {
-  background: var(--uid-color-primary);
+  background: var(--uid-color-primary-solid);
   color: var(--uid-color-text-on-primary);
 }
 
@@ -202,7 +202,7 @@
   align-items: center;
   gap: 4px;
   padding: 2px 6px;
-  background: var(--uid-event-color, var(--uid-color-primary));
+  background: var(--uid-event-color, var(--uid-color-primary-solid));
   color: var(--uid-color-text-on-primary);
   font-size: 11px;
   border-radius: var(--uid-radius-sm);
@@ -366,7 +366,7 @@
 }
 
 .uid-calendar__tg-day--today .uid-calendar__tg-date {
-  background: var(--uid-color-primary);
+  background: var(--uid-color-primary-solid);
   color: var(--uid-color-text-on-primary);
 }
 
@@ -616,7 +616,7 @@
 }
 
 .uid-calendar__mini-day--today {
-  background: var(--uid-color-primary);
+  background: var(--uid-color-primary-solid);
   color: var(--uid-color-text-on-primary);
 }
 

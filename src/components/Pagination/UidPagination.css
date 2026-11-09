@@ -34,8 +34,8 @@
 }
 
 .uid-pagination__btn--active {
-  background: var(--uid-pagination-btn-bg-active, var(--uid-color-primary));
-  border-color: var(--uid-color-primary);
+  background: var(--uid-pagination-btn-bg-active, var(--uid-color-primary-solid));
+  border-color: var(--uid-color-primary-solid);
   color: var(--uid-pagination-btn-color-active, var(--uid-color-text-on-primary));
   cursor: default;
 }

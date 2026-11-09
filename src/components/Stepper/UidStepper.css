@@ -49,14 +49,14 @@
 }
 
 .uid-stepper__step--current .uid-stepper__indicator {
-  background: var(--uid-stepper-indicator-bg-current, var(--uid-color-primary));
-  border-color: var(--uid-stepper-indicator-border-current, var(--uid-color-primary));
+  background: var(--uid-stepper-indicator-bg-current, var(--uid-color-primary-solid));
+  border-color: var(--uid-stepper-indicator-border-current, var(--uid-color-primary-solid));
   color: var(--uid-stepper-indicator-color-current, var(--uid-color-text-on-primary));
 }
 
 .uid-stepper__step--completed .uid-stepper__indicator {
-  background: var(--uid-stepper-indicator-bg-completed, var(--uid-color-primary));
-  border-color: var(--uid-stepper-indicator-border-completed, var(--uid-color-primary));
+  background: var(--uid-stepper-indicator-bg-completed, var(--uid-color-primary-solid));
+  border-color: var(--uid-stepper-indicator-border-completed, var(--uid-color-primary-solid));
   color: var(--uid-stepper-indicator-color-completed, var(--uid-color-text-on-primary));
 }
 

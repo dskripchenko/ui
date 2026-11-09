@@ -71,8 +71,8 @@ Per-component knobs. Always have a fallback to a semantic token. Override these 
 
 ```css
 .uid-button {
-  --uid-button-bg:       var(--uid-accent);
-  --uid-button-bg-hover: var(--uid-accent-hover);
+  --uid-button-bg:       var(--uid-accent-solid);
+  --uid-button-bg-hover: var(--uid-accent-solid-hover);
   --uid-button-color:    var(--uid-text-on-accent);
   --uid-button-radius:   var(--uid-radius-md);
   /* … */
@@ -92,7 +92,7 @@ Outside override — no `!important` needed:
 | Category | Prefix | File | Notes |
 |---|---|---|---|
 | Colour (primitive) | `--uid-color-*` | `tokens/colors.css` | Zinc / Teal / Rose / Emerald / Amber |
-| Colour (semantic) | `--uid-surface-*`, `--uid-text-*`, `--uid-border-*`, `--uid-accent-*`, `--uid-danger-*`, `--uid-success-*`, `--uid-warning-*` | `styles/themes.css` | Different per theme |
+| Colour (semantic) | `--uid-surface-*`, `--uid-text-*`, `--uid-border-*`, `--uid-accent-*`, `--uid-danger-*`, `--uid-success-*`, `--uid-warning-*`, `--uid-info-*`, `--uid-neutral-text` | `styles/themes.css` | Different per theme; see [Theming → Contrast](./theming.md#contrast) |
 | Typography | `--uid-font-family-*`, `--uid-font-size-*`, `--uid-font-weight-*`, `--uid-line-height-*` | `tokens/typography.css` | Inter by default |
 | Spacing | `--uid-space-*` | `tokens/spacing.css` | xs/sm/md/lg/xl/2xl/3xl, 4px step |
 | Sizing | `--uid-size-*` | `tokens/sizing.css` | sm=32 / md=40 / lg=48 — interactive heights |

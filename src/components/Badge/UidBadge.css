@@ -39,17 +39,17 @@
 
 .uid-badge--success {
   --uid-badge-bg:    var(--uid-success-subtle);
-  --uid-badge-color: var(--uid-success);
+  --uid-badge-color: var(--uid-success-text);
 }
 
 .uid-badge--warning {
   --uid-badge-bg:    var(--uid-warning-subtle);
-  --uid-badge-color: var(--uid-warning);
+  --uid-badge-color: var(--uid-warning-text);
 }
 
 .uid-badge--danger {
   --uid-badge-bg:    var(--uid-danger-subtle);
-  --uid-badge-color: var(--uid-danger);
+  --uid-badge-color: var(--uid-danger-text);
 }
 
 /* Dot variant colors */

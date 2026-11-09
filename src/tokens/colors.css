@@ -18,6 +18,7 @@
   --uid-color-teal-500:  #14b8a6;
   --uid-color-teal-600:  #0d9488;
   --uid-color-teal-700:  #0f766e;
+  --uid-color-teal-800:  #115e59;
   --uid-color-teal-900:  #134e4a;
 
   --uid-color-rose-50:   #fff1f2;
@@ -30,16 +31,19 @@
   --uid-color-emerald-50:   #ecfdf5;
   --uid-color-emerald-400:  #34d399;
   --uid-color-emerald-600:  #059669;
+  --uid-color-emerald-700:  #047857;
   --uid-color-emerald-950:  #022c22;
 
   --uid-color-amber-50:   #fffbeb;
   --uid-color-amber-400:  #fbbf24;
   --uid-color-amber-600:  #d97706;
+  --uid-color-amber-700:  #b45309;
   --uid-color-amber-950:  #451a03;
 
   --uid-color-blue-50:   #eff6ff;
   --uid-color-blue-400:  #60a5fa;
   --uid-color-blue-600:  #2563eb;
+  --uid-color-blue-700:  #1d4ed8;
   --uid-color-blue-950:  #172554;
 
   --uid-color-white: #ffffff;

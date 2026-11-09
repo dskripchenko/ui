@@ -53,8 +53,8 @@
 }
 
 .uid-tags-input__chip--invalid {
-  background: color-mix(in srgb, var(--uid-color-danger) 12%, transparent);
-  color: var(--uid-color-danger);
+  background: var(--uid-color-danger-subtle);
+  color: var(--uid-color-danger-text);
 }
 
 .uid-tags-input__chip-remove {
