@@ -86,32 +86,32 @@
 
 /* Tones */
 .uid-timeline-item--success .uid-timeline-item__marker {
-  background: var(--uid-color-success);
-  border-color: var(--uid-color-success);
+  background: var(--uid-color-success-solid);
+  border-color: var(--uid-color-success-solid);
   color: var(--uid-color-text-on-primary);
 }
 
 .uid-timeline-item--warning .uid-timeline-item__marker {
-  background: var(--uid-color-warning);
-  border-color: var(--uid-color-warning);
+  background: var(--uid-color-warning-solid);
+  border-color: var(--uid-color-warning-solid);
   color: var(--uid-color-text-on-primary);
 }
 
 .uid-timeline-item--danger .uid-timeline-item__marker {
-  background: var(--uid-color-danger);
-  border-color: var(--uid-color-danger);
+  background: var(--uid-color-danger-solid);
+  border-color: var(--uid-color-danger-solid);
   color: var(--uid-color-text-on-primary);
 }
 
 .uid-timeline-item--primary .uid-timeline-item__marker {
-  background: var(--uid-color-primary);
-  border-color: var(--uid-color-primary);
+  background: var(--uid-color-primary-solid);
+  border-color: var(--uid-color-primary-solid);
   color: var(--uid-color-text-on-primary);
 }
 
 .uid-timeline-item--info .uid-timeline-item__marker {
-  background: var(--uid-color-info);
-  border-color: var(--uid-color-info);
+  background: var(--uid-color-info-solid);
+  border-color: var(--uid-color-info-solid);
   color: var(--uid-color-text-on-primary);
 }
 

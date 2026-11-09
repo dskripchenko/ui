@@ -75,7 +75,7 @@
   font-size: 13px;
   cursor: pointer;
 }
-.uid-event-calendar__day--on { border-color: var(--uid-color-primary); background: var(--uid-color-primary); color: var(--uid-color-text-on-primary); }
+.uid-event-calendar__day--on { border-color: var(--uid-color-primary-solid); background: var(--uid-color-primary-solid); color: var(--uid-color-text-on-primary); }
 .uid-event-calendar__skipped { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
 .uid-event-calendar__chip {
   padding: 1px 8px;

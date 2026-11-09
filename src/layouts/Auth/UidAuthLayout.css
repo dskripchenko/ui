@@ -41,7 +41,7 @@
   align-items: center;
   justify-content: center;
   padding: var(--uid-space-2xl);
-  background: var(--uid-layout-auth-brand-bg, var(--uid-color-primary));
+  background: var(--uid-layout-auth-brand-bg, var(--uid-color-primary-solid));
   color: var(--uid-layout-auth-brand-color, var(--uid-color-text-on-primary));
 }
 

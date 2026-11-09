@@ -170,7 +170,7 @@
 }
 
 .uid-datepicker__day--selected {
-  background: var(--uid-color-primary) !important;
+  background: var(--uid-color-primary-solid) !important;
   color: var(--uid-color-text-on-primary) !important;
   font-weight: 600;
 }

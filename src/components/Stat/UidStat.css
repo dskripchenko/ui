@@ -99,12 +99,12 @@
 
 .uid-stat__trend--up {
   background: var(--uid-color-success-subtle);
-  color: var(--uid-color-success);
+  color: var(--uid-color-success-text);
 }
 
 .uid-stat__trend--down {
   background: var(--uid-color-danger-subtle);
-  color: var(--uid-color-danger);
+  color: var(--uid-color-danger-text);
 }
 
 .uid-stat__footer {

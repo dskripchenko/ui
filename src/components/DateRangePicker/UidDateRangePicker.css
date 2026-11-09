@@ -187,7 +187,7 @@
 
 .uid-daterange__day--start,
 .uid-daterange__day--end {
-  background: var(--uid-color-primary) !important;
+  background: var(--uid-color-primary-solid) !important;
   color: var(--uid-color-text-on-primary) !important;
   font-weight: 600;
   border-radius: var(--uid-radius-sm);

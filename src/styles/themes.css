@@ -16,19 +16,34 @@
   --uid-accent-hover:     var(--uid-color-teal-600);
   --uid-accent-subtle:    var(--uid-color-teal-50);
   --uid-accent-text:      var(--uid-color-teal-700);
+  /* Fills that carry text (primary buttons, counters): --uid-text-on-accent on
+     them stays at 4.5:1 or more. --uid-accent keeps borders, focus and charts. */
+  --uid-accent-solid:       var(--uid-color-teal-700);
+  --uid-accent-solid-hover: var(--uid-color-teal-800);
 
   --uid-danger:           var(--uid-color-rose-600);
   --uid-danger-hover:     var(--uid-color-rose-700);
   --uid-danger-subtle:    var(--uid-color-rose-50);
+  --uid-danger-text:      #bf193d;
+  --uid-danger-solid:     var(--uid-color-rose-600);
 
   --uid-success:          var(--uid-color-emerald-600);
   --uid-success-subtle:   var(--uid-color-emerald-50);
+  --uid-success-text:     #04704f;
+  --uid-success-solid:    var(--uid-color-emerald-700);
 
   --uid-warning:          var(--uid-color-amber-600);
   --uid-warning-subtle:   var(--uid-color-amber-50);
+  --uid-warning-text:     #985304;
+  --uid-warning-solid:    var(--uid-color-amber-700);
 
   --uid-info:             var(--uid-color-blue-600);
   --uid-info-subtle:      var(--uid-color-blue-50);
+  --uid-info-text:        var(--uid-color-blue-700);
+  --uid-info-solid:       var(--uid-color-blue-600);
+
+  /* Text of a neutral pill on a light grey tint. */
+  --uid-neutral-text:     var(--uid-color-zinc-600);
 
   --uid-shadow-sm:  0 1px 2px rgb(0 0 0 / 0.05);
   --uid-shadow-md:  0 4px 12px rgb(0 0 0 / 0.08);
@@ -44,7 +59,7 @@
   --uid-text-primary:     var(--uid-color-zinc-100);
   --uid-text-secondary:   var(--uid-color-zinc-400);
   --uid-text-tertiary:    var(--uid-color-zinc-600);
-  --uid-text-on-accent:   var(--uid-color-white);
+  --uid-text-on-accent:   var(--uid-color-zinc-900);
 
   --uid-border-subtle:    var(--uid-color-zinc-700);
   --uid-border-default:   var(--uid-color-zinc-600);
@@ -54,19 +69,31 @@
   --uid-accent-hover:     var(--uid-color-teal-300);
   --uid-accent-subtle:    var(--uid-color-teal-900);
   --uid-accent-text:      var(--uid-color-teal-300);
+  --uid-accent-solid:       var(--uid-color-teal-400);
+  --uid-accent-solid-hover: var(--uid-color-teal-300);
 
   --uid-danger:           var(--uid-color-rose-400);
   --uid-danger-hover:     var(--uid-color-rose-500);
   --uid-danger-subtle:    var(--uid-color-rose-950);
+  --uid-danger-text:      var(--uid-color-rose-400);
+  --uid-danger-solid:     var(--uid-color-rose-400);
 
   --uid-success:          var(--uid-color-emerald-400);
   --uid-success-subtle:   var(--uid-color-emerald-950);
+  --uid-success-text:     var(--uid-color-emerald-400);
+  --uid-success-solid:    var(--uid-color-emerald-400);
 
   --uid-warning:          var(--uid-color-amber-400);
   --uid-warning-subtle:   var(--uid-color-amber-950);
+  --uid-warning-text:     var(--uid-color-amber-400);
+  --uid-warning-solid:    var(--uid-color-amber-400);
 
   --uid-info:             var(--uid-color-blue-400);
   --uid-info-subtle:      var(--uid-color-blue-950);
+  --uid-info-text:        var(--uid-color-blue-400);
+  --uid-info-solid:       var(--uid-color-blue-400);
+
+  --uid-neutral-text:     var(--uid-color-zinc-300);
 
   --uid-shadow-sm:  0 1px 2px rgb(0 0 0 / 0.2);
   --uid-shadow-md:  0 4px 12px rgb(0 0 0 / 0.4);
@@ -96,20 +123,30 @@
   --uid-color-primary:         var(--uid-accent);
   --uid-color-primary-hover:   var(--uid-accent-hover);
   --uid-color-primary-subtle:  var(--uid-accent-subtle);
+  --uid-color-primary-solid:   var(--uid-accent-solid);
+  --uid-color-primary-solid-hover: var(--uid-accent-solid-hover);
   /* The halo of a focused field (box-shadow). */
   --uid-focus-ring:            0 0 0 3px var(--uid-color-primary-subtle);
   --uid-color-focus-ring:      var(--uid-accent);
 
   --uid-color-danger:          var(--uid-danger);
   --uid-color-danger-subtle:   var(--uid-danger-subtle);
+  --uid-color-danger-text:     var(--uid-danger-text);
+  --uid-color-danger-solid:    var(--uid-danger-solid);
 
   --uid-color-success:         var(--uid-success);
   --uid-color-success-subtle:  var(--uid-success-subtle);
+  --uid-color-success-text:    var(--uid-success-text);
+  --uid-color-success-solid:   var(--uid-success-solid);
 
   --uid-color-warning:         var(--uid-warning);
   --uid-color-warning-subtle:  var(--uid-warning-subtle);
-  --uid-color-warning-dark:    var(--uid-warning);
+  --uid-color-warning-text:    var(--uid-warning-text);
+  --uid-color-warning-solid:   var(--uid-warning-solid);
+  --uid-color-warning-dark:    var(--uid-warning-text);
 
   --uid-color-info:            var(--uid-info);
   --uid-color-info-subtle:     var(--uid-info-subtle);
+  --uid-color-info-text:       var(--uid-info-text);
+  --uid-color-info-solid:      var(--uid-info-solid);
 }

@@ -127,7 +127,7 @@
 }
 
 .uid-board__column--over .uid-board__count {
-  color: var(--uid-color-danger);
+  color: var(--uid-color-danger-text);
   font-weight: 700;
 }
 
@@ -255,7 +255,7 @@
   margin-left: auto;
   overflow: hidden;
   border-radius: var(--uid-radius-full, 9999px);
-  background: var(--uid-board-avatar-bg, var(--uid-color-primary));
+  background: var(--uid-board-avatar-bg, var(--uid-color-primary-solid));
   color: var(--uid-board-avatar-fg, var(--uid-color-text-on-primary));
   font-size: 10px;
   font-weight: var(--uid-font-weight-semibold, 600);

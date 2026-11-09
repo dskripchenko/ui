@@ -53,10 +53,21 @@ Semantic colours (danger / success / warning) are intentionally muted; saturated
   --uid-accent-hover:     var(--uid-color-teal-600);
   --uid-accent-subtle:    var(--uid-color-teal-50);
   --uid-accent-text:      var(--uid-color-teal-700);
+  --uid-accent-solid:       var(--uid-color-teal-700);
+  --uid-accent-solid-hover: var(--uid-color-teal-800);
 
   --uid-danger:           var(--uid-color-rose-600);
+  --uid-danger-text:      #bf193d;
+  --uid-danger-solid:     var(--uid-color-rose-600);
   --uid-success:          var(--uid-color-emerald-600);
+  --uid-success-text:     #04704f;
+  --uid-success-solid:    var(--uid-color-emerald-700);
   --uid-warning:          var(--uid-color-amber-600);
+  --uid-warning-text:     #985304;
+  --uid-warning-solid:    var(--uid-color-amber-700);
+  --uid-info-text:        var(--uid-color-blue-700);
+  --uid-info-solid:       var(--uid-color-blue-600);
+  --uid-neutral-text:     var(--uid-color-zinc-600);
 
   --uid-shadow-sm:  0 1px 2px rgb(0 0 0 / 0.05);
   --uid-shadow-md:  0 4px 12px rgb(0 0 0 / 0.08);
@@ -71,16 +82,51 @@ Semantic colours (danger / success / warning) are intentionally muted; saturated
   --uid-text-primary:     var(--uid-color-zinc-100);
   --uid-text-secondary:   var(--uid-color-zinc-400);
   --uid-text-tertiary:    var(--uid-color-zinc-600);
+  --uid-text-on-accent:   var(--uid-color-zinc-900); /* dark text on light fills */
 
   --uid-accent:           var(--uid-color-teal-400);
   --uid-accent-hover:     var(--uid-color-teal-300);
+  --uid-accent-solid:       var(--uid-color-teal-400);
+  --uid-accent-solid-hover: var(--uid-color-teal-300);
 
-  /* semantics brighter for dark backgrounds */
+  /* semantics brighter for dark backgrounds; -text and -solid match them */
   --uid-danger:           var(--uid-color-rose-400);
   --uid-success:          var(--uid-color-emerald-400);
   --uid-warning:          var(--uid-color-amber-400);
+  --uid-neutral-text:     var(--uid-color-zinc-300);
 }
 ```
+
+## Contrast
+
+Text the components put on a fill or a tint keeps WCAG AA contrast (4.5:1) in both themes. Each colour role has tokens for that job:
+
+| Token | Use | Light | Dark |
+|---|---|---|---|
+| `--uid-accent` | borders, focus rings, charts, checkbox and switch fills — no text on it | teal-500 | teal-400 |
+| `--uid-accent-solid` (`-hover`) | fills that carry text: primary buttons, counters, selected days | teal-700 / teal-800 | teal-400 / teal-300 |
+| `--uid-text-on-accent` | text on any `-solid` fill | white | zinc-900 |
+| `--uid-accent-text` | accent text on `--uid-accent-subtle` or a 15% accent tint | teal-700 | teal-300 |
+| `--uid-{success,warning,danger,info}-text` | text of a status pill, tag or alert on its `-subtle` tint | `#04704f` / `#985304` / `#bf193d` / blue-700 | emerald-400 / amber-400 / rose-400 / blue-400 |
+| `--uid-{success,warning,danger,info}-solid` | status fills that carry text: counters, timeline markers, danger button | emerald-700 / amber-700 / rose-600 / blue-600 | the `-400` steps |
+| `--uid-neutral-text` | text of a neutral pill on a grey tint (up to 8% of itself) | zinc-600 | zinc-300 |
+
+Computed ratios:
+
+| Pair | Light | Dark |
+|---|---|---|
+| `text-on-accent` on `accent-solid` | 5.47 | 9.52 |
+| `text-on-accent` on `accent-solid-hover` | 7.58 | 11.98 |
+| `success-text` on `success-subtle` | 5.80 | 7.88 |
+| `warning-text` on `warning-subtle` | 5.67 | 8.97 |
+| `danger-text` on `danger-subtle` | 5.59 | 5.81 |
+| `info-text` on `info-subtle` | 6.16 | 5.78 |
+| `text-on-accent` on `success-solid` / `warning-solid` / `danger-solid` / `info-solid` | 5.48 / 5.02 / 4.70 / 5.17 | 9.22 / 10.61 / 6.58 / 6.97 |
+| `neutral-text` on itself at 8% over `surface-raised` | 7.03 | 7.79 |
+
+`--uid-text-tertiary` stays below 4.5:1 on purpose (placeholders, disabled text, decoration). Text that carries meaning uses `--uid-text-secondary` or stronger.
+
+A custom theme that changes these colours should keep the pairs above 4.5:1; `src/__guards__/contrast.spec.ts` checks the built-in themes.
 
 ## Default and `prefers-color-scheme`
 

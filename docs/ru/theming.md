@@ -45,16 +45,18 @@ import '@dskripchenko/ui/styles/reset.css'    // опционально
   --uid-text-primary:     var(--uid-color-zinc-900);    /* #18181b */
   --uid-text-secondary:   var(--uid-color-zinc-500);    /* #71717a */
   --uid-text-tertiary:    var(--uid-color-zinc-400);    /* #a1a1aa */
-  --uid-text-on-accent:   var(--uid-color-white);
+  --uid-text-on-accent:   var(--uid-color-zinc-900);    /* тёмный текст на светлых заливках */
 
   --uid-border-subtle:    var(--uid-color-zinc-200);    /* #e4e4e7 */
   --uid-border-default:   var(--uid-color-zinc-300);    /* #d4d4d8 */
 
-  /* teal-500 на светлом фоне — достаточный контраст (WCAG AA) */
+  /* teal-500 — рамки, фокус, графики; текст на заливке — accent-solid (см. docs/en/theming.md#contrast) */
   --uid-accent:           var(--uid-color-teal-500);    /* #14b8a6 */
   --uid-accent-hover:     var(--uid-color-teal-600);    /* #0d9488 */
   --uid-accent-subtle:    var(--uid-color-teal-50);     /* фон active-item, badge */
   --uid-accent-text:      var(--uid-color-teal-700);    /* текст поверх accent-subtle */
+  --uid-accent-solid:       var(--uid-color-teal-700);  /* заливки с текстом, белый 5,47:1 */
+  --uid-accent-solid-hover: var(--uid-color-teal-800);
 
   --uid-danger:           var(--uid-color-rose-600);    /* #e11d48 */
   --uid-danger-hover:     var(--uid-color-rose-700);

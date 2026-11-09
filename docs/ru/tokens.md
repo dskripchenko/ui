@@ -126,7 +126,7 @@ primitive  →  semantic  →  component
   --uid-text-primary:     var(--uid-color-zinc-100);
   --uid-text-secondary:   var(--uid-color-zinc-400);
   --uid-text-tertiary:    var(--uid-color-zinc-600);
-  --uid-text-on-accent:   var(--uid-color-white);
+  --uid-text-on-accent:   var(--uid-color-zinc-900);
 
   --uid-border-subtle:    var(--uid-color-zinc-700);
   --uid-border-default:   var(--uid-color-zinc-600);
@@ -160,8 +160,8 @@ primitive  →  semantic  →  component
 
 ```css
 .uid-button {
-  --uid-button-bg:           var(--uid-accent);
-  --uid-button-bg-hover:     var(--uid-accent-hover);
+  --uid-button-bg:           var(--uid-accent-solid);
+  --uid-button-bg-hover:     var(--uid-accent-solid-hover);
   --uid-button-color:        var(--uid-color-neutral-0);
   --uid-button-radius:       var(--uid-radius-md);
   --uid-button-padding-x:    var(--uid-space-4);

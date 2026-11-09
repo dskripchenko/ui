@@ -75,18 +75,18 @@
 
 .uid-alert--success {
   --uid-alert-bg:     var(--uid-success-subtle);
-  --uid-alert-color:  var(--uid-success);
+  --uid-alert-color:  var(--uid-success-text);
   --uid-alert-border: var(--uid-success);
 }
 
 .uid-alert--warning {
   --uid-alert-bg:     var(--uid-warning-subtle);
-  --uid-alert-color:  var(--uid-warning);
+  --uid-alert-color:  var(--uid-warning-text);
   --uid-alert-border: var(--uid-warning);
 }
 
 .uid-alert--danger {
   --uid-alert-bg:     var(--uid-danger-subtle);
-  --uid-alert-color:  var(--uid-danger);
+  --uid-alert-color:  var(--uid-danger-text);
   --uid-alert-border: var(--uid-danger);
 }
