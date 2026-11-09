@@ -380,6 +380,20 @@ export interface UidLocale {
     cancelled: (title: string) => string
   }
 
+  /** UidCodeInput: a one-time code typed into separate cells. */
+  codeInput: {
+    /** Default accessible name of the group of cells. */
+    label: string
+    /** A cell's label: "Character 2 of 6". */
+    cell: (n: number, total: number) => string
+  }
+
+  /** UidQrCode: a QR code drawn as SVG. */
+  qrCode: {
+    /** Default accessible name of the code. */
+    label: string
+  }
+
   validation: {
     value: string
     required: (label: string) => string

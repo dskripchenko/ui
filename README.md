@@ -83,7 +83,7 @@ Switch theme by attribute on `<html>`:
 
 A short selection — the full catalog is in [Storybook](https://dskripchenko.github.io/ui/).
 
-**Forms & input:** Button, Input, Textarea, NumberInput, Checkbox, CheckboxGroup, Radio, Switch, Label, FormField, Select, Combobox, TagsInput, DatePicker, DateRangePicker, TimePicker, ColorPicker, Slider, Rating, FileUpload, Mention, TreeSelect, Cascader
+**Forms & input:** Button, Input, Textarea, NumberInput, Checkbox, CheckboxGroup, Radio, Switch, Label, FormField, Select, Combobox, TagsInput, CodeInput, DatePicker, DateRangePicker, TimePicker, ColorPicker, Slider, Rating, FileUpload, Mention, TreeSelect, Cascader
 
 **Feedback:** Spinner, Skeleton, Badge, Alert, Progress, Toast, Tour
 
@@ -91,7 +91,7 @@ A short selection — the full catalog is in [Storybook](https://dskripchenko.gi
 
 **Navigation:** Tabs, Breadcrumb, Link, Pagination (+ Cursor / LoadMore / InfiniteScroll / PageSize), BackTop, Affix, Anchor
 
-**Data display:** Card, Avatar, AvatarGroup, Tag, Divider, Accordion, Table, VirtualList, Stat, DescriptionList, Timeline, TreeView, Code, Watermark, Carousel, Calendar, EventCalendar, Board, Kanban, NotificationBadge
+**Data display:** Card, Avatar, AvatarGroup, Tag, Divider, Accordion, Table, VirtualList, Stat, DescriptionList, Timeline, TreeView, Code, Watermark, Carousel, Calendar, EventCalendar, Board, Kanban, NotificationBadge, QrCode
 
 **Layout helpers:** Stack, Grid, Container, Splitter, DashboardGrid
 
@@ -111,7 +111,7 @@ A short selection — the full catalog is in [Storybook](https://dskripchenko.gi
 
 User docs are translated into four languages — pick yours:
 
-- 🇬🇧 **English** (default): [getting-started](./docs/en/getting-started.md), [theming](./docs/en/theming.md), [tokens](./docs/en/tokens.md), [icons](./docs/en/icons.md), [patterns](./docs/en/patterns.md), [validation](./docs/en/validation.md), [charts](./docs/en/charts.md), [dashboard grid](./docs/en/dashboard-grid.md), [markdown](./docs/en/markdown.md), [board](./docs/en/board.md), [calendar](./docs/en/calendar.md), [kanban](./docs/en/kanban.md), [event calendar](./docs/en/event-calendar.md), [video](./docs/en/video.md), [audio](./docs/en/audio.md), [i18n](./docs/en/i18n.md)
+- 🇬🇧 **English** (default): [getting-started](./docs/en/getting-started.md), [theming](./docs/en/theming.md), [tokens](./docs/en/tokens.md), [icons](./docs/en/icons.md), [patterns](./docs/en/patterns.md), [validation](./docs/en/validation.md), [charts](./docs/en/charts.md), [dashboard grid](./docs/en/dashboard-grid.md), [code input](./docs/en/code-input.md), [QR code](./docs/en/qr-code.md), [markdown](./docs/en/markdown.md), [board](./docs/en/board.md), [calendar](./docs/en/calendar.md), [kanban](./docs/en/kanban.md), [event calendar](./docs/en/event-calendar.md), [video](./docs/en/video.md), [audio](./docs/en/audio.md), [i18n](./docs/en/i18n.md)
 - 🇷🇺 **Русский**: [docs/ru/](./docs/ru/)
 - 🇩🇪 **Deutsch**: [docs/de/](./docs/de/)
 - 🇨🇳 **中文**: [docs/zh/](./docs/zh/)

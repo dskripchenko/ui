@@ -1,0 +1,19 @@
+.uid-qr-code {
+  /* Scanners need dark modules on a light ground: the colours stay the same in the dark theme. */
+  --uid-qr-code-dark:   var(--uid-color-zinc-950);
+  --uid-qr-code-light:  var(--uid-color-white);
+
+  display: inline-block;
+  flex-shrink: 0;
+  max-width: 100%;
+  height: auto;
+  vertical-align: middle;
+}
+
+.uid-qr-code__background {
+  fill: var(--uid-qr-code-light);
+}
+
+.uid-qr-code__modules {
+  fill: var(--uid-qr-code-dark);
+}

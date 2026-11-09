@@ -128,6 +128,9 @@ export type {
   UidDateRangePickerProps, DateRange, DateRangePreset,
 } from './components/DateRangePicker/index.js'
 
+export { UidCodeInput } from './components/CodeInput/index.js'
+export type { UidCodeInputProps } from './components/CodeInput/index.js'
+
 export { UidTagsInput } from './components/TagsInput/index.js'
 export type { UidTagsInputProps } from './components/TagsInput/index.js'
 
@@ -379,6 +382,14 @@ export type {
   DashboardGridHandleBindings,
   DashboardGridItemSlotProps,
 } from './components/DashboardGrid/index.js'
+
+export { UidQrCode, encodeQr } from './components/QrCode/index.js'
+export type {
+  UidQrCodeProps,
+  QrCode,
+  QrEncodeOptions,
+  QrErrorCorrection,
+} from './components/QrCode/index.js'
 
 export { UidStepper } from './components/Stepper/index.js'
 export type { UidStepperProps, StepperStep } from './components/Stepper/index.js'
