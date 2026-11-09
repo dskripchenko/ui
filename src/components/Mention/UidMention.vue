@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import './UidMention.css'
-import { computed, nextTick, ref, useId } from 'vue'
+import { computed, nextTick, ref, useAttrs, useId } from 'vue'
 import { useLocale } from '../../composables/useLocale.js'
 import { useFloatingPanel } from '../../composables/useFloatingPanel.js'
 import { useControlAttrs } from '../../composables/useControlAttrs.js'
@@ -24,6 +24,21 @@ export interface UidMentionProps {
 
 defineOptions({ inheritAttrs: false })
 const { rootAttrs, controlAttrs } = useControlAttrs()
+const attrs = useAttrs()
+
+// The host's keydown runs after the list's: keys the open list takes (arrows,
+// Enter, Tab, Escape) never reach it, so Enter picks an option, not "send".
+function fieldAttrs(): Record<string, unknown> {
+  const rest = controlAttrs()
+  delete rest.onKeydown
+  return rest
+}
+
+function hostKeydown(e: KeyboardEvent): void {
+  const handler = attrs.onKeydown
+  const list = Array.isArray(handler) ? handler : handler === undefined ? [] : [handler]
+  for (const h of list) if (typeof h === 'function') h(e)
+}
 
 const props = withDefaults(defineProps<UidMentionProps>(), {
   prefix: '@',
@@ -128,24 +143,49 @@ function onClickField(): void {
 }
 
 function onKeydown(e: KeyboardEvent): void {
-  if (!isOpen.value) return
+  if (!isOpen.value || !listKeydown(e)) hostKeydown(e)
+}
+
+/** Handles a key of the open list; false when the list does not use it. */
+function listKeydown(e: KeyboardEvent): boolean {
   if (e.key === 'ArrowDown') {
     e.preventDefault()
     activeIndex.value = Math.min(activeIndex.value + 1, filtered.value.length - 1)
-  } else if (e.key === 'ArrowUp') {
+    return true
+  }
+  if (e.key === 'ArrowUp') {
     e.preventDefault()
     activeIndex.value = Math.max(activeIndex.value - 1, 0)
-  } else if (e.key === 'Enter' || e.key === 'Tab') {
-    if (filtered.value.length > 0) {
-      e.preventDefault()
-      selectOption(filtered.value[activeIndex.value])
-    }
-  } else if (e.key === 'Escape' && isOpen.value) {
+    return true
+  }
+  if (e.key === 'Enter' || e.key === 'Tab') {
+    const option = filtered.value[activeIndex.value]
+    if (option === undefined) return false
+    e.preventDefault()
+    selectOption(option)
+    return true
+  }
+  if (e.key === 'Escape') {
     // Ours to handle: an enclosing modal must not close with the list.
     e.stopPropagation()
     isOpen.value = false
+    return true
   }
+  return false
 }
+
+/** Puts the caret in the field. */
+function focus(): void {
+  fieldRef.value?.focus()
+}
+
+defineExpose({
+  focus,
+  /** The textarea, for a host that formats the selection. */
+  field: fieldRef,
+  /** Whether the list of options is open. */
+  isOpen,
+})
 
 </script>
 
@@ -164,7 +204,7 @@ function onKeydown(e: KeyboardEvent): void {
     </label>
 
     <textarea
-      v-bind="controlAttrs()"
+      v-bind="fieldAttrs()"
       :id="fieldId"
       ref="fieldRef"
       class="uid-mention__field"

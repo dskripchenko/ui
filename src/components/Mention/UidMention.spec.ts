@@ -1,5 +1,5 @@
 import { mount, config } from '@vue/test-utils'
-import { describe, expect, it, beforeAll, afterAll } from 'vitest'
+import { describe, expect, it, beforeAll, afterAll, vi } from 'vitest'
 import { nextTick } from 'vue'
 import UidMention from './UidMention.vue'
 
@@ -143,6 +143,28 @@ describe('UidMention', () => {
     el.selectionStart = 11
     await ta.trigger('input')
     expect(wrapper.find('.uid-mention__dropdown').exists()).toBe(false)
+    wrapper.unmount()
+  })
+
+  it('gives Enter to the open list first, then to the host', async () => {
+    const onKeydown = vi.fn()
+    const wrapper = mount(UidMention, {
+      props: { options: [{ value: 'alice', label: 'Alice' }] },
+      attrs: { onKeydown },
+      attachTo: document.body,
+    })
+    const field = wrapper.find('textarea')
+    const el = field.element as HTMLTextAreaElement
+    el.value = '@al'
+    el.setSelectionRange(3, 3)
+    await field.trigger('input')
+    await field.trigger('keydown', { key: 'Enter' })
+    expect(onKeydown).not.toHaveBeenCalled()
+    expect(wrapper.emitted('update:modelValue')?.pop()).toEqual(['@alice '])
+
+    await field.trigger('keydown', { key: 'Enter' })
+    expect(onKeydown).toHaveBeenCalledTimes(1)
+    expect((wrapper.vm as unknown as { isOpen: boolean }).isOpen).toBe(false)
     wrapper.unmount()
   })
 })
