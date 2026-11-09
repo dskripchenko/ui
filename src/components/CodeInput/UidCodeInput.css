@@ -1,0 +1,91 @@
+.uid-code-input {
+  --uid-code-input-cell-width:  44px;
+  --uid-code-input-cell-height: 52px;
+  --uid-code-input-font-size:   22px;
+  --uid-code-input-gap:         var(--uid-space-sm);
+  --uid-code-input-font:        var(--uid-font-family-mono);
+  --uid-code-input-bg:          var(--uid-surface-raised);
+  --uid-code-input-color:       var(--uid-text-primary);
+  --uid-code-input-border:      var(--uid-border-default);
+  --uid-code-input-border-hover: var(--uid-border-hover);
+  --uid-code-input-border-focus: var(--uid-accent);
+  --uid-code-input-ring:        var(--uid-accent);
+  --uid-code-input-radius:      var(--uid-radius-md);
+
+  display: flex;
+  justify-content: center;
+  gap: var(--uid-code-input-gap);
+}
+
+.uid-code-input__cell {
+  box-sizing: border-box;
+  flex: 0 1 var(--uid-code-input-cell-width);
+  width: var(--uid-code-input-cell-width);
+  min-width: 0;
+  height: var(--uid-code-input-cell-height);
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--uid-code-input-border);
+  border-radius: var(--uid-code-input-radius);
+  background: var(--uid-code-input-bg);
+  color: var(--uid-code-input-color);
+  caret-color: var(--uid-code-input-border-focus);
+  font-family: var(--uid-code-input-font);
+  font-size: var(--uid-code-input-font-size);
+  font-weight: var(--uid-font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  text-align: center;
+  outline: none;
+  transition:
+    border-color var(--uid-duration-fast) var(--uid-ease-out),
+    box-shadow var(--uid-duration-fast) var(--uid-ease-out);
+}
+
+.uid-code-input__cell::selection {
+  background: transparent;
+}
+
+.uid-code-input__cell:hover:not(:disabled) {
+  border-color: var(--uid-code-input-border-hover);
+}
+
+.uid-code-input__cell:focus-visible,
+.uid-code-input__cell:focus-visible:hover {
+  border-color: var(--uid-code-input-border-focus);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--uid-code-input-ring) 15%, transparent);
+}
+
+/* Invalid */
+.uid-code-input--invalid {
+  --uid-code-input-border:       var(--uid-danger);
+  --uid-code-input-border-hover: var(--uid-danger);
+  --uid-code-input-border-focus: var(--uid-danger);
+  --uid-code-input-ring:         var(--uid-danger);
+}
+
+/* Disabled */
+.uid-code-input--disabled .uid-code-input__cell {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: var(--uid-surface-base);
+}
+
+/* Sizes */
+.uid-code-input--sm {
+  --uid-code-input-cell-width:  36px;
+  --uid-code-input-cell-height: 44px;
+  --uid-code-input-font-size:   18px;
+}
+
+.uid-code-input--lg {
+  --uid-code-input-cell-width:  52px;
+  --uid-code-input-cell-height: 60px;
+  --uid-code-input-font-size:   26px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .uid-code-input__cell {
+    transition: none;
+  }
+}

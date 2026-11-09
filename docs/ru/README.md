@@ -70,7 +70,7 @@ import { Check } from '@dskripchenko/ui/icons'
 
 Краткий список — полный каталог в [Storybook](https://dskripchenko.github.io/ui/).
 
-**Формы и ввод:** Button, Input, Textarea, NumberInput, Checkbox, CheckboxGroup, Radio, Switch, Label, FormField, Select, Combobox, TagsInput, DatePicker, DateRangePicker, TimePicker, ColorPicker, Slider, Rating, FileUpload, Mention, TreeSelect, Cascader
+**Формы и ввод:** Button, Input, Textarea, NumberInput, Checkbox, CheckboxGroup, Radio, Switch, Label, FormField, Select, Combobox, TagsInput, CodeInput, DatePicker, DateRangePicker, TimePicker, ColorPicker, Slider, Rating, FileUpload, Mention, TreeSelect, Cascader
 
 **Обратная связь:** Spinner, Skeleton, Badge, Alert, Progress, Toast, Tour
 
@@ -99,7 +99,7 @@ import { Check } from '@dskripchenko/ui/icons'
 Пользовательская документация переведена на 4 языка — выбери свой:
 
 - 🇬🇧 **English** (default): [docs/en/](../../docs/en/)
-- 🇷🇺 **Русский**: [getting-started](../../docs/ru/getting-started.md), [тема](../../docs/ru/theming.md), [токены](../../docs/ru/tokens.md), [иконки](../../docs/ru/icons.md), [патерны](../../docs/ru/patterns.md), [валидация](../../docs/ru/validation.md), [графики](../../docs/ru/charts.md), [сетка дашборда](../../docs/ru/dashboard-grid.md), [QR-код](../../docs/ru/qr-code.md), [markdown](../../docs/ru/markdown.md), [доска](../../docs/ru/board.md), [календарь](../../docs/ru/calendar.md), [канбан](../../docs/ru/kanban.md), [календарь событий](../../docs/ru/event-calendar.md), [видео](../../docs/ru/video.md), [аудио](../../docs/ru/audio.md), [i18n](../../docs/ru/i18n.md)
+- 🇷🇺 **Русский**: [getting-started](../../docs/ru/getting-started.md), [тема](../../docs/ru/theming.md), [токены](../../docs/ru/tokens.md), [иконки](../../docs/ru/icons.md), [патерны](../../docs/ru/patterns.md), [валидация](../../docs/ru/validation.md), [графики](../../docs/ru/charts.md), [сетка дашборда](../../docs/ru/dashboard-grid.md), [поле кода](../../docs/ru/code-input.md), [QR-код](../../docs/ru/qr-code.md), [markdown](../../docs/ru/markdown.md), [доска](../../docs/ru/board.md), [календарь](../../docs/ru/calendar.md), [канбан](../../docs/ru/kanban.md), [календарь событий](../../docs/ru/event-calendar.md), [видео](../../docs/ru/video.md), [аудио](../../docs/ru/audio.md), [i18n](../../docs/ru/i18n.md)
 - 🇩🇪 **Deutsch**: [docs/de/](../../docs/de/)
 - 🇨🇳 **中文**: [docs/zh/](../../docs/zh/)
 

@@ -128,6 +128,9 @@ export type {
   UidDateRangePickerProps, DateRange, DateRangePreset,
 } from './components/DateRangePicker/index.js'
 
+export { UidCodeInput } from './components/CodeInput/index.js'
+export type { UidCodeInputProps } from './components/CodeInput/index.js'
+
 export { UidTagsInput } from './components/TagsInput/index.js'
 export type { UidTagsInputProps } from './components/TagsInput/index.js'
 

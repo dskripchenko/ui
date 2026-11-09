@@ -400,6 +400,11 @@ export const en: UidLocale = {
     cancelled: (title) => `${title}: move cancelled`,
   },
 
+  codeInput: {
+    label: 'Verification code',
+    cell: (n, total) => `Character ${n} of ${total}`,
+  },
+
   qrCode: {
     label: 'QR code',
   },

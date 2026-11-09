@@ -400,6 +400,11 @@ export const ru: UidLocale = {
     cancelled: (title) => `«${title}»: перемещение отменено`,
   },
 
+  codeInput: {
+    label: 'Код подтверждения',
+    cell: (n, total) => `Символ ${n} из ${total}`,
+  },
+
   qrCode: {
     label: 'QR-код',
   },
