@@ -87,8 +87,11 @@ Ein Klick auf einen Tag in der Monatsansicht wählt ihn aus: `update:modelValue`
 | `allDayLabel` | `string` | Locale | Die Beschriftung der Ganztagszeile; `''` — keine. |
 | `bands` | `CalendarBand[]` | `[]` | Balken über ganze Tage — siehe unten. |
 | `headInline` | `boolean` | `false` | Tagesköpfe im Tages- und Wochenraster in einer Zeile (Wochentag, Datum, `day-extra`); die Tagesansicht nennt den Wochentag dann ausgeschrieben. |
+| `mini` | `boolean` | `false` | Ein kleiner Monat zur Datumswahl: nur Daten, einbuchstabige Wochentage, keine Termine oder Balken (mit `header: false` neben einem großen Kalender). |
 
 Slots: `title` (`{ title, view, range }`) ersetzt den Text des Titels; `event` (`{ event, view, short }`) ersetzt, was ein Termin zeigt — `short` ist wahr bei einzeiligen Blöcken (kürzer als 36 px) und bei Chips; `band` (`{ band }`) — der Inhalt eines Balkens über dem Raster; `day-extra` (`{ iso }`) — neben dem Datum einer Monatszelle und am Ende eines Tageskopfs im Tages- und Wochenraster, z. B. ein Feiertags-Tag.
+
+Die Spalte von heute im Tages- und Wochenraster ist mit `--uid-cal-today-bg` getönt; `transparent` nimmt die Tönung weg.
 
 ## Balken
 

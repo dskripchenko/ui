@@ -87,8 +87,11 @@ A click on a day in the month view selects it: `update:modelValue`, `date-click`
 | `allDayLabel` | `string` | locale | The caption of the all-day row; `''` — none. |
 | `bands` | `CalendarBand[]` | `[]` | Bars across whole days — see below. |
 | `headInline` | `boolean` | `false` | Day heads of the day and week grid in one row (weekday, date, `day-extra`); the day view then names the weekday in full. |
+| `mini` | `boolean` | `false` | A small month to pick a date from: dates only, one-letter weekdays, no events or bands (with `header: false` beside a big calendar). |
 
 Slots: `title` (`{ title, view, range }`) replaces the text of the header's title; `event` (`{ event, view, short }`) replaces what an event shows — `short` is true for one-line blocks (shorter than 36 px) and for chips; `band` (`{ band }`) — the content of a bar over the time grid; `day-extra` (`{ iso }`) — next to the date in a month cell and at the end of a day head in the day and week grid, e.g. a holiday tag.
+
+The today column of the day and week grid is tinted by `--uid-cal-today-bg`; set it to `transparent` to drop the tint.
 
 ## Bands
 

@@ -432,7 +432,7 @@
 }
 
 .uid-calendar__col--today {
-  background-color: color-mix(in srgb, var(--uid-color-primary) 4%, transparent);
+  background-color: var(--uid-cal-today-bg, color-mix(in srgb, var(--uid-color-primary) 4%, transparent));
 }
 
 .uid-calendar__now {
@@ -909,4 +909,56 @@
   min-width: 0;
   margin-left: auto;
   overflow: hidden;
+}
+
+/* A small month to pick a date from (`mini`). */
+.uid-calendar--mini .uid-calendar__weekdays,
+.uid-calendar--mini .uid-calendar__grid {
+  gap: 0;
+  border: 0;
+  background: none;
+}
+
+.uid-calendar--mini .uid-calendar__weekday {
+  padding: 0 0 6px;
+  border: 0;
+  background: none;
+  color: var(--uid-color-text-secondary);
+  font-size: 11px;
+  font-weight: var(--uid-font-weight-medium);
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.uid-calendar--mini .uid-calendar__day {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 26px;
+  height: 26px;
+  padding: 0;
+  border: 0;
+  background-color: transparent;
+}
+
+.uid-calendar--mini .uid-calendar__date {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  margin: 0;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: var(--uid-font-weight-medium);
+}
+
+.uid-calendar--mini .uid-calendar__day--other .uid-calendar__date {
+  color: var(--uid-color-text-tertiary);
+  font-weight: var(--uid-font-weight-regular, 400);
+}
+
+.uid-calendar--mini .uid-calendar__day--today .uid-calendar__date {
+  background: var(--uid-color-primary-solid);
+  color: var(--uid-color-text-on-primary);
 }

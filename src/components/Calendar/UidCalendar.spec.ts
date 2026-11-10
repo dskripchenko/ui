@@ -423,4 +423,15 @@ describe('UidCalendar', () => {
     expect(wrapper.classes()).toContain('uid-calendar--head-inline')
     expect(wrapper.findAll('.uid-calendar__tg-extra i').map((i) => i.text())).toEqual(['day off'])
   })
+
+  it('мини-месяц: только числа, буква дня недели, без событий и полос', () => {
+    const wrapper = mount(UidCalendar, {
+      props: { anchor: '2026-11-10', mini: true, header: false, events: [{ id: 1, date: '2026-11-10', title: 'A' }], bands: [{ start: '2026-11-09', end: '2026-11-12', label: 'B' }] },
+    })
+    expect(wrapper.classes()).toContain('uid-calendar--mini')
+    expect(wrapper.findAll('.uid-calendar__weekday').map((w) => w.text())).toEqual(['П', 'В', 'С', 'Ч', 'П', 'С', 'В'])
+    expect(wrapper.find('.uid-calendar__event').exists()).toBe(false)
+    expect(wrapper.find('.uid-calendar__band').exists()).toBe(false)
+    expect(wrapper.findAll('.uid-calendar__day')).toHaveLength(42)
+  })
 })

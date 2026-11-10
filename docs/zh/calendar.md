@@ -87,8 +87,11 @@ function onSlot(s: CalendarSlot): void {
 | `allDayLabel` | `string` | 语言包 | “全天”行的标题；`''` —— 无。 |
 | `bands` | `CalendarBand[]` | `[]` | 跨整天的条带——见下文。 |
 | `headInline` | `boolean` | `false` | 日/周网格的日期头排成一行（星期、日期、`day-extra`）；此时日视图显示完整的星期名称。 |
+| `mini` | `boolean` | `false` | 用于选日期的小月历：只显示日期、单字母星期，不显示事件和条带（与大日历并排时配合 `header: false`）。 |
 
 插槽：`title`（`{ title, view, range }`）替换标题文本；`event`（`{ event, view, short }`）替换事件显示的内容——单行块（低于 36 px）和小标签的 `short` 为真；`band`（`{ band }`）——网格上方条带的内容；`day-extra`（`{ iso }`）——月视图单元格中日期旁边，以及日/周网格日期头的末尾，例如节假日标记。
+
+日/周网格中今天这一列由 `--uid-cal-today-bg` 着色；设为 `transparent` 可去掉着色。
 
 ## 条带
 

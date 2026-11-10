@@ -76,6 +76,8 @@ export interface UidCalendarProps {
   bands?: CalendarBand[]
   /** The day heads of the day and week grid in one row — weekday, date, `day-extra` — instead of stacked. */
   headInline?: boolean
+  /** A small month to pick a date from: dates only, no events or bands, one-letter weekdays. */
+  mini?: boolean
 }
 
 /** What `dayClass` returns: anything Vue's `:class` takes, or nothing. */
@@ -99,6 +101,7 @@ const props = withDefaults(defineProps<UidCalendarProps>(), {
   allDayLabel: undefined,
   bands: () => [],
   headInline: false,
+  mini: false,
 })
 
 const emit = defineEmits<{
@@ -513,7 +516,7 @@ defineExpose({ go, goToday, setView })
 <template>
   <div
     class="uid-calendar"
-    :class="[`uid-calendar--${view}`, { 'uid-calendar--head-inline': headInline, 'uid-calendar--compact': compact, 'uid-calendar--editable': editable, 'uid-calendar--selectable': isSelectable }]"
+    :class="[`uid-calendar--${view}`, { 'uid-calendar--mini': mini, 'uid-calendar--head-inline': headInline, 'uid-calendar--compact': compact, 'uid-calendar--editable': editable, 'uid-calendar--selectable': isSelectable }]"
   >
     <div
       v-if="header"
@@ -584,7 +587,7 @@ defineExpose({ go, goToday, setView })
           v-for="wd in locale.datePicker.weekdaysShort"
           :key="wd"
           class="uid-calendar__weekday"
-        >{{ wd }}</span>
+        >{{ mini ? wd.slice(0, 1) : wd }}</span>
       </div>
       <div class="uid-calendar__grid">
         <div
@@ -622,7 +625,7 @@ defineExpose({ go, goToday, setView })
             class="uid-calendar__date"
           >{{ day.date.getDate() }}</span>
           <div
-            v-if="bands.length"
+            v-if="bands.length && !mini"
             class="uid-calendar__day-bands"
           >
             <template
@@ -642,7 +645,10 @@ defineExpose({ go, goToday, setView })
               />
             </template>
           </div>
-          <div class="uid-calendar__events">
+          <div
+            v-if="!mini"
+            class="uid-calendar__events"
+          >
             <button
               v-for="(evt, i) in day.events.slice(0, maxEventsPerDay)"
               :key="evt.id ?? `${day.iso}-${i}`"

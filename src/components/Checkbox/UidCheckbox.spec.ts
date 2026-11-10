@@ -50,4 +50,9 @@ describe('UidCheckbox', () => {
     const wrapper = mount(UidCheckbox, { props: { label: 'Текст' } })
     expect(wrapper.find('.uid-checkbox__hint').exists()).toBe(false)
   })
+
+  it('takes its label from the default slot', () => {
+    const wrapper = mount(UidCheckbox, { slots: { default: '<b class="mine">Layer</b>' } })
+    expect(wrapper.find('.uid-checkbox__text .mine').text()).toBe('Layer')
+  })
 })
