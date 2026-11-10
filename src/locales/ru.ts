@@ -205,6 +205,45 @@ export const ru: UidLocale = {
     nav: 'Навигация',
   },
 
+  reactions: {
+    label: 'Реакции',
+    add: 'Добавить реакцию',
+    limit: (max: number) => `Не больше ${max} разных реакций`,
+    pill: (emoji: string, count: number, who: string) => `${emoji} ${count}: ${who}`,
+  },
+
+  emojiPicker: {
+    label: 'Выбор реакции',
+    search: 'Поиск эмодзи',
+    categories: 'Категории',
+    recent: 'Недавние',
+    empty: 'Ничего не нашлось',
+    hint: '↑↓←→ выбор · ↵ поставить · Esc закрыть',
+    skinTone: 'Оттенок кожи',
+    tones: ['Без оттенка', 'Светлый', 'Средне-светлый', 'Средний', 'Средне-тёмный', 'Тёмный'],
+    groups: {
+      smileys: 'Смайлы и эмоции',
+      people: 'Люди и жесты',
+      nature: 'Животные и природа',
+      food: 'Еда и напитки',
+      travel: 'Путешествия и места',
+      activities: 'Занятия',
+      objects: 'Предметы',
+      symbols: 'Символы',
+      flags: 'Флаги',
+    },
+  },
+
+  avatar: {
+    presence: {
+      online: 'в сети',
+      away: 'отошёл',
+      dnd: 'не беспокоить',
+      call: 'в созвоне',
+      offline: 'не в сети',
+    },
+  },
+
   tabBar: {
     label: 'Нижняя навигация',
   },

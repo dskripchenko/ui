@@ -168,6 +168,49 @@ export interface UidLocale {
     label: string
   }
 
+  /** UidReactions: emoji reactions under a message. */
+  reactions: {
+    label: string
+    add: string
+    limit: (max: number) => string
+    /** The pill's spoken name: emoji, count and who. */
+    pill: (emoji: string, count: number, who: string) => string
+  }
+
+  /** UidEmojiPicker. */
+  emojiPicker: {
+    label: string
+    search: string
+    categories: string
+    recent: string
+    empty: string
+    hint: string
+    skinTone: string
+    tones: [string, string, string, string, string, string]
+    groups: {
+      smileys: string
+      people: string
+      nature: string
+      food: string
+      travel: string
+      activities: string
+      objects: string
+      symbols: string
+      flags: string
+    }
+  }
+
+  /** UidAvatar: the presence mark's spoken name. */
+  avatar: {
+    presence: {
+      online: string
+      away: string
+      dnd: string
+      call: string
+      offline: string
+    }
+  }
+
   header: {
     nav: string
   }

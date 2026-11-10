@@ -1,0 +1,97 @@
+/* Reactions under a message: pills «emoji · count», one's own pressed; «+» at the end. */
+.uid-reactions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+  max-width: var(--uid-reactions-max-width, 640px);
+}
+
+.uid-reactions__pill,
+.uid-reactions__add {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  height: 24px;
+  padding: 0 8px;
+  border: 1px solid var(--uid-color-border-subtle, var(--uid-color-border));
+  border-radius: 9999px;
+  background: var(--uid-color-surface);
+  color: var(--uid-color-text-secondary);
+  font-family: inherit;
+  line-height: 1;
+  cursor: pointer;
+  transition: border-color var(--uid-duration-fast) var(--uid-ease-out), background var(--uid-duration-fast) var(--uid-ease-out);
+}
+
+.uid-reactions__pill:hover:not(:disabled),
+.uid-reactions__add:hover:not([aria-disabled]) {
+  border-color: var(--uid-color-border-hover, var(--uid-color-border));
+  background: var(--uid-color-surface-hover);
+}
+
+/* One's own: accent fill and a solid accent border (the plain accent border is under 3:1 in light). */
+.uid-reactions__pill--mine {
+  border-color: var(--uid-color-primary-solid);
+  background: var(--uid-color-primary-subtle, color-mix(in srgb, var(--uid-color-primary) 10%, transparent));
+  color: var(--uid-color-primary-text);
+}
+
+.uid-reactions__pill--mine:hover:not(:disabled) {
+  border-color: var(--uid-color-primary-solid);
+  background: var(--uid-color-primary-subtle, color-mix(in srgb, var(--uid-color-primary) 16%, transparent));
+}
+
+.uid-reactions__pill:disabled {
+  cursor: default;
+}
+
+.uid-reactions__emoji {
+  font-size: 14px;
+}
+
+.uid-reactions__count {
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.uid-reactions__add {
+  width: 32px;
+  padding: 0;
+}
+
+.uid-reactions__add[aria-disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.uid-reactions__pill:focus-visible,
+.uid-reactions__add:focus-visible {
+  outline: 2px solid var(--uid-color-focus-ring);
+  outline-offset: 2px;
+}
+
+/* Touch: pills of 32 in rows of 44. */
+.uid-reactions--touch {
+  gap: 6px;
+  row-gap: 6px;
+}
+
+.uid-reactions--touch .uid-reactions__pill,
+.uid-reactions--touch .uid-reactions__add {
+  height: 32px;
+  padding: 0 10px;
+  margin: 6px 0;
+}
+
+.uid-reactions--touch .uid-reactions__add {
+  width: 44px;
+  padding: 0;
+}
+
+.uid-reactions--touch .uid-reactions__emoji {
+  font-size: 16px;
+}

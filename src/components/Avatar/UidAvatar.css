@@ -37,6 +37,79 @@
   color: #fff;
 }
 
+/* Presence: a mark in the bottom-right corner, shape and colour together. */
+.uid-avatar-presence {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+  --uid-avatar-presence-size: 10px;
+}
+
+.uid-avatar-presence--xs { --uid-avatar-presence-size: 8px; }
+.uid-avatar-presence--lg { --uid-avatar-presence-size: 14px; }
+.uid-avatar-presence--xl { --uid-avatar-presence-size: 16px; }
+
+.uid-avatar-presence__dot {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  box-sizing: border-box;
+  width: calc(var(--uid-avatar-presence-size) + 4px);
+  height: calc(var(--uid-avatar-presence-size) + 4px);
+  border: 2px solid var(--uid-avatar-presence-ring, var(--uid-color-bg));
+  border-radius: 50%;
+  background: var(--uid-avatar-presence-ring, var(--uid-color-bg));
+}
+
+.uid-avatar-presence__dot::before,
+.uid-avatar-presence__dot::after {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  content: '';
+}
+
+/* Online: a filled dot. */
+.uid-avatar-presence__dot--online::before {
+  background: var(--uid-color-success-solid, var(--uid-color-success));
+}
+
+/* Away: a ring with an empty middle. */
+.uid-avatar-presence__dot--away::before {
+  border: 2px solid var(--uid-color-warning-solid, var(--uid-color-warning));
+}
+
+/* Do not disturb: a dot with a bar across. */
+.uid-avatar-presence__dot--dnd::before {
+  background: var(--uid-color-danger-solid, var(--uid-color-danger));
+}
+
+.uid-avatar-presence__dot--dnd::after {
+  inset: auto;
+  top: 50%;
+  left: 50%;
+  width: 60%;
+  height: 2px;
+  border-radius: 1px;
+  background: #fff;
+  transform: translate(-50%, -50%);
+}
+
+/* In a call: a ring with a dot. */
+.uid-avatar-presence__dot--call::before {
+  border: 2px solid var(--uid-color-info-solid, var(--uid-color-info));
+}
+
+.uid-avatar-presence__dot--call::after {
+  inset: 30%;
+  background: var(--uid-color-info-solid, var(--uid-color-info));
+}
+
+/* Offline: a grey ring. */
+.uid-avatar-presence__dot--offline::before {
+  border: 2px solid var(--uid-color-border-strong, var(--uid-color-border));
+}
+
 /* Group */
 .uid-avatar-group {
   display: inline-flex;

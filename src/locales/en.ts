@@ -205,6 +205,45 @@ export const en: UidLocale = {
     nav: 'Navigation',
   },
 
+  reactions: {
+    label: 'Reactions',
+    add: 'Add a reaction',
+    limit: (max: number) => `At most ${max} different reactions`,
+    pill: (emoji: string, count: number, who: string) => `${emoji} ${count}: ${who}`,
+  },
+
+  emojiPicker: {
+    label: 'Pick a reaction',
+    search: 'Search emoji',
+    categories: 'Categories',
+    recent: 'Recent',
+    empty: 'Nothing found',
+    hint: '↑↓←→ move · ↵ pick · Esc close',
+    skinTone: 'Skin tone',
+    tones: ['No tone', 'Light', 'Medium-light', 'Medium', 'Medium-dark', 'Dark'],
+    groups: {
+      smileys: 'Smileys & emotion',
+      people: 'People & body',
+      nature: 'Animals & nature',
+      food: 'Food & drink',
+      travel: 'Travel & places',
+      activities: 'Activities',
+      objects: 'Objects',
+      symbols: 'Symbols',
+      flags: 'Flags',
+    },
+  },
+
+  avatar: {
+    presence: {
+      online: 'online',
+      away: 'away',
+      dnd: 'do not disturb',
+      call: 'in a call',
+      offline: 'offline',
+    },
+  },
+
   tabBar: {
     label: 'Bottom navigation',
   },

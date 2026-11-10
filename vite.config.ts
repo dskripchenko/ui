@@ -10,6 +10,9 @@ const analyze = process.env.ANALYZE === 'true'
 const lucideLicense = readFileSync(resolve(__dirname, 'node_modules/lucide-vue-next/LICENSE'), 'utf8').trim()
 const lucideBanner = `/*! Includes icons from lucide-vue-next (https://lucide.dev)\n${lucideLicense.replace(/\*\//g, '* /')}\n*/`
 
+const unicodeLicense = readFileSync(resolve(__dirname, 'src/components/EmojiPicker/data/LICENSE-UNICODE.txt'), 'utf8').trim()
+const unicodeBanner = `/*! Emoji data from Unicode emoji-test.txt and CLDR annotations (https://unicode.org)\n${unicodeLicense.replace(/\*\//g, '* /')}\n*/`
+
 export default defineConfig({
   plugins: [
     vue(),
@@ -41,7 +44,10 @@ export default defineConfig({
         id === 'vue' || id === '@dskripchenko/syntax' || id === '@dskripchenko/math' || (id === 'lucide-vue-next' && !!importer?.replace(/\\/g, '/').endsWith('/src/icons/index.ts')),
       output: {
         assetFileNames: 'styles/[name][extname]',
-        postBanner: (chunk) => (chunk.isEntry && chunk.name === 'index' ? lucideBanner : ''),
+        postBanner: (chunk) => {
+          if (chunk.isEntry && chunk.name === 'index') return lucideBanner
+          return chunk.moduleIds.some((id) => id.replace(/\\/g, '/').includes('/EmojiPicker/data/')) ? unicodeBanner : ''
+        },
         globals: { vue: 'Vue' },
       },
     },
