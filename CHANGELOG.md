@@ -1,5 +1,15 @@
 # @dskripchenko/ui
 
+## 1.46.0
+
+### Minor Changes
+
+- 9fa72c5: `UidTabBar` and `UidTabBarItem` — bottom navigation for phones: equal tabs with an icon, a label, a count or a dot; 44 px hit areas, safe-area padding, `fixed` placement.
+
+### Patch Changes
+
+- 9fa72c5: Accessibility: `UidMessageFeed` dividers carry no role (a `feed` may only own `article`s); `UidSidebarGroup` titles use the secondary text colour so they meet WCAG AA contrast (override with `--uid-sidebar-group-title-color`).
+
 ## 1.45.0
 
 ### Minor Changes
