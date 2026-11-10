@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import './UidEmojiPicker.css'
 import { computed, nextTick, onMounted, ref, useId, watch, type Component } from 'vue'
-import { Clock, Flag, Hand, Heart, Leaf, Lightbulb, Plane, Search, Smile, Trophy, UtensilsCrossed } from '../../icons/index.js'
+import { Clock, Flag, Hand, Heart, Leaf, Lightbulb, Plane, Search, Smile, Trophy, UtensilsCrossed } from 'lucide-vue-next'
 import { useLocale } from '../../composables/useLocale.js'
 import { loadEmoji, searchEmoji, withTone, type EmojiEntry, type EmojiGroup, type EmojiGroupKey } from './emojiData.js'
 

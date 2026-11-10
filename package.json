@@ -73,8 +73,8 @@
   "scripts": {
     "dev": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "build": "vue-tsc --noEmit -p tsconfig.build.json && vite build && node scripts/build-styles.mjs",
-    "build:lib": "vite build && node scripts/build-styles.mjs",
+    "build": "vue-tsc --noEmit -p tsconfig.build.json && vite build && node scripts/build-styles.mjs && node scripts/check-dist.mjs",
+    "build:lib": "vite build && node scripts/build-styles.mjs && node scripts/check-dist.mjs",
     "build:analyze": "ANALYZE=true vite build && node scripts/build-styles.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
