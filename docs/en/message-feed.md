@@ -97,4 +97,4 @@ When the feed opens in the middle (`hasMoreAfter`), it does not follow the botto
 
 ## Accessibility
 
-The feed is a `role="feed"` with `aria-busy` while loading; each message is an `article` with `aria-posinset` and `aria-setsize` (`-1` while more can be loaded); dividers are `separator`s. Give the feed a `label`.
+The feed is a `role="feed"` with `aria-busy` while loading; each message is an `article` with `aria-posinset` and `aria-setsize` (`-1` while more can be loaded); dividers (days, "new") carry no role: a `feed` may hold only `article`s, and their text is read in order. Give the feed a `label`.

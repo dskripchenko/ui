@@ -92,4 +92,4 @@ async function loadOlder(): Promise<void> {
 
 ## Доступность
 
-Лента — `role="feed"` с `aria-busy` во время загрузки; каждое сообщение — `article` с `aria-posinset` и `aria-setsize` (`-1`, пока можно подгрузить ещё); разделители — `separator`. Задайте ленте `label`.
+Лента — `role="feed"` с `aria-busy` во время загрузки; каждое сообщение — `article` с `aria-posinset` и `aria-setsize` (`-1`, пока можно подгрузить ещё); разделители (дни, «новые») — без роли: в `feed` допустимы только `article`, а их текст читается по порядку. Задайте ленте `label`.

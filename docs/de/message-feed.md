@@ -73,4 +73,4 @@ Wird der Verlauf in der Mitte geöffnet (`hasMoreAfter`), folgt er dem Ende erst
 
 ## Barrierefreiheit
 
-Der Verlauf ist ein `role="feed"` mit `aria-busy` während des Ladens; jede Nachricht ist ein `article` mit `aria-posinset` und `aria-setsize` (`-1`, solange nachgeladen werden kann); Trenner sind `separator`. Geben Sie dem Verlauf ein `label`.
+Der Verlauf ist ein `role="feed"` mit `aria-busy` während des Ladens; jede Nachricht ist ein `article` mit `aria-posinset` und `aria-setsize` (`-1`, solange nachgeladen werden kann); Trenner (Tage, «neu») haben keine Rolle: ein `feed` erlaubt nur `article`, ihr Text wird der Reihe nach gelesen. Geben Sie dem Verlauf ein `label`.

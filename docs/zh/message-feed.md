@@ -73,4 +73,4 @@
 
 ## 无障碍
 
-消息流为 `role="feed"`，加载时带 `aria-busy`；每条消息是带 `aria-posinset` 与 `aria-setsize`（仍可加载时为 `-1`）的 `article`；分隔线为 `separator`。请为消息流设置 `label`。
+消息流为 `role="feed"`，加载时带 `aria-busy`；每条消息是带 `aria-posinset` 与 `aria-setsize`（仍可加载时为 `-1`）的 `article`；分隔线（日期、“新消息”）不设角色：`feed` 只允许包含 `article`，其文字按顺序读出。请为消息流设置 `label`。

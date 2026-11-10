@@ -205,6 +205,10 @@ export const en: UidLocale = {
     nav: 'Navigation',
   },
 
+  tabBar: {
+    label: 'Bottom navigation',
+  },
+
   header: {
     nav: 'Main navigation',
   },

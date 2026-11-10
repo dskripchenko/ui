@@ -61,6 +61,23 @@ Props：`collapsed?`、`width?`、`position?: 'left' \| 'right'`。
 
 子组件：`UidSidebarItem`、`UidSidebarGroup`、`UidSidebarDivider`。分组的 `action` 插槽在标题旁放置操作控件（例如“添加”按钮）；侧边栏折叠时它与标题一同隐藏。
 
+### `UidTabBar` — 手机底部导航
+
+小屏幕底部的一排等宽标签：图标在上，简短文字在下，图标上可显示计数或圆点。每个标签至少 44 × 44 px；导航栏会自动避开安全区域。
+
+```vue
+<UidTabBar fixed>
+  <UidTabBarItem :to="{ name: 'home' }" :active="route.name === 'home'" :badge="3">
+    <template #icon><House :size="20" /></template>首页
+  </UidTabBarItem>
+  <UidTabBarItem :to="{ name: 'search' }">
+    <template #icon><Search :size="20" /></template>搜索
+  </UidTabBarItem>
+</UidTabBar>
+```
+
+`UidTabBar` 属性：`label?`（导航的无障碍名称，默认取自语言包）、`fixed?`（固定在窗口底部）。`UidTabBarItem` 属性：`to?` / `href?` / `as?`、`active?`（设置 `aria-current="page"`）、`disabled?`、`badge?`（为 0 时不显示）、`dot?`。CSS 变量：`--uid-tab-bar-height`、`--uid-tab-bar-bg`、`--uid-tab-bar-color-active`。
+
 ### `UidProductSwitcher` — 产品切换
 
 在同一系列的相邻应用之间切换；若另一应用中有同一对象，则直接打开它。放在侧边栏的 `header` 插槽中、品牌旁边。
