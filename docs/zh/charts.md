@@ -111,6 +111,7 @@ const references: ChartReference[] = [{ axis: 'x', value: 5, label: '今天', da
 | `categories` | `string[]` | — | x 轴，等间距排列。 |
 | `series` | `ChartSeries[]` | — | 见下文。 |
 | `references` | `ChartReference[]` | `[]` | 垂直和水平参考线。y 参考线计入自动 y 范围。 |
+| `bands` | `ChartBand[]` | `[]` | 在网格和标记之下着色的类别区间(迭代、冻结期、假期)。见下文。 |
 | `height` | `number` | `240` | 高度(px)。宽度跟随容器(`ResizeObserver`)；无法测量时为 600 px。 |
 | `yMin` | `number` | `min(0, 数据最小值)` | |
 | `yMax` | `number` | 数据的"整齐"最大值 | 堆叠会求和。 |
@@ -121,6 +122,7 @@ const references: ChartReference[] = [{ axis: 'x', value: 5, label: '今天', da
 | `grid` | `boolean` | `true` | 水平网格线。 |
 | `tooltip` | `boolean` | `true` | |
 | `xLabels` | `'auto' \| 'all' \| 'none'` | `'auto'` | `auto` 会抽稀标签，保证互不重叠。 |
+| `axes` | `boolean` | `true` | `false` 绘制迷你图：没有刻度标签和 x 标签，没有轴线，内边距 2 px；网格仍由 `grid` 控制。适合例如 150 × 50。 |
 | `ariaLabel` | `string` | locale 中的摘要("Chart: 2 series, 10 points") | |
 
 事件 `hover(index: number | null)` — 活动类别变化时触发(指针或键盘)。插槽 `#tooltip="{ index, category, items }"` 可替换 tooltip 内容；每一项为 `{ series, value, formatted, color }`。
@@ -138,6 +140,7 @@ interface ChartSeries {
   dashed?: boolean                          // line / area：虚线(计划线、理想线)
   stack?: string                            // id 相同的 bar / area 系列会堆叠
   legend?: boolean                          // 默认 true
+  width?: number                            // line / area：线宽(px)，默认 2
 }
 
 interface ChartReference {
@@ -147,6 +150,15 @@ interface ChartReference {
   tone?: ChartTone
   color?: string
   dashed?: boolean
+  pill?: boolean     // x：标签画成线上方居中的小型实心标记
+}
+
+interface ChartBand {
+  from: number       // 第一个类别的索引(含)
+  to: number         // 最后一个类别的索引(含)
+  label?: string     // 图例条目(浅色方块)，排在系列之后；同一标签只出现一次
+  tone?: ChartTone   // 默认 neutral
+  color?: string
 }
 ```
 
@@ -157,6 +169,8 @@ interface ChartReference {
 没有 `color` 或 `tone` 的系列按 `series` 数组的顺序占用调色板槽位：`--uid-chart-1` … `--uid-chart-6`。槽位属于系列的位置，因此隐藏其他系列不会让它变色。超过六个这样的系列会重复调色板 — 建议把尾部合并为"其他"。tone 取自主题：`accent`、`info`、`warning`、`danger`、`success` 对应 `--uid-accent`、`--uid-info`……，`neutral` 对应 `--uid-chart-neutral`(计划、基准线)。调色板在浅色和深色主题(`:root[data-theme='dark']`)下各有取值，可像任何 token 一样覆盖。`--uid-chart-surface`(默认 `--uid-color-surface`)是堆叠柱形之间缝隙和散点外圈的颜色：请设为图表所在的背景色。
 
 标记：2 px 圆角连接的线条，`4 4` 虚线，15 % 不透明度的面积(堆叠面积为 70 % 的色带，顶部 1 px 边线)，带 2 px 外圈的 8 px 散点，数据端 4 px 圆角、间隔 2 px 的柱形。文字始终使用文本颜色，从不使用系列颜色。
+
+色带从类别 `from` 槽位的左边缘延伸到 `to` 槽位的右边缘，占满绘图区高度，位于网格和标记之下。默认填充为 `--uid-chart-neutral`，不透明度为 `--uid-chart-region-neutral-opacity`(浅色 35 %，深色 30 %)；带 `tone` 或 `color` 的色带是淡淡的色调，不透明度为 `--uid-chart-region-opacity`(浅色 7 %，深色 10 %)。标记式参考线(`pill: true`，x 轴且有 `label`)是参考线颜色的圆角标签，文字为 `--uid-text-on-accent`、11 px、半粗，始终保持在图表宽度之内 — 例如在计划上标出"今天"。
 
 ### 无障碍
 

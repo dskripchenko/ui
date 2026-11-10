@@ -436,6 +436,11 @@ export const ru: UidLocale = {
     category: 'Категория',
   },
 
+  milestoneStrip: {
+    label: 'Вехи',
+    atRisk: 'под угрозой',
+  },
+
   dashboardGrid: {
     label: 'Панель',
     item: (n) => `Элемент ${n}`,

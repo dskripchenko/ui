@@ -111,6 +111,7 @@ Gestapelte Balken — Serien mit derselben `stack`-ID stapeln sich (Flächen sta
 | `categories` | `string[]` | — | Die x-Achse, gleichmäßig verteilt. |
 | `series` | `ChartSeries[]` | — | Siehe unten. |
 | `references` | `ChartReference[]` | `[]` | Vertikale und horizontale Referenzlinien. y-Referenzen fließen in den automatischen y-Bereich ein. |
+| `bands` | `ChartBand[]` | `[]` | Kategoriebereiche, hinter Raster und Markierungen schattiert (Iterationen, Freezes, Feiertage). Siehe unten. |
 | `height` | `number` | `240` | Höhe in px. Die Breite folgt dem Container (`ResizeObserver`); 600 px, wenn sie nicht messbar ist. |
 | `yMin` | `number` | `min(0, Datenminimum)` | |
 | `yMax` | `number` | ein „runder“ Datenmaximalwert | Stapel werden summiert. |
@@ -121,6 +122,7 @@ Gestapelte Balken — Serien mit derselben `stack`-ID stapeln sich (Flächen sta
 | `grid` | `boolean` | `true` | Horizontale Gitterlinien. |
 | `tooltip` | `boolean` | `true` | |
 | `xLabels` | `'auto' \| 'all' \| 'none'` | `'auto'` | `auto` dünnt die Beschriftungen aus, damit sie sich nie überlappen. |
+| `axes` | `boolean` | `true` | `false` zeichnet eine Sparkline: keine Tick- und x-Beschriftungen, keine Achsenlinie, 2 px Innenabstand; das Raster folgt weiter `grid`. Passt z. B. für 150 × 50. |
 | `ariaLabel` | `string` | Zusammenfassung aus der Locale („Chart: 2 series, 10 points“) | |
 
 Ereignis `hover(index: number | null)` — die aktive Kategorie wechselt (Zeiger oder Tastatur). Der Slot `#tooltip="{ index, category, items }"` ersetzt den Tooltip-Inhalt; jedes Element ist `{ series, value, formatted, color }`.
@@ -138,6 +140,7 @@ interface ChartSeries {
   dashed?: boolean                          // line / area: gestrichelt (Pläne, Ideallinien)
   stack?: string                            // bar- / area-Serien mit derselben ID stapeln sich
   legend?: boolean                          // Standard true
+  width?: number                            // line / area: Strichstärke in px, Standard 2
 }
 
 interface ChartReference {
@@ -147,6 +150,15 @@ interface ChartReference {
   tone?: ChartTone
   color?: string
   dashed?: boolean
+  pill?: boolean     // x: die Beschriftung als kleines gefülltes Etikett mittig über der Linie
+}
+
+interface ChartBand {
+  from: number       // Index der ersten Kategorie, inklusive
+  to: number         // Index der letzten Kategorie, inklusive
+  label?: string     // ein Legendeneintrag (helles Quadrat) nach den Serien; einer pro Label
+  tone?: ChartTone   // Standard neutral
+  color?: string
 }
 ```
 
@@ -157,6 +169,8 @@ interface ChartReference {
 Serien ohne `color` oder `tone` belegen Palettenplätze in der Reihenfolge des `series`-Arrays: `--uid-chart-1` … `--uid-chart-6`. Der Platz gehört zur Position der Serie, daher färbt das Ausblenden einer anderen Serie sie nie um. Mehr als sechs solcher Serien wiederholen die Palette — fasse den Rest besser zu „Sonstige“ zusammen. Töne kommen aus dem Theme: `accent`, `info`, `warning`, `danger`, `success` entsprechen `--uid-accent`, `--uid-info`, …, und `neutral` entspricht `--uid-chart-neutral` (Pläne, Basislinien). Die Palette hat eigene Werte für hell und dunkel (`:root[data-theme='dark']`) und lässt sich wie jedes Token überschreiben. `--uid-chart-surface` (Standard `--uid-color-surface`) ist die Farbe der Lücken zwischen gestapelten Balken und des Rings um Punkte: setze sie auf den Hintergrund, auf dem das Diagramm steht.
 
 Markierungen: 2-px-Linien mit runden Verbindungen, Striche `4 4`, Flächen mit 15 % Deckkraft (gestapelte Flächen — Bänder mit 70 % und 1 px Oberkante), 8-px-Punkte mit 2-px-Ring, Balken mit 4 px gerundetem Datenende und 2-px-Lücken. Text nutzt immer die Textfarben, nie eine Serienfarbe.
+
+Ein Band reicht vom linken Rand des Platzes der Kategorie `from` bis zum rechten Rand von `to`, über die ganze Zeichenhöhe, hinter Raster und Markierungen. Die Standardfüllung ist `--uid-chart-neutral` mit `--uid-chart-region-neutral-opacity` (35 % hell, 30 % dunkel); ein Band mit `tone` oder `color` ist eine leichte Tönung mit `--uid-chart-region-opacity` (7 % hell, 10 % dunkel). Eine Pill-Referenz (`pill: true`, x-Achse mit `label`) ist ein abgerundetes Etikett in der Farbe der Referenz mit Text in `--uid-text-on-accent`, 11 px, halbfett, innerhalb der Diagrammbreite gehalten — etwa für „heute“ über einem Plan.
 
 ### Barrierefreiheit
 

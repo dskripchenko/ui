@@ -32,6 +32,8 @@ export interface ChartSeries {
   stack?: string
   /** Default `true`: shown in the legend. */
   legend?: boolean
+  /** line / area: the stroke width in px. Default 2 (1 for the edge of a stacked area). */
+  width?: number
 }
 
 export interface ChartReference {
@@ -42,6 +44,20 @@ export interface ChartReference {
   tone?: ChartTone
   color?: string
   dashed?: boolean
+  /** x: the label drawn as a small filled tag centred above the line. */
+  pill?: boolean
+}
+
+/** A range of categories shaded behind the grid and the marks. */
+export interface ChartBand {
+  /** The first category index (inclusive). */
+  from: number
+  /** The last category index (inclusive). */
+  to: number
+  /** A label gets a legend entry; bands with the same label share one entry. */
+  label?: string
+  tone?: ChartTone
+  color?: string
 }
 
 export interface ChartTooltipItem {
@@ -63,6 +79,8 @@ export interface UidChartProps {
   categories: string[]
   series: ChartSeries[]
   references?: ChartReference[]
+  /** Category ranges shaded behind the grid and the marks. */
+  bands?: ChartBand[]
   /** Height in px; the width follows the container. */
   height?: number
   yMin?: number
@@ -75,11 +93,14 @@ export interface UidChartProps {
   grid?: boolean
   tooltip?: boolean
   xLabels?: 'auto' | 'all' | 'none'
+  /** Default `true`. `false` draws a sparkline: no tick labels, no axis line, minimal padding. */
+  axes?: boolean
   ariaLabel?: string
 }
 
 const props = withDefaults(defineProps<UidChartProps>(), {
   references: () => [],
+  bands: () => [],
   height: 240,
   yMin: undefined,
   yMax: undefined,
@@ -90,6 +111,7 @@ const props = withDefaults(defineProps<UidChartProps>(), {
   grid: true,
   tooltip: true,
   xLabels: 'auto',
+  axes: true,
   ariaLabel: undefined,
 })
 
@@ -111,6 +133,9 @@ const STACK_GAP = 2
 const BAR_RADIUS = 4
 const MAX_BAR = 48
 const PALETTE_SIZE = 6
+const PILL_H = 18
+const PILL_PAD = 6
+const SPARK_PAD = 2
 
 const TONES: Record<ChartTone, string> = {
   accent: 'var(--uid-accent)',
@@ -249,11 +274,16 @@ const width = computed(() => (measuredWidth.value > 0 ? measuredWidth.value : FA
 const tickLabels = computed(() => yScaleInfo.value.ticks.map(t => formatNumber(t)))
 
 const hasTopLabels = computed(() => props.references.some(r => r.axis === 'x' && r.label))
+const hasPills = computed(() => props.references.some(r => r.axis === 'x' && r.label && r.pill))
 
 const pad = computed(() => {
+  const top = hasPills.value ? PILL_H + 6 : hasTopLabels.value ? 18 : null
+  if (!props.axes) {
+    return { top: top ?? SPARK_PAD, right: SPARK_PAD, bottom: SPARK_PAD, left: SPARK_PAD }
+  }
   const yAxis = Math.max(16, ...tickLabels.value.map(t => estimateTextWidth(t, FONT_PX))) + 8
   return {
-    top: hasTopLabels.value ? 18 : 8,
+    top: top ?? 8,
     right: 8,
     bottom: props.xLabels === 'none' ? 4 : 22,
     left: Math.ceil(yAxis),
@@ -290,7 +320,7 @@ const gridLines = computed(() =>
 )
 
 const xLabelItems = computed(() => {
-  if (props.xLabels === 'none') return []
+  if (props.xLabels === 'none' || !props.axes) return []
   const texts = props.categories.map((_, i) => categoryText(i))
   const widest = texts.reduce((m, t) => Math.max(m, estimateTextWidth(t, FONT_PX)), 0)
   const step = props.xLabels === 'all' ? 1 : Math.max(1, Math.ceil((widest + 8) / band.value))
@@ -379,6 +409,8 @@ interface LineMark {
   area: string
   /** An area in a stack: a solid band with a thin top edge. */
   stacked: boolean
+  /** An explicit stroke width, px; null keeps the stylesheet's. */
+  width: number | null
   color: string
   dashed: boolean
   singles: ChartPoint[]
@@ -409,6 +441,7 @@ const lines = computed<LineMark[]>(() =>
       return {
         key: s.def.key,
         series: s.index,
+        width: typeof s.def.width === 'number' && s.def.width > 0 ? s.def.width : null,
         d: linePath(top),
         area,
         stacked: s.type === 'area' && stackKey(s) !== null,
@@ -434,27 +467,76 @@ const referenceMarks = computed(() =>
       const color = r.color ?? (r.tone ? TONES[r.tone] : 'var(--uid-chart-reference)')
       if (r.axis === 'x') {
         const x = r2(plot.value.left + (r.value + 0.5) * band.value)
-        const half = r.label ? estimateTextWidth(r.label, FONT_PX) / 2 : 0
+        const pill = !!(r.pill && r.label)
+        // Semibold text runs a little wider than the estimate for regular text.
+        const textW = r.label ? estimateTextWidth(r.label, FONT_PX) * (pill ? 1.08 : 1) : 0
+        const half = pill ? textW / 2 + PILL_PAD : textW / 2
         const lx = Math.min(width.value - half, Math.max(half, x))
-        return { key: `x-${i}`, axis: 'x' as const, x1: x, x2: x, y1: plot.value.top, y2: plot.value.bottom, color, dashed: !!r.dashed, label: r.label, lx: r2(lx), ly: plot.value.top - 6, anchor: 'middle' }
+        const pillBox = pill ? { x: r2(lx - half), y: r2(plot.value.top - PILL_H - 4), width: r2(half * 2), height: PILL_H } : null
+        const ly = pillBox ? r2(pillBox.y + PILL_H / 2) : plot.value.top - 6
+        return { key: `x-${i}`, axis: 'x' as const, x1: x, x2: x, y1: plot.value.top, y2: plot.value.bottom, color, dashed: !!r.dashed, label: r.label, lx: r2(lx), ly, anchor: 'middle', pill: pillBox }
       }
       const y = r2(yPos(r.value))
-      return { key: `y-${i}`, axis: 'y' as const, x1: plot.value.left, x2: plot.value.right, y1: y, y2: y, color, dashed: !!r.dashed, label: r.label, lx: plot.value.right - 4, ly: y - 5, anchor: 'end' }
+      return { key: `y-${i}`, axis: 'y' as const, x1: plot.value.left, x2: plot.value.right, y1: y, y2: y, color, dashed: !!r.dashed, label: r.label, lx: plot.value.right - 4, ly: y - 5, anchor: 'end', pill: null }
     }),
 )
 
 const hasBars = computed(() => resolved.value.some(s => s.type === 'bar'))
 
+function bandColor(b: ChartBand): string {
+  return b.color ?? (b.tone ? TONES[b.tone] ?? TONES.neutral : TONES.neutral)
+}
+
+const bandMarks = computed(() => {
+  const last = n.value - 1
+  if (last < 0) return []
+  return props.bands.flatMap((b, i) => {
+    if (!Number.isFinite(b.from) || !Number.isFinite(b.to)) return []
+    const lo = Math.max(0, Math.min(b.from, b.to))
+    const hi = Math.min(last, Math.max(b.from, b.to))
+    if (hi < lo) return []
+    const x = plot.value.left + lo * band.value
+    return [{
+      key: `band-${i}`,
+      x: r2(x),
+      y: r2(plot.value.top),
+      width: r2((hi - lo + 1) * band.value),
+      height: r2(plot.value.height),
+      color: bandColor(b),
+      neutral: !b.color && (!b.tone || b.tone === 'neutral'),
+    }]
+  })
+})
+
 // ---------- legend ----------
 
-const legendItems = computed(() => resolved.value.filter(s => s.def.legend !== false))
+interface LegendEntry {
+  key: string
+  label: string
+  shape: 'line' | 'dot' | 'square' | 'band'
+  dashed: boolean
+  color: string
+}
+
+const legendEntries = computed<LegendEntry[]>(() => {
+  const out: LegendEntry[] = resolved.value
+    .filter(s => s.def.legend !== false)
+    .map(s => ({ key: `s-${s.def.key}`, label: s.def.label, shape: keyShape(s), dashed: !!s.def.dashed, color: s.color }))
+  const seen = new Set<string>()
+  for (const b of props.bands) {
+    if (!b.label || seen.has(b.label)) continue
+    seen.add(b.label)
+    out.push({ key: `b-${b.label}`, label: b.label, shape: 'band', dashed: false, color: bandColor(b) })
+  }
+  return out
+})
 
 const legendPosition = computed<ChartLegendPosition | null>(() => {
   const l = props.legend
   if (l === false) return null
   if (l === 'top' || l === 'bottom') return l
   if (l === true) return 'bottom'
-  return legendItems.value.length >= 2 ? 'bottom' : null
+  return legendEntries.value.length >= 2 ? 'bottom' : null
 })
 
 function keyShape(s: ResolvedSeries): 'line' | 'dot' | 'square' {
@@ -614,17 +696,17 @@ const tooltipId = `uid-chart-tip-${uid}`
       class="uid-chart__legend uid-chart__legend--top"
     >
       <li
-        v-for="s in legendItems"
-        :key="s.def.key"
+        v-for="e in legendEntries"
+        :key="e.key"
         class="uid-chart__legend-item"
       >
         <span
           class="uid-chart__key"
-          :class="[`uid-chart__key--${keyShape(s)}`, { 'uid-chart__key--dashed': s.def.dashed }]"
-          :style="{ '--uid-chart-key-color': s.color }"
+          :class="[`uid-chart__key--${e.shape}`, { 'uid-chart__key--dashed': e.dashed }]"
+          :style="{ '--uid-chart-key-color': e.color }"
           aria-hidden="true"
         />
-        {{ s.def.label }}
+        {{ e.label }}
       </li>
     </ul>
 
@@ -670,6 +752,23 @@ const tooltipId = `uid-chart-tip-${uid}`
         </defs>
 
         <g
+          v-if="bandMarks.length"
+          class="uid-chart__regions"
+        >
+          <rect
+            v-for="b in bandMarks"
+            :key="b.key"
+            class="uid-chart__region"
+            :class="{ 'uid-chart__region--neutral': b.neutral }"
+            :x="b.x"
+            :y="b.y"
+            :width="b.width"
+            :height="b.height"
+            :style="{ fill: b.color }"
+          />
+        </g>
+
+        <g
           v-if="grid"
           class="uid-chart__grid"
         >
@@ -683,7 +782,10 @@ const tooltipId = `uid-chart-tip-${uid}`
           />
         </g>
 
-        <g class="uid-chart__y-axis">
+        <g
+          v-if="axes"
+          class="uid-chart__y-axis"
+        >
           <text
             v-for="(g, i) in gridLines"
             :key="`yl-${i}`"
@@ -735,6 +837,7 @@ const tooltipId = `uid-chart-tip-${uid}`
         </g>
 
         <line
+          v-if="axes"
           class="uid-chart__axis"
           :x1="plot.left"
           :x2="plot.right"
@@ -753,7 +856,7 @@ const tooltipId = `uid-chart-tip-${uid}`
               :d="l.d"
               :data-series="l.series"
               :stroke-dasharray="l.dashed ? '4 4' : undefined"
-              :style="{ stroke: l.color }"
+              :style="{ stroke: l.color, strokeWidth: l.width === null ? undefined : `${l.width}px` }"
             />
             <circle
               v-for="(p, i) in l.singles"
@@ -781,8 +884,26 @@ const tooltipId = `uid-chart-tip-${uid}`
             :stroke-dasharray="r.dashed ? '4 4' : undefined"
             :style="{ stroke: r.color }"
           />
+          <template v-if="r.label && r.pill">
+            <rect
+              class="uid-chart__pill"
+              :x="r.pill.x"
+              :y="r.pill.y"
+              :width="r.pill.width"
+              :height="r.pill.height"
+              :rx="r.pill.height / 2"
+              :style="{ fill: r.color }"
+            />
+            <text
+              class="uid-chart__pill-label"
+              :x="r.lx"
+              :y="r.ly"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >{{ r.label }}</text>
+          </template>
           <text
-            v-if="r.label"
+            v-else-if="r.label"
             class="uid-chart__reference-label"
             :x="r.lx"
             :y="r.ly"
@@ -874,17 +995,17 @@ const tooltipId = `uid-chart-tip-${uid}`
       class="uid-chart__legend uid-chart__legend--bottom"
     >
       <li
-        v-for="s in legendItems"
-        :key="s.def.key"
+        v-for="e in legendEntries"
+        :key="e.key"
         class="uid-chart__legend-item"
       >
         <span
           class="uid-chart__key"
-          :class="[`uid-chart__key--${keyShape(s)}`, { 'uid-chart__key--dashed': s.def.dashed }]"
-          :style="{ '--uid-chart-key-color': s.color }"
+          :class="[`uid-chart__key--${e.shape}`, { 'uid-chart__key--dashed': e.dashed }]"
+          :style="{ '--uid-chart-key-color': e.color }"
           aria-hidden="true"
         />
-        {{ s.def.label }}
+        {{ e.label }}
       </li>
     </ul>
 

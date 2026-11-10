@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
 import UidChart from './UidChart.vue'
-import type { ChartReference, ChartSeries } from './UidChart.vue'
+import type { ChartBand, ChartReference, ChartSeries } from './UidChart.vue'
 
 const meta: Meta<typeof UidChart> = {
   title: 'Charts/Chart',
@@ -144,6 +144,41 @@ export const DarkTheme: Story = {
       })) satisfies ChartSeries[],
     }),
     template: `<div style="box-sizing:border-box;width:640px;max-width:100%;padding:16px;background:var(--uid-surface-raised)"><UidChart :categories="categories" :series="series" /></div>`,
+  }),
+}
+
+const weeks = ['W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'W8', 'W9', 'W10', 'W11', 'W12']
+
+export const BandsAndPill: Story = {
+  render: () => ({
+    components: { UidChart },
+    setup: () => ({
+      categories: weeks,
+      series: [
+        { key: 'done', label: 'Done', tone: 'accent', width: 2.5, data: [3, 7, 12, 18, 22, 27, 33, null, null, null, null, null] },
+        { key: 'plan', label: 'Plan', tone: 'neutral', dashed: true, width: 1.5, data: [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55] },
+      ] satisfies ChartSeries[],
+      bands: [
+        { from: 0, to: 1, label: 'Iteration' },
+        { from: 4, to: 5, label: 'Iteration' },
+        { from: 8, to: 9, label: 'Iteration' },
+        { from: 10, to: 10, tone: 'warning', label: 'Freeze' },
+      ] satisfies ChartBand[],
+      references: [{ axis: 'x', value: 6, label: 'Today', tone: 'danger', pill: true }] satisfies ChartReference[],
+    }),
+    template: `<div style="width:640px;max-width:100%"><UidChart :categories="categories" :series="series" :bands="bands" :references="references" :height="240" /></div>`,
+  }),
+}
+
+export const Sparkline: Story = {
+  render: () => ({
+    components: { UidChart },
+    setup: () => ({
+      categories: weeks,
+      series: [{ key: 'v', label: 'Throughput', tone: 'accent', width: 1.5, data: [4, 6, 5, 8, 7, 9, 12, 10, 11, 14, 13, 15] }] satisfies ChartSeries[],
+      bands: [{ from: 9, to: 11 }] satisfies ChartBand[],
+    }),
+    template: `<div style="width:150px"><UidChart :categories="categories" :series="series" :bands="bands" :axes="false" :grid="false" :tooltip="false" :height="50" aria-label="Throughput, 12 weeks" /></div>`,
   }),
 }
 

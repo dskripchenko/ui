@@ -362,6 +362,7 @@ export type {
   ChartSeriesType,
   ChartTone,
   ChartReference,
+  ChartBand,
   ChartLegendPosition,
   ChartTooltipItem,
   ChartTooltipContext,
@@ -441,6 +442,9 @@ export type { UidSegmentedProps, SegmentedOption } from './components/Segmented/
 
 export { UidBusyStrip, firstFree } from './components/BusyStrip/index.js'
 export type { UidBusyStripProps, BusyRow, BusySegment, BusySelection, FirstFreeOptions } from './components/BusyStrip/index.js'
+
+export { UidMilestoneStrip } from './components/MilestoneStrip/index.js'
+export type { UidMilestoneStripProps, UidMilestoneStripMonthFormat, Milestone } from './components/MilestoneStrip/index.js'
 
 export { UidObjectCard } from './components/ObjectCard/index.js'
 export type { UidObjectCardProps, UidObjectCardStatus, UidObjectCardTone } from './components/ObjectCard/index.js'

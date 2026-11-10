@@ -1,0 +1,154 @@
+.uid-milestone-strip {
+  /* Half the marker's width: the marker's centre sits on the date. */
+  --uid-milestone-half: 6px;
+  --uid-milestone-row-h: 44px;
+  --uid-milestone-marker: var(--uid-accent);
+  --uid-milestone-risk: var(--uid-warning);
+  --uid-milestone-today: var(--uid-danger);
+  /* The colour behind the strip: the text is backed by it where the today line crosses. */
+  --uid-milestone-surface: var(--uid-color-surface);
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--uid-space-sm);
+  min-width: 0;
+  box-sizing: border-box;
+  width: 100%;
+  padding-inline: 10px;
+  color: var(--uid-color-text);
+}
+
+.uid-milestone-strip__track {
+  position: relative;
+  min-width: 0;
+}
+
+.uid-milestone-strip__months {
+  position: relative;
+  height: 20px;
+  border-bottom: 1px solid var(--uid-border-subtle);
+  color: var(--uid-color-text-secondary);
+  font-size: var(--uid-font-size-xs);
+  line-height: 16px;
+}
+
+.uid-milestone-strip__month {
+  position: absolute;
+  top: 0;
+  white-space: nowrap;
+}
+
+.uid-milestone-strip__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.uid-milestone-strip__row {
+  display: flex;
+  align-items: center;
+  min-height: var(--uid-milestone-row-h);
+  padding-block: 4px;
+  border-bottom: 1px solid var(--uid-border-subtle);
+  box-sizing: border-box;
+}
+
+.uid-milestone-strip__item {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--uid-space-sm);
+  min-width: 0;
+  margin: 0;
+  padding: 2px 0;
+  border: 0;
+  border-radius: var(--uid-radius-sm);
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: start;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.uid-milestone-strip__item--flip {
+  flex-direction: row-reverse;
+  text-align: end;
+}
+
+.uid-milestone-strip__item:focus-visible {
+  outline: 2px solid var(--uid-color-focus-ring);
+  outline-offset: 2px;
+}
+
+.uid-milestone-strip__item:hover .uid-milestone-strip__label {
+  text-decoration: underline;
+}
+
+.uid-milestone-strip__marker {
+  flex: none;
+  width: calc(var(--uid-milestone-half) * 2);
+  height: calc(var(--uid-milestone-half) * 2);
+  border: 2px solid var(--uid-milestone-marker);
+  border-radius: 1px;
+  background: transparent;
+  box-sizing: border-box;
+  transform: rotate(45deg);
+}
+
+.uid-milestone-strip__item--risk .uid-milestone-strip__marker {
+  border-color: var(--uid-milestone-risk);
+}
+
+.uid-milestone-strip__text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding-inline: 2px;
+  border-radius: 2px;
+  background: var(--uid-milestone-surface);
+  overflow-wrap: anywhere;
+}
+
+.uid-milestone-strip__label {
+  font-size: var(--uid-font-size-sm);
+  font-weight: var(--uid-font-weight-semibold, 600);
+  line-height: 18px;
+}
+
+.uid-milestone-strip__caption {
+  color: var(--uid-color-text-secondary);
+  font-size: var(--uid-font-size-xs);
+  line-height: 16px;
+}
+
+.uid-milestone-strip__item--risk .uid-milestone-strip__caption {
+  color: var(--uid-color-warning-text);
+}
+
+.uid-milestone-strip__today {
+  position: absolute;
+  top: 20px;
+  bottom: 0;
+  width: 2px;
+  margin-inline-start: -1px;
+  background: var(--uid-milestone-today);
+  pointer-events: none;
+}
+
+.uid-milestone-strip__footnote {
+  display: flex;
+  align-items: center;
+  gap: var(--uid-space-xs);
+  margin: 0;
+  color: var(--uid-color-text-secondary);
+  font-size: var(--uid-font-size-xs);
+}
+
+.uid-milestone-strip__footnote-mark {
+  flex: none;
+  width: 2px;
+  height: 12px;
+  background: var(--uid-milestone-today);
+}

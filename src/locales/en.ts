@@ -436,6 +436,11 @@ export const en: UidLocale = {
     category: 'Category',
   },
 
+  milestoneStrip: {
+    label: 'Milestones',
+    atRisk: 'at risk',
+  },
+
   dashboardGrid: {
     label: 'Dashboard',
     item: (n) => `Item ${n}`,

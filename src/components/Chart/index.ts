@@ -5,6 +5,7 @@ export type {
   ChartSeriesType,
   ChartTone,
   ChartReference,
+  ChartBand,
   ChartLegendPosition,
   ChartTooltipItem,
   ChartTooltipContext,
