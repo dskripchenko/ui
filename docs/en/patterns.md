@@ -2,7 +2,7 @@
 
 Beyond atomic components, the kit ships two extra tiers:
 
-- **Patterns** — composite blocks: Header, Footer, Sidebar, PageHeader, EmptyState, ErrorState, Result. "Bigger bricks" assembled from components.
+- **Patterns** — composite blocks: Header, Footer, Sidebar, TabBar, PageHeader, EmptyState, ErrorState, Result. "Bigger bricks" assembled from components.
 - **Layouts** — page templates: Simple, Sidebar, Auth, Wizard. Whole-box scaffolding that arranges Header / Sidebar / Content / Footer with slots for content.
 
 The idea is simple: you often need a "dashboard layout in 5 minutes", not just a `UidButton`. Patterns and layouts close that gap.
@@ -60,6 +60,23 @@ Vertical app menu.
 Props: `collapsed?`, `width?`, `position?: 'left' \| 'right'`.
 
 Sub-components: `UidSidebarItem`, `UidSidebarGroup`, `UidSidebarDivider`. A group's `action` slot puts a control next to its title — an "add" button, say; it hides with the titles when the sidebar is collapsed.
+
+### `UidTabBar` — bottom navigation on a phone
+
+A row of equal tabs at the bottom of a small screen: an icon over a short label, a count or a dot over the icon. Each tab is at least 44 × 44 px; the bar pads itself by the safe-area inset.
+
+```vue
+<UidTabBar fixed>
+  <UidTabBarItem :to="{ name: 'home' }" :active="route.name === 'home'" :badge="3">
+    <template #icon><House :size="20" /></template>Home
+  </UidTabBarItem>
+  <UidTabBarItem :to="{ name: 'search' }">
+    <template #icon><Search :size="20" /></template>Search
+  </UidTabBarItem>
+</UidTabBar>
+```
+
+`UidTabBar` props: `label?` (the navigation's accessible name; the locale's by default), `fixed?` (stay at the bottom of the viewport). `UidTabBarItem` props: `to?` / `href?` / `as?`, `active?` (sets `aria-current="page"`), `disabled?`, `badge?` (0 shows nothing), `dot?`. CSS variables: `--uid-tab-bar-height`, `--uid-tab-bar-bg`, `--uid-tab-bar-color-active`.
 
 ### `UidProductSwitcher` — switching between products
 

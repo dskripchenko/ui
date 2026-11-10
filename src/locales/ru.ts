@@ -205,6 +205,10 @@ export const ru: UidLocale = {
     nav: 'Навигация',
   },
 
+  tabBar: {
+    label: 'Нижняя навигация',
+  },
+
   header: {
     nav: 'Основная навигация',
   },

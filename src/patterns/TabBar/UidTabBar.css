@@ -1,0 +1,109 @@
+/* A bottom navigation bar for phones: equal tabs, an icon over a short label. */
+.uid-tab-bar {
+  display: flex;
+  align-items: stretch;
+  min-height: var(--uid-tab-bar-height, 56px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  border-top: 1px solid var(--uid-color-border);
+  background: var(--uid-tab-bar-bg, var(--uid-color-surface));
+}
+
+.uid-tab-bar--fixed {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: var(--uid-z-sticky, 100);
+}
+
+.uid-tab-bar-item {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  gap: 2px;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 6px 2px;
+  border: 0;
+  background: none;
+  color: var(--uid-color-text-secondary);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: color var(--uid-duration-fast) var(--uid-ease-out);
+}
+
+.uid-tab-bar-item:hover:not(.uid-tab-bar-item--disabled) {
+  color: var(--uid-color-text-primary);
+  text-decoration: none;
+}
+
+.uid-tab-bar-item--active,
+.uid-tab-bar-item--active:hover:not(.uid-tab-bar-item--disabled) {
+  color: var(--uid-tab-bar-color-active, var(--uid-color-primary-text));
+}
+
+.uid-tab-bar-item--disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.uid-tab-bar-item:focus-visible {
+  outline: 2px solid var(--uid-color-focus-ring);
+  outline-offset: -2px;
+  border-radius: var(--uid-radius-md);
+}
+
+.uid-tab-bar-item__icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+}
+
+.uid-tab-bar-item__label {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.uid-tab-bar-item__badge {
+  position: absolute;
+  top: -4px;
+  left: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border: 2px solid var(--uid-tab-bar-bg, var(--uid-color-surface));
+  border-radius: 9999px;
+  background: var(--uid-color-primary-solid);
+  color: var(--uid-color-text-on-primary);
+  font-size: 10px;
+  font-weight: 600;
+  box-sizing: content-box;
+}
+
+.uid-tab-bar-item__dot {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 8px;
+  height: 8px;
+  border: 2px solid var(--uid-tab-bar-bg, var(--uid-color-surface));
+  border-radius: 50%;
+  background: var(--uid-color-primary-solid);
+}

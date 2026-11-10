@@ -164,6 +164,10 @@ export interface UidLocale {
     nav: string
   }
 
+  tabBar: {
+    label: string
+  }
+
   header: {
     nav: string
   }

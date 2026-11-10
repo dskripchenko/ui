@@ -394,7 +394,7 @@ const isEmpty = computed(() => props.items.length === 0)
           :ref="(el) => bindRow(row.key, el)"
           :data-key="row.key"
           class="uid-message-feed__row"
-          :role="row.kind === 'item' ? 'article' : 'separator'"
+          :role="row.kind === 'item' ? 'article' : 'none'"
           :aria-posinset="row.kind === 'item' ? row.index + 1 : undefined"
           :aria-setsize="row.kind === 'item' ? (hasMoreBefore || hasMoreAfter ? -1 : items.length) : undefined"
         >

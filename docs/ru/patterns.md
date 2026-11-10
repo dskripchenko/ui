@@ -2,7 +2,7 @@
 
 Помимо атомарных компонентов kit предоставляет два дополнительных слоя:
 
-- **Patterns** — составные блоки: Header, Footer, Sidebar, PageHeader, EmptyState. Это «крупные кирпичи», собранные из компонентов.
+- **Patterns** — составные блоки: Header, Footer, Sidebar, TabBar, PageHeader, EmptyState. Это «крупные кирпичи», собранные из компонентов.
 - **Layouts** — готовые шаблоны страниц: Simple, Sidebar, Auth, Wizard. Это «коробка целиком» — задаёт расположение Header / Sidebar / Content / Footer и оставляет слоты под контент.
 
 Идея простая: часто нужен не «UidButton», а «вёрстка приборной панели за 5 минут». Patterns и layouts закрывают именно это.
@@ -112,6 +112,23 @@ CSS-переменные для кастомизации:
 - `UidSidebarItem` — одиночный пункт (иконка + label + опциональный badge)
 - `UidSidebarGroup` — секция со заголовком и набором item'ов; слот `action` ставит рядом с заголовком действие (например, «добавить») и прячется вместе с заголовками в свёрнутом сайдбаре
 - `UidSidebarDivider`
+
+### `UidTabBar` — нижняя навигация на телефоне
+
+Ряд равных вкладок внизу маленького экрана: иконка над короткой подписью, счётчик или точка над иконкой. Каждая вкладка не меньше 44 × 44 px; полоса сама отступает на безопасную зону экрана.
+
+```vue
+<UidTabBar fixed>
+  <UidTabBarItem :to="{ name: 'home' }" :active="route.name === 'home'" :badge="3">
+    <template #icon><House :size="20" /></template>Главная
+  </UidTabBarItem>
+  <UidTabBarItem :to="{ name: 'search' }">
+    <template #icon><Search :size="20" /></template>Поиск
+  </UidTabBarItem>
+</UidTabBar>
+```
+
+Свойства `UidTabBar`: `label?` (доступное имя навигации; по умолчанию из локали), `fixed?` (прижать к низу окна). Свойства `UidTabBarItem`: `to?` / `href?` / `as?`, `active?` (ставит `aria-current="page"`), `disabled?`, `badge?` (0 не показывается), `dot?`. CSS-переменные: `--uid-tab-bar-height`, `--uid-tab-bar-bg`, `--uid-tab-bar-color-active`.
 
 ### `UidProductSwitcher` — переключение между продуктами
 

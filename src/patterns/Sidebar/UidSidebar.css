@@ -139,7 +139,8 @@ button.uid-sidebar-item {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--uid-color-text-disabled);
+  /* Secondary, not disabled: the title carries meaning and must meet 4.5:1 (WCAG AA). */
+  color: var(--uid-sidebar-group-title-color, var(--uid-color-text-secondary));
 }
 
 .uid-sidebar-group__head {

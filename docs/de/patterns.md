@@ -2,7 +2,7 @@
 
 Über atomare Komponenten hinaus liefert das Kit zwei zusätzliche Ebenen:
 
-- **Patterns** — zusammengesetzte Blöcke: Header, Footer, Sidebar, PageHeader, EmptyState, ErrorState, Result. "Größere Bausteine", aus Komponenten zusammengebaut.
+- **Patterns** — zusammengesetzte Blöcke: Header, Footer, Sidebar, TabBar, PageHeader, EmptyState, ErrorState, Result. "Größere Bausteine", aus Komponenten zusammengebaut.
 - **Layouts** — Seitenvorlagen: Simple, Sidebar, Auth, Wizard. Eine "Box" insgesamt, die Header / Sidebar / Content / Footer anordnet und Slots für Inhalt lässt.
 
 Die Idee ist einfach: oft brauchst du ein "Dashboard-Layout in 5 Minuten", nicht nur einen `UidButton`. Patterns und Layouts schließen genau diese Lücke.
@@ -60,6 +60,23 @@ Vertikales App-Menü.
 Props: `collapsed?`, `width?`, `position?: 'left' \| 'right'`.
 
 Sub-Komponenten: `UidSidebarItem`, `UidSidebarGroup`, `UidSidebarDivider`. Der Slot `action` einer Gruppe setzt ein Bedienelement neben ihren Titel — etwa eine Schaltfläche „Hinzufügen“; in der eingeklappten Sidebar wird es mit den Titeln ausgeblendet.
+
+### `UidTabBar` — untere Navigation auf dem Telefon
+
+Eine Reihe gleich breiter Tabs am unteren Rand eines kleinen Bildschirms: ein Symbol über einer kurzen Beschriftung, eine Zahl oder ein Punkt über dem Symbol. Jeder Tab ist mindestens 44 × 44 px groß; die Leiste berücksichtigt den sicheren Bereich.
+
+```vue
+<UidTabBar fixed>
+  <UidTabBarItem :to="{ name: 'home' }" :active="route.name === 'home'" :badge="3">
+    <template #icon><House :size="20" /></template>Start
+  </UidTabBarItem>
+  <UidTabBarItem :to="{ name: 'search' }">
+    <template #icon><Search :size="20" /></template>Suche
+  </UidTabBarItem>
+</UidTabBar>
+```
+
+Props von `UidTabBar`: `label?` (zugänglicher Name; standardmäßig aus der Locale), `fixed?` (am unteren Fensterrand halten). Props von `UidTabBarItem`: `to?` / `href?` / `as?`, `active?` (setzt `aria-current="page"`), `disabled?`, `badge?` (0 wird nicht angezeigt), `dot?`. CSS-Variablen: `--uid-tab-bar-height`, `--uid-tab-bar-bg`, `--uid-tab-bar-color-active`.
 
 ### `UidProductSwitcher` — Wechsel zwischen Produkten
 
