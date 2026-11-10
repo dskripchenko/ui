@@ -435,6 +435,8 @@ export type { UidSimpleLayoutProps } from './layouts/Simple/index.js'
 
 export { UidProductSwitcher } from './patterns/ProductSwitcher/index.js'
 export type { UidProductSwitcherItem, UidProductSwitcherProps } from './patterns/ProductSwitcher/index.js'
+export { UidObjectCard } from './components/ObjectCard/index.js'
+export type { UidObjectCardProps, UidObjectCardStatus, UidObjectCardTone } from './components/ObjectCard/index.js'
 export { UidReactions } from './components/Reactions/index.js'
 export type { UidReactionsProps, UidReaction } from './components/Reactions/index.js'
 export { UidEmojiPicker, loadEmoji, searchEmoji, withTone } from './components/EmojiPicker/index.js'

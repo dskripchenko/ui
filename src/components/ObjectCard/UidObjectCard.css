@@ -1,0 +1,158 @@
+/* An object of another system in a feed: its code, status, title, a meta line, quick actions, a notice. */
+.uid-object-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-sizing: border-box;
+  max-width: var(--uid-object-card-max-width, 560px);
+  padding: 12px 14px;
+  border: 1px solid var(--uid-color-border);
+  border-radius: var(--uid-radius-lg);
+  background: var(--uid-color-surface);
+  color: var(--uid-color-text-primary);
+}
+
+.uid-object-card--sm {
+  gap: 4px;
+  padding: 8px 12px;
+}
+
+.uid-object-card--invalid {
+  border-color: var(--uid-color-danger-solid);
+}
+
+.uid-object-card__top {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  min-width: 0;
+  font-size: var(--uid-font-size-sm);
+}
+
+.uid-object-card__icon {
+  display: inline-flex;
+  flex: none;
+  color: var(--uid-color-text-secondary);
+}
+
+.uid-object-card__code {
+  flex: none;
+  color: var(--uid-color-text-secondary);
+  font-family: var(--uid-font-family-mono, ui-monospace, monospace);
+  font-size: var(--uid-font-size-xs);
+}
+
+.uid-object-card__status {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+  box-sizing: border-box;
+  height: 22px;
+  padding: 0 8px;
+  border: 1px solid transparent;
+  border-radius: 9999px;
+  background: var(--uid-color-surface-hover);
+  color: var(--uid-color-text-secondary);
+  font-family: inherit;
+  font-size: var(--uid-font-size-xs);
+  font-weight: var(--uid-font-weight-medium);
+  white-space: nowrap;
+}
+
+.uid-object-card__status--info {
+  background: var(--uid-color-info-subtle);
+  color: var(--uid-color-info-text);
+}
+
+.uid-object-card__status--success {
+  background: var(--uid-color-success-subtle);
+  color: var(--uid-color-success-text);
+}
+
+.uid-object-card__status--warning {
+  background: var(--uid-color-warning-subtle);
+  color: var(--uid-color-warning-text);
+}
+
+.uid-object-card__status--danger {
+  background: var(--uid-color-danger-subtle);
+  color: var(--uid-color-danger-text);
+}
+
+.uid-object-card__status--button {
+  cursor: pointer;
+  transition: border-color var(--uid-duration-fast) var(--uid-ease-out);
+}
+
+.uid-object-card__status--button:hover {
+  border-color: currentcolor;
+}
+
+.uid-object-card__status--button:focus-visible {
+  outline: 2px solid var(--uid-color-focus-ring, var(--uid-color-primary));
+  outline-offset: 2px;
+}
+
+.uid-object-card__spin {
+  animation: uid-spin 0.8s linear infinite;
+}
+
+.uid-object-card__link {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+  margin-left: auto;
+  color: var(--uid-color-text-secondary);
+  font-size: var(--uid-font-size-xs);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.uid-object-card__link:hover {
+  color: var(--uid-color-primary-text);
+}
+
+.uid-object-card__title {
+  margin: 0;
+  font-size: var(--uid-font-size-md);
+  font-weight: var(--uid-font-weight-semibold);
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.uid-object-card--sm .uid-object-card__title {
+  font-size: var(--uid-font-size-sm);
+}
+
+.uid-object-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  align-items: center;
+  color: var(--uid-color-text-secondary);
+  font-size: var(--uid-font-size-sm);
+}
+
+.uid-object-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  margin-top: 4px;
+  padding-top: 10px;
+  border-top: 1px solid var(--uid-color-border-subtle, var(--uid-color-border));
+}
+
+.uid-object-card--busy .uid-object-card__actions {
+  opacity: 0.5;
+}
+
+.uid-object-card__notice:empty {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .uid-object-card__spin {
+    animation: none;
+  }
+}
