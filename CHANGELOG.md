@@ -1,5 +1,11 @@
 # @dskripchenko/ui
 
+## 1.48.0
+
+### Minor Changes
+
+- 64bf6c9: UidObjectCard: an object of another system in a feed — its code, status (a pill, or a button that anchors a menu of moves), title, a link to it, a meta line, quick actions under a divider and a notice; `busy` shows a change under way and makes the actions inert, `invalid` marks a refusal.
+
 ## 1.47.2
 
 ### Patch Changes
