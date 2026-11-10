@@ -181,3 +181,32 @@ export const WorkingDays: Story = {
   }),
 }
 
+
+export const Schedule: Story = {
+  render: () => ({
+    components: { UidCalendar },
+    setup: () => {
+      const events = [
+        { id: 1, date: '2026-11-09', time: '10:00', endTime: '10:15', title: 'Daily', variant: 'solid' as const, label: 'Daily, Monday 10:00–10:15, you will come' },
+        { id: 2, date: '2026-11-10', time: '12:00', endTime: '12:30', title: 'One-on-one', variant: 'solid' as const },
+        { id: 3, date: '2026-11-11', time: '15:00', endTime: '16:00', title: 'Review', variant: 'outline' as const },
+        { id: 4, date: '2026-11-12', time: '14:00', endTime: '15:00', title: 'Planning', variant: 'tentative' as const },
+        { id: 5, date: '2026-11-09', time: '16:00', endTime: '16:30', title: 'Sync', variant: 'declined' as const },
+        { id: 6, date: '2026-11-13', time: '10:00', endTime: '10:15', title: 'Daily', variant: 'cancelled' as const },
+      ]
+      const bands = [
+        { id: 's', start: '2026-11-10', end: '2026-11-21', label: 'Sprint 12 · 10–21 Nov', tone: 'info' as const },
+        { id: 'v', start: '2026-11-02', end: '2026-11-17', label: 'Mia Chen · vacation until 17 Nov', tone: 'warning' as const },
+        { id: 'o', start: '2026-11-12', end: '2026-11-12', label: 'Sam Ortiz · away' },
+      ]
+      const dayClass = (iso: string) => ({ 'is-off': ['2026-11-14', '2026-11-15'].includes(iso) })
+      return { events, bands, dayClass }
+    },
+    template: `
+      <div style="width:1100px">
+        <UidCalendar view="week" anchor="2026-11-10" :views="['day', 'week', 'month']" :events="events" :bands="bands" :day-class="dayClass"
+          :start-hour="8" :end-hour="19" :hour-height="54" gutter-label="UTC+3" all-day-label="" :scroll-to-hour="8" />
+        <component is="style">.is-off { background-color: color-mix(in srgb, var(--uid-color-text) 3%, transparent); }</component>
+      </div>`,
+  }),
+}

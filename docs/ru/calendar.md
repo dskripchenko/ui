@@ -48,6 +48,8 @@ function onSlot(s: CalendarSlot): void {
 | `title` | `string` | Название. |
 | `color` | `string` | Любой CSS-цвет. |
 | `editable` | `boolean` | `false` — событие не переносится и не растягивается (ручки нет), даже если календарь `editable`; по клику оно по-прежнему открывается. `true` или не задано — как у календаря. |
+| `variant` | `CalendarEventVariant` | Как рисуется — формой, а не только цветом: `solid` (заливка), `tentative` (штриховка, пунктирный край), `declined` (приглушено, зачёркнуто), `outline` (только контур), `cancelled` (пунктир, зачёркнуто). Не задано — обычный вид. |
+| `label` | `string` | Имя для чтения с экрана, например «Дейли, вторник 10:00–10:15, вы придёте»; не задано — только название. |
 
 ## Поведение
 
@@ -77,10 +79,19 @@ function onSlot(s: CalendarSlot): void {
 | `todayLabel` | `string` | из локали | Подпись кнопки «Сегодня». |
 | `hourHeight` | `number` | `48` | Пикселей на час в сетке дня и недели. |
 | `scrollToHour` | `number` | `8` | К какому часу прокручивается сетка дня и недели. |
-| `dayClass` | `(iso: string) => CalendarDayClass` | — | Классы ячейки дня в сетке месяца по её `YYYY-MM-DD` (всё, что принимает `:class`): выходные, праздники, переносы. |
+| `dayClass` | `(iso: string) => CalendarDayClass` | — | Классы дня по его `YYYY-MM-DD` (всё, что принимает `:class`): выходные, праздники, переносы — на ячейке месяца, а в сетке дня и недели — на колонке и её шапке. |
 | `todayButton` | `boolean` | `true` | Показывать кнопку «Сегодня» между стрелками. |
+| `header` | `boolean` | `true` | Показывать встроенную шапку. Выключается, когда хозяин рисует свою панель и ведёт календарь через `go(±1)`, `goToday()`, `setView(view)`. |
+| `startHour`, `endHour` | `number` | `0`, `24` | Какие часы показывает сетка дня и недели; события за пределами обрезаются. |
+| `gutterLabel` | `string` | `''` | Угол над часами, например часовой пояс. |
+| `allDayLabel` | `string` | из локали | Подпись строки «весь день»; `''` — без подписи. |
+| `bands` | `CalendarBand[]` | `[]` | Полосы на целые дни — см. ниже. |
 
-Слот `title` (`{ title, view, range }`) заменяет текст заголовка; стрелки и переключатель видов остаются.
+Слоты: `title` (`{ title, view, range }`) заменяет текст заголовка; `event` (`{ event, view, short }`) заменяет содержимое события — `short` истинно у блоков в одну строку (короче 36 px) и у чипов; `band` (`{ band }`) — содержимое полосы над сеткой; `day-extra` (`{ iso }`) — рядом с числом в ячейке месяца, например метка праздника.
+
+## Полосы
+
+`bands` — полосы на целые дни: спринт, отсутствие, период. Каждая — `{ id?, start, end, label, tone? }`: `start` и `end` в `YYYY-MM-DD`, `end` включительно; `tone` — `neutral` (по умолчанию), `info`, `success`, `warning` или `danger`. Над сеткой дня и недели полоса тянется через свои колонки; пересекающиеся раскладываются по дорожкам. В месяце полоса — строка 16 px в каждой своей ячейке с подписью в начале и по понедельникам; дорожка держится всю неделю. `bandLanes(bands)` даёт дорожки для своей раскладки.
 
 `v-model` — выбранная дата, `v-model:view` — вид, `v-model:anchor` — дата, вокруг которой строится вид.
 
@@ -88,14 +99,15 @@ function onSlot(s: CalendarSlot): void {
 
 | Событие | Payload | |
 |---|---|---|
-| `event-click` | `CalendarEvent` | Клик по событию. |
+| `event-click` | `CalendarEvent`, `HTMLElement` | Клик по событию или Enter на нём; его элемент — чтобы привязать поповер. |
+| `event-hover` | `CalendarEvent \| null`, `HTMLElement \| null` | Указатель или фокус пришёл на событие или ушёл (`null`) — для предпросмотра. |
 | `event-move` | `CalendarEventMove` | `{ event, date, endDate?, time?, endTime? }`: исходное событие и куда оно переходит. Перенос даёт новый `date` (плюс `endDate` у многодневного, `time`/`endTime` у события со временем); растягивание в сетке времени — новый `endTime`; растягивание в сетке месяца или в строке «весь день» — новый `endDate`. |
 | `slot-click` | `CalendarSlot` | `{ date, time? }`: клик по пустому месту (при `selectable`). |
 | `date-click` | `string` | Выбран день. |
 | `change` | `string \| null` | Выбранная дата. |
 | `range` | `CalendarRange` | `{ view, start, end }`: изменились дни на экране — загрузите для них события. |
 
-Типы: `UidCalendarProps`, `CalendarEvent`, `CalendarEventMove`, `CalendarSlot`, `CalendarRange`, `CalendarView`.
+Типы: `UidCalendarProps`, `CalendarEvent`, `CalendarEventVariant`, `CalendarBand`, `CalendarEventMove`, `CalendarSlot`, `CalendarRange`, `CalendarView`.
 
 ## Тексты
 

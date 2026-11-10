@@ -48,6 +48,8 @@ function onSlot(s: CalendarSlot): void {
 | `title` | `string` | Der Titel. |
 | `color` | `string` | Beliebige CSS-Farbe. |
 | `editable` | `boolean` | `false` — der Termin lässt sich weder verschieben noch in der Länge ändern (kein Griff), auch wenn der Kalender `editable` ist; per Klick öffnet er sich weiterhin. `true` oder fehlend — wie der Kalender. |
+| `variant` | `CalendarEventVariant` | Wie er gezeichnet wird — durch Form, nicht nur Farbe: `solid` (gefüllt), `tentative` (schraffiert, gestrichelter Rand), `declined` (gedämpft, durchgestrichen), `outline` (nur Umriss), `cancelled` (gestrichelt, durchgestrichen). Fehlend — normales Aussehen. |
+| `label` | `string` | Der zugängliche Name, z. B. „Daily, Dienstag 10:00–10:15, Sie kommen“; fehlend — nur der Titel. |
 
 ## Verhalten
 
@@ -77,10 +79,19 @@ Ein Klick auf einen Tag in der Monatsansicht wählt ihn aus: `update:modelValue`
 | `todayLabel` | `string` | Locale | Die Beschriftung der Heute-Schaltfläche. |
 | `hourHeight` | `number` | `48` | Pixel pro Stunde im Tages- und Wochenraster. |
 | `scrollToHour` | `number` | `8` | Die Stunde, zu der das Tages- und Wochenraster scrollt. |
-| `dayClass` | `(iso: string) => CalendarDayClass` | — | Klassen für eine Tageszelle des Monatsrasters nach ihrem `YYYY-MM-DD` (alles, was `:class` annimmt): Wochenenden, Feiertage, freie Tage. |
+| `dayClass` | `(iso: string) => CalendarDayClass` | — | Klassen für einen Tag nach seinem `YYYY-MM-DD` (alles, was `:class` annimmt): Wochenenden, Feiertage, freie Tage — an der Monatszelle und im Tages- und Wochenraster an der Spalte und ihrem Kopf. |
 | `todayButton` | `boolean` | `true` | Die Heute-Schaltfläche zwischen den Pfeilen anzeigen. |
+| `header` | `boolean` | `true` | Den eingebauten Kopf zeigen. Aus, wenn der Host eine eigene Leiste zeichnet und den Kalender über `go(±1)`, `goToday()`, `setView(view)` steuert. |
+| `startHour`, `endHour` | `number` | `0`, `24` | Die Stunden des Tages- und Wochenrasters; Termine außerhalb werden abgeschnitten. |
+| `gutterLabel` | `string` | `''` | Die Ecke über den Stunden, z. B. die Zeitzone. |
+| `allDayLabel` | `string` | Locale | Die Beschriftung der Ganztagszeile; `''` — keine. |
+| `bands` | `CalendarBand[]` | `[]` | Balken über ganze Tage — siehe unten. |
 
-Der Slot `title` (`{ title, view, range }`) ersetzt den Text des Kopftitels; Pfeile und Ansichtsumschalter bleiben.
+Slots: `title` (`{ title, view, range }`) ersetzt den Text des Titels; `event` (`{ event, view, short }`) ersetzt, was ein Termin zeigt — `short` ist wahr bei einzeiligen Blöcken (kürzer als 36 px) und bei Chips; `band` (`{ band }`) — der Inhalt eines Balkens über dem Raster; `day-extra` (`{ iso }`) — neben dem Datum einer Monatszelle, z. B. ein Feiertags-Tag.
+
+## Balken
+
+`bands` sind Balken über ganze Tage: ein Sprint, eine Abwesenheit, ein Zeitraum. Jeder ist `{ id?, start, end, label, tone? }` — `start` und `end` als `YYYY-MM-DD`, `end` inklusive; `tone` ist `neutral` (Standard), `info`, `success`, `warning` oder `danger`. Über dem Tages- und Wochenraster spannt ein Balken seine Spalten; überlappende kommen in Bahnen. Im Monat ist ein Balken ein 16-px-Streifen in jeder seiner Zellen, beschriftet am Anfang und montags; die Bahn bleibt die ganze Woche. `bandLanes(bands)` liefert die Bahnen für ein eigenes Layout.
 
 `v-model` ist das gewählte Datum, `v-model:view` die Ansicht, `v-model:anchor` das Datum, um das die Ansicht aufgebaut wird.
 
@@ -88,14 +99,15 @@ Der Slot `title` (`{ title, view, range }`) ersetzt den Text des Kopftitels; Pfe
 
 | Event | Payload | |
 |---|---|---|
-| `event-click` | `CalendarEvent` | Auf einen Termin wurde geklickt. |
+| `event-click` | `CalendarEvent`, `HTMLElement` | Ein Termin wurde angeklickt oder mit Enter geöffnet; sein Element, um ein Popover anzuheften. |
+| `event-hover` | `CalendarEvent \| null`, `HTMLElement \| null` | Zeiger oder Fokus kam zu einem Termin oder verließ ihn (`null`) — für eine Vorschau. |
 | `event-move` | `CalendarEventMove` | `{ event, date, endDate?, time?, endTime? }`: der ursprüngliche Termin und wohin er geht. Ein Verschieben liefert das neue `date` (plus `endDate` bei mehrtägigen, `time`/`endTime` bei Terminen mit Uhrzeit); eine Längenänderung im Zeitraster die neue `endTime`; eine Längenänderung im Monatsraster oder in der Ganztagszeile das neue `endDate`. |
 | `slot-click` | `CalendarSlot` | `{ date, time? }`: auf eine leere Stelle wurde geklickt (mit `selectable`). |
 | `date-click` | `string` | Ein Tag wurde gewählt. |
 | `change` | `string \| null` | Das gewählte Datum. |
 | `range` | `CalendarRange` | `{ view, start, end }`: die sichtbaren Tage haben sich geändert — Termine dafür laden. |
 
-Typen: `UidCalendarProps`, `CalendarEvent`, `CalendarEventMove`, `CalendarSlot`, `CalendarRange`, `CalendarView`.
+Typen: `UidCalendarProps`, `CalendarEvent`, `CalendarEventVariant`, `CalendarBand`, `CalendarEventMove`, `CalendarSlot`, `CalendarRange`, `CalendarView`.
 
 ## Texte
 

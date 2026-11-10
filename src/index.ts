@@ -280,7 +280,8 @@ export { UidCascader } from './components/Cascader/index.js'
 export type { UidCascaderProps, CascaderOption, CascaderValue } from './components/Cascader/index.js'
 
 export { UidCalendar } from './components/Calendar/index.js'
-export type { UidCalendarProps, CalendarEvent, CalendarEventMove, CalendarSlot, CalendarRange, CalendarView, CalendarDayClass } from './components/Calendar/index.js'
+export type { UidCalendarProps, CalendarEvent, CalendarEventMove, CalendarEventVariant, CalendarBand, CalendarSlot, CalendarRange, CalendarView, CalendarDayClass } from './components/Calendar/index.js'
+export { bandLanes } from './components/Calendar/index.js'
 
 export {
   UidKanban,
@@ -435,6 +436,9 @@ export type { UidSimpleLayoutProps } from './layouts/Simple/index.js'
 
 export { UidProductSwitcher } from './patterns/ProductSwitcher/index.js'
 export type { UidProductSwitcherItem, UidProductSwitcherProps } from './patterns/ProductSwitcher/index.js'
+export { UidBusyStrip, firstFree } from './components/BusyStrip/index.js'
+export type { UidBusyStripProps, BusyRow, BusySegment, BusySelection, FirstFreeOptions } from './components/BusyStrip/index.js'
+
 export { UidObjectCard } from './components/ObjectCard/index.js'
 export type { UidObjectCardProps, UidObjectCardStatus, UidObjectCardTone } from './components/ObjectCard/index.js'
 export { UidReactions } from './components/Reactions/index.js'

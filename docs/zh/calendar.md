@@ -48,6 +48,8 @@ function onSlot(s: CalendarSlot): void {
 | `title` | `string` | 标题。 |
 | `color` | `string` | 任意 CSS 颜色。 |
 | `editable` | `boolean` | `false` —— 即使日历是 `editable`，该事件也不能拖动或调整长度（没有手柄）；点击仍可打开它。`true` 或省略 —— 跟随日历。 |
+| `variant` | `CalendarEventVariant` | 绘制方式——靠形状而不仅是颜色：`solid`（填充）、`tentative`（斜线、虚线边）、`declined`（淡化、删除线）、`outline`（仅轮廓）、`cancelled`（虚线、删除线）。省略——默认外观。 |
+| `label` | `string` | 读屏用的名称，例如“Daily，周二 10:00–10:15，你会参加”；省略——仅标题。 |
 
 ## 行为
 
@@ -77,10 +79,19 @@ function onSlot(s: CalendarSlot): void {
 | `todayLabel` | `string` | 来自语言包 | “今天”按钮的文字。 |
 | `hourHeight` | `number` | `48` | 日视图和周视图网格中每小时的像素数。 |
 | `scrollToHour` | `number` | `8` | 日视图和周视图网格滚动到的小时。 |
-| `dayClass` | `(iso: string) => CalendarDayClass` | — | 按 `YYYY-MM-DD` 为月视图的日单元格添加类（`:class` 接受的任意值）：周末、节假日、调休。 |
+| `dayClass` | `(iso: string) => CalendarDayClass` | — | 按 `YYYY-MM-DD` 为某天添加类（`:class` 接受的任意值）：周末、节假日、调休——作用于月视图单元格，以及日/周网格中的列和列头。 |
 | `todayButton` | `boolean` | `true` | 在箭头之间显示“今天”按钮。 |
+| `header` | `boolean` | `true` | 显示内置标题栏。宿主自绘工具栏并通过 `go(±1)`、`goToday()`、`setView(view)` 控制日历时关闭。 |
+| `startHour`、`endHour` | `number` | `0`、`24` | 日/周网格显示的小时；范围外的事件被截断。 |
+| `gutterLabel` | `string` | `''` | 小时列上方的角落，例如时区。 |
+| `allDayLabel` | `string` | 语言包 | “全天”行的标题；`''` —— 无。 |
+| `bands` | `CalendarBand[]` | `[]` | 跨整天的条带——见下文。 |
 
-插槽 `title`（`{ title, view, range }`）替换标题文本；箭头和视图切换保留。
+插槽：`title`（`{ title, view, range }`）替换标题文本；`event`（`{ event, view, short }`）替换事件显示的内容——单行块（低于 36 px）和小标签的 `short` 为真；`band`（`{ band }`）——网格上方条带的内容；`day-extra`（`{ iso }`）——月视图单元格中日期旁边，例如节假日标记。
+
+## 条带
+
+`bands` 是跨整天的条带：冲刺、缺勤、时段。每条为 `{ id?, start, end, label, tone? }`——`start` 和 `end` 为 `YYYY-MM-DD`，`end` 含当天；`tone` 为 `neutral`（默认）、`info`、`success`、`warning` 或 `danger`。在日/周网格上方，条带横跨其所在列，重叠的条带分道排列。在月视图中，条带是其每个单元格中 16 px 的一行，在起始日和每周一标注；同一条带整周保持同一车道。`bandLanes(bands)` 可为自定义布局计算车道。
 
 `v-model` 是选中的日期，`v-model:view` 是视图，`v-model:anchor` 是构建视图所围绕的日期。
 
@@ -88,14 +99,15 @@ function onSlot(s: CalendarSlot): void {
 
 | 事件 | 载荷 | |
 |---|---|---|
-| `event-click` | `CalendarEvent` | 点击了某个事件。 |
+| `event-click` | `CalendarEvent`、`HTMLElement` | 点击事件或在其上按 Enter；其元素，用于定位弹出层。 |
+| `event-hover` | `CalendarEvent \| null`、`HTMLElement \| null` | 指针或焦点进入事件，或离开（`null`）——用于预览。 |
 | `event-move` | `CalendarEventMove` | `{ event, date, endDate?, time?, endTime? }`：原始事件及其去向。移动给出新的 `date`（多天事件另有 `endDate`，带时间的事件另有 `time`/`endTime`）；在时间网格中调整长度给出新的 `endTime`；在月视图网格或全天行中调整长度给出新的 `endDate`。 |
 | `slot-click` | `CalendarSlot` | `{ date, time? }`：点击了空白位置（需 `selectable`）。 |
 | `date-click` | `string` | 选中了某天。 |
 | `change` | `string \| null` | 选中的日期。 |
 | `range` | `CalendarRange` | `{ view, start, end }`：屏幕上的日期变化了 —— 为这些日期加载事件。 |
 
-类型：`UidCalendarProps`、`CalendarEvent`、`CalendarEventMove`、`CalendarSlot`、`CalendarRange`、`CalendarView`。
+类型：`UidCalendarProps`、`CalendarEvent`、`CalendarEventVariant`、`CalendarBand`、`CalendarEventMove`、`CalendarSlot`、`CalendarRange`、`CalendarView`。
 
 ## 文本
 

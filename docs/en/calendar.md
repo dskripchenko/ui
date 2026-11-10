@@ -48,6 +48,8 @@ function onSlot(s: CalendarSlot): void {
 | `title` | `string` | The title. |
 | `color` | `string` | Any CSS colour. |
 | `editable` | `boolean` | `false` — the event is neither draggable nor resizable (no handle) even when the calendar is `editable`; it still opens on click. `true` or omitted — it follows the calendar. |
+| `variant` | `CalendarEventVariant` | How it is drawn, by shape as well as colour: `solid` (filled), `tentative` (hatched, dashed edge), `declined` (muted, struck through), `outline` (outline only), `cancelled` (dashed, struck through). Omitted — the default look. |
+| `label` | `string` | The accessible name, e.g. "Daily, Tuesday 10:00–10:15, you will come"; omitted — none beyond the title. |
 
 ## Behaviour
 
@@ -77,10 +79,19 @@ A click on a day in the month view selects it: `update:modelValue`, `date-click`
 | `todayLabel` | `string` | locale | The caption of the Today button. |
 | `hourHeight` | `number` | `48` | Pixels per hour in the day and week grid. |
 | `scrollToHour` | `number` | `8` | The hour the day and week grid scrolls to. |
-| `dayClass` | `(iso: string) => CalendarDayClass` | — | Classes for a day cell of the month grid by its `YYYY-MM-DD` (anything `:class` takes): weekends, holidays, days off. |
+| `dayClass` | `(iso: string) => CalendarDayClass` | — | Classes for a day by its `YYYY-MM-DD` (anything `:class` takes): weekends, holidays, days off — on the month cell, and on the column and its head in the day and week grid. |
 | `todayButton` | `boolean` | `true` | Show the Today button between the arrows. |
+| `header` | `boolean` | `true` | Show the built-in header. Off when the host draws its own toolbar and drives the calendar through the exposed `go(±1)`, `goToday()`, `setView(view)`. |
+| `startHour`, `endHour` | `number` | `0`, `24` | The hours the day and week grid shows; events outside are cut to them. |
+| `gutterLabel` | `string` | `''` | The corner over the hours, e.g. the time zone. |
+| `allDayLabel` | `string` | locale | The caption of the all-day row; `''` — none. |
+| `bands` | `CalendarBand[]` | `[]` | Bars across whole days — see below. |
 
-Slot `title` (`{ title, view, range }`) replaces the text of the header's title; the arrows and the view switcher stay.
+Slots: `title` (`{ title, view, range }`) replaces the text of the header's title; `event` (`{ event, view, short }`) replaces what an event shows — `short` is true for one-line blocks (shorter than 36 px) and for chips; `band` (`{ band }`) — the content of a bar over the time grid; `day-extra` (`{ iso }`) — next to the date in a month cell, e.g. a holiday tag.
+
+## Bands
+
+`bands` are bars across whole days: a sprint, an absence, a period. Each is `{ id?, start, end, label, tone? }` — `start` and `end` are `YYYY-MM-DD`, `end` inclusive; `tone` is `neutral` (default), `info`, `success`, `warning` or `danger`. Over the day and week grid a bar spans its columns; overlapping bars go into lanes. In the month a bar is a 16 px strip in each of its cells, labelled where it starts and on Mondays; a band keeps its lane through the week. `bandLanes(bands)` gives the lanes for a layout of one's own.
 
 `v-model` is the selected date, `v-model:view` the view, `v-model:anchor` the date the view is built around.
 
@@ -88,14 +99,15 @@ Slot `title` (`{ title, view, range }`) replaces the text of the header's title;
 
 | Event | Payload | |
 |---|---|---|
-| `event-click` | `CalendarEvent` | An event was clicked. |
+| `event-click` | `CalendarEvent`, `HTMLElement` | An event was clicked or opened with Enter; its element, to anchor a popover. |
+| `event-hover` | `CalendarEvent \| null`, `HTMLElement \| null` | The pointer or the focus came to an event, or left it (`null`) — for a preview. |
 | `event-move` | `CalendarEventMove` | `{ event, date, endDate?, time?, endTime? }`: the original event and where it goes. A move gives the new `date` (plus `endDate` for a multi-day event, `time`/`endTime` for a timed one); a resize in the time grid gives the new `endTime`; a resize in the month grid or the all-day row gives the new `endDate`. |
 | `slot-click` | `CalendarSlot` | `{ date, time? }`: an empty slot was clicked (with `selectable`). |
 | `date-click` | `string` | A day was selected. |
 | `change` | `string \| null` | The selected date. |
 | `range` | `CalendarRange` | `{ view, start, end }`: the days on screen changed — load the events for them. |
 
-Types: `UidCalendarProps`, `CalendarEvent`, `CalendarEventMove`, `CalendarSlot`, `CalendarRange`, `CalendarView`.
+Types: `UidCalendarProps`, `CalendarEvent`, `CalendarEventVariant`, `CalendarBand`, `CalendarEventMove`, `CalendarSlot`, `CalendarRange`, `CalendarView`.
 
 ## Texts
 
