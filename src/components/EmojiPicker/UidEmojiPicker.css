@@ -1,0 +1,219 @@
+/* The emoji picker: search, category tabs, a grid of 8, a footer with the name and the skin tone. */
+.uid-emoji-picker {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: var(--uid-emoji-picker-width, 352px);
+  height: var(--uid-emoji-picker-height, 420px);
+  max-width: 100%;
+  overflow: hidden;
+  border: 1px solid var(--uid-color-border);
+  border-radius: var(--uid-radius-lg);
+  background: var(--uid-color-surface);
+  color: var(--uid-color-text-primary);
+  box-shadow: var(--uid-shadow-lg);
+  --uid-emoji-cell: 36px;
+}
+
+.uid-emoji-picker--touch {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  --uid-emoji-cell: 42px;
+}
+
+.uid-emoji-picker__search {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin: 10px 10px 0;
+  padding: 0 10px;
+  height: 36px;
+  border: 1px solid var(--uid-color-border);
+  border-radius: var(--uid-radius-md);
+  color: var(--uid-color-text-secondary);
+}
+
+.uid-emoji-picker__search:focus-within {
+  border-color: var(--uid-color-primary-solid);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--uid-color-primary) 15%, transparent);
+}
+
+.uid-emoji-picker__search input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--uid-color-text-primary);
+  font: inherit;
+  font-size: 14px;
+}
+
+.uid-emoji-picker__tabs {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 8px 0;
+  border-bottom: 1px solid var(--uid-color-border);
+}
+
+.uid-emoji-picker__tab {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: var(--uid-color-text-secondary);
+  cursor: pointer;
+  place-items: center;
+}
+
+.uid-emoji-picker__tab:hover {
+  color: var(--uid-color-text-primary);
+}
+
+.uid-emoji-picker__tab--on {
+  border-bottom-color: var(--uid-color-primary-solid);
+  color: var(--uid-color-primary-text);
+}
+
+.uid-emoji-picker__body {
+  flex: 1;
+  min-height: 0;
+  padding: 4px 8px 8px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.uid-emoji-picker__section {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 300px;
+}
+
+.uid-emoji-picker__title {
+  margin: 0;
+  padding: 10px 4px 4px;
+  color: var(--uid-color-text-secondary);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.uid-emoji-picker__grid {
+  display: grid;
+  grid-template-columns: repeat(8, var(--uid-emoji-cell));
+  justify-content: space-between;
+}
+
+.uid-emoji-picker__cell {
+  display: grid;
+  width: var(--uid-emoji-cell);
+  height: var(--uid-emoji-cell);
+  border: 1px solid transparent;
+  border-radius: var(--uid-radius-md);
+  background: none;
+  font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+  font-size: calc(var(--uid-emoji-cell) * 0.6);
+  line-height: 1;
+  cursor: pointer;
+  place-items: center;
+}
+
+.uid-emoji-picker__cell:hover {
+  background: var(--uid-color-surface-hover);
+}
+
+.uid-emoji-picker__cell--active {
+  border-color: var(--uid-color-primary-solid);
+  background: var(--uid-color-primary-subtle, color-mix(in srgb, var(--uid-color-primary) 10%, transparent));
+}
+
+.uid-emoji-picker__note {
+  margin: 0;
+  padding: 32px 8px;
+  color: var(--uid-color-text-secondary);
+  font-size: 13px;
+  text-align: center;
+}
+
+.uid-emoji-picker__foot {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  min-height: 52px;
+  padding: 6px 10px;
+  border-top: 1px solid var(--uid-color-border);
+}
+
+.uid-emoji-picker__preview {
+  width: 28px;
+  font-size: 24px;
+  line-height: 1;
+  text-align: center;
+}
+
+.uid-emoji-picker__meta {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.uid-emoji-picker__name {
+  overflow: hidden;
+  font-size: 13px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.uid-emoji-picker__hint {
+  color: var(--uid-color-text-secondary);
+  font-size: 11px;
+}
+
+.uid-emoji-picker__tone {
+  position: relative;
+}
+
+.uid-emoji-picker__tone-button,
+.uid-emoji-picker__tone-option {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--uid-color-border);
+  border-radius: var(--uid-radius-md);
+  background: var(--uid-color-surface);
+  font-size: 18px;
+  cursor: pointer;
+  place-items: center;
+}
+
+.uid-emoji-picker__tones {
+  position: absolute;
+  right: 0;
+  bottom: 38px;
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--uid-color-border);
+  border-radius: var(--uid-radius-md);
+  background: var(--uid-color-surface);
+  box-shadow: var(--uid-shadow-md);
+}
+
+.uid-emoji-picker__tone-option[aria-checked='true'] {
+  border-color: var(--uid-color-primary-solid);
+}
+
+.uid-emoji-picker__tab:focus-visible,
+.uid-emoji-picker__cell:focus-visible,
+.uid-emoji-picker__tone-button:focus-visible,
+.uid-emoji-picker__tone-option:focus-visible {
+  outline: 2px solid var(--uid-color-focus-ring);
+  outline-offset: 1px;
+}

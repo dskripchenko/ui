@@ -75,3 +75,18 @@ export const Group: Story = {
     `,
   }),
 }
+
+export const Presence: Story = {
+  render: () => ({
+    components: { UidAvatar },
+    template: `
+      <div style="display: flex; gap: 16px;">
+        <UidAvatar name="Bob" presence="online" />
+        <UidAvatar name="Ilya Petrov" presence="away" />
+        <UidAvatar name="Maria Sokolova" presence="dnd" />
+        <UidAvatar name="Ada" presence="call" />
+        <UidAvatar name="Eve" presence="offline" />
+      </div>
+    `,
+  }),
+}

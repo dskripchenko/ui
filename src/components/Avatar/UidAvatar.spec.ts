@@ -44,4 +44,18 @@ describe('UidAvatar', () => {
     const wrapper = mount(UidAvatar)
     expect(wrapper.attributes('role')).toBe('img')
   })
+
+  it('присутствие — метка в углу и в подписи', () => {
+    const wrapper = mount(UidAvatar, { props: { name: 'Мария Соколова', presence: 'dnd' } })
+    expect(wrapper.attributes('role')).toBe('img')
+    expect(wrapper.attributes('aria-label')).toBe('Мария Соколова, не беспокоить')
+    expect(wrapper.find('.uid-avatar-presence__dot--dnd').exists()).toBe(true)
+    expect(wrapper.find('.uid-avatar').attributes('aria-hidden')).toBe('true')
+  })
+
+  it('без присутствия — прежняя разметка', () => {
+    const wrapper = mount(UidAvatar, { props: { name: 'Боб' } })
+    expect(wrapper.classes()).toContain('uid-avatar')
+    expect(wrapper.find('.uid-avatar-presence__dot').exists()).toBe(false)
+  })
 })

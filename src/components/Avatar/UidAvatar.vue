@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import './UidAvatar.css'
 import { computed, ref } from 'vue'
+import { useLocale } from '../../composables/useLocale.js'
+
+export type UidPresence = 'online' | 'away' | 'dnd' | 'call' | 'offline'
 
 export interface UidAvatarProps {
   src?: string
@@ -8,6 +11,12 @@ export interface UidAvatarProps {
   name?: string
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
   shape?: 'circle' | 'square'
+  /**
+   * Presence mark in the corner, told by shape and colour together: online —
+   * a filled dot; away — a ring; do not disturb — a dot with a bar; in a
+   * call — a ring with a dot; offline — a grey ring.
+   */
+  presence?: UidPresence
 }
 
 const props = withDefaults(defineProps<UidAvatarProps>(), {
@@ -16,6 +25,14 @@ const props = withDefaults(defineProps<UidAvatarProps>(), {
   name: undefined,
   size: 'md',
   shape: 'circle',
+  presence: undefined,
+})
+
+const uidLocale = useLocale()
+const presenceText = computed(() => (props.presence ? uidLocale.value.avatar.presence[props.presence] : null))
+const label = computed(() => {
+  const base = props.alt ?? props.name
+  return presenceText.value === null ? base : [base, presenceText.value].filter(Boolean).join(', ')
 })
 
 const imgError = ref(false)
@@ -48,6 +65,41 @@ function onError(): void {
 
 <template>
   <span
+    v-if="presence"
+    class="uid-avatar-presence"
+    :class="`uid-avatar-presence--${size}`"
+    role="img"
+    :aria-label="label"
+    :title="label"
+  >
+    <span
+      class="uid-avatar"
+      :class="[`uid-avatar--${size}`, `uid-avatar--${shape}`]"
+      aria-hidden="true"
+    >
+      <img
+        v-if="src && !imgError"
+        :src="src"
+        alt=""
+        class="uid-avatar__img"
+        @error="onError"
+      >
+      <span
+        v-else
+        class="uid-avatar__initials"
+        :style="{ background: bgColor }"
+      >
+        {{ initials }}
+      </span>
+    </span>
+    <span
+      class="uid-avatar-presence__dot"
+      :class="`uid-avatar-presence__dot--${presence}`"
+      aria-hidden="true"
+    />
+  </span>
+  <span
+    v-else
     class="uid-avatar"
     :class="[`uid-avatar--${size}`, `uid-avatar--${shape}`]"
     :title="name"
