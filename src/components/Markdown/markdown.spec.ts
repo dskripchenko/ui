@@ -84,6 +84,20 @@ describe('renderMarkdown — documentation features', () => {
     expect(html).toContain('&lt;script&gt;')
     expect(html).not.toContain('href="javascript')
   })
+
+  it('takes a destination in angle brackets, spaces and all (CommonMark)', () => {
+    const html = renderMarkdown(
+      '[a](<req/b.md>) [b](<my notes/plan.md> "T") ![p](<img/a b.png>) [c](req/c.md)\n\n| x |\n|---|\n| [d](<req/d.md>) |',
+      { linkBase: 'folio://app/r/1/', imageBase: '/m/' },
+    )
+    expect(html).toContain('href="folio://app/r/1/req/b.md"')
+    expect(html).toContain('href="folio://app/r/1/my%20notes/plan.md" title="T"')
+    expect(html).toContain('src="/m/img/a%20b.png"')
+    expect(html).toContain('href="folio://app/r/1/req/c.md"')
+    expect(html).toContain('href="folio://app/r/1/req/d.md"')
+    expect(html).not.toMatch(/%3C|%3E|&lt;req/)
+    expect(renderMarkdown('[x](<javascript:alert(1)>)')).not.toContain('href="javascript')
+  })
 })
 
 describe('splitMarkdown', () => {
