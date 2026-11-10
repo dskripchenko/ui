@@ -112,6 +112,17 @@ const emit = defineEmits<{
   'slot-click': [slot: CalendarSlot]
 }>()
 
+defineSlots<{
+  /** The header's title text. */
+  title?: (props: { title: string; view: CalendarView; range: CalendarRange }) => unknown
+  /** What an event shows: a block of the time grid, a chip of the month or the all-day row. */
+  event?: (props: { event: CalendarEvent; view: CalendarView; short: boolean }) => unknown
+  /** The content of a band over the time grid. */
+  band?: (props: { band: CalendarBand }) => unknown
+  /** Next to the date of a month cell, and at the end of a day head of the time grid. */
+  'day-extra'?: (props: { iso: string }) => unknown
+}>()
+
 const model = defineModel<string | null>({ default: null })
 const view = defineModel<CalendarView>('view', { default: 'month' })
 const anchorModel = defineModel<string | null>('anchor', { default: null })
