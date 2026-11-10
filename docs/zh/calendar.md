@@ -86,8 +86,9 @@ function onSlot(s: CalendarSlot): void {
 | `gutterLabel` | `string` | `''` | 小时列上方的角落，例如时区。 |
 | `allDayLabel` | `string` | 语言包 | “全天”行的标题；`''` —— 无。 |
 | `bands` | `CalendarBand[]` | `[]` | 跨整天的条带——见下文。 |
+| `headInline` | `boolean` | `false` | 日/周网格的日期头排成一行（星期、日期、`day-extra`）；此时日视图显示完整的星期名称。 |
 
-插槽：`title`（`{ title, view, range }`）替换标题文本；`event`（`{ event, view, short }`）替换事件显示的内容——单行块（低于 36 px）和小标签的 `short` 为真；`band`（`{ band }`）——网格上方条带的内容；`day-extra`（`{ iso }`）——月视图单元格中日期旁边，例如节假日标记。
+插槽：`title`（`{ title, view, range }`）替换标题文本；`event`（`{ event, view, short }`）替换事件显示的内容——单行块（低于 36 px）和小标签的 `short` 为真；`band`（`{ band }`）——网格上方条带的内容；`day-extra`（`{ iso }`）——月视图单元格中日期旁边，以及日/周网格日期头的末尾，例如节假日标记。
 
 ## 条带
 

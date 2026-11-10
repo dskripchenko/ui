@@ -74,6 +74,8 @@ export interface UidCalendarProps {
   allDayLabel?: string
   /** Bars across whole days: over the day and week grid, and in the month cells. */
   bands?: CalendarBand[]
+  /** The day heads of the day and week grid in one row — weekday, date, `day-extra` — instead of stacked. */
+  headInline?: boolean
 }
 
 /** What `dayClass` returns: anything Vue's `:class` takes, or nothing. */
@@ -96,6 +98,7 @@ const props = withDefaults(defineProps<UidCalendarProps>(), {
   gutterLabel: '',
   allDayLabel: undefined,
   bands: () => [],
+  headInline: false,
 })
 
 const emit = defineEmits<{
@@ -499,7 +502,7 @@ defineExpose({ go, goToday, setView })
 <template>
   <div
     class="uid-calendar"
-    :class="[`uid-calendar--${view}`, { 'uid-calendar--compact': compact, 'uid-calendar--editable': editable, 'uid-calendar--selectable': isSelectable }]"
+    :class="[`uid-calendar--${view}`, { 'uid-calendar--head-inline': headInline, 'uid-calendar--compact': compact, 'uid-calendar--editable': editable, 'uid-calendar--selectable': isSelectable }]"
   >
     <div
       v-if="header"
@@ -694,8 +697,15 @@ defineExpose({ go, goToday, setView })
           :class="[{ 'uid-calendar__tg-day--today': iso === todayISO }, dayClass?.(iso)]"
           @click="view === 'week' ? openDay(iso) : selectDay(iso)"
         >
-          <span class="uid-calendar__tg-weekday">{{ locale.datePicker.weekdaysShort[(fromISO(iso).getDay() + 6) % 7] }}</span>
+          <span class="uid-calendar__tg-weekday">{{ view === 'day' && headInline ? L.weekdaysLong[(fromISO(iso).getDay() + 6) % 7] : locale.datePicker.weekdaysShort[(fromISO(iso).getDay() + 6) % 7] }}</span>
           <span class="uid-calendar__tg-date">{{ fromISO(iso).getDate() }}</span>
+          <span
+            v-if="$slots['day-extra']"
+            class="uid-calendar__tg-extra"
+          ><slot
+            name="day-extra"
+            :iso="iso"
+          /></span>
         </button>
       </div>
       <div

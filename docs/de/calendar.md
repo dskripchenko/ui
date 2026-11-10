@@ -86,8 +86,9 @@ Ein Klick auf einen Tag in der Monatsansicht wählt ihn aus: `update:modelValue`
 | `gutterLabel` | `string` | `''` | Die Ecke über den Stunden, z. B. die Zeitzone. |
 | `allDayLabel` | `string` | Locale | Die Beschriftung der Ganztagszeile; `''` — keine. |
 | `bands` | `CalendarBand[]` | `[]` | Balken über ganze Tage — siehe unten. |
+| `headInline` | `boolean` | `false` | Tagesköpfe im Tages- und Wochenraster in einer Zeile (Wochentag, Datum, `day-extra`); die Tagesansicht nennt den Wochentag dann ausgeschrieben. |
 
-Slots: `title` (`{ title, view, range }`) ersetzt den Text des Titels; `event` (`{ event, view, short }`) ersetzt, was ein Termin zeigt — `short` ist wahr bei einzeiligen Blöcken (kürzer als 36 px) und bei Chips; `band` (`{ band }`) — der Inhalt eines Balkens über dem Raster; `day-extra` (`{ iso }`) — neben dem Datum einer Monatszelle, z. B. ein Feiertags-Tag.
+Slots: `title` (`{ title, view, range }`) ersetzt den Text des Titels; `event` (`{ event, view, short }`) ersetzt, was ein Termin zeigt — `short` ist wahr bei einzeiligen Blöcken (kürzer als 36 px) und bei Chips; `band` (`{ band }`) — der Inhalt eines Balkens über dem Raster; `day-extra` (`{ iso }`) — neben dem Datum einer Monatszelle und am Ende eines Tageskopfs im Tages- und Wochenraster, z. B. ein Feiertags-Tag.
 
 ## Balken
 

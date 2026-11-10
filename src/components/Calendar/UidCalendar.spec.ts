@@ -414,4 +414,13 @@ describe('UidCalendar', () => {
     expect(wrapper.findAll('.uid-calendar__col.off')).toHaveLength(2)
     expect(wrapper.findAll('.uid-calendar__tg-day.off')).toHaveLength(2)
   })
+
+  it('шапка дня в строку и слот day-extra в шапке недели', () => {
+    const wrapper = mount(UidCalendar, {
+      props: { view: 'week', anchor: '2026-11-10', headInline: true },
+      slots: { 'day-extra': '<template #day-extra="{ iso }"><i v-if="iso === \'2026-11-14\'">day off</i></template>' },
+    })
+    expect(wrapper.classes()).toContain('uid-calendar--head-inline')
+    expect(wrapper.findAll('.uid-calendar__tg-extra i').map((i) => i.text())).toEqual(['day off'])
+  })
 })

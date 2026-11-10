@@ -86,8 +86,9 @@ A click on a day in the month view selects it: `update:modelValue`, `date-click`
 | `gutterLabel` | `string` | `''` | The corner over the hours, e.g. the time zone. |
 | `allDayLabel` | `string` | locale | The caption of the all-day row; `''` — none. |
 | `bands` | `CalendarBand[]` | `[]` | Bars across whole days — see below. |
+| `headInline` | `boolean` | `false` | Day heads of the day and week grid in one row (weekday, date, `day-extra`); the day view then names the weekday in full. |
 
-Slots: `title` (`{ title, view, range }`) replaces the text of the header's title; `event` (`{ event, view, short }`) replaces what an event shows — `short` is true for one-line blocks (shorter than 36 px) and for chips; `band` (`{ band }`) — the content of a bar over the time grid; `day-extra` (`{ iso }`) — next to the date in a month cell, e.g. a holiday tag.
+Slots: `title` (`{ title, view, range }`) replaces the text of the header's title; `event` (`{ event, view, short }`) replaces what an event shows — `short` is true for one-line blocks (shorter than 36 px) and for chips; `band` (`{ band }`) — the content of a bar over the time grid; `day-extra` (`{ iso }`) — next to the date in a month cell and at the end of a day head in the day and week grid, e.g. a holiday tag.
 
 ## Bands
 

@@ -891,3 +891,22 @@
 .uid-calendar__block--cancelled .uid-calendar__block-time {
   text-decoration: line-through;
 }
+
+/* Day heads in one row: weekday, date, then whatever `day-extra` adds at the end. */
+.uid-calendar--head-inline .uid-calendar__tg-day {
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  min-width: 0;
+  height: 52px;
+  padding: 0 10px;
+  overflow: hidden;
+}
+
+.uid-calendar__tg-extra {
+  display: inline-flex;
+  min-width: 0;
+  margin-left: auto;
+  overflow: hidden;
+}
