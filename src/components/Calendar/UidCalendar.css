@@ -911,7 +911,23 @@
   overflow: hidden;
 }
 
+/* Edge to edge in a pane (`bordered: false`). */
+.uid-calendar--flat {
+  border: 0;
+  border-radius: 0;
+}
+
 /* A small month to pick a date from (`mini`). */
+.uid-calendar--mini {
+  --uid-cal-cell-min-h: 26px;
+  border: 0;
+  border-radius: 0;
+}
+
+.uid-calendar--mini .uid-calendar__grid {
+  grid-auto-rows: 26px;
+}
+
 .uid-calendar--mini .uid-calendar__weekdays,
 .uid-calendar--mini .uid-calendar__grid {
   gap: 0;

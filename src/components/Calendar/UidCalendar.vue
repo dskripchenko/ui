@@ -78,6 +78,8 @@ export interface UidCalendarProps {
   headInline?: boolean
   /** A small month to pick a date from: dates only, no events or bands, one-letter weekdays. */
   mini?: boolean
+  /** The outer border and rounding; off when the calendar fills a pane edge to edge. */
+  bordered?: boolean
 }
 
 /** What `dayClass` returns: anything Vue's `:class` takes, or nothing. */
@@ -102,6 +104,7 @@ const props = withDefaults(defineProps<UidCalendarProps>(), {
   bands: () => [],
   headInline: false,
   mini: false,
+  bordered: true,
 })
 
 const emit = defineEmits<{
@@ -516,7 +519,7 @@ defineExpose({ go, goToday, setView })
 <template>
   <div
     class="uid-calendar"
-    :class="[`uid-calendar--${view}`, { 'uid-calendar--mini': mini, 'uid-calendar--head-inline': headInline, 'uid-calendar--compact': compact, 'uid-calendar--editable': editable, 'uid-calendar--selectable': isSelectable }]"
+    :class="[`uid-calendar--${view}`, { 'uid-calendar--mini': mini, 'uid-calendar--flat': !bordered, 'uid-calendar--head-inline': headInline, 'uid-calendar--compact': compact, 'uid-calendar--editable': editable, 'uid-calendar--selectable': isSelectable }]"
   >
     <div
       v-if="header"
