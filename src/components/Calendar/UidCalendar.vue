@@ -5,10 +5,12 @@ import { ChevronLeft, ChevronRight } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
 import { useLocale } from '../../composables/useLocale.js'
 import {
+  type CalendarBand,
   type CalendarEvent,
   type CalendarRange,
   type CalendarView,
   addDays,
+  bandLanes,
   daysBetween,
   eventsOn,
   formatTime,
@@ -26,7 +28,7 @@ import {
   toISO,
 } from './calendarModel'
 
-export type { CalendarEvent, CalendarRange, CalendarView } from './calendarModel'
+export type { CalendarBand, CalendarEvent, CalendarEventVariant, CalendarRange, CalendarView } from './calendarModel'
 
 /** `event-move`: a move gives the new date (and times); a resize gives the new `endTime` (time grid) or inclusive `endDate` (month, all-day row). */
 export interface CalendarEventMove {
@@ -60,6 +62,24 @@ export interface UidCalendarProps {
   dayClass?: (iso: string) => CalendarDayClass
   /** Show the Today button between the arrows. */
   todayButton?: boolean
+  /** Show the built-in header (title, views, arrows); off when the host draws its own toolbar and drives the exposed `go`, `goToday`, `setView`. */
+  header?: boolean
+  /** The first hour of the day and week grid. */
+  startHour?: number
+  /** The hour the day and week grid ends at (not shown as a row). */
+  endHour?: number
+  /** The corner over the hours in the day and week grid, e.g. the time zone. */
+  gutterLabel?: string
+  /** The caption of the all-day row; empty — none. */
+  allDayLabel?: string
+  /** Bars across whole days: over the day and week grid, and in the month cells. */
+  bands?: CalendarBand[]
+  /** The day heads of the day and week grid in one row — weekday, date, `day-extra` — instead of stacked. */
+  headInline?: boolean
+  /** A small month to pick a date from: dates only, no events or bands, one-letter weekdays. */
+  mini?: boolean
+  /** The outer border and rounding; off when the calendar fills a pane edge to edge. */
+  bordered?: boolean
 }
 
 /** What `dayClass` returns: anything Vue's `:class` takes, or nothing. */
@@ -76,15 +96,37 @@ const props = withDefaults(defineProps<UidCalendarProps>(), {
   scrollToHour: 8,
   dayClass: undefined,
   todayButton: true,
+  header: true,
+  startHour: 0,
+  endHour: 24,
+  gutterLabel: '',
+  allDayLabel: undefined,
+  bands: () => [],
+  headInline: false,
+  mini: false,
+  bordered: true,
 })
 
 const emit = defineEmits<{
-  'event-click': [event: CalendarEvent]
+  'event-click': [event: CalendarEvent, element: HTMLElement]
+  /** The pointer or the focus came to an event (its element), or left it (`null`): for a preview popover. */
+  'event-hover': [event: CalendarEvent | null, element: HTMLElement | null]
   'date-click': [iso: string]
   change: [iso: string | null]
   range: [range: CalendarRange]
   'event-move': [move: CalendarEventMove]
   'slot-click': [slot: CalendarSlot]
+}>()
+
+defineSlots<{
+  /** The header's title text. */
+  title?: (props: { title: string; view: CalendarView; range: CalendarRange }) => unknown
+  /** What an event shows: a block of the time grid, a chip of the month or the all-day row. */
+  event?: (props: { event: CalendarEvent; view: CalendarView; short: boolean }) => unknown
+  /** The content of a band over the time grid. */
+  band?: (props: { band: CalendarBand }) => unknown
+  /** Next to the date of a month cell, and at the end of a day head of the time grid. */
+  'day-extra'?: (props: { iso: string }) => unknown
 }>()
 
 const model = defineModel<string | null>({ default: null })
@@ -206,10 +248,19 @@ const origin = computed(() => {
 })
 const real = (e: CalendarEvent): CalendarEvent => origin.value.get(e) ?? e
 
-function onEventClick(e: MouseEvent, evt: CalendarEvent): void {
+function onEventClick(e: MouseEvent | KeyboardEvent, evt: CalendarEvent): void {
   e.stopPropagation()
   if (suppressClick) return
-  emit('event-click', real(evt))
+  emit('event-click', real(evt), e.currentTarget as HTMLElement)
+}
+
+function onEventHover(e: Event | null, evt: CalendarEvent | null): void {
+  if (drag.value?.active) return
+  emit('event-hover', evt === null ? null : real(evt), evt === null || e === null ? null : (e.currentTarget as HTMLElement))
+}
+
+function variantClass(e: CalendarEvent, prefix: string): Record<string, boolean> {
+  return e.variant ? { [`${prefix}--${e.variant}`]: true, [`${prefix}--variant`]: true } : {}
 }
 
 function timeLabel(e: CalendarEvent): string {
@@ -242,6 +293,7 @@ function chipClass(e: CalendarEvent, iso: string): Record<string, boolean> {
     'uid-calendar__event--dragging': !!drag.value?.active && real(e) === drag.value.event,
     'uid-calendar__event--draggable': canEdit(e),
     'uid-calendar__event--resizable': hasEndHandle(e, iso),
+    ...variantClass(e, 'uid-calendar__event'),
   }
 }
 
@@ -250,18 +302,62 @@ const gridDays = computed<string[]>(() => {
   const start = startOfWeek(anchor.value)
   return Array.from({ length: 7 }, (_, i) => addDays(start, i))
 })
-const hours = Array.from({ length: 24 }, (_, h) => h)
+const firstHour = computed(() => Math.max(0, Math.min(23, Math.floor(props.startHour))))
+const lastHour = computed(() => Math.max(firstHour.value + 1, Math.min(24, Math.ceil(props.endHour))))
+const hours = computed(() => Array.from({ length: lastHour.value - firstHour.value }, (_, i) => firstHour.value + i))
+/** The grid's first and last minute of the day. */
+const gridFrom = computed(() => firstHour.value * 60)
+const gridTo = computed(() => lastHour.value * 60)
 const hourPx = computed(() => props.hourHeight)
 
 const allDayRow = computed(() => gridDays.value.map((iso) => eventsOn(shown.value, iso).filter((e) => isAllDay(e) || isMultiDay(e))))
-const blocks = computed(() => gridDays.value.map((iso) => layoutDay(shown.value, iso)))
+const blocks = computed(() => gridDays.value.map((iso) => layoutDay(shown.value, iso)
+  .filter((b) => b.end > gridFrom.value && b.start < gridTo.value)
+  .map((b) => ({ ...b, start: Math.max(b.start, gridFrom.value), end: Math.min(b.end, gridTo.value) }))))
+
+/** Bands over the day and week grid: their columns and lanes in the days shown. */
+const gridBands = computed(() => {
+  const first = gridDays.value[0]
+  const last = gridDays.value[gridDays.value.length - 1]
+  return bandLanes(props.bands.filter((b) => b.end >= first && b.start <= last)).map(({ band, lane }) => ({
+    band,
+    lane,
+    from: Math.max(0, daysBetween(first, band.start)),
+    to: Math.min(gridDays.value.length - 1, daysBetween(first, band.end)),
+  }))
+})
+const gridBandLanes = computed(() => gridBands.value.reduce((n, b) => Math.max(n, b.lane + 1), 0))
+
+/** Bands in the month: the lanes of each week, so a band keeps its height across the week. */
+const monthBands = computed(() => {
+  const weeks: { band: CalendarBand; lane: number }[][] = []
+  for (let w = 0; w < 6; w++) {
+    const first = addDays(range.value.start, w * 7)
+    const last = addDays(first, 6)
+    weeks.push(bandLanes(props.bands.filter((b) => b.end >= first && b.start <= last)))
+  }
+  return weeks
+})
+
+function bandsOnDay(iso: string, week: number): ({ band: CalendarBand; label: boolean; fromPrev: boolean; toNext: boolean } | null)[] {
+  const list = monthBands.value[week] ?? []
+  const lanes = list.reduce((n, b) => Math.max(n, b.lane + 1), 0)
+  const out: ({ band: CalendarBand; label: boolean; fromPrev: boolean; toNext: boolean } | null)[] = Array.from({ length: lanes }, () => null)
+  const monday = fromISO(iso).getDay() === 1
+  for (const { band, lane } of list) {
+    if (band.start <= iso && band.end >= iso) {
+      out[lane] = { band, label: iso === band.start || monday, fromPrev: iso !== band.start && !monday, toNext: iso !== band.end && fromISO(iso).getDay() !== 0 }
+    }
+  }
+  return out
+}
 
 const nowMinutes = ref(new Date().getHours() * 60 + new Date().getMinutes())
 let clock: ReturnType<typeof setInterval> | undefined
 const body = ref<HTMLElement | null>(null)
 
 function scrollGrid(): void {
-  if (body.value) body.value.scrollTop = Math.max(0, props.scrollToHour * hourPx.value - 12)
+  if (body.value) body.value.scrollTop = Math.max(0, (props.scrollToHour - firstHour.value) * hourPx.value - 12)
 }
 watch(view, (v) => {
   if (v === 'day' || v === 'week') nextTick(scrollGrid)
@@ -284,12 +380,12 @@ function snap(min: number, to = 15): number {
 
 function minuteAt(column: HTMLElement, clientY: number): number {
   const rect = column.getBoundingClientRect()
-  return ((clientY - rect.top) / hourPx.value) * 60
+  return ((clientY - rect.top) / hourPx.value) * 60 + gridFrom.value
 }
 
 function onSlotClick(e: MouseEvent, iso: string): void {
   if (!isSelectable.value || suppressClick) return
-  const min = Math.max(0, Math.min(23 * 60 + 30, Math.floor(minuteAt(e.currentTarget as HTMLElement, e.clientY) / 30) * 30))
+  const min = Math.max(gridFrom.value, Math.min(gridTo.value - 30, Math.floor(minuteAt(e.currentTarget as HTMLElement, e.clientY) / 30) * 30))
   emit('slot-click', { date: iso, time: formatTime(min) })
 }
 
@@ -330,7 +426,7 @@ function onDragMove(e: PointerEvent): void {
   const from = minutes(d.event.time) ?? 0
   const to = minutes(d.event.endTime) ?? from + 60
   if (d.mode === 'resize') {
-    const end = Math.max(from + 15, Math.min(24 * 60, snap(column ? minuteAt(column, e.clientY) : to)))
+    const end = Math.max(from + 15, Math.min(gridTo.value, snap(column ? minuteAt(column, e.clientY) : to)))
     d.preview = { date: d.event.date, time: d.event.time, endTime: formatTime(end) }
     return
   }
@@ -338,7 +434,7 @@ function onDragMove(e: PointerEvent): void {
     d.preview = moved(d.event, iso)
     return
   }
-  const start = Math.max(0, Math.min(24 * 60 - (to - from), snap(minuteAt(column, e.clientY) - d.grab)))
+  const start = Math.max(gridFrom.value, Math.min(gridTo.value - (to - from), snap(minuteAt(column, e.clientY) - d.grab)))
   d.preview = moved(d.event, iso, formatTime(start))
 }
 
@@ -368,7 +464,7 @@ function stopDrag(): void {
 
 function blockStyle(b: { start: number; end: number; col: number; cols: number; event: CalendarEvent }): Record<string, string> {
   const style: Record<string, string> = {
-    top: `${(b.start / 60) * hourPx.value}px`,
+    top: `${((b.start - gridFrom.value) / 60) * hourPx.value}px`,
     height: `${Math.max(18, ((b.end - b.start) / 60) * hourPx.value - 2)}px`,
     left: `calc(${(b.col / b.cols) * 100}% + 2px)`,
     width: `calc(${100 / b.cols}% - 4px)`,
@@ -423,9 +519,12 @@ defineExpose({ go, goToday, setView })
 <template>
   <div
     class="uid-calendar"
-    :class="[`uid-calendar--${view}`, { 'uid-calendar--compact': compact, 'uid-calendar--editable': editable, 'uid-calendar--selectable': isSelectable }]"
+    :class="[`uid-calendar--${view}`, { 'uid-calendar--mini': mini, 'uid-calendar--flat': !bordered, 'uid-calendar--head-inline': headInline, 'uid-calendar--compact': compact, 'uid-calendar--editable': editable, 'uid-calendar--selectable': isSelectable }]"
   >
-    <div class="uid-calendar__header">
+    <div
+      v-if="header"
+      class="uid-calendar__header"
+    >
       <span class="uid-calendar__title"><slot
         name="title"
         :title="title"
@@ -491,7 +590,7 @@ defineExpose({ go, goToday, setView })
           v-for="wd in locale.datePicker.weekdaysShort"
           :key="wd"
           class="uid-calendar__weekday"
-        >{{ wd }}</span>
+        >{{ mini ? wd.slice(0, 1) : wd }}</span>
       </div>
       <div class="uid-calendar__grid">
         <div
@@ -514,8 +613,45 @@ defineExpose({ go, goToday, setView })
           @keydown.enter.prevent="selectDay(day.iso)"
           @keydown.space.prevent="selectDay(day.iso)"
         >
-          <span class="uid-calendar__date">{{ day.date.getDate() }}</span>
-          <div class="uid-calendar__events">
+          <span
+            v-if="$slots['day-extra']"
+            class="uid-calendar__day-head"
+          >
+            <span class="uid-calendar__date">{{ day.date.getDate() }}</span>
+            <slot
+              name="day-extra"
+              :iso="day.iso"
+            />
+          </span>
+          <span
+            v-else
+            class="uid-calendar__date"
+          >{{ day.date.getDate() }}</span>
+          <div
+            v-if="bands.length && !mini"
+            class="uid-calendar__day-bands"
+          >
+            <template
+              v-for="(piece, k) in bandsOnDay(day.iso, Math.floor(days.indexOf(day) / 7))"
+              :key="k"
+            >
+              <span
+                v-if="piece"
+                class="uid-calendar__band"
+                :class="[`uid-calendar__band--${piece.band.tone ?? 'neutral'}`, { 'uid-calendar__band--from-prev': piece.fromPrev, 'uid-calendar__band--to-next': piece.toNext }]"
+                :title="piece.band.label"
+              >{{ piece.label ? piece.band.label : '\u00a0' }}</span>
+              <span
+                v-else
+                class="uid-calendar__band uid-calendar__band--gap"
+                aria-hidden="true"
+              />
+            </template>
+          </div>
+          <div
+            v-if="!mini"
+            class="uid-calendar__events"
+          >
             <button
               v-for="(evt, i) in day.events.slice(0, maxEventsPerDay)"
               :key="evt.id ?? `${day.iso}-${i}`"
@@ -524,14 +660,26 @@ defineExpose({ go, goToday, setView })
               :class="chipClass(evt, day.iso)"
               :style="evt.color ? { '--uid-event-color': evt.color } : undefined"
               :title="timeLabel(evt) ? `${timeLabel(evt)} ${evt.title}` : evt.title"
+              :aria-label="evt.label"
               @click="onEventClick($event, evt)"
               @pointerdown="startDrag($event, evt, 'move', false)"
+              @mouseenter="onEventHover($event, evt)"
+              @mouseleave="onEventHover(null, null)"
+              @focus="onEventHover($event, evt)"
+              @blur="onEventHover(null, null)"
             >
-              <span
-                v-if="!isAllDay(evt) && day.iso === evt.date"
-                class="uid-calendar__event-time"
-              >{{ evt.time }}</span>
-              <span class="uid-calendar__event-label">{{ !isMultiDay(evt) || day.iso === evt.date || day.date.getDay() === 1 ? evt.title : '\u00a0' }}</span>
+              <slot
+                name="event"
+                :event="real(evt)"
+                :view="'month'"
+                :short="true"
+              >
+                <span
+                  v-if="!isAllDay(evt) && day.iso === evt.date"
+                  class="uid-calendar__event-time"
+                >{{ evt.time }}</span>
+                <span class="uid-calendar__event-label">{{ !isMultiDay(evt) || day.iso === evt.date || day.date.getDay() === 1 ? evt.title : '\u00a0' }}</span>
+              </slot>
               <span
                 v-if="hasEndHandle(evt, day.iso)"
                 class="uid-calendar__resize uid-calendar__resize--end"
@@ -560,25 +708,51 @@ defineExpose({ go, goToday, setView })
       :style="{ '--uid-cal-hour-h': `${hourPx}px` }"
     >
       <div class="uid-calendar__tg-head">
-        <span class="uid-calendar__gutter" />
+        <span class="uid-calendar__gutter uid-calendar__gutter-label uid-calendar__gutter-corner">{{ gutterLabel }}</span>
         <button
           v-for="iso in gridDays"
           :key="iso"
           type="button"
           class="uid-calendar__tg-day"
-          :class="{ 'uid-calendar__tg-day--today': iso === todayISO }"
+          :class="[{ 'uid-calendar__tg-day--today': iso === todayISO }, dayClass?.(iso)]"
           @click="view === 'week' ? openDay(iso) : selectDay(iso)"
         >
-          <span class="uid-calendar__tg-weekday">{{ locale.datePicker.weekdaysShort[(fromISO(iso).getDay() + 6) % 7] }}</span>
+          <span class="uid-calendar__tg-weekday">{{ view === 'day' && headInline ? L.weekdaysLong[(fromISO(iso).getDay() + 6) % 7] : locale.datePicker.weekdaysShort[(fromISO(iso).getDay() + 6) % 7] }}</span>
           <span class="uid-calendar__tg-date">{{ fromISO(iso).getDate() }}</span>
+          <span
+            v-if="$slots['day-extra']"
+            class="uid-calendar__tg-extra"
+          ><slot
+            name="day-extra"
+            :iso="iso"
+          /></span>
         </button>
       </div>
-      <div class="uid-calendar__allday">
-        <span class="uid-calendar__gutter uid-calendar__gutter-label">{{ L.allDay }}</span>
+      <div
+        class="uid-calendar__allday"
+        :style="{ '--uid-cal-band-lanes': gridBandLanes }"
+      >
+        <span
+          class="uid-calendar__gutter uid-calendar__gutter-label"
+          :style="{ gridRow: `1 / ${gridBandLanes + 2}` }"
+        >{{ allDayLabel ?? L.allDay }}</span>
+        <span
+          v-for="b in gridBands"
+          :key="b.band.id ?? `${b.band.start}-${b.band.label}`"
+          class="uid-calendar__band uid-calendar__band--grid"
+          :class="[`uid-calendar__band--${b.band.tone ?? 'neutral'}`, { 'uid-calendar__band--from-prev': b.band.start < gridDays[0], 'uid-calendar__band--to-next': b.band.end > gridDays[gridDays.length - 1] }]"
+          :style="{ gridColumn: `${b.from + 2} / ${b.to + 3}`, gridRow: b.lane + 1 }"
+          :title="b.band.label"
+        ><slot
+          name="band"
+          :band="b.band"
+        >{{ b.band.label }}</slot></span>
         <div
           v-for="(list, i) in allDayRow"
           :key="gridDays[i]"
           class="uid-calendar__allday-cell"
+          :class="dayClass?.(gridDays[i])"
+          :style="{ gridRow: gridBandLanes + 1, gridColumn: i + 2 }"
           :data-date="gridDays[i]"
           @click="onAllDayClick(gridDays[i])"
         >
@@ -590,10 +764,22 @@ defineExpose({ go, goToday, setView })
             :class="chipClass(evt, gridDays[i])"
             :style="evt.color ? { '--uid-event-color': evt.color } : undefined"
             :title="evt.title"
+            :aria-label="evt.label"
             @click="onEventClick($event, evt)"
             @pointerdown="startDrag($event, evt, 'move', false)"
+            @mouseenter="onEventHover($event, evt)"
+            @mouseleave="onEventHover(null, null)"
+            @focus="onEventHover($event, evt)"
+            @blur="onEventHover(null, null)"
           >
-            <span class="uid-calendar__event-label">{{ evt.title }}</span>
+            <slot
+              name="event"
+              :event="real(evt)"
+              :view="view"
+              :short="true"
+            >
+              <span class="uid-calendar__event-label">{{ evt.title }}</span>
+            </slot>
             <span
               v-if="hasEndHandle(evt, gridDays[i])"
               class="uid-calendar__resize uid-calendar__resize--end"
@@ -609,26 +795,29 @@ defineExpose({ go, goToday, setView })
         ref="body"
         class="uid-calendar__tg-body"
       >
-        <div class="uid-calendar__tg-inner">
+        <div
+          class="uid-calendar__tg-inner"
+          :style="{ '--uid-cal-hours': lastHour - firstHour }"
+        >
           <div class="uid-calendar__gutter uid-calendar__hours">
             <span
               v-for="h in hours"
               :key="h"
               class="uid-calendar__hour"
-            >{{ h === 0 ? '' : formatTime(h * 60) }}</span>
+            >{{ h === firstHour ? '' : formatTime(h * 60) }}</span>
           </div>
           <div
             v-for="(iso, i) in gridDays"
             :key="iso"
             class="uid-calendar__col"
-            :class="{ 'uid-calendar__col--today': iso === todayISO }"
+            :class="[{ 'uid-calendar__col--today': iso === todayISO }, dayClass?.(iso)]"
             :data-date="iso"
             @click="onSlotClick($event, iso)"
           >
             <div
-              v-if="iso === todayISO"
+              v-if="iso === todayISO && nowMinutes >= gridFrom && nowMinutes <= gridTo"
               class="uid-calendar__now"
-              :style="{ top: `${(nowMinutes / 60) * hourPx}px` }"
+              :style="{ top: `${((nowMinutes - gridFrom) / 60) * hourPx}px` }"
             />
             <div
               v-for="(b, j) in blocks[i]"
@@ -636,19 +825,32 @@ defineExpose({ go, goToday, setView })
               class="uid-calendar__block"
               :class="{
                 'uid-calendar__block--dragging': !!drag?.active && real(b.event) === drag.event,
-                'uid-calendar__block--short': b.end - b.start < 45,
+                'uid-calendar__block--short': ((b.end - b.start) / 60) * hourPx < 36,
                 'uid-calendar__block--draggable': canEdit(b.event),
+                ...variantClass(b.event, 'uid-calendar__block'),
               }"
               :style="blockStyle(b)"
               role="button"
               tabindex="0"
               :title="`${timeLabel(b.event)} ${b.event.title}`"
+              :aria-label="b.event.label"
               @click="onEventClick($event, b.event)"
-              @keydown.enter.prevent="emit('event-click', real(b.event))"
+              @keydown.enter.prevent="onEventClick($event, b.event)"
               @pointerdown="startDrag($event, b.event, 'move', true)"
+              @mouseenter="onEventHover($event, b.event)"
+              @mouseleave="onEventHover(null, null)"
+              @focus="onEventHover($event, b.event)"
+              @blur="onEventHover(null, null)"
             >
-              <span class="uid-calendar__block-time">{{ timeLabel(b.event) }}</span>
-              <span class="uid-calendar__block-title">{{ b.event.title }}</span>
+              <slot
+                name="event"
+                :event="real(b.event)"
+                :view="view"
+                :short="((b.end - b.start) / 60) * hourPx < 36"
+              >
+                <span class="uid-calendar__block-time">{{ timeLabel(b.event) }}</span>
+                <span class="uid-calendar__block-title">{{ b.event.title }}</span>
+              </slot>
               <span
                 v-if="canEdit(b.event)"
                 class="uid-calendar__resize"

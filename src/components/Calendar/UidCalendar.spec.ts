@@ -299,7 +299,7 @@ describe('UidCalendar', () => {
     expect(props.events).toHaveLength(1)
   })
 
-  it('добавляет классы дня из dayClass, только в сетке месяца', () => {
+  it('добавляет классы дня из dayClass в сетке месяца', () => {
     const wrapper = mount(UidCalendar, {
       props: {
         modelValue: '2026-11-01',
@@ -318,5 +318,121 @@ describe('UidCalendar', () => {
     })
     expect(wrapper.find('.uid-calendar__title').text()).toMatch(/^Calendar · Ноябрь 2026 · 2026-10-26$/)
     expect(wrapper.findAll('.uid-calendar__nav button')).toHaveLength(2)
+  })
+
+  it('без шапки: header false; хозяин ведёт календарь через go и setView', async () => {
+    const wrapper = mount(UidCalendar, { props: { anchor: '2026-11-10', header: false, views: ['week', 'month'] } })
+    expect(wrapper.find('.uid-calendar__header').exists()).toBe(false)
+    ;(wrapper.vm as unknown as { setView: (v: CalendarView) => void }).setView('week')
+    await nextTick()
+    expect(wrapper.find('.uid-calendar__tg').exists()).toBe(true)
+  })
+
+  it('сетка часов от startHour до endHour; подпись угла и строки «весь день»', () => {
+    const wrapper = mount(UidCalendar, {
+      props: {
+        view: 'week', anchor: '2026-11-10', startHour: 8, endHour: 19, hourHeight: 54, gutterLabel: 'UTC+3', allDayLabel: '',
+        events: [
+          { id: 1, date: '2026-11-10', time: '10:00', endTime: '10:15', title: 'Daily' },
+          { id: 2, date: '2026-11-10', time: '06:00', endTime: '07:00', title: 'Too early' },
+        ],
+      },
+    })
+    const hours = wrapper.findAll('.uid-calendar__hour')
+    expect(hours).toHaveLength(11)
+    expect(hours[0].text()).toBe('')
+    expect(hours[1].text()).toBe('09:00')
+    expect(wrapper.find('.uid-calendar__gutter-corner').text()).toBe('UTC+3')
+    expect(wrapper.find('.uid-calendar__allday .uid-calendar__gutter-label').text()).toBe('')
+    const blocks = wrapper.findAll('.uid-calendar__block')
+    expect(blocks).toHaveLength(1)
+    // 10:00 is two hours after 8:00; a quarter of an hour is shorter than 36 px — one line.
+    expect(blocks[0].attributes('style')).toContain('top: 108px')
+    expect(blocks[0].classes()).toContain('uid-calendar__block--short')
+  })
+
+  it('рисует событие по variant и даёт ему имя для чтения с экрана', () => {
+    const wrapper = mount(UidCalendar, {
+      props: {
+        view: 'week', anchor: '2026-11-10',
+        events: [
+          { id: 1, date: '2026-11-10', time: '10:00', endTime: '11:00', title: 'A', variant: 'tentative', label: 'A, Tuesday 10:00–11:00, maybe' },
+          { id: 2, date: '2026-11-12', title: 'B', variant: 'cancelled' },
+        ],
+      },
+    })
+    const block = wrapper.find('.uid-calendar__block')
+    expect(block.classes()).toEqual(expect.arrayContaining(['uid-calendar__block--tentative', 'uid-calendar__block--variant']))
+    expect(block.attributes('aria-label')).toBe('A, Tuesday 10:00–11:00, maybe')
+    expect(wrapper.find('.uid-calendar__allday .uid-calendar__event').classes()).toContain('uid-calendar__event--cancelled')
+  })
+
+  it('слот event заменяет содержимое блока; event-click и event-hover отдают элемент', async () => {
+    const event: CalendarEvent = { id: 1, date: '2026-11-10', time: '10:00', endTime: '11:00', title: 'A' }
+    const wrapper = mount(UidCalendar, {
+      props: { view: 'day', anchor: '2026-11-10', events: [event] },
+      slots: { event: '<template #event="{ event, short }"><b class="mine">{{ event.title }}·{{ short }}</b></template>' },
+    })
+    const block = wrapper.find('.uid-calendar__block')
+    expect(block.find('.mine').text()).toBe('A·false')
+    await block.trigger('mouseenter')
+    expect(wrapper.emitted('event-hover')?.[0]).toEqual([event, block.element])
+    await block.trigger('mouseleave')
+    expect(wrapper.emitted('event-hover')?.[1]).toEqual([null, null])
+    await block.trigger('keydown', { key: 'Enter' })
+    expect(wrapper.emitted('event-click')?.[0]).toEqual([event, block.element])
+  })
+
+  it('полосы через дни: в неделе — по колонкам и дорожкам, в месяце — в ячейках с подписью в начале', () => {
+    const bands = [
+      { id: 's', start: '2026-11-10', end: '2026-11-21', label: 'Sprint 12', tone: 'info' as const },
+      { id: 'v', start: '2026-11-01', end: '2026-11-17', label: 'Vacation', tone: 'warning' as const },
+      { id: 'o', start: '2026-11-12', end: '2026-11-12', label: 'Away' },
+    ]
+    const week = mount(UidCalendar, { props: { view: 'week', anchor: '2026-11-10', bands } })
+    const grid = week.findAll('.uid-calendar__allday .uid-calendar__band')
+    expect(grid.map((b) => b.text())).toEqual(['Vacation', 'Sprint 12', 'Away'])
+    expect(grid[0].attributes('style')).toContain('grid-column: 2 / 9')
+    expect(grid[0].classes()).toEqual(expect.arrayContaining(['uid-calendar__band--warning', 'uid-calendar__band--from-prev', 'uid-calendar__band--to-next']))
+    expect(grid[1].attributes('style')).toContain('grid-column: 3 / 9')
+    expect(grid[2].attributes('style')).toContain('grid-row: 3')
+    expect(grid[2].classes()).toContain('uid-calendar__band--neutral')
+
+    const month = mount(UidCalendar, { props: { anchor: '2026-11-10', bands, dayClass: (iso: string) => (iso === '2026-11-04' ? 'holiday' : undefined) }, slots: { 'day-extra': '<template #day-extra="{ iso }"><i v-if="iso === \'2026-11-04\'">holiday</i></template>' } })
+    const cell = (iso: string) => month.find(`[data-date="${iso}"]`)
+    const labels = (iso: string) => cell(iso).findAll('.uid-calendar__band').map((b) => b.text().trim())
+    // The week of 9 November: the vacation is labelled on Monday, the sprint where it starts.
+    expect(labels('2026-11-09')).toEqual(['Vacation', '', ''])
+    expect(labels('2026-11-10')).toEqual(['', 'Sprint 12', ''])
+    expect(labels('2026-11-12')).toEqual(['', '', 'Away'])
+    expect(labels('2026-11-16')).toEqual(['Vacation', 'Sprint 12'])
+    expect(cell('2026-11-04').find('.uid-calendar__day-head i').text()).toBe('holiday')
+  })
+
+  it('dayClass красит и колонки недели', () => {
+    const wrapper = mount(UidCalendar, { props: { view: 'week', anchor: '2026-11-10', dayClass: (iso: string) => (iso >= '2026-11-14' ? 'off' : undefined) } })
+    expect(wrapper.findAll('.uid-calendar__col.off')).toHaveLength(2)
+    expect(wrapper.findAll('.uid-calendar__tg-day.off')).toHaveLength(2)
+  })
+
+  it('шапка дня в строку и слот day-extra в шапке недели', () => {
+    const wrapper = mount(UidCalendar, {
+      props: { view: 'week', anchor: '2026-11-10', headInline: true },
+      slots: { 'day-extra': '<template #day-extra="{ iso }"><i v-if="iso === \'2026-11-14\'">day off</i></template>' },
+    })
+    expect(wrapper.classes()).toContain('uid-calendar--head-inline')
+    expect(wrapper.findAll('.uid-calendar__tg-extra i').map((i) => i.text())).toEqual(['day off'])
+  })
+
+  it('мини-месяц: только числа, буква дня недели, без событий и полос', () => {
+    const wrapper = mount(UidCalendar, {
+      props: { anchor: '2026-11-10', mini: true, header: false, events: [{ id: 1, date: '2026-11-10', title: 'A' }], bands: [{ start: '2026-11-09', end: '2026-11-12', label: 'B' }] },
+    })
+    expect(wrapper.classes()).toContain('uid-calendar--mini')
+    expect(mount(UidCalendar, { props: { bordered: false } }).classes()).toContain('uid-calendar--flat')
+    expect(wrapper.findAll('.uid-calendar__weekday').map((w) => w.text())).toEqual(['П', 'В', 'С', 'Ч', 'П', 'С', 'В'])
+    expect(wrapper.find('.uid-calendar__event').exists()).toBe(false)
+    expect(wrapper.find('.uid-calendar__band').exists()).toBe(false)
+    expect(wrapper.findAll('.uid-calendar__day')).toHaveLength(42)
   })
 })

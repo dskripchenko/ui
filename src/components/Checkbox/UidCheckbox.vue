@@ -84,10 +84,10 @@ function handleChange(event: Event): void {
         aria-hidden="true"
       />
       <span
-        v-if="label"
+        v-if="label || $slots.default"
         class="uid-checkbox__text"
       >
-        {{ label }}
+        <slot>{{ label }}</slot>
         <span
           v-if="required"
           class="uid-checkbox__required"

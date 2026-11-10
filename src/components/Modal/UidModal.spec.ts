@@ -108,4 +108,11 @@ describe('UidModal', () => {
     expect(document.body.querySelector('.uid-modal--full')).not.toBeNull()
     wrapper.unmount()
   })
+
+  it('takes an exact width', async () => {
+    const wrapper = mount(UidModal, { props: { modelValue: true, width: '1100px' }, attachTo: document.body })
+    await flushPromises()
+    expect(document.querySelector<HTMLElement>('.uid-modal')?.style.maxWidth).toBe('1100px')
+    wrapper.unmount()
+  })
 })

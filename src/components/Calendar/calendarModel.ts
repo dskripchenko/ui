@@ -11,6 +11,45 @@ export interface CalendarEvent {
   color?: string
   /** `false` — never dragged or resized, even in an editable calendar; omitted — follows the calendar. */
   editable?: boolean
+  /**
+   * How the event is drawn, by shape as well as colour: `solid` — filled;
+   * `tentative` — hatched with a dashed edge; `declined` — muted and struck
+   * through; `outline` — only an outline; `cancelled` — dashed and struck
+   * through. Omitted — the default look.
+   */
+  variant?: CalendarEventVariant
+  /** The accessible name of the event, for screen readers; omitted — its time and title. */
+  label?: string
+}
+
+export type CalendarEventVariant = 'solid' | 'tentative' | 'declined' | 'outline' | 'cancelled'
+
+/** A bar across whole days above the time grid and in the month: a sprint, an absence, a period. */
+export interface CalendarBand {
+  id?: string | number
+  /** `YYYY-MM-DD`: the first day. */
+  start: string
+  /** `YYYY-MM-DD`: the last day, inclusive. */
+  end: string
+  label: string
+  /** The bar's colour; `neutral` by default. */
+  tone?: 'neutral' | 'info' | 'success' | 'warning' | 'danger'
+}
+
+/** Bands placed in lanes so that overlapping ones do not cover each other. */
+export function bandLanes<T extends { start: string; end: string }>(bands: T[]): { band: T; lane: number }[] {
+  const sorted = [...bands].sort((a, b) => a.start.localeCompare(b.start) || b.end.localeCompare(a.end))
+  const ends: string[] = []
+  return sorted.map((band) => {
+    let lane = ends.findIndex((end) => end < band.start)
+    if (lane < 0) {
+      lane = ends.length
+      ends.push(band.end)
+    } else {
+      ends[lane] = band.end
+    }
+    return { band, lane }
+  })
 }
 
 export interface CalendarRange {
