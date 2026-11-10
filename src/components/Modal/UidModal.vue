@@ -13,6 +13,8 @@ const locale = useLocale()
 export interface UidModalProps {
   title?: string
   size?: 'sm' | 'md' | 'lg' | 'xl' | 'full'
+  /** An exact width (any CSS length) when no size fits; it still never exceeds the window. */
+  width?: string
   closeOnOverlay?: boolean
   /** Close on the Escape key (default). Turn off for a dialog that must be answered. */
   closeOnEsc?: boolean
@@ -26,6 +28,7 @@ const props = withDefaults(defineProps<UidModalProps>(), {
   closeOnOverlay: true,
   closeOnEsc: true,
   hideClose: false,
+  width: undefined,
 })
 
 const emit = defineEmits<{
@@ -99,6 +102,7 @@ function onEscape(event: KeyboardEvent): void {
           ref="dialogRef"
           class="uid-modal"
           :class="`uid-modal--${size}`"
+          :style="width ? { maxWidth: width } : undefined"
           role="dialog"
           aria-modal="true"
           :aria-labelledby="title ? titleId : undefined"
