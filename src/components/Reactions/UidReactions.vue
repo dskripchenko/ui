@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import './UidReactions.css'
 import { computed } from 'vue'
-import { SmilePlus } from '../../icons/index.js'
+import { SmilePlus } from 'lucide-vue-next'
 import { useLocale } from '../../composables/useLocale.js'
 import UidTooltip from '../Tooltip/UidTooltip.vue'
 

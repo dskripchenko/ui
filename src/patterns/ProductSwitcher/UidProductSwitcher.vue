@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, type Component } from 'vue'
-import { ArrowLeftRight } from '../../icons/index.js'
+import { ArrowLeftRight } from 'lucide-vue-next'
 import './UidProductSwitcher.css'
 
 export interface UidProductSwitcherItem {
