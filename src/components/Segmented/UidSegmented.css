@@ -1,0 +1,89 @@
+.uid-segmented {
+  --uid-seg-h: 36px;
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.uid-segmented--sm {
+  --uid-seg-h: 28px;
+}
+
+.uid-segmented__item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--uid-seg-h);
+  padding: 0 12px;
+  border: 1px solid var(--uid-color-border);
+  border-radius: 999px;
+  background: var(--uid-color-bg);
+  color: var(--uid-color-text);
+  font: inherit;
+  font-size: var(--uid-font-size-sm, 14px);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.uid-segmented--sm .uid-segmented__item {
+  padding: 0 10px;
+  font-size: 13px;
+}
+
+.uid-segmented__item:hover:not(:disabled) {
+  border-color: var(--uid-color-border-hover);
+}
+
+.uid-segmented__item:focus-visible {
+  outline: 2px solid var(--uid-color-primary);
+  outline-offset: 1px;
+}
+
+.uid-segmented__item:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.uid-segmented--chips .uid-segmented__item--on {
+  border-color: var(--uid-color-primary);
+  background: var(--uid-color-primary-subtle);
+  color: var(--uid-color-primary-text);
+  font-weight: var(--uid-font-weight-medium);
+}
+
+.uid-segmented--round .uid-segmented__item {
+  width: var(--uid-seg-h);
+  padding: 0;
+}
+
+.uid-segmented--round .uid-segmented__item--on {
+  border-color: var(--uid-color-primary-solid);
+  background: var(--uid-color-primary-solid);
+  color: var(--uid-color-text-on-primary);
+}
+
+/* One bar of buttons: the chosen one raised on a sunken track. */
+.uid-segmented--joined {
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid var(--uid-color-border);
+  border-radius: var(--uid-radius-md);
+  background: var(--uid-color-bg-subtle);
+}
+
+.uid-segmented--joined .uid-segmented__item {
+  height: calc(var(--uid-seg-h) - 6px);
+  border-color: transparent;
+  border-radius: calc(var(--uid-radius-md) - 2px);
+  background: transparent;
+  color: var(--uid-color-text-secondary);
+}
+
+.uid-segmented--joined .uid-segmented__item--on {
+  border-color: var(--uid-color-border);
+  background: var(--uid-color-bg);
+  color: var(--uid-color-text);
+  font-weight: var(--uid-font-weight-medium);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.06);
+}

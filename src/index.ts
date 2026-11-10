@@ -436,6 +436,9 @@ export type { UidSimpleLayoutProps } from './layouts/Simple/index.js'
 
 export { UidProductSwitcher } from './patterns/ProductSwitcher/index.js'
 export type { UidProductSwitcherItem, UidProductSwitcherProps } from './patterns/ProductSwitcher/index.js'
+export { UidSegmented } from './components/Segmented/index.js'
+export type { UidSegmentedProps, SegmentedOption } from './components/Segmented/index.js'
+
 export { UidBusyStrip, firstFree } from './components/BusyStrip/index.js'
 export type { UidBusyStripProps, BusyRow, BusySegment, BusySelection, FirstFreeOptions } from './components/BusyStrip/index.js'
 
