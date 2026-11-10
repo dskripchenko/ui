@@ -9,9 +9,14 @@
   --uid-chart-5: #e11d48;
   --uid-chart-6: #0891b2;
   --uid-chart-neutral: #d4d4d8;
+  /* Shaded category ranges: a neutral wash, coloured ones a faint tint. */
+  --uid-chart-region-opacity: 0.07;
+  --uid-chart-region-neutral-opacity: 0.35;
 }
 
 :root[data-theme='dark'] {
+  --uid-chart-region-opacity: 0.1;
+  --uid-chart-region-neutral-opacity: 0.3;
   --uid-chart-1: #0d9488;
   --uid-chart-2: #3b82f6;
   --uid-chart-3: #d97706;
@@ -69,6 +74,15 @@
   font-variant-numeric: tabular-nums;
 }
 
+.uid-chart__region {
+  fill-opacity: var(--uid-chart-region-opacity);
+  pointer-events: none;
+}
+
+.uid-chart__region--neutral {
+  fill-opacity: var(--uid-chart-region-neutral-opacity);
+}
+
 .uid-chart__line {
   fill: none;
   stroke-width: 2;
@@ -102,6 +116,17 @@
 .uid-chart__reference line {
   stroke-width: 1.5;
   shape-rendering: crispEdges;
+}
+
+.uid-chart__pill {
+  stroke: none;
+}
+
+.uid-chart__pill-label {
+  fill: var(--uid-text-on-accent);
+  font-size: 11px;
+  font-weight: var(--uid-font-weight-semibold, 600);
+  font-variant-numeric: tabular-nums;
 }
 
 .uid-chart__crosshair {
@@ -164,6 +189,14 @@
   height: 8px;
   border-radius: 50%;
   background: var(--uid-chart-key-color);
+}
+
+.uid-chart__key--band {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--uid-chart-key-color) 35%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--uid-chart-key-color) 70%, transparent);
 }
 
 .uid-chart__key--line {

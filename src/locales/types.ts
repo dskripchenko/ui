@@ -410,6 +410,14 @@ export interface UidLocale {
     category: string
   }
 
+  /** UidMilestoneStrip: milestones on a month scale. */
+  milestoneStrip: {
+    /** Accessible name of the list. */
+    label: string
+    /** Announced after a milestone at risk. */
+    atRisk: string
+  }
+
   /** UidDashboardGrid: a grid of movable, resizable items. */
   dashboardGrid: {
     /** Default accessible name of the grid. */

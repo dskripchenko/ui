@@ -111,6 +111,7 @@ Stacked bars — series with the same `stack` id pile up (areas stack the same w
 | `categories` | `string[]` | — | The x axis, evenly spaced. |
 | `series` | `ChartSeries[]` | — | See below. |
 | `references` | `ChartReference[]` | `[]` | Vertical and horizontal reference lines. y references are included in the automatic y range. |
+| `bands` | `ChartBand[]` | `[]` | Category ranges shaded behind the grid and the marks (iterations, freezes, holidays). See below. |
 | `height` | `number` | `240` | Height in px. The width follows the container (`ResizeObserver`); 600 px when it cannot be measured. |
 | `yMin` | `number` | `min(0, data min)` | |
 | `yMax` | `number` | a nice max of the data | Stacks are summed. |
@@ -121,6 +122,7 @@ Stacked bars — series with the same `stack` id pile up (areas stack the same w
 | `grid` | `boolean` | `true` | Horizontal grid lines. |
 | `tooltip` | `boolean` | `true` | |
 | `xLabels` | `'auto' \| 'all' \| 'none'` | `'auto'` | `auto` thins the labels so they never collide. |
+| `axes` | `boolean` | `true` | `false` draws a sparkline: no tick labels, no x labels, no axis line, 2 px padding; the grid still follows `grid`. Fits e.g. 150 × 50. |
 | `ariaLabel` | `string` | locale summary ("Chart: 2 series, 10 points") | |
 
 Event `hover(index: number | null)` — the active category changes (pointer or keyboard). Slot `#tooltip="{ index, category, items }"` replaces the tooltip content; each item is `{ series, value, formatted, color }`.
@@ -138,6 +140,7 @@ interface ChartSeries {
   dashed?: boolean                          // line / area: dashed stroke (plans, ideal lines)
   stack?: string                            // bar / area series with the same id stack
   legend?: boolean                          // default true
+  width?: number                            // line / area: stroke width in px, default 2
 }
 
 interface ChartReference {
@@ -147,6 +150,15 @@ interface ChartReference {
   tone?: ChartTone
   color?: string
   dashed?: boolean
+  pill?: boolean     // x: the label as a small filled tag centred above the line
+}
+
+interface ChartBand {
+  from: number       // the first category index, inclusive
+  to: number         // the last category index, inclusive
+  label?: string     // a legend entry (light square key) after the series; one per label
+  tone?: ChartTone   // default neutral
+  color?: string
 }
 ```
 
@@ -157,6 +169,8 @@ interface ChartReference {
 Series without `color` or `tone` take palette slots in the order of the `series` array: `--uid-chart-1` … `--uid-chart-6`. The slot belongs to the series' position, so hiding another series never repaints it. More than six such series repeat the palette — fold the tail into "Other" instead. Tones map to the theme: `accent`, `info`, `warning`, `danger`, `success` to `--uid-accent`, `--uid-info`, … and `neutral` to `--uid-chart-neutral` (plans, baselines). The palette has separate light and dark values (`:root[data-theme='dark']`) and can be overridden like any token. `--uid-chart-surface` (default `--uid-color-surface`) is the colour of the gaps between stacked bars and the ring around dots: set it to the background the chart sits on.
 
 Marks: 2 px lines with round joins, `4 4` dashes, areas at 15 % opacity (stacked areas — bands at 70 % with a 1 px top edge), 8 px dots with a 2 px ring, bars with a 4 px rounded data end and 2 px gaps. Text always uses the text colours, never a series colour.
+
+Bands span from the left edge of category `from`'s slot to the right edge of `to`'s, the full plot height, behind the grid and the marks. The default fill is `--uid-chart-neutral` at `--uid-chart-region-neutral-opacity` (35 % light, 30 % dark); a `tone` or `color` band is a faint tint at `--uid-chart-region-opacity` (7 % light, 10 % dark). A pill reference (`pill: true`, x axis with a `label`) is a rounded tag in the reference colour with `--uid-text-on-accent` text, 11 px semibold, kept inside the chart's width — use it for "today" over a plan.
 
 ### Accessibility
 

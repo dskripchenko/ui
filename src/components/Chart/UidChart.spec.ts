@@ -348,4 +348,98 @@ describe('UidChart', () => {
     expect(lone.find('.uid-chart__area--stacked').exists()).toBe(false)
     expect(lone.find('.uid-chart__line--edge').exists()).toBe(false)
   })
+
+  it('takes a stroke width per line series, 2 px by default', () => {
+    const w = make({
+      series: [
+        { key: 'a', label: 'A', data: [1, 2, 3, 4, 5], width: 3 },
+        { key: 'b', label: 'B', type: 'area', data: [1, 2, 3, 4, 5] },
+      ],
+    })
+    const lines = w.findAll('.uid-chart__line')
+    expect(lines[0]!.attributes('style')).toContain('stroke-width: 3px')
+    expect(lines[1]!.attributes('style') ?? '').not.toContain('stroke-width')
+  })
+
+  it('shades category ranges behind the grid, from the left edge of from to the right edge of to', () => {
+    const w = make({
+      series: [{ key: 'a', label: 'A', data: [1, 2, 3, 4, 5] }],
+      bands: [
+        { from: 1, to: 2, label: 'Sprint' },
+        { from: 4, to: 4, label: 'Sprint' },
+        { from: 3, to: 3, tone: 'warning', label: 'Freeze' },
+        { from: 0, to: 0 },
+      ],
+    })
+    const grid = w.findAll('.uid-chart__grid line')
+    const left = num(grid[0]!.attributes('x1'))
+    const band = (num(grid[0]!.attributes('x2')) - left) / 5
+    const regions = w.findAll('.uid-chart__region')
+    expect(regions).toHaveLength(4)
+    expect(num(regions[0]!.attributes('x'))).toBeCloseTo(left + band, 1)
+    expect(num(regions[0]!.attributes('width'))).toBeCloseTo(2 * band, 1)
+    expect(num(regions[1]!.attributes('width'))).toBeCloseTo(band, 1)
+    expect(regions[0]!.classes()).toContain('uid-chart__region--neutral')
+    expect(regions[0]!.attributes('style')).toContain('var(--uid-chart-neutral)')
+    expect(regions[2]!.classes()).not.toContain('uid-chart__region--neutral')
+    expect(regions[2]!.attributes('style')).toContain('var(--uid-warning)')
+    // Behind the grid: the regions come first in the SVG.
+    const svg = w.get('svg').element
+    const order = [...svg.children].map(el => el.getAttribute('class'))
+    expect(order.indexOf('uid-chart__regions')).toBeLessThan(order.indexOf('uid-chart__grid'))
+    // Legend: series first, then one entry per band label.
+    const legend = w.get('.uid-chart__legend')
+    expect(legend.findAll('li').map(li => li.text())).toEqual(['A', 'Sprint', 'Freeze'])
+    expect(legend.findAll('.uid-chart__key--band')).toHaveLength(2)
+  })
+
+  it('clamps a band to the categories and skips one outside', () => {
+    const w = make({
+      series: [{ key: 'a', label: 'A', data: [1, 2, 3, 4, 5] }],
+      bands: [{ from: 3, to: 9 }, { from: 7, to: 9 }],
+    })
+    const grid = w.findAll('.uid-chart__grid line')
+    const right = num(grid[0]!.attributes('x2'))
+    const regions = w.findAll('.uid-chart__region')
+    expect(regions).toHaveLength(1)
+    expect(num(regions[0]!.attributes('x')) + num(regions[0]!.attributes('width'))).toBeCloseTo(right, 1)
+  })
+
+  it('draws a sparkline without axes', () => {
+    const w = make({ axes: false, grid: false, height: 50, series: [{ key: 'a', label: 'A', data: [1, 3, 2, 5, 4] }] })
+    expect(w.findAll('.uid-chart__tick')).toHaveLength(0)
+    expect(w.find('.uid-chart__axis').exists()).toBe(false)
+    expect(w.find('.uid-chart__grid').exists()).toBe(false)
+    const d = w.get('.uid-chart__line').attributes('d')!
+    // The first point sits half a band in from the 2 px padding.
+    const x0 = Number(d.slice(1).split(' ')[0])
+    expect(x0).toBeCloseTo(2 + (600 - 4) / 10, 1)
+
+    const withGrid = make({ axes: false, series: [{ key: 'a', label: 'A', data: [1, 3, 2, 5, 4] }] })
+    expect(withGrid.find('.uid-chart__grid').exists()).toBe(true)
+    expect(num(withGrid.get('.uid-chart__grid line').attributes('x1'))).toBe(2)
+  })
+
+  it('draws an x reference label as a pill kept inside the chart', () => {
+    const w = make({
+      series: [{ key: 'a', label: 'A', data: [1, 2, 3, 4, 5] }],
+      references: [
+        { axis: 'x', value: 2, label: 'Today', pill: true, tone: 'danger' },
+        { axis: 'x', value: 4, label: 'A long release label', pill: true },
+        { axis: 'x', value: 1, label: 'Plain' },
+      ],
+    })
+    const pills = w.findAll('.uid-chart__pill')
+    expect(pills).toHaveLength(2)
+    expect(pills[0]!.attributes('style')).toContain('var(--uid-danger)')
+    const line = w.findAll('.uid-chart__reference')[0]!.get('line')
+    const px = num(pills[0]!.attributes('x'))
+    const pw = num(pills[0]!.attributes('width'))
+    expect(px + pw / 2).toBeCloseTo(num(line.attributes('x1')), 1)
+    expect(num(pills[0]!.attributes('y')) + num(pills[0]!.attributes('height'))).toBeLessThanOrEqual(num(line.attributes('y1')))
+    // The last one would overflow the right edge: shifted inside.
+    expect(num(pills[1]!.attributes('x')) + num(pills[1]!.attributes('width'))).toBeLessThanOrEqual(600)
+    expect(w.findAll('.uid-chart__pill-label').map(t => t.text())).toEqual(['Today', 'A long release label'])
+    expect(w.findAll('.uid-chart__reference-label').map(t => t.text())).toEqual(['Plain'])
+  })
 })
