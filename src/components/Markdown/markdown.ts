@@ -307,14 +307,20 @@ function renderInline(escaped: string, opts: MarkdownOptions = {}): string {
       return stash(link)
     })
   }
-  out = out.replace(/!\[([^\]]*)\]\(([^)\s]+)(?:\s+&quot;([^)]*?)&quot;)?\)/g, (m, alt: string, url: string, t?: string) => {
-    let src = checkUrl(url)
+  // A destination is bare, or in angle brackets as CommonMark allows — then it may hold spaces:
+  // [text](<my notes/plan.md>). The brackets are not part of the address; a space in it is %20.
+  const DEST = String.raw`(?:&lt;((?:(?!&lt;|&gt;)[^\n])*)&gt;|([^)\s]+))`
+  const TITLE = String.raw`(?:\s+&quot;([^)]*?)&quot;)?\)`
+  const dest = (angled: string | undefined, bare: string | undefined): string =>
+    angled !== undefined ? angled.trim().replace(/ /g, '%20') : (bare ?? '')
+  out = out.replace(new RegExp(String.raw`!\[([^\]]*)\]\(` + DEST + TITLE, 'g'), (m, alt: string, angled?: string, bare?: string, t?: string) => {
+    let src = checkUrl(dest(angled, bare))
     if (src === null) return m
     if (opts.imageBase && isRelative(src)) src = resolveAgainst(src, opts.imageBase)
     return stash(`<img src="${src}" alt="${attr(alt)}"${title(t)} loading="lazy">`)
   })
-  out = out.replace(/\[([^\]]+)\]\(([^)\s]+)(?:\s+&quot;([^)]*?)&quot;)?\)/g, (m, text: string, url: string, t?: string) => {
-    let href = checkUrl(url)
+  out = out.replace(new RegExp(String.raw`\[([^\]]+)\]\(` + DEST + TITLE, 'g'), (m, text: string, angled?: string, bare?: string, t?: string) => {
+    let href = checkUrl(dest(angled, bare))
     if (href === null) return m
     const relative = isRelative(href)
     if (opts.linkBase && relative) {
