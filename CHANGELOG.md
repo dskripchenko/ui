@@ -1,5 +1,11 @@
 # @dskripchenko/ui
 
+## 1.55.0
+
+### Minor Changes
+
+- 181d8c5: UidAvatar `ring` — a toned ring around the avatar through a gap of the background, to tell a kind of account at a glance; UidTag `icon` — an icon before the text; UidAlert `action` slot on the right and `role` (`status` for a standing banner).
+
 ## 1.54.0
 
 ### Minor Changes
