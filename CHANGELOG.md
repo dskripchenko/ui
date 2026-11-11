@@ -1,5 +1,11 @@
 # @dskripchenko/ui
 
+## 1.56.1
+
+### Patch Changes
+
+- 0501f14: UidTopBar: the search field's text and shortcut keep 4.5:1 contrast (secondary text, not tertiary).
+
 ## 1.56.0
 
 ### Minor Changes
