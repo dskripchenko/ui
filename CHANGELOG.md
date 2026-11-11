@@ -1,5 +1,11 @@
 # @dskripchenko/ui
 
+## 1.56.2
+
+### Patch Changes
+
+- d87c0ab: UidTopBar: the search field's accessible name includes its shortcut, as its visible text does (WCAG 2.5.3), and it declares aria-keyshortcuts for ⌘K.
+
 ## 1.56.1
 
 ### Patch Changes
