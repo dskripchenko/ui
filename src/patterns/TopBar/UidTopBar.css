@@ -33,7 +33,8 @@
   border: 1px solid var(--uid-border-subtle);
   border-radius: var(--uid-radius-md);
   background: var(--uid-surface-base);
-  color: var(--uid-text-tertiary);
+  /* Secondary, not tertiary: the placeholder-like text keeps 4.5:1 (WCAG AA). */
+  color: var(--uid-text-secondary);
   font: inherit;
   font-size: 13px;
   cursor: pointer;
@@ -49,6 +50,7 @@
   border: 1px solid var(--uid-border-subtle);
   border-radius: var(--uid-radius-sm);
   background: var(--uid-surface-raised);
+  color: var(--uid-text-secondary);
   font-family: var(--uid-font-family-mono);
   font-size: 10px;
 }
