@@ -25,3 +25,9 @@ Die Daten (Unicode 15.1, Namen und Schlüsselwörter aus CLDR, Russisch und Engl
 ## Anwesenheit an `UidAvatar`
 
 `presence`: `online` (gefüllter Punkt), `away` (Ring), `dnd` (Punkt mit Strich), `call` (Ring mit Punkt), `offline` (grauer Ring) — Form und Farbe zusammen; der zugängliche Name nennt den Zustand.
+
+`color` setzt die Füllung unter den Initialen statt der Farbe aus dem Namen — um eine Art Konto zu unterscheiden, einen Dienst oder einen Bot (weiße Initialen darauf: 4,5:1 halten). Ein Bindestrich trennt in den Initialen zwei Wörter eines Namens: «Anne-Marie» ist «AM».
+
+```vue
+<UidAvatar name="Build bot" shape="square" color="#52525b" size="sm" />
+```

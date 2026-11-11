@@ -19,6 +19,16 @@ describe('UidAvatar', () => {
     expect(wrapper.find('.uid-avatar__initials').text()).toBe('И')
   })
 
+  it('считает дефис границей слов в инициалах', () => {
+    const wrapper = mount(UidAvatar, { props: { name: 'Anne-Marie' } })
+    expect(wrapper.find('.uid-avatar__initials').text()).toBe('AM')
+  })
+
+  it('берёт заливку из color вместо цвета по имени', () => {
+    const wrapper = mount(UidAvatar, { props: { name: 'Build bot', color: '#52525b' } })
+    expect(wrapper.find('.uid-avatar__initials').attributes('style')).toContain('background: rgb(82, 82, 91)')
+  })
+
   it('показывает ? без name и src', () => {
     const wrapper = mount(UidAvatar)
     expect(wrapper.find('.uid-avatar__initials').text()).toBe('?')

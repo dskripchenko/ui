@@ -17,6 +17,12 @@ export interface UidAvatarProps {
    * call — a ring with a dot; offline — a grey ring.
    */
   presence?: UidPresence
+  /**
+   * The fill under the initials, instead of the one picked by the name: a
+   * kind of account told apart (a service, a bot). White initials go on it,
+   * so it should keep 4.5:1 with white.
+   */
+  color?: string
 }
 
 const props = withDefaults(defineProps<UidAvatarProps>(), {
@@ -26,6 +32,7 @@ const props = withDefaults(defineProps<UidAvatarProps>(), {
   size: 'md',
   shape: 'circle',
   presence: undefined,
+  color: undefined,
 })
 
 const uidLocale = useLocale()
@@ -39,7 +46,9 @@ const imgError = ref(false)
 
 const initials = computed<string>(() => {
   if (!props.name) return '?'
-  const words = props.name.trim().split(/\s+/)
+  // A hyphen joins two words of one name: "Anne-Marie" is "AM".
+  const words = props.name.trim().split(/[\s-]+/).filter(Boolean)
+  if (words.length === 0) return '?'
   if (words.length === 1) return words[0][0].toUpperCase()
   return (words[0][0] + words[words.length - 1][0]).toUpperCase()
 })
@@ -56,7 +65,7 @@ const PALETTE = [
   '#15803d', '#0f766e', '#1d4ed8', '#b91c1c',
 ]
 
-const bgColor = computed(() => PALETTE[colorIndex.value])
+const bgColor = computed(() => props.color ?? PALETTE[colorIndex.value])
 
 function onError(): void {
   imgError.value = true
