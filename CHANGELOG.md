@@ -1,5 +1,11 @@
 # @dskripchenko/ui
 
+## 1.57.1
+
+### Patch Changes
+
+- 48d7e30: UidSidebarItem: the meta of the active row takes the row's colour — the secondary grey was 3.7:1 on the active fill in the dark theme.
+
 ## 1.57.0
 
 ### Minor Changes
