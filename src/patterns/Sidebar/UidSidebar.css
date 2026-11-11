@@ -171,3 +171,348 @@ button.uid-sidebar-item {
   margin: var(--uid-space-sm) 12px;
   background: var(--uid-color-border);
 }
+
+/* A dense row: a conversation in a long list (28px). */
+.uid-sidebar-item--dense {
+  gap: 8px;
+  min-height: 28px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.uid-sidebar-item--dense .uid-sidebar-item__icon {
+  width: 16px;
+  height: 16px;
+}
+
+.uid-sidebar-item--strong {
+  color: var(--uid-color-text-primary);
+  font-weight: 600;
+}
+
+.uid-sidebar-item--quiet:not(.uid-sidebar-item--active) {
+  opacity: 0.6;
+}
+
+.uid-sidebar-item__suffix {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.uid-sidebar-item__meta {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  color: var(--uid-color-text-secondary);
+  font-size: 12px;
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+}
+
+.uid-sidebar-item__mentions,
+.uid-sidebar-item__count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  font-size: 11px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.uid-sidebar-item__mentions {
+  background: var(--uid-color-danger-solid, var(--uid-color-danger));
+  color: #fff;
+}
+
+.uid-sidebar-item__count {
+  background: var(--uid-color-surface-sunken, color-mix(in srgb, var(--uid-color-text-primary) 10%, transparent));
+  color: var(--uid-color-text-primary);
+}
+
+/* A row with actions: they take the place of the meta and the counts on hover and focus. */
+.uid-sidebar-item-row {
+  position: relative;
+}
+
+.uid-sidebar-item__actions {
+  position: absolute;
+  top: 50%;
+  right: calc(var(--uid-space-sm) + 6px);
+  display: none;
+  gap: 2px;
+  align-items: center;
+  transform: translateY(-50%);
+}
+
+.uid-sidebar-item-row:hover .uid-sidebar-item__actions,
+.uid-sidebar-item-row:focus-within .uid-sidebar-item__actions {
+  display: inline-flex;
+}
+
+.uid-sidebar-item-row:hover .uid-sidebar-item__meta,
+.uid-sidebar-item-row:hover .uid-sidebar-item__mentions,
+.uid-sidebar-item-row:hover .uid-sidebar-item__count,
+.uid-sidebar-item-row:focus-within .uid-sidebar-item__meta,
+.uid-sidebar-item-row:focus-within .uid-sidebar-item__mentions,
+.uid-sidebar-item-row:focus-within .uid-sidebar-item__count {
+  visibility: hidden;
+}
+
+.uid-sidebar-item__actions button {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--uid-radius-sm);
+  background: none;
+  color: var(--uid-color-text-secondary);
+  cursor: pointer;
+}
+
+.uid-sidebar-item__actions button:hover {
+  background: var(--uid-color-surface-hover, color-mix(in srgb, var(--uid-color-text-primary) 8%, transparent));
+  color: var(--uid-color-text-primary);
+}
+
+.uid-sidebar-item__actions button:focus-visible {
+  outline: 2px solid var(--uid-color-focus-ring);
+  outline-offset: 1px;
+}
+
+.uid-pattern-sidebar--collapsed .uid-sidebar-item__suffix,
+.uid-pattern-sidebar--collapsed .uid-sidebar-item__meta,
+.uid-pattern-sidebar--collapsed .uid-sidebar-item__mentions,
+.uid-pattern-sidebar--collapsed .uid-sidebar-item__count,
+.uid-pattern-sidebar--collapsed .uid-sidebar-item__actions {
+  display: none;
+}
+
+/* "13 more unread" and "All channels · 134" */
+.uid-sidebar-more {
+  font-size: 12px;
+}
+
+.uid-sidebar-more--primary {
+  color: var(--uid-color-text-primary);
+}
+
+.uid-sidebar-more .uid-sidebar-item__meta {
+  color: var(--uid-color-text-secondary);
+}
+
+/* Sections */
+.uid-sidebar-section {
+  padding: var(--uid-space-xs) 0;
+}
+
+.uid-sidebar-section__head {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  min-height: 30px;
+  padding: 0 10px 0 12px;
+}
+
+.uid-sidebar-section__toggle {
+  display: flex;
+  flex: 1;
+  gap: 6px;
+  align-items: center;
+  min-width: 0;
+  padding: 4px 4px;
+  border: 0;
+  border-radius: var(--uid-radius-sm);
+  background: none;
+  color: var(--uid-color-text-secondary);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+span.uid-sidebar-section__toggle {
+  cursor: default;
+}
+
+.uid-sidebar-section__toggle:focus-visible {
+  outline: 2px solid var(--uid-color-focus-ring);
+  outline-offset: 1px;
+}
+
+.uid-sidebar-section__chevron {
+  flex-shrink: 0;
+  transition: transform var(--uid-duration-fast) var(--uid-ease-out);
+}
+
+.uid-sidebar-section--folded .uid-sidebar-section__chevron {
+  transform: rotate(-90deg);
+}
+
+.uid-sidebar-section__title {
+  overflow: hidden;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--uid-sidebar-group-title-color, var(--uid-color-text-secondary));
+}
+
+.uid-sidebar-section__summary {
+  overflow: hidden;
+  color: var(--uid-color-text-secondary);
+  font-size: 11px;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.uid-sidebar-section__actions {
+  display: inline-flex;
+  flex-shrink: 0;
+  gap: 2px;
+  align-items: center;
+  margin-left: auto;
+}
+
+.uid-sidebar-section__actions button {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--uid-radius-sm);
+  background: none;
+  color: var(--uid-color-text-secondary);
+  cursor: pointer;
+}
+
+.uid-sidebar-section__actions button:hover {
+  background: var(--uid-color-surface-hover, color-mix(in srgb, var(--uid-color-text-primary) 8%, transparent));
+  color: var(--uid-color-text-primary);
+}
+
+/* A collapsed sidebar: the section is an icon with its count. */
+.uid-sidebar-section--rail {
+  display: flex;
+  justify-content: center;
+  padding: 2px 0;
+}
+
+.uid-sidebar-section__rail {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--uid-radius-sm);
+  background: none;
+  color: var(--uid-color-text-secondary);
+  cursor: pointer;
+}
+
+.uid-sidebar-section__rail:hover,
+.uid-sidebar-section__rail--open {
+  background: var(--uid-color-surface-hover, color-mix(in srgb, var(--uid-color-text-primary) 8%, transparent));
+  color: var(--uid-color-text-primary);
+}
+
+.uid-sidebar-section__rail:focus-visible {
+  outline: 2px solid var(--uid-color-focus-ring);
+  outline-offset: 1px;
+}
+
+.uid-sidebar-section__rail-count {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 8px;
+  background: var(--uid-color-text-secondary);
+  color: var(--uid-color-bg);
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 16px;
+  text-align: center;
+  box-shadow: 0 0 0 2px var(--uid-sidebar-bg, var(--uid-color-bg-subtle));
+}
+
+.uid-sidebar-section__rail-count--mention {
+  background: var(--uid-color-danger-solid, var(--uid-color-danger));
+  color: #fff;
+}
+
+.uid-sidebar-section__flyout {
+  z-index: var(--uid-z-popover, 500);
+  width: 260px;
+  max-height: calc(100vh - 32px);
+  padding: 4px 0;
+  overflow-y: auto;
+  border: 1px solid var(--uid-color-border);
+  border-radius: var(--uid-radius-md);
+  box-shadow: var(--uid-shadow-lg);
+}
+
+/* The jump field: "Go to a conversation… ⌘K" on top of the sidebar. */
+.uid-sidebar-jump {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  width: calc(100% - 2 * var(--uid-space-sm));
+  height: 30px;
+  margin: 4px var(--uid-space-sm) 6px;
+  padding: 0 8px;
+  border: 1px solid var(--uid-color-border);
+  border-radius: var(--uid-radius-md);
+  background: var(--uid-color-bg);
+  color: var(--uid-color-text-secondary);
+  font: inherit;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.uid-sidebar-jump:hover {
+  border-color: var(--uid-color-border-strong, var(--uid-color-border));
+}
+
+.uid-sidebar-jump:focus-visible {
+  outline: 2px solid var(--uid-color-focus-ring);
+  outline-offset: 1px;
+}
+
+.uid-sidebar-jump__label {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.uid-sidebar-jump__kbd {
+  padding: 1px 5px;
+  border: 1px solid var(--uid-color-border);
+  border-radius: var(--uid-radius-sm);
+  font-family: var(--uid-font-family-mono);
+  font-size: 10px;
+}
+
+.uid-sidebar-jump--icon {
+  justify-content: center;
+  width: 40px;
+  margin: 4px auto 6px;
+  padding: 0;
+  border-color: transparent;
+  background: none;
+}

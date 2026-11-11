@@ -418,9 +418,11 @@ export type { UidFooterProps } from './patterns/Footer/index.js'
 
 export {
   UidSidebar, UidSidebarItem, UidSidebarGroup, UidSidebarDivider,
+  UidSidebarSection, UidSidebarMore, UidSidebarJump,
 } from './patterns/Sidebar/index.js'
 export type {
   UidSidebarProps, UidSidebarItemProps, UidSidebarGroupProps,
+  UidSidebarSectionProps, UidSidebarMoreProps, UidSidebarJumpProps,
 } from './patterns/Sidebar/index.js'
 
 export { UidPageHeader } from './patterns/PageHeader/index.js'
@@ -438,6 +440,8 @@ export type { UidSimpleLayoutProps } from './layouts/Simple/index.js'
 export { UidProductSwitcher } from './patterns/ProductSwitcher/index.js'
 export type { UidProductSwitcherItem, UidProductSwitcherProps } from './patterns/ProductSwitcher/index.js'
 export { UidTopBar } from './patterns/TopBar/index.js'
+export { UidDataList } from './patterns/DataList/index.js'
+export type { UidDataListProps, UidDataListChip, UidDataListColumn, UidDataListGroup } from './patterns/DataList/index.js'
 export type { UidTopBarProps } from './patterns/TopBar/index.js'
 export { UidSegmented } from './components/Segmented/index.js'
 export type { UidSegmentedProps, SegmentedOption } from './components/Segmented/index.js'
