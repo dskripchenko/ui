@@ -17,6 +17,18 @@
 .uid-avatar--lg { width: 56px; height: 56px; font-size: 18px; }
 .uid-avatar--xl { width: 72px; height: 72px; font-size: 22px; }
 
+/* Ring: a 2 px line around the avatar, apart from it by a 2 px gap of the background. */
+.uid-avatar--ring {
+  box-shadow:
+    0 0 0 2px var(--uid-avatar-ring-gap, var(--uid-color-bg)),
+    0 0 0 4px var(--uid-avatar-ring-color);
+}
+
+.uid-avatar--ring-info { --uid-avatar-ring-color: var(--uid-color-info-solid, var(--uid-color-info)); }
+.uid-avatar--ring-success { --uid-avatar-ring-color: var(--uid-color-success-solid, var(--uid-color-success)); }
+.uid-avatar--ring-warning { --uid-avatar-ring-color: var(--uid-color-warning-solid, var(--uid-color-warning)); }
+.uid-avatar--ring-danger { --uid-avatar-ring-color: var(--uid-color-danger-solid, var(--uid-color-danger)); }
+
 /* Shape */
 .uid-avatar--circle { border-radius: 50%; }
 .uid-avatar--square { border-radius: var(--uid-radius-md); }

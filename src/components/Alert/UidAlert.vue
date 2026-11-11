@@ -13,6 +13,11 @@ export interface UidAlertProps {
   title?: string
   dismissible?: boolean
   icon?: Component
+  /**
+   * `alert` for what just happened; `status` for a standing notice (a
+   * banner on top of a page), which screen readers do not interrupt with.
+   */
+  role?: 'alert' | 'status'
 }
 
 const props = withDefaults(defineProps<UidAlertProps>(), {
@@ -20,6 +25,7 @@ const props = withDefaults(defineProps<UidAlertProps>(), {
   dismissible: false,
   title: undefined,
   icon: undefined,
+  role: 'alert',
 })
 
 const emit = defineEmits<{
@@ -29,6 +35,8 @@ const emit = defineEmits<{
 defineSlots<{
   default(): unknown
   icon?(): unknown
+  /** On the right of the text: a link or a button that goes with it. */
+  action?(): unknown
 }>()
 
 const ICONS: Record<Tone, Component> = {
@@ -45,7 +53,7 @@ const defaultIcon = computed<Component>(() => ICONS[props.variant ?? 'info'])
   <div
     class="uid-alert"
     :class="`uid-alert--${variant}`"
-    role="alert"
+    :role="role"
   >
     <span class="uid-alert__icon">
       <slot name="icon">
@@ -66,6 +74,13 @@ const defaultIcon = computed<Component>(() => ICONS[props.variant ?? 'info'])
       <div class="uid-alert__body">
         <slot />
       </div>
+    </div>
+
+    <div
+      v-if="$slots.action"
+      class="uid-alert__action"
+    >
+      <slot name="action" />
     </div>
 
     <button

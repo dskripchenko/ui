@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
+import { Globe } from 'lucide-vue-next'
 import UidTag from './UidTag.vue'
 
 describe('UidTag', () => {
@@ -37,5 +38,11 @@ describe('UidTag', () => {
     })
     await wrapper.find('.uid-tag__dismiss').trigger('click')
     expect(wrapper.emitted('dismiss')).toHaveLength(1)
+  })
+
+  it('ставит иконку перед текстом', () => {
+    const wrapper = mount(UidTag, { props: { icon: Globe, variant: 'warning' }, slots: { default: 'гость' } })
+    expect(wrapper.find('.uid-tag__icon').exists()).toBe(true)
+    expect(wrapper.text()).toBe('гость')
   })
 })
