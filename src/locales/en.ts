@@ -234,6 +234,15 @@ export const en: UidLocale = {
     },
   },
 
+  aiSuggestion: {
+    private: 'only you see this',
+    pending: 'The model is reading',
+    edited: 'edited by you',
+    field: 'Text · Markdown',
+    revert: 'Revert',
+    retry: 'Retry',
+    code: (code) => `code: ${code}`,
+  },
   diffView: {
     unchanged: (n) => `${n} unchanged ${n === 1 ? 'line' : 'lines'}`,
     added: 'added',

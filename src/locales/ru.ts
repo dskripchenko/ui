@@ -234,6 +234,15 @@ export const ru: UidLocale = {
     },
   },
 
+  aiSuggestion: {
+    private: 'видно только вам',
+    pending: 'Модель читает',
+    edited: 'текст поправлен вами',
+    field: 'Текст · Markdown',
+    revert: 'Вернуть как было',
+    retry: 'Повторить',
+    code: (code) => `код: ${code}`,
+  },
   diffView: {
     unchanged: (n) => {
       const m10 = n % 10

@@ -1,0 +1,177 @@
+.uid-ai-suggestion {
+  display: flex;
+  flex-direction: column;
+  gap: var(--uid-space-sm);
+  padding: var(--uid-space-sm) var(--uid-space-md) var(--uid-space-md);
+  border: 1px dashed color-mix(in srgb, var(--uid-color-primary) 55%, transparent);
+  border-radius: var(--uid-radius-lg, 10px);
+  background: color-mix(in srgb, var(--uid-color-primary) 5%, var(--uid-color-surface));
+  color: var(--uid-color-text);
+  font-size: var(--uid-font-size-sm);
+}
+
+.uid-ai-suggestion--error {
+  border-style: solid;
+  border-color: var(--uid-color-border);
+  background: var(--uid-color-bg-subtle);
+}
+
+.uid-ai-suggestion__head {
+  display: flex;
+  align-items: center;
+  gap: var(--uid-space-sm);
+  min-height: 28px;
+}
+
+.uid-ai-suggestion__spark {
+  flex: none;
+  color: var(--uid-color-primary-text);
+}
+
+.uid-ai-suggestion__title {
+  min-width: 0;
+  overflow: hidden;
+  font-weight: var(--uid-font-weight-semibold, 600);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.uid-ai-suggestion__private {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 6px;
+  border-radius: var(--uid-radius-sm, 4px);
+  background: var(--uid-color-surface-raised);
+  color: var(--uid-color-text-secondary);
+  font-size: var(--uid-font-size-xs, 11px);
+  white-space: nowrap;
+}
+
+.uid-ai-suggestion__close {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  margin-left: auto;
+  padding: 0;
+  border: none;
+  border-radius: var(--uid-radius-md, 6px);
+  background: transparent;
+  color: var(--uid-color-text-secondary);
+  cursor: pointer;
+}
+
+.uid-ai-suggestion__close:hover {
+  background: var(--uid-color-surface-hover);
+  color: var(--uid-color-text);
+}
+
+.uid-ai-suggestion__close:focus-visible,
+.uid-ai-suggestion__field:focus-visible {
+  outline: 2px solid var(--uid-color-focus-ring);
+  outline-offset: 1px;
+}
+
+.uid-ai-suggestion__skeleton .uid-skeleton:nth-child(2) { width: 85% !important; }
+.uid-ai-suggestion__skeleton .uid-skeleton:nth-child(3) { width: 70% !important; }
+
+.uid-ai-suggestion__pending {
+  display: flex;
+  align-items: center;
+  gap: var(--uid-space-sm);
+  margin: 0;
+  color: var(--uid-color-text-secondary);
+  font-size: var(--uid-font-size-xs, 12px);
+}
+
+.uid-ai-suggestion__text {
+  font-size: var(--uid-font-size-sm);
+}
+
+.uid-ai-suggestion__text > :first-child { margin-top: 0; }
+.uid-ai-suggestion__text > :last-child { margin-bottom: 0; }
+
+.uid-ai-suggestion__edit {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.uid-ai-suggestion__label {
+  color: var(--uid-color-text-secondary);
+  font-size: var(--uid-font-size-xs, 12px);
+}
+
+.uid-ai-suggestion__field {
+  width: 100%;
+  min-height: 7.5em;
+  padding: var(--uid-space-sm);
+  border: 1px solid var(--uid-color-primary);
+  border-radius: var(--uid-radius-md, 6px);
+  background: var(--uid-color-surface);
+  color: var(--uid-color-text);
+  font: inherit;
+  font-family: var(--uid-font-family-mono);
+  font-size: var(--uid-font-size-xs, 12px);
+  line-height: 1.6;
+  resize: vertical;
+}
+
+.uid-ai-suggestion__meta {
+  margin: 0;
+  color: var(--uid-color-text-secondary);
+  font-size: var(--uid-font-size-xs, 12px);
+}
+
+.uid-ai-suggestion__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--uid-space-sm);
+}
+
+.uid-ai-suggestion__error {
+  display: flex;
+  gap: var(--uid-space-sm);
+}
+
+.uid-ai-suggestion__error-icon {
+  flex: none;
+  margin-top: 2px;
+}
+
+.uid-ai-suggestion__error--off .uid-ai-suggestion__error-icon { color: var(--uid-color-text-secondary); }
+.uid-ai-suggestion__error--setup .uid-ai-suggestion__error-icon,
+.uid-ai-suggestion__error--limit .uid-ai-suggestion__error-icon { color: var(--uid-color-warning-text); }
+.uid-ai-suggestion__error--failed .uid-ai-suggestion__error-icon { color: var(--uid-color-danger-text); }
+
+.uid-ai-suggestion__error-title {
+  margin: 0;
+  font-weight: var(--uid-font-weight-semibold, 600);
+}
+
+.uid-ai-suggestion__error-text {
+  margin: 2px 0 0;
+  color: var(--uid-color-text-secondary);
+}
+
+/* Phones: a touch target for the close, buttons in a column. */
+@media (max-width: 480px) {
+  .uid-ai-suggestion__close {
+    width: 44px;
+    height: 44px;
+    margin-right: -8px;
+  }
+
+  .uid-ai-suggestion__actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .uid-ai-suggestion__actions .uid-button {
+    min-height: 44px;
+  }
+}
