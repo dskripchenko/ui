@@ -9,7 +9,8 @@ const locale = useLocale()
 
 export interface UidDescriptionItemProps {
   label?: string
-  span?: number
+  /** Columns it takes; `full` — the whole row (in tiles too). */
+  span?: number | 'full'
   copyable?: boolean
   copyValue?: string
 }
@@ -30,7 +31,7 @@ void ctx // ensure provider exists; visual styles are class-based
 const itemRef = ref<HTMLElement | null>(null)
 const copied = ref(false)
 
-const itemStyle = computed(() => ({ '--uid-desc-span': props.span }))
+const itemStyle = computed(() => (props.span === 'full' ? {} : { '--uid-desc-span': props.span }))
 
 async function onCopy(): Promise<void> {
   const text = props.copyValue ?? itemRef.value?.querySelector('.uid-description-item__value')?.textContent?.trim() ?? ''
@@ -49,6 +50,7 @@ async function onCopy(): Promise<void> {
   <div
     ref="itemRef"
     class="uid-description-item"
+    :class="{ 'uid-description-item--full': span === 'full' }"
     :style="itemStyle"
   >
     <dt class="uid-description-item__label">

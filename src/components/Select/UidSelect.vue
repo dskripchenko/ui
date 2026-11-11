@@ -11,6 +11,8 @@ import { useTriggerAttrs } from '../../composables/useControlAttrs.js'
 export interface SelectOption {
   value: string | number
   label: string
+  /** A line under the label: what the option means, or why it is disabled. */
+  description?: string
   disabled?: boolean
   group?: string
 }
@@ -448,7 +450,14 @@ onUnmounted(() => {
                   @click="selectOption(opt)"
                   @mouseenter="!opt.disabled && (activeIndex = filtered.indexOf(opt))"
                 >
-                  <span>{{ opt.label }}</span>
+                  <span
+                    v-if="opt.description"
+                    class="uid-select__option-text"
+                  >
+                    <span>{{ opt.label }}</span>
+                    <span class="uid-select__option-description">{{ opt.description }}</span>
+                  </span>
+                  <span v-else>{{ opt.label }}</span>
                   <UidIcon
                     v-if="isSelected(opt)"
                     :icon="Check"

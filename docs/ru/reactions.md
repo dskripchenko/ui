@@ -42,3 +42,13 @@
 ```vue
 <UidAvatar name="Сборочный бот" shape="square" color="#52525b" size="sm" />
 ```
+
+`icon` — иконка вместо инициалов, белая на заливке: учётная запись не человека; подписью аватара остаётся имя.
+
+```vue
+<script setup>
+import { Bot } from 'lucide-vue-next'
+</script>
+
+<UidAvatar name="Сборочный бот" shape="square" color="#52525b" :icon="Bot" size="sm" />
+```

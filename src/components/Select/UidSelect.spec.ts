@@ -61,6 +61,19 @@ describe('UidSelect', () => {
     expect(bodyQueryAll('.uid-select__option')).toHaveLength(5)
   })
 
+  it('показывает строку описания под названием опции, и у неактивной тоже', async () => {
+    const described = [
+      { value: 'off', label: 'Off', description: 'Reads and writes nothing' },
+      { value: 'all', label: 'All', description: 'Above the limit', disabled: true },
+      { value: 'plain', label: 'Plain' },
+    ]
+    const wrapper = mount(UidSelect, { props: { options: described }, attachTo: document.body })
+    await wrapper.find('.uid-select__trigger').trigger('click')
+    const texts = bodyQueryAll('.uid-select__option-description').map((el) => el.textContent)
+    expect(texts).toEqual(['Reads and writes nothing', 'Above the limit'])
+    expect(bodyQueryAll('.uid-select__option')[1].getAttribute('aria-disabled')).toBe('true')
+  })
+
   it('выбирает опцию при клике', async () => {
     const wrapper = mount(UidSelect, { props: { options }, attachTo: document.body })
     await wrapper.find('.uid-select__trigger').trigger('click')

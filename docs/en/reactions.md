@@ -42,3 +42,13 @@ The data — Unicode 15.1 emoji with CLDR names and keywords in Russian and Engl
 ```vue
 <UidAvatar name="Build bot" shape="square" color="#52525b" size="sm" />
 ```
+
+`icon` shows an icon instead of the initials, white on the fill — an account that is not a person; the name still labels the avatar.
+
+```vue
+<script setup>
+import { Bot } from 'lucide-vue-next'
+</script>
+
+<UidAvatar name="Build bot" shape="square" color="#52525b" :icon="Bot" size="sm" />
+```

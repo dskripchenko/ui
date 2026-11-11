@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
+import { Bot } from 'lucide-vue-next'
 import UidAvatar from './UidAvatar.vue'
 
 describe('UidAvatar', () => {
@@ -27,6 +28,14 @@ describe('UidAvatar', () => {
   it('берёт заливку из color вместо цвета по имени', () => {
     const wrapper = mount(UidAvatar, { props: { name: 'Build bot', color: '#52525b' } })
     expect(wrapper.find('.uid-avatar__initials').attributes('style')).toContain('background: rgb(82, 82, 91)')
+  })
+
+  it('показывает иконку вместо инициалов и сохраняет имя как подпись', () => {
+    const wrapper = mount(UidAvatar, { props: { name: 'Build bot', icon: Bot, shape: 'square' } })
+    expect(wrapper.find('.uid-avatar__initials svg').exists()).toBe(true)
+    expect(wrapper.find('.uid-avatar__initials').text()).toBe('')
+    expect(wrapper.attributes('aria-label')).toBe('Build bot')
+    expect(wrapper.classes()).toContain('uid-avatar--square')
   })
 
   it('показывает ? без name и src', () => {

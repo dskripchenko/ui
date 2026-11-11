@@ -31,3 +31,13 @@
 ```vue
 <UidAvatar name="Build bot" shape="square" color="#52525b" size="sm" />
 ```
+
+`icon` 用图标代替首字母，白色显示在填充色上——用于非个人账户；头像的标签仍然是名称。
+
+```vue
+<script setup>
+import { Bot } from 'lucide-vue-next'
+</script>
+
+<UidAvatar name="Build bot" shape="square" color="#52525b" :icon="Bot" size="sm" />
+```

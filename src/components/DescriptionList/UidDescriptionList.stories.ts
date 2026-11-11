@@ -98,3 +98,18 @@ export const Compact: Story = {
     `,
   }),
 }
+
+export const Tiles: Story = {
+  render: () => ({
+    components: { UidDescriptionList, UidDescriptionItem },
+    template: `
+      <UidDescriptionList layout="tiles" style="max-width:360px">
+        <UidDescriptionItem label="Длительность">11 мин</UidDescriptionItem>
+        <UidDescriptionItem label="Шагов">38</UidDescriptionItem>
+        <UidDescriptionItem label="Стоимость">$0.42</UidDescriptionItem>
+        <UidDescriptionItem label="Ветка"><code>feature/retry</code></UidDescriptionItem>
+        <UidDescriptionItem label="Замечания" span="full">нет</UidDescriptionItem>
+      </UidDescriptionList>
+    `,
+  }),
+}

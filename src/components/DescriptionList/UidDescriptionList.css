@@ -116,6 +116,32 @@
   align-items: center;
 }
 
+/* Tiles */
+.uid-description-list--tiles .uid-description-list__grid {
+  grid-template-columns: repeat(auto-fill, minmax(var(--uid-desc-tile-min, 120px), 1fr));
+  gap: 1px;
+  background: var(--uid-color-border);
+  border: 1px solid var(--uid-color-border);
+  border-radius: var(--uid-radius-md);
+  overflow: hidden;
+}
+
+.uid-description-list--tiles .uid-description-item {
+  flex-direction: column;
+  gap: var(--uid-space-2xs);
+  padding: var(--uid-space-sm) var(--uid-space-md);
+  background: var(--uid-color-surface);
+}
+
+.uid-description-list--tiles .uid-description-item__label {
+  font-size: var(--uid-font-size-sm);
+  color: var(--uid-color-text-tertiary);
+}
+
+.uid-description-item--full {
+  grid-column: 1 / -1;
+}
+
 /* Sizes */
 .uid-description-list--sm { font-size: var(--uid-font-size-sm); }
 .uid-description-list--lg { font-size: var(--uid-font-size-lg, 16px); }

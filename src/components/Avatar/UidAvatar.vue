@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import './UidAvatar.css'
-import { computed, ref } from 'vue'
+import { computed, ref, type Component } from 'vue'
+import UidIcon from '../../icons/UidIcon.vue'
 import { useLocale } from '../../composables/useLocale.js'
 
 export type UidPresence = 'online' | 'away' | 'dnd' | 'call' | 'offline'
@@ -23,6 +24,11 @@ export interface UidAvatarProps {
    * so it should keep 4.5:1 with white.
    */
   color?: string
+  /**
+   * An icon instead of the initials, white on the fill: an account that is
+   * not a person (a bot, a service). The name still labels the avatar.
+   */
+  icon?: Component
 }
 
 const props = withDefaults(defineProps<UidAvatarProps>(), {
@@ -33,6 +39,7 @@ const props = withDefaults(defineProps<UidAvatarProps>(), {
   shape: 'circle',
   presence: undefined,
   color: undefined,
+  icon: undefined,
 })
 
 const uidLocale = useLocale()
@@ -67,6 +74,9 @@ const PALETTE = [
 
 const bgColor = computed(() => props.color ?? PALETTE[colorIndex.value])
 
+const ICON_SIZES = { xs: 12, sm: 14, md: 16, lg: 20, xl: 32 } as const
+const iconSize = computed(() => ICON_SIZES[props.size])
+
 function onError(): void {
   imgError.value = true
 }
@@ -98,7 +108,12 @@ function onError(): void {
         class="uid-avatar__initials"
         :style="{ background: bgColor }"
       >
-        {{ initials }}
+        <UidIcon
+          v-if="icon"
+          :icon="icon"
+          :size="iconSize"
+        />
+        <template v-else>{{ initials }}</template>
       </span>
     </span>
     <span
@@ -128,7 +143,12 @@ function onError(): void {
       :style="{ background: bgColor }"
       aria-hidden="true"
     >
-      {{ initials }}
+      <UidIcon
+        v-if="icon"
+        :icon="icon"
+        :size="iconSize"
+      />
+      <template v-else>{{ initials }}</template>
     </span>
   </span>
 </template>

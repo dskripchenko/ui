@@ -106,3 +106,18 @@ export const MultipleMaxTagCount: Story = {
   }),
   args: { options: countries, multiple: true, maxTagCount: 2 },
 }
+
+export const WithDescriptions: Story = {
+  render: (args) => ({
+    components: { UidSelect },
+    setup: () => ({ args, value: ref<string | number | null>('mentions') }),
+    template: `<UidSelect v-bind="args" v-model="value" style="max-width: 320px;" />`,
+  }),
+  args: {
+    options: [
+      { value: 'off', label: 'Выключено', description: 'ничего не читает и не пишет' },
+      { value: 'mentions', label: 'При упоминании', description: 'читает упоминания, отвечает туда же' },
+      { value: 'all', label: 'Всё', description: 'выше предела — может поднять администратор', disabled: true },
+    ],
+  },
+}

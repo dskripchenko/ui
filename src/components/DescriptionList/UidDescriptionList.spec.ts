@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils'
+import { h } from 'vue'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import UidDescriptionList from './UidDescriptionList.vue'
 import UidDescriptionItem from './UidDescriptionItem.vue'
@@ -23,6 +24,17 @@ describe('UidDescriptionList', () => {
   it('применяет bordered-класс', () => {
     const wrapper = mount(UidDescriptionList, { props: { bordered: true } })
     expect(wrapper.classes()).toContain('uid-description-list--bordered')
+  })
+
+  it('раскладывает плитками с минимальной шириной и элементом на всю строку', () => {
+    const wrapper = mount(UidDescriptionList, {
+      props: { layout: 'tiles', tileMin: '140px' },
+      slots: { default: () => [h(UidDescriptionItem, { label: 'Turns' }, () => '38'), h(UidDescriptionItem, { label: 'Note', span: 'full' }, () => 'none')] },
+    })
+    expect(wrapper.classes()).toContain('uid-description-list--tiles')
+    expect(wrapper.classes()).not.toContain('uid-description-list--horizontal')
+    expect(wrapper.find('.uid-description-list__grid').attributes('style')).toContain('--uid-desc-tile-min: 140px')
+    expect(wrapper.findAll('.uid-description-item')[1].classes()).toContain('uid-description-item--full')
   })
 
   it('применяет size-класс', () => {
