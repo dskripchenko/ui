@@ -6,6 +6,8 @@ describe('UidTopBar', () => {
   it('показывает поле поиска, колокольчик со счётчиком, тему и язык', () => {
     const wrapper = mount(UidTopBar, { props: { searchLabel: 'Поиск…', notifications: 140, theme: 'dark', locale: 'ru' } })
     expect(wrapper.find('[data-test=open-palette]').text()).toContain('Поиск…')
+    // The visible text is part of the accessible name (WCAG 2.5.3); the name stays when a phone hides the text.
+    expect(wrapper.find('[data-test=open-palette]').attributes('aria-label')).toBe('Поиск… ⌘K')
     expect(wrapper.find('.uid-notification-badge__count').text()).toBe('99+')
     expect(wrapper.find('[data-test=theme]').attributes('aria-label')).toBe('Light theme')
     expect(wrapper.find('[data-test=locale]').text()).toBe('RU')

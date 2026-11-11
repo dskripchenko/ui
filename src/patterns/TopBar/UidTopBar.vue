@@ -76,7 +76,8 @@ defineSlots<{
       v-if="searchLabel !== null"
       type="button"
       class="uid-top-bar__search"
-      :aria-label="searchLabel"
+      :aria-label="searchShortcut ? `${searchLabel} ${searchShortcut}` : searchLabel"
+      :aria-keyshortcuts="searchShortcut === '⌘K' ? 'Meta+K Control+K' : undefined"
       data-test="open-palette"
       @click="emit('search')"
     >
