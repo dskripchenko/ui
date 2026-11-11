@@ -33,6 +33,7 @@
 }
 
 .uid-description-item__value {
+  margin: 0;
   color: var(--uid-desc-value-color);
   display: flex;
   align-items: center;
