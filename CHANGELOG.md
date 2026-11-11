@@ -1,5 +1,11 @@
 # @dskripchenko/ui
 
+## 1.52.1
+
+### Patch Changes
+
+- be174e7: UidDescriptionItem: the value has no browser margin of `dd` (it pushed values aside in tiles and the vertical direction).
+
 ## 1.52.0
 
 ### Minor Changes
