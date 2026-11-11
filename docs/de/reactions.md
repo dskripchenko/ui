@@ -31,3 +31,13 @@ Die Daten (Unicode 15.1, Namen und Schlüsselwörter aus CLDR, Russisch und Engl
 ```vue
 <UidAvatar name="Build bot" shape="square" color="#52525b" size="sm" />
 ```
+
+`icon` zeigt ein Symbol statt der Initialen, weiß auf der Füllung — für ein Konto, das keine Person ist; der Name bleibt die Beschriftung.
+
+```vue
+<script setup>
+import { Bot } from 'lucide-vue-next'
+</script>
+
+<UidAvatar name="Build bot" shape="square" color="#52525b" :icon="Bot" size="sm" />
+```

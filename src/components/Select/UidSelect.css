@@ -225,6 +225,19 @@
   pointer-events: none;
 }
 
+.uid-select__option-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.uid-select__option-description {
+  font-size: var(--uid-font-size-xs, 12px);
+  font-weight: 400;
+  color: var(--uid-color-text-secondary);
+}
+
 .uid-select__check {
   flex-shrink: 0;
   color: var(--uid-color-primary-text);
