@@ -36,3 +36,9 @@ The data — Unicode 15.1 emoji with CLDR names and keywords in Russian and Engl
 ```vue
 <UidAvatar name="Maria Sokolova" presence="dnd" size="sm" />
 ```
+
+`color` sets the fill under the initials instead of the one picked by the name — to tell a kind of account apart, a service or a bot (white initials go on it: keep 4.5:1). A hyphen joins two words of one name in the initials: «Anne-Marie» is «AM».
+
+```vue
+<UidAvatar name="Build bot" shape="square" color="#52525b" size="sm" />
+```

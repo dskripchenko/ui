@@ -25,3 +25,9 @@
 ## `UidAvatar` 的在线状态
 
 `presence`：`online`（实心点）、`away`（圆环）、`dnd`（带横线的点）、`call`（带点的圆环）、`offline`（灰色圆环）——形状与颜色同时表达；无障碍名称包含该状态。
+
+`color` 设置首字母下的填充色，取代按姓名选取的颜色——用于区分账户类型，例如服务或机器人（其上为白色首字母，请保持 4.5:1）。首字母中连字符视为单词分隔：«Anne-Marie» 为 «AM»。
+
+```vue
+<UidAvatar name="Build bot" shape="square" color="#52525b" size="sm" />
+```
