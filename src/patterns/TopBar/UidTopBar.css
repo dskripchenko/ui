@@ -1,0 +1,114 @@
+.uid-top-bar {
+  display: flex;
+  gap: var(--uid-space-sm);
+  align-items: center;
+  height: 56px;
+  padding: 0 var(--uid-space-lg);
+  border-bottom: 1px solid var(--uid-border-subtle);
+  background: var(--uid-surface-raised);
+}
+
+.uid-top-bar__crumbs {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  --uid-breadcrumb-font-size: 13px;
+  --uid-breadcrumb-sep-color: var(--uid-text-tertiary);
+}
+
+.uid-top-bar__crumbs > .uid-breadcrumb {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.uid-top-bar__search {
+  display: flex;
+  flex: none;
+  gap: var(--uid-space-sm);
+  align-items: center;
+  min-width: 220px;
+  height: 32px;
+  margin-right: var(--uid-space-sm);
+  padding: 0 var(--uid-space-sm);
+  border: 1px solid var(--uid-border-subtle);
+  border-radius: var(--uid-radius-md);
+  background: var(--uid-surface-base);
+  color: var(--uid-text-tertiary);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.uid-top-bar__search:hover {
+  border-color: var(--uid-border-default);
+}
+
+.uid-top-bar__kbd {
+  margin-left: auto;
+  padding: 1px 5px;
+  border: 1px solid var(--uid-border-subtle);
+  border-radius: var(--uid-radius-sm);
+  background: var(--uid-surface-raised);
+  font-family: var(--uid-font-family-mono);
+  font-size: 10px;
+}
+
+/* A compact count over the bell's corner. */
+.uid-top-bar__badge {
+  --uid-notif-badge-size: 16px;
+  --uid-notif-badge-offset-x: 6px;
+  --uid-notif-badge-offset-y: 6px;
+}
+
+.uid-top-bar__badge .uid-notification-badge__count {
+  padding: 0 4px;
+  font-size: 10px;
+  box-shadow: 0 0 0 2px var(--uid-surface-raised);
+}
+
+.uid-top-bar__locale {
+  display: inline-flex;
+  flex: none;
+  gap: 4px;
+  align-items: center;
+  height: 32px;
+  padding: 0 var(--uid-space-xs);
+  border: 0;
+  border-radius: var(--uid-radius-md);
+  background: none;
+  color: var(--uid-text-secondary);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.uid-top-bar__locale:hover {
+  background: var(--uid-surface-base);
+  color: var(--uid-text-primary);
+}
+
+.uid-top-bar__search:focus-visible,
+.uid-top-bar__locale:focus-visible {
+  outline: 2px solid var(--uid-accent);
+  outline-offset: 2px;
+}
+
+/* On a phone the field is an icon. */
+@media (max-width: 768px) {
+  .uid-top-bar {
+    padding: 0 var(--uid-space-md);
+  }
+
+  .uid-top-bar__search {
+    justify-content: center;
+    min-width: 0;
+    width: 32px;
+    margin-right: 0;
+    padding: 0;
+  }
+
+  .uid-top-bar__search-text,
+  .uid-top-bar__kbd {
+    display: none;
+  }
+}

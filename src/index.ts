@@ -437,6 +437,8 @@ export type { UidSimpleLayoutProps } from './layouts/Simple/index.js'
 
 export { UidProductSwitcher } from './patterns/ProductSwitcher/index.js'
 export type { UidProductSwitcherItem, UidProductSwitcherProps } from './patterns/ProductSwitcher/index.js'
+export { UidTopBar } from './patterns/TopBar/index.js'
+export type { UidTopBarProps } from './patterns/TopBar/index.js'
 export { UidSegmented } from './components/Segmented/index.js'
 export type { UidSegmentedProps, SegmentedOption } from './components/Segmented/index.js'
 
