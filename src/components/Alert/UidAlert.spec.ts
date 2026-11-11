@@ -48,4 +48,16 @@ describe('UidAlert', () => {
     const wrapper = mount(UidAlert, { slots: { icon: '<span class="custom-icon" />' } })
     expect(wrapper.find('.custom-icon').exists()).toBe(true)
   })
+
+  it('ставит действие справа и роль status для постоянной плашки', () => {
+    const wrapper = mount(UidAlert, { props: { role: 'status' }, slots: { default: 'Управляется извне', action: '<a href="#">Открыть</a>' } })
+    expect(wrapper.attributes('role')).toBe('status')
+    expect(wrapper.find('.uid-alert__action a').text()).toBe('Открыть')
+  })
+
+  it('по умолчанию роль alert и без действия', () => {
+    const wrapper = mount(UidAlert, { slots: { default: 'x' } })
+    expect(wrapper.attributes('role')).toBe('alert')
+    expect(wrapper.find('.uid-alert__action').exists()).toBe(false)
+  })
 })

@@ -45,6 +45,11 @@
   color: var(--uid-tag-color-danger, var(--uid-color-danger-text));
 }
 
+/* Icon before the text */
+.uid-tag__icon {
+  flex-shrink: 0;
+}
+
 /* Dismiss button */
 .uid-tag__dismiss {
   display: inline-flex;

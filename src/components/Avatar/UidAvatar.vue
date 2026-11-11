@@ -3,6 +3,7 @@ import './UidAvatar.css'
 import { computed, ref, type Component } from 'vue'
 import UidIcon from '../../icons/UidIcon.vue'
 import { useLocale } from '../../composables/useLocale.js'
+import type { Tone } from '../../types/index.js'
 
 export type UidPresence = 'online' | 'away' | 'dnd' | 'call' | 'offline'
 
@@ -29,6 +30,12 @@ export interface UidAvatarProps {
    * not a person (a bot, a service). The name still labels the avatar.
    */
   icon?: Component
+  /**
+   * A ring around the avatar, apart from it by a gap of the background: an
+   * account told apart at a glance (an outside person, a guest). Not the
+   * presence mark — that one sits on the corner dot.
+   */
+  ring?: Tone
 }
 
 const props = withDefaults(defineProps<UidAvatarProps>(), {
@@ -40,6 +47,7 @@ const props = withDefaults(defineProps<UidAvatarProps>(), {
   presence: undefined,
   color: undefined,
   icon: undefined,
+  ring: undefined,
 })
 
 const uidLocale = useLocale()
@@ -93,7 +101,7 @@ function onError(): void {
   >
     <span
       class="uid-avatar"
-      :class="[`uid-avatar--${size}`, `uid-avatar--${shape}`]"
+      :class="[`uid-avatar--${size}`, `uid-avatar--${shape}`, ring ? `uid-avatar--ring uid-avatar--ring-${ring}` : null]"
       aria-hidden="true"
     >
       <img
@@ -125,7 +133,7 @@ function onError(): void {
   <span
     v-else
     class="uid-avatar"
-    :class="[`uid-avatar--${size}`, `uid-avatar--${shape}`]"
+    :class="[`uid-avatar--${size}`, `uid-avatar--${shape}`, ring ? `uid-avatar--ring uid-avatar--ring-${ring}` : null]"
     :title="name"
     :aria-label="alt ?? name"
     role="img"

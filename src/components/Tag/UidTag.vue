@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import './UidTag.css'
 import { X } from 'lucide-vue-next'
+import type { Component } from 'vue'
 import UidIcon from '../../icons/UidIcon.vue'
 import { useLocale } from '../../composables/useLocale.js'
 import type { Tone } from '../../types/index.js'
@@ -13,12 +14,15 @@ export interface UidTagProps {
   variant?: UidTagVariant
   size?: 'sm' | 'md'
   dismissible?: boolean
+  /** An icon before the text, in the tag's colour. */
+  icon?: Component
 }
 
 withDefaults(defineProps<UidTagProps>(), {
   variant: 'default',
   size: 'md',
   dismissible: false,
+  icon: undefined,
 })
 
 const emit = defineEmits<{
@@ -35,6 +39,12 @@ defineSlots<{
     class="uid-tag"
     :class="[`uid-tag--${variant}`, `uid-tag--${size}`]"
   >
+    <UidIcon
+      v-if="icon"
+      class="uid-tag__icon"
+      :icon="icon"
+      :size="size === 'sm' ? 11 : 12"
+    />
     <slot />
     <button
       v-if="dismissible"

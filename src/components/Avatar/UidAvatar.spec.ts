@@ -77,4 +77,16 @@ describe('UidAvatar', () => {
     expect(wrapper.classes()).toContain('uid-avatar')
     expect(wrapper.find('.uid-avatar-presence__dot').exists()).toBe(false)
   })
+
+  it('обводит аватар кольцом тона, и с присутствием тоже', () => {
+    const plain = mount(UidAvatar, { props: { name: 'Гас Петерсон', ring: 'warning' } })
+    expect(plain.classes()).toContain('uid-avatar--ring-warning')
+    const present = mount(UidAvatar, { props: { name: 'Гас Петерсон', ring: 'warning', presence: 'online' } })
+    expect(present.find('.uid-avatar').classes()).toContain('uid-avatar--ring')
+    expect(present.find('.uid-avatar-presence__dot--online').exists()).toBe(true)
+  })
+
+  it('без ring кольца нет', () => {
+    expect(mount(UidAvatar, { props: { name: 'Боб' } }).classes()).not.toContain('uid-avatar--ring')
+  })
 })
