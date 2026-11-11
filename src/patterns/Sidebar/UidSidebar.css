@@ -516,3 +516,8 @@ span.uid-sidebar-section__toggle {
   border-color: transparent;
   background: none;
 }
+
+/* The active row: its meta takes the row's colour, which keeps 4.5:1 on the active fill. */
+.uid-sidebar-item--active .uid-sidebar-item__meta {
+  color: inherit;
+}
