@@ -1,5 +1,11 @@
 # @dskripchenko/ui
 
+## 1.52.0
+
+### Minor Changes
+
+- 81216ae: UidAvatar: `icon` shows an icon instead of the initials. UidSelect: an option's `description` line, also under a disabled one. UidDescriptionList: `layout="tiles"` with `tileMin`; UidDescriptionItem `span="full"`.
+
 ## 1.51.0
 
 ### Minor Changes
