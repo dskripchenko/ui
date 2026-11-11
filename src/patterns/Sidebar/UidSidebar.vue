@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import './UidSidebar.css'
+import { computed, provide } from 'vue'
 import { useLocale } from '../../composables/useLocale.js'
+import { SIDEBAR_COLLAPSED } from './context.js'
 
 
 export interface UidSidebarProps {
@@ -9,13 +11,15 @@ export interface UidSidebarProps {
   position?: 'left' | 'right'
 }
 
-withDefaults(defineProps<UidSidebarProps>(), {
+const props = withDefaults(defineProps<UidSidebarProps>(), {
   collapsed: false,
   width: undefined,
   position: 'left',
 })
 
 const uidLocale = useLocale()
+// Sections turn into icons with a flyout when the sidebar is collapsed.
+provide(SIDEBAR_COLLAPSED, computed(() => props.collapsed))
 
 defineSlots<{
   header?(): unknown

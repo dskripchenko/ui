@@ -4,6 +4,9 @@ import UidSidebar from './UidSidebar.vue'
 import UidSidebarItem from './UidSidebarItem.vue'
 import UidSidebarGroup from './UidSidebarGroup.vue'
 import UidSidebarDivider from './UidSidebarDivider.vue'
+import UidSidebarSection from './UidSidebarSection.vue'
+import UidSidebarMore from './UidSidebarMore.vue'
+import UidSidebarJump from './UidSidebarJump.vue'
 
 const meta: Meta<typeof UidSidebar> = {
   title: 'Patterns/Sidebar',
@@ -91,4 +94,34 @@ export const WithIcons: Story = {
     `,
   }),
   args: {},
+}
+
+/** Sections with limits for long lists: rows with time, mentions and counts, "more" links. */
+export const Sections: Story = {
+  args: { collapsed: false },
+  render: (args) => ({
+    components: { UidSidebar, UidSidebarItem, UidSidebarSection, UidSidebarMore, UidSidebarJump },
+    setup: () => ({ args }),
+    template: `<div style="height: 560px; display: flex"><UidSidebar v-bind="args">
+      <template #nav>
+        <UidSidebarJump label="Go to a conversation…" />
+        <UidSidebarSection title="Favourites" :count="4" :mentions="1">
+          <template #icon>★</template>
+          <UidSidebarItem href="#" dense strong :mentions="1" :count="4">kb-editors</UidSidebarItem>
+          <UidSidebarItem href="#" dense>kb-review</UidSidebarItem>
+        </UidSidebarSection>
+        <UidSidebarSection title="Channels" summary="19 new" :count="19">
+          <template #icon>#</template>
+          <template #actions><button type="button" aria-label="Add">+</button></template>
+          <UidSidebarItem href="#" dense strong meta="12:44" :count="12">
+            kb-incidents
+            <template #actions><button type="button" aria-label="Favourite">☆</button></template>
+          </UidSidebarItem>
+          <UidSidebarItem href="#" dense meta="yesterday" quiet>random</UidSidebarItem>
+          <UidSidebarMore href="#" tone="primary">13 more unread</UidSidebarMore>
+          <UidSidebarMore href="#">All channels · 134</UidSidebarMore>
+        </UidSidebarSection>
+      </template>
+    </UidSidebar></div>`,
+  }),
 }
