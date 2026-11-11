@@ -234,6 +234,13 @@ export const en: UidLocale = {
     },
   },
 
+  diffView: {
+    unchanged: (n) => `${n} unchanged ${n === 1 ? 'line' : 'lines'}`,
+    added: 'added',
+    deleted: 'deleted',
+    truncated: 'There are more changes than shown: the rest is at the source.',
+    fileTruncated: 'The file is shown in part.',
+  },
   avatar: {
     presence: {
       online: 'online',
