@@ -1,5 +1,11 @@
 # @dskripchenko/ui
 
+## 1.51.0
+
+### Minor Changes
+
+- 9e59578: `UidAvatar`: `color` sets the fill under the initials instead of the one picked by the name; a hyphen joins two words of one name in the initials («Anne-Marie» is «AM»).
+
 ## 1.50.0
 
 ### Minor Changes
