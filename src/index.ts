@@ -443,6 +443,8 @@ export type { UidSegmentedProps, SegmentedOption } from './components/Segmented/
 export { UidBusyStrip, firstFree } from './components/BusyStrip/index.js'
 export type { UidBusyStripProps, BusyRow, BusySegment, BusySelection, FirstFreeOptions } from './components/BusyStrip/index.js'
 
+export { UidDiffView, diffCounts, diffPairs, diffRows } from './components/DiffView/index.js'
+export type { UidDiffViewProps, DiffFile, DiffPair, DiffRow } from './components/DiffView/index.js'
 export { UidMilestoneStrip } from './components/MilestoneStrip/index.js'
 export type { UidMilestoneStripProps, UidMilestoneStripMonthFormat, Milestone } from './components/MilestoneStrip/index.js'
 

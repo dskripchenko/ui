@@ -200,6 +200,15 @@ export interface UidLocale {
     }
   }
 
+  /** UidDiffView */
+  diffView: {
+    unchanged: (n: number) => string
+    added: string
+    deleted: string
+    truncated: string
+    fileTruncated: string
+  }
+
   /** UidAvatar: the presence mark's spoken name. */
   avatar: {
     presence: {

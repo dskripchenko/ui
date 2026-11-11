@@ -234,6 +234,18 @@ export const ru: UidLocale = {
     },
   },
 
+  diffView: {
+    unchanged: (n) => {
+      const m10 = n % 10
+      const m100 = n % 100
+      const word = m10 === 1 && m100 !== 11 ? 'строка' : m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14) ? 'строки' : 'строк'
+      return `${n} ${word} без изменений`
+    },
+    added: 'добавлено',
+    deleted: 'удалено',
+    truncated: 'Изменений больше, чем показано: остальное — у источника.',
+    fileTruncated: 'Файл показан не полностью.',
+  },
   avatar: {
     presence: {
       online: 'в сети',
