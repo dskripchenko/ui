@@ -200,6 +200,17 @@ export interface UidLocale {
     }
   }
 
+  /** UidAiSuggestionCard */
+  aiSuggestion: {
+    private: string
+    pending: string
+    edited: string
+    field: string
+    revert: string
+    retry: string
+    code: (code: string) => string
+  }
+
   /** UidDiffView */
   diffView: {
     unchanged: (n: number) => string

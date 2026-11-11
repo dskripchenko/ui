@@ -1,0 +1,27 @@
+.uid-ai-model-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 100%;
+  padding: 1px 6px;
+  border: 1px solid var(--uid-color-border);
+  border-radius: var(--uid-radius-sm, 4px);
+  background: var(--uid-color-surface);
+  color: var(--uid-color-text-secondary);
+  font-size: var(--uid-font-size-xs, 11px);
+  font-weight: 500;
+  line-height: 16px;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.uid-ai-model-tag__spark {
+  flex: none;
+  color: var(--uid-color-primary-text);
+}
+
+.uid-ai-model-tag__text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
