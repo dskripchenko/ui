@@ -2,9 +2,11 @@ import type { Meta, StoryObj } from '@storybook/vue3'
 import { ref } from 'vue'
 import UidMenu from './UidMenu.vue'
 import UidMenuItem from './UidMenuItem.vue'
+import UidMenuLabel from './UidMenuLabel.vue'
+import UidMenuNote from './UidMenuNote.vue'
 import UidMenuSeparator from './UidMenuSeparator.vue'
 import UidSubMenu from './UidSubMenu.vue'
-import { Copy, Eye, Pencil, Trash2 } from 'lucide-vue-next'
+import { Copy, Eye, EyeOff, Info, LayoutGrid, Pencil, PanelLeft, Pin, Trash2 } from 'lucide-vue-next'
 
 const meta: Meta<typeof UidMenu> = {
   title: 'Overlays/Menu',
@@ -197,3 +199,32 @@ export const ContextMenu: Story = {
   }),
 }
 
+export const Choices: Story = {
+  name: 'Выбор: радио, переключатели, сноска',
+  render: () => ({
+    components: { UidMenu, UidMenuItem, UidMenuLabel, UidMenuNote, UidMenuSeparator },
+    setup() {
+      const view = ref<'grid' | 'speaker' | 'stage'>('grid')
+      const hideEmpty = ref(false)
+      const hideMine = ref(true)
+      return { view, hideEmpty, hideMine, LayoutGrid, PanelLeft, Pin, EyeOff, Info }
+    },
+    template: `
+      <div style="display:flex;justify-content:center;padding:80px;--uid-menu-min-width:260px">
+        <UidMenu>
+          <template #trigger>
+            <button style="padding:8px 16px;cursor:pointer">Вид ▾</button>
+          </template>
+          <UidMenuLabel>Вид</UidMenuLabel>
+          <UidMenuItem type="radio" :icon="LayoutGrid" :checked="view === 'grid'" hint="все плитки одного размера" @click="view = 'grid'">Сетка</UidMenuItem>
+          <UidMenuItem type="radio" :icon="PanelLeft" :checked="view === 'speaker'" hint="крупно тот, кто говорит" @click="view = 'speaker'">Докладчик</UidMenuItem>
+          <UidMenuItem type="radio" :icon="Pin" :checked="view === 'stage'" hint="один выбранный крупно" @click="view = 'stage'">Сцена</UidMenuItem>
+          <UidMenuSeparator />
+          <UidMenuItem type="switch" :icon="EyeOff" :checked="hideEmpty" hint="кроме того, кто говорит" @click="hideEmpty = !hideEmpty">Скрыть пустые</UidMenuItem>
+          <UidMenuItem type="switch" :icon="EyeOff" :checked="hideMine" @click="hideMine = !hideMine">Скрыть свою</UidMenuItem>
+          <UidMenuNote :icon="Info">Выбор виден только вам</UidMenuNote>
+        </UidMenu>
+      </div>
+    `,
+  }),
+}

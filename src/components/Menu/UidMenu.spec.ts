@@ -2,8 +2,11 @@ import { mount, flushPromises } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vitest'
 import UidMenu from './UidMenu.vue'
 import UidMenuItem from './UidMenuItem.vue'
+import UidMenuLabel from './UidMenuLabel.vue'
+import UidMenuNote from './UidMenuNote.vue'
 import UidMenuSeparator from './UidMenuSeparator.vue'
 import UidSubMenu from './UidSubMenu.vue'
+import { MENU_CLOSE_KEY } from './context.js'
 import { Pencil } from 'lucide-vue-next'
 
 const buildMenu = () => mount(UidMenu, {
@@ -502,5 +505,92 @@ describe('UidMenu: управляемый режим и меню в точке',
     await flushPromises()
     expect(document.querySelector('.uid-menu')).toBeNull()
     wrapper.unmount()
+  })
+
+  describe('пункты выбора', () => {
+    const choices = `
+      <UidMenuLabel>Вид</UidMenuLabel>
+      <UidMenuItem type="radio" :checked="true" hint="все одного размера">Сетка</UidMenuItem>
+      <UidMenuItem type="radio" :checked="false">Докладчик</UidMenuItem>
+      <UidMenuSeparator />
+      <UidMenuItem type="switch" :checked="true" >Скрыть пустые</UidMenuItem>
+      <UidMenuItem>Обычный</UidMenuItem>
+      <UidMenuNote>Видно только вам</UidMenuNote>
+    `
+
+    async function open() {
+      const wrapper = mount(UidMenu, {
+        slots: { trigger: '<button>Меню</button>', default: choices },
+        global: {
+          components: { UidMenuItem, UidMenuLabel, UidMenuNote, UidMenuSeparator },
+        },
+        attachTo: document.body,
+      })
+      await wrapper.find('.uid-menu-trigger').trigger('click')
+      await flushPromises()
+      return wrapper
+    }
+
+    it('радио и переключатель — с ролью и отметкой для экранных чтецов', async () => {
+      const wrapper = await open()
+      const radios = document.querySelectorAll('[role="menuitemradio"]')
+      expect(radios).toHaveLength(2)
+      expect(radios[0]?.getAttribute('aria-checked')).toBe('true')
+      expect(radios[1]?.getAttribute('aria-checked')).toBe('false')
+      expect(radios[0]?.querySelector('.uid-menu-item__check')).not.toBeNull()
+      expect(radios[1]?.querySelector('.uid-menu-item__check')).toBeNull()
+      expect(radios[0]?.querySelector('.uid-menu-item__hint')?.textContent).toBe('все одного размера')
+      const sw = document.querySelector('[role="menuitemcheckbox"]')
+      expect(sw?.getAttribute('aria-checked')).toBe('true')
+      expect(sw?.querySelector('.uid-menu-item__switch')).not.toBeNull()
+      expect(document.querySelector('[role="menuitem"]')?.getAttribute('aria-checked')).toBeNull()
+      expect(document.querySelector('.uid-menu-label')?.textContent).toBe('Вид')
+      expect(document.querySelector('.uid-menu-note')?.textContent?.trim()).toBe('Видно только вам')
+      wrapper.unmount()
+    })
+
+    it('переключатель не закрывает меню, радио закрывает', async () => {
+      const wrapper = await open()
+      ;(document.querySelector('[role="menuitemcheckbox"]') as HTMLElement).click()
+      await flushPromises()
+      expect(document.querySelector('.uid-menu')).not.toBeNull()
+      ;(document.querySelector('[role="menuitemradio"]') as HTMLElement).click()
+      await flushPromises()
+      expect(document.querySelector('.uid-menu')).toBeNull()
+      wrapper.unmount()
+    })
+
+    it('пункт сообщает о клике; keepOpen оставляет меню открытым и для обычного пункта', async () => {
+      const close = vi.fn()
+      const item = mount(UidMenuItem, {
+        props: { keepOpen: true },
+        slots: { default: 'Обновить' },
+        global: { provide: { [MENU_CLOSE_KEY as symbol]: close } },
+      })
+      await item.trigger('click')
+      expect(item.emitted('click')).toHaveLength(1)
+      expect(close).not.toHaveBeenCalled()
+      await item.setProps({ keepOpen: undefined })
+      await item.trigger('click')
+      expect(close).toHaveBeenCalledTimes(1)
+    })
+
+    it('стрелки ходят по всем пунктам, мимо заголовка и сноски', async () => {
+      const wrapper = await open()
+      const menu = document.querySelector('.uid-menu') as HTMLElement
+      const items = Array.from(menu.querySelectorAll<HTMLElement>('button'))
+      // The menu focuses its first item on its own, a frame after opening.
+      await new Promise((resolve) => requestAnimationFrame(resolve))
+      await flushPromises()
+      items[0]?.focus()
+      const visited: number[] = []
+      for (let i = 0; i < 4; i++) {
+        menu.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }))
+        await flushPromises()
+        visited.push(items.indexOf(document.activeElement as HTMLElement))
+      }
+      expect(visited).toEqual([1, 2, 3, 0])
+      wrapper.unmount()
+    })
   })
 })

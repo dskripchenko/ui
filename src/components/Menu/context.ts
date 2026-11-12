@@ -10,7 +10,9 @@ export interface MenuLevel {
 
 export const MENU_LEVEL_KEY: InjectionKey<MenuLevel> = Symbol('uid-menu-level')
 
-const ITEM_SELECTOR = '[role="menuitem"]:not([disabled]):not([aria-disabled="true"])'
+const ITEM_SELECTOR = ['menuitem', 'menuitemradio', 'menuitemcheckbox']
+  .map((role) => `[role="${role}"]:not([disabled]):not([aria-disabled="true"])`)
+  .join(', ')
 
 // Enabled items that belong to `menu` itself, skipping items of nested panels.
 export function getLevelItems(menu: HTMLElement | null): HTMLElement[] {
