@@ -579,12 +579,17 @@ describe('UidMenu: управляемый режим и меню в точке',
       const wrapper = await open()
       const menu = document.querySelector('.uid-menu') as HTMLElement
       const items = Array.from(menu.querySelectorAll<HTMLElement>('button'))
+      // The menu focuses its first item on its own, a frame after opening.
+      await new Promise((resolve) => requestAnimationFrame(resolve))
+      await flushPromises()
       items[0]?.focus()
-      for (const expected of [1, 2, 3, 0]) {
+      const visited: number[] = []
+      for (let i = 0; i < 4; i++) {
         menu.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }))
         await flushPromises()
-        expect(document.activeElement).toBe(items[expected])
+        visited.push(items.indexOf(document.activeElement as HTMLElement))
       }
+      expect(visited).toEqual([1, 2, 3, 0])
       wrapper.unmount()
     })
   })
