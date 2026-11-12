@@ -56,6 +56,12 @@
   pointer-events: none;
 }
 
+/* A menu with hints is wider: the hints wrap within it */
+.uid-menu:has(.uid-menu-item__hint) {
+  min-width: var(--uid-menu-rich-min-width, 260px);
+  max-width: var(--uid-menu-rich-max-width, 320px);
+}
+
 /* Rich items: a hint under the label, a choice at the end */
 .uid-menu-item--rich {
   align-items: flex-start;
