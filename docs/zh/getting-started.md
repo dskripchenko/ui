@@ -57,6 +57,16 @@ import { Check } from '@dskripchenko/ui/icons'
 
 不带该属性时使用 light 主题。详见 [主题](./theming.md) 中的主题切换、自定义主题及 `useTheme()`。
 
+## 焦点环
+
+套件控件在键盘焦点时显示焦点环（`:focus-visible`）。浏览器在刚点击过的元素上按下修饰键时也会显示它；在启动时调用一次 `trackFocusModality()`，在按下修饰键以外的按键之前焦点环保持隐藏：
+
+```ts
+import { trackFocusModality } from '@dskripchenko/ui'
+
+trackFocusModality()
+```
+
 ## 语言
 
 默认情况下，所有内置组件文案为俄文。要切换为英文(或其他语言)，用 `UidLocaleProvider` 包裹应用：

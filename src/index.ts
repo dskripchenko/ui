@@ -479,6 +479,7 @@ export { ru, en } from './locales/index.js'
 export type { UidLocale, UidPartialLocale, UidMediaLocale } from './locales/index.js'
 
 export { useTheme } from './composables/useTheme.js'
+export { trackFocusModality } from './composables/useFocusModality.js'
 export type { Theme } from './composables/useTheme.js'
 
 export { useLocale, provideLocale, provideAppLocale, localeKey as uidLocaleKey } from './composables/useLocale.js'
