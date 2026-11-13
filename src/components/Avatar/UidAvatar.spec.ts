@@ -30,6 +30,13 @@ describe('UidAvatar', () => {
     expect(wrapper.find('.uid-avatar__initials').attributes('style')).toContain('background: rgb(82, 82, 91)')
   })
 
+  it('берёт цвет по seed, а не по имени: тёзки различаются, один человек — один цвет', () => {
+    const bg = (props: Record<string, unknown>) => mount(UidAvatar, { props }).find('.uid-avatar__initials').attributes('style')
+    expect(bg({ name: 'Иван', seed: 7 })).toBe(bg({ name: 'Иван Петров', seed: 7 }))
+    const many = new Set(Array.from({ length: 16 }, (_, i) => bg({ name: 'Иван', seed: i })))
+    expect(many.size).toBeGreaterThan(4)
+  })
+
   it('показывает иконку вместо инициалов и сохраняет имя как подпись', () => {
     const wrapper = mount(UidAvatar, { props: { name: 'Build bot', icon: Bot, shape: 'square' } })
     expect(wrapper.find('.uid-avatar__initials svg').exists()).toBe(true)

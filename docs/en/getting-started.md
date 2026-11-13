@@ -57,6 +57,16 @@ The kit ships with `light` and `dark` themes, switched via the `data-theme` attr
 
 Without the attribute, the light theme applies. See [theming](./theming.md) for theme switching, custom themes, and `useTheme()`.
 
+## Focus rings
+
+Kit controls show a focus ring on keyboard focus (`:focus-visible`). Browsers also show it on an element clicked earlier as soon as a modifier key is pressed; call `trackFocusModality()` once at startup and the ring stays hidden until a key other than a modifier is pressed:
+
+```ts
+import { trackFocusModality } from '@dskripchenko/ui'
+
+trackFocusModality()
+```
+
 ## Locale
 
 By default, all built-in component strings are in Russian. To switch to English (or another locale), wrap your app in `UidLocaleProvider`:

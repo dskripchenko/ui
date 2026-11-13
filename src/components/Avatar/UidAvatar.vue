@@ -1,3 +1,15 @@
+<script lang="ts">
+/** FNV-1a: close seeds («Ann», «Anna», ids 12 and 21) land far apart. */
+export function avatarHash(seed: string): number {
+  let hash = 0x811c9dc5
+  for (let i = 0; i < seed.length; i++) {
+    hash ^= seed.charCodeAt(i)
+    hash = Math.imul(hash, 0x01000193)
+  }
+  return hash >>> 0
+}
+</script>
+
 <script setup lang="ts">
 import './UidAvatar.css'
 import { computed, ref, type Component } from 'vue'
@@ -26,6 +38,12 @@ export interface UidAvatarProps {
    */
   color?: string
   /**
+   * What picks the fill when there is no `color`: a stable id of the person
+   * (an account id), so that two people with like names differ and one
+   * person has one colour everywhere. The name by default.
+   */
+  seed?: string | number
+  /**
    * An icon instead of the initials, white on the fill: an account that is
    * not a person (a bot, a service). The name still labels the avatar.
    */
@@ -46,6 +64,7 @@ const props = withDefaults(defineProps<UidAvatarProps>(), {
   shape: 'circle',
   presence: undefined,
   color: undefined,
+  seed: undefined,
   icon: undefined,
   ring: undefined,
 })
@@ -69,15 +88,17 @@ const initials = computed<string>(() => {
 })
 
 const colorIndex = computed<number>(() => {
-  if (!props.name) return 0
-  return props.name.split('').reduce((acc, ch) => acc + ch.charCodeAt(0), 0) % PALETTE.length
+  const seed = props.seed ?? props.name
+  if (seed === undefined || seed === '') return 0
+  return avatarHash(String(seed)) % PALETTE.length
 })
 
-// The 700 steps of indigo, violet, pink, orange, green, teal, blue and red:
-// white initials stay at 4.5:1 or more on each, in both themes.
+// The 700 steps of indigo, violet, pink, orange, green, fuchsia, blue and
+// red: white initials stay at 4.5:1 or more on each, in both themes. One
+// green only — the accent is teal, a second green reads as the same colour.
 const PALETTE = [
   '#4338ca', '#6d28d9', '#be185d', '#c2410c',
-  '#15803d', '#0f766e', '#1d4ed8', '#b91c1c',
+  '#15803d', '#a21caf', '#1d4ed8', '#b91c1c',
 ]
 
 const bgColor = computed(() => props.color ?? PALETTE[colorIndex.value])

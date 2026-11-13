@@ -57,6 +57,16 @@ Das Kit liefert `light` und `dark` Themes, umschaltbar über das Attribut `data-
 
 Ohne Attribut gilt das Light-Theme. Mehr in [Theming](./theming.md) zu Theme-Wechsel, eigenen Themes und `useTheme()`.
 
+## Fokusring
+
+Elemente des Kits zeigen bei Tastaturfokus einen Ring (`:focus-visible`). Browser zeigen ihn auch auf einem zuvor angeklickten Element, sobald eine Modifikatortaste gedrückt wird; rufen Sie `trackFocusModality()` einmal beim Start auf, dann bleibt der Ring verborgen, bis eine andere Taste als ein Modifikator gedrückt wird:
+
+```ts
+import { trackFocusModality } from '@dskripchenko/ui'
+
+trackFocusModality()
+```
+
 ## Locale
 
 Standardmäßig sind alle eingebauten Komponenten-Texte auf Russisch. Um auf Englisch (oder eine andere Sprache) zu wechseln, umschließe deine App mit `UidLocaleProvider`:
