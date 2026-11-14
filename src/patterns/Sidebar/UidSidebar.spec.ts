@@ -162,3 +162,13 @@ describe('UidSidebarItem to / RouterLink', () => {
   })
 })
 
+describe('UidSidebarItem counters', () => {
+  it('shows alerts as a danger number, apart from the neutral count', () => {
+    const wrapper = mount(UidSidebarItem, { props: { href: '#', alerts: 2, count: 3 }, slots: { default: 'Checks' } })
+    expect(wrapper.find('.uid-sidebar-item__alerts').text()).toBe('2')
+    expect(wrapper.find('.uid-sidebar-item__count').text()).toBe('3')
+    expect(mount(UidSidebarItem, { props: { href: '#', alerts: 120 } }).find('.uid-sidebar-item__alerts').text()).toBe('99+')
+    expect(mount(UidSidebarItem, { props: { href: '#' } }).find('.uid-sidebar-item__alerts').exists()).toBe(false)
+    expect(sidebarCss).toContain('.uid-sidebar-item__alerts {')
+  })
+})

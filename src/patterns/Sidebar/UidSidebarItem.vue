@@ -15,6 +15,8 @@ export interface UidSidebarItemProps {
   meta?: string
   /** Mentions: a danger "@N" pill. */
   mentions?: number
+  /** Something broken there (checks down, failed runs): a danger number. */
+  alerts?: number
   /** Unread: a neutral number. */
   count?: number
   /** Something new here: the label is bold. */
@@ -33,6 +35,7 @@ const props = withDefaults(defineProps<UidSidebarItemProps>(), {
   dense: false,
   meta: undefined,
   mentions: 0,
+  alerts: 0,
   count: 0,
   strong: false,
   quiet: false,
@@ -103,6 +106,10 @@ const attrs = computed(() => {
         class="uid-sidebar-item__mentions"
       >@{{ mentions }}</span>
       <span
+        v-if="alerts > 0"
+        class="uid-sidebar-item__alerts"
+      >{{ alerts > 99 ? '99+' : alerts }}</span>
+      <span
         v-if="count > 0"
         class="uid-sidebar-item__count"
       >{{ count > 99 ? '99+' : count }}</span>
@@ -155,6 +162,10 @@ const attrs = computed(() => {
       v-if="mentions > 0"
       class="uid-sidebar-item__mentions"
     >@{{ mentions }}</span>
+    <span
+      v-if="alerts > 0"
+      class="uid-sidebar-item__alerts"
+    >{{ alerts > 99 ? '99+' : alerts }}</span>
     <span
       v-if="count > 0"
       class="uid-sidebar-item__count"

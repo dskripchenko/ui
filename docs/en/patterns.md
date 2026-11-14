@@ -59,7 +59,7 @@ Vertical app menu.
 
 Props: `collapsed?`, `width?`, `position?: 'left' \| 'right'`.
 
-Sub-components: `UidSidebarItem`, `UidSidebarGroup`, `UidSidebarDivider`. A group's `action` slot puts a control next to its title — an "add" button, say; it hides with the titles when the sidebar is collapsed.
+Sub-components: `UidSidebarItem`, `UidSidebarGroup`, `UidSidebarDivider`. A group's `action` slot puts a control next to its title — an "add" button, say; it hides with the titles when the sidebar is collapsed. An item's counters: `count` — a neutral number (unread), `alerts` — a danger number (something broken there), `mentions` — a danger "@N" pill.
 
 ### `UidTabBar` — bottom navigation on a phone
 
