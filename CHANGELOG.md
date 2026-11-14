@@ -1,5 +1,11 @@
 # @dskripchenko/ui
 
+## 1.60.0
+
+### Minor Changes
+
+- 27b7829: UidSidebarItem: `alerts` — a danger number for a section where something is broken (checks down, failed runs), apart from the neutral `count` and the `@N` of `mentions`.
+
 ## 1.59.0
 
 ### Minor Changes
