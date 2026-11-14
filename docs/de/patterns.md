@@ -59,7 +59,7 @@ Vertikales App-Menü.
 
 Props: `collapsed?`, `width?`, `position?: 'left' \| 'right'`.
 
-Sub-Komponenten: `UidSidebarItem`, `UidSidebarGroup`, `UidSidebarDivider`. Der Slot `action` einer Gruppe setzt ein Bedienelement neben ihren Titel — etwa eine Schaltfläche „Hinzufügen“; in der eingeklappten Sidebar wird es mit den Titeln ausgeblendet.
+Sub-Komponenten: `UidSidebarItem`, `UidSidebarGroup`, `UidSidebarDivider`. Der Slot `action` einer Gruppe setzt ein Bedienelement neben ihren Titel — etwa eine Schaltfläche „Hinzufügen“; in der eingeklappten Sidebar wird es mit den Titeln ausgeblendet. Zähler eines Eintrags: `count` — eine neutrale Zahl (ungelesen), `alerts` — eine Warnzahl (dort ist etwas kaputt), `mentions` — eine Warnpille „@N“.
 
 ### `UidTabBar` — untere Navigation auf dem Telefon
 

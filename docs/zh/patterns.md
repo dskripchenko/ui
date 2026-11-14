@@ -59,7 +59,7 @@ Props：`variant?: 'minimal' \| 'columns'`。
 
 Props：`collapsed?`、`width?`、`position?: 'left' \| 'right'`。
 
-子组件：`UidSidebarItem`、`UidSidebarGroup`、`UidSidebarDivider`。分组的 `action` 插槽在标题旁放置操作控件（例如“添加”按钮）；侧边栏折叠时它与标题一同隐藏。
+子组件：`UidSidebarItem`、`UidSidebarGroup`、`UidSidebarDivider`。分组的 `action` 插槽在标题旁放置操作控件（例如“添加”按钮）；侧边栏折叠时它与标题一同隐藏。 条目的计数：`count` — 中性数字（未读），`alerts` — 危险色数字（该处有故障），`mentions` — 危险色“@N”标记。
 
 ### `UidTabBar` — 手机底部导航
 

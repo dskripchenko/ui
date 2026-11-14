@@ -210,6 +210,7 @@ button.uid-sidebar-item {
 }
 
 .uid-sidebar-item__mentions,
+.uid-sidebar-item__alerts,
 .uid-sidebar-item__count {
   display: inline-flex;
   align-items: center;
@@ -227,6 +228,11 @@ button.uid-sidebar-item {
 .uid-sidebar-item__mentions {
   background: var(--uid-color-danger-solid, var(--uid-color-danger));
   color: #fff;
+}
+
+.uid-sidebar-item__alerts {
+  background: var(--uid-color-danger-subtle);
+  color: var(--uid-color-danger-text, var(--uid-color-danger));
 }
 
 .uid-sidebar-item__count {
@@ -256,9 +262,11 @@ button.uid-sidebar-item {
 
 .uid-sidebar-item-row:hover .uid-sidebar-item__meta,
 .uid-sidebar-item-row:hover .uid-sidebar-item__mentions,
+.uid-sidebar-item-row:hover .uid-sidebar-item__alerts,
 .uid-sidebar-item-row:hover .uid-sidebar-item__count,
 .uid-sidebar-item-row:focus-within .uid-sidebar-item__meta,
 .uid-sidebar-item-row:focus-within .uid-sidebar-item__mentions,
+.uid-sidebar-item-row:focus-within .uid-sidebar-item__alerts,
 .uid-sidebar-item-row:focus-within .uid-sidebar-item__count {
   visibility: hidden;
 }
