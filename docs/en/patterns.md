@@ -105,6 +105,8 @@ Page-content header with title, description, breadcrumbs, and actions.
 
 Props: `title?`, `description?`, `back?` (back arrow that emits `back`).
 
+The top padding comes from `--uid-page-header-padding` (default `var(--uid-space-lg) 0 0`); set it to `0` when the page already spaces its top.
+
 ### `UidEmptyState` — empty state
 
 Fallback when there's no data ("no projects", "nothing found", "start by creating…").

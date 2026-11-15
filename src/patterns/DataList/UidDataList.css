@@ -167,18 +167,47 @@
   font-size: 12px;
 }
 
-/* A phone: one column of rows; the app shows what it needs in the first cell. */
+/*
+ * A phone: the first and the last cell on a line; the cells between are
+ * hidden unless marked `data-phone`, which go on a line of their own below.
+ */
 @media (max-width: 768px) {
   .uid-data-list__head {
     display: none;
   }
 
   .uid-data-list__row {
-    grid-template-columns: minmax(0, 1fr) auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 12px;
     min-height: 64px;
+    padding-block: 10px;
   }
 
-  .uid-data-list__row > :not(:first-child):not(:last-child) {
+  .uid-data-list__row > :first-child {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .uid-data-list__row > :last-child:not(:first-child) {
+    flex: none;
+    order: 1;
+  }
+
+  .uid-data-list__row > :not(:first-child):not(:last-child):not([data-phone]) {
     display: none;
+  }
+
+  .uid-data-list__row > [data-phone]:not(:first-child):not(:last-child) {
+    order: 2;
+    min-width: 0;
+  }
+
+  /* Breaks the line after the last cell, so the kept ones go below. */
+  .uid-data-list__row:has(> [data-phone]:not(:first-child):not(:last-child))::after {
+    content: '';
+    flex-basis: 100%;
+    order: 1;
+    height: 0;
   }
 }

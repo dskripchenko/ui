@@ -1,5 +1,6 @@
+/* `--uid-page-header-padding`: set it to 0 when the page already spaces its top. */
 .uid-pattern-page-header {
-  padding: var(--uid-space-lg) 0 0;
+  padding: var(--uid-page-header-padding, var(--uid-space-lg) 0 0);
 }
 
 .uid-pattern-page-header__breadcrumb {

@@ -105,6 +105,8 @@ Props：`collapsed?`、`width?`、`position?: 'left' \| 'right'`。
 
 Props：`title?`、`description?`、`back?`。
 
+顶部内边距由 `--uid-page-header-padding` 决定（默认 `var(--uid-space-lg) 0 0`）；页面顶部已有间距时设为 `0`。
+
 ### `UidEmptyState`
 
 无数据时的回退("没有项目"、"未找到"、"从创建...开始")。

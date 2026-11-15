@@ -33,3 +33,12 @@ type Story = StoryObj
 export const Default: Story = {}
 export const Loading: Story = { args: { loading: true } }
 export const Empty: Story = { args: { items: [] } }
+
+/** Narrow the viewport: the Space cell, marked `data-phone`, stays on a line below. */
+export const KeptOnPhone: Story = {
+  render: (args) => ({
+    components: { UidDataList },
+    setup: () => ({ args }),
+    template: '<UidDataList v-bind="args"><template #row="{ row }"><span role="cell">{{ row.name }}</span><span role="cell" data-phone>{{ row.space }}</span><span role="cell">{{ row.members }}</span></template></UidDataList>',
+  }),
+}
