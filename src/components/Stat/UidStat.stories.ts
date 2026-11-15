@@ -137,3 +137,17 @@ export const CustomFormatter: Story = {
     `,
   }),
 }
+
+export const Small: Story = {
+  render: () => ({
+    components: { UidStat },
+    setup: () => ({ Activity, Users }),
+    template: `
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px">
+        <UidStat size="sm" title="Runs today" :value="14" :icon="Activity" />
+        <UidStat size="sm" title="People" :value="6" :icon="Users" tone="info" />
+        <UidStat size="sm" title="Spent" value="$3.20" />
+      </div>
+    `,
+  }),
+}

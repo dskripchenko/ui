@@ -115,4 +115,18 @@ describe('UidModal', () => {
     expect(document.querySelector<HTMLElement>('.uid-modal')?.style.maxWidth).toBe('1100px')
     wrapper.unmount()
   })
+
+  it('shows an icon of the tone and a subtitle that describes the dialog', async () => {
+    const wrapper = mount(UidModal, {
+      props: { modelValue: true, title: 'Block Ada', subtitle: 'Access ends at once', icon: { render: () => null }, iconTone: 'danger' },
+      slots: { default: 'Body' },
+      attachTo: document.body,
+    })
+    await flushPromises()
+    expect(document.querySelector('.uid-modal__icon--danger')).not.toBeNull()
+    const subtitle = document.querySelector('.uid-modal__subtitle')
+    expect(subtitle?.textContent?.trim()).toBe('Access ends at once')
+    expect(document.querySelector('.uid-modal')?.getAttribute('aria-describedby')).toBe(subtitle?.id)
+    wrapper.unmount()
+  })
 })

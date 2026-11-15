@@ -18,6 +18,8 @@ export interface UidAlertProps {
    * banner on top of a page), which screen readers do not interrupt with.
    */
   role?: 'alert' | 'status'
+  /** `sm`: a compact line inside a card or a form. */
+  size?: 'sm' | 'md'
 }
 
 const props = withDefaults(defineProps<UidAlertProps>(), {
@@ -26,6 +28,7 @@ const props = withDefaults(defineProps<UidAlertProps>(), {
   title: undefined,
   icon: undefined,
   role: 'alert',
+  size: 'md',
 })
 
 const emit = defineEmits<{
@@ -52,14 +55,14 @@ const defaultIcon = computed<Component>(() => ICONS[props.variant ?? 'info'])
 <template>
   <div
     class="uid-alert"
-    :class="`uid-alert--${variant}`"
+    :class="[`uid-alert--${variant}`, size === 'sm' && 'uid-alert--sm']"
     :role="role"
   >
     <span class="uid-alert__icon">
       <slot name="icon">
         <UidIcon
           :icon="icon ?? defaultIcon"
-          :size="18"
+          :size="size === 'sm' ? 16 : 18"
         />
       </slot>
     </span>

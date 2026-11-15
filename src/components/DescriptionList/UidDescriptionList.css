@@ -15,6 +15,7 @@
 
 .uid-description-list__grid {
   display: grid;
+  margin: 0;
   grid-template-columns: repeat(var(--uid-desc-cols), 1fr);
   gap: 0;
 }

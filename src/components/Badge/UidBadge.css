@@ -6,6 +6,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 5px;
   padding: 2px var(--uid-space-xs);
   background: var(--uid-badge-bg);
   color: var(--uid-badge-color);
@@ -15,6 +16,15 @@
   line-height: 1.4;
   white-space: nowrap;
   vertical-align: middle;
+}
+
+/* Marker: a dot of the tone before the text */
+.uid-badge__marker {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
 }
 
 /* Dot mode */
@@ -33,7 +43,12 @@
 
 /* Variants */
 .uid-badge--info {
-  --uid-badge-bg:    color-mix(in srgb, var(--uid-accent) 15%, transparent);
+  --uid-badge-bg:    var(--uid-info-subtle);
+  --uid-badge-color: var(--uid-info-text);
+}
+
+.uid-badge--accent {
+  --uid-badge-bg:    var(--uid-accent-subtle);
   --uid-badge-color: var(--uid-accent-text);
 }
 
@@ -54,7 +69,8 @@
 
 /* Dot variant colors */
 .uid-badge--dot.uid-badge--default { background: var(--uid-text-tertiary); }
-.uid-badge--dot.uid-badge--info    { background: var(--uid-accent); }
+.uid-badge--dot.uid-badge--info    { background: var(--uid-info); }
+.uid-badge--dot.uid-badge--accent  { background: var(--uid-accent); }
 .uid-badge--dot.uid-badge--success { background: var(--uid-success); }
 .uid-badge--dot.uid-badge--warning { background: var(--uid-warning); }
 .uid-badge--dot.uid-badge--danger  { background: var(--uid-danger); }

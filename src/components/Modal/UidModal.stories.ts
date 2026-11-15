@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
 import { ref } from 'vue'
+import { ShieldOff } from 'lucide-vue-next'
 import UidModal from './UidModal.vue'
 
 const meta: Meta<typeof UidModal> = {
@@ -77,6 +78,21 @@ export const Sizes: Story = {
         </UidModal>
         <UidModal v-model="openXl" title="Широкое окно" size="xl">
           <p>Для таблиц и сложного содержимого.</p>
+        </UidModal>
+      </div>
+    `,
+  }),
+}
+
+export const WithIcon: Story = {
+  render: () => ({
+    components: { UidModal },
+    setup: () => ({ open: ref(false), ShieldOff }),
+    template: `
+      <div>
+        <button @click="open = true" style="padding:8px 16px;cursor:pointer">Block</button>
+        <UidModal v-model="open" title="Block the account" subtitle="Access ends at once; the reason goes to the audit." :icon="ShieldOff" icon-tone="danger" size="sm">
+          <p>The person signs out everywhere.</p>
         </UidModal>
       </div>
     `,

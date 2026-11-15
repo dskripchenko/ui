@@ -60,4 +60,9 @@ describe('UidAlert', () => {
     expect(wrapper.attributes('role')).toBe('alert')
     expect(wrapper.find('.uid-alert__action').exists()).toBe(false)
   })
+
+  it('size sm makes it compact', () => {
+    expect(mount(UidAlert, { props: { size: 'sm' }, slots: { default: 'x' } }).classes()).toContain('uid-alert--sm')
+    expect(mount(UidAlert, { slots: { default: 'x' } }).classes()).not.toContain('uid-alert--sm')
+  })
 })

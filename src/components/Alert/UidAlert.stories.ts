@@ -81,3 +81,16 @@ export const Dismissible: Story = {
     `,
   }),
 }
+
+export const Compact: Story = {
+  render: () => ({
+    components: { UidAlert },
+    template: `
+      <div style="display:flex;flex-direction:column;gap:8px;max-width:420px">
+        <UidAlert size="sm" variant="info">Shown once: copy it now.</UidAlert>
+        <UidAlert size="sm" variant="warning">Ends in 5 days.</UidAlert>
+        <UidAlert size="sm" variant="danger" title="Not saved">The name is taken.</UidAlert>
+      </div>
+    `,
+  }),
+}

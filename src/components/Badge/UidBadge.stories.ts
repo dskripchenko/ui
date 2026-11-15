@@ -30,6 +30,7 @@ export const Variants: Story = {
     template: `
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
         <UidBadge variant="default">Default</UidBadge>
+        <UidBadge variant="accent">Accent</UidBadge>
         <UidBadge variant="info">Info</UidBadge>
         <UidBadge variant="success">Success</UidBadge>
         <UidBadge variant="warning">Warning</UidBadge>
@@ -77,6 +78,22 @@ export const WithNumbers: Story = {
         <UidBadge variant="info">Новое</UidBadge>
         <UidBadge variant="success">Активен</UidBadge>
         <UidBadge variant="warning">Beta</UidBadge>
+      </div>
+    `,
+  }),
+}
+
+export const Markers: Story = {
+  render: () => ({
+    components: { UidBadge },
+    template: `
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <UidBadge marker variant="success">Running</UidBadge>
+        <UidBadge marker variant="warning">Waiting</UidBadge>
+        <UidBadge marker variant="danger">Down</UidBadge>
+        <UidBadge marker variant="info">Queued</UidBadge>
+        <UidBadge marker variant="accent">Agent</UidBadge>
+        <UidBadge marker>Paused</UidBadge>
       </div>
     `,
   }),
