@@ -1,5 +1,11 @@
 # @dskripchenko/ui
 
+## 1.63.0
+
+### Minor Changes
+
+- 4210485: `--uid-font-family-serif` token and IBM Plex Serif (500, 600; Latin and Cyrillic) in `styles/fonts.css`, for editorial headlines.
+
 ## 1.62.0
 
 ### Minor Changes
