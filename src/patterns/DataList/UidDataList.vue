@@ -53,7 +53,11 @@ const query = defineModel<string>('query', { default: '' })
 const chip = defineModel<string | null>('chip', { default: null })
 
 defineSlots<{
-  /** One row: its cells, in the columns' order. */
+  /**
+   * One row: its cells, in the columns' order. On a phone only the first
+   * and the last cell stay on the row's line; a cell between them marked
+   * `data-phone` stays too, on a line below.
+   */
   row(props: { row: T }): unknown
   /** Dropdown filters next to the search: project, order, grouping. */
   filters?(): unknown

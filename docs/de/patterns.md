@@ -105,6 +105,8 @@ Seiten-Inhaltskopf mit Titel, Beschreibung, Breadcrumbs und Aktionen.
 
 Props: `title?`, `description?`, `back?`.
 
+Den oberen Abstand setzt `--uid-page-header-padding` (Standard `var(--uid-space-lg) 0 0`); auf `0` setzen, wenn die Seite oben bereits Abstand hat.
+
 ### `UidEmptyState`
 
 Fallback, wenn keine Daten da sind ("keine Projekte", "nichts gefunden", "fang an mit…").
