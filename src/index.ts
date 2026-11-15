@@ -448,6 +448,8 @@ export type { UidSegmentedProps, SegmentedOption } from './components/Segmented/
 
 export { UidBusyStrip, firstFree } from './components/BusyStrip/index.js'
 export type { UidBusyStripProps, BusyRow, BusySegment, BusySelection, FirstFreeOptions } from './components/BusyStrip/index.js'
+export { UidHistoryStrip } from './components/HistoryStrip/index.js'
+export type { UidHistoryStripProps, HistoryCell } from './components/HistoryStrip/index.js'
 
 export { UidAiSuggestionCard, UidAiModelTag } from './components/AiSuggestion/index.js'
 export type { UidAiSuggestionCardProps, UidAiSuggestionError, UidAiSuggestionErrorKind, UidAiSuggestionState, UidAiModelTagProps } from './components/AiSuggestion/index.js'

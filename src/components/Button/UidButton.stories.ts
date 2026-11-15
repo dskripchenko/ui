@@ -135,3 +135,16 @@ export const IconOnly: Story = {
     `,
   }),
 }
+
+export const AsLink: Story = {
+  render: () => ({
+    components: { UidButton },
+    template: `
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <UidButton href="#docs">Link</UidButton>
+        <UidButton variant="secondary" href="https://example.com" external>External</UidButton>
+        <UidButton variant="ghost" href="#off" disabled>Disabled</UidButton>
+      </div>
+    `,
+  }),
+}

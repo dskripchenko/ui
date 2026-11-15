@@ -131,6 +131,24 @@
   100% { background-position: 200% 0; }
 }
 
+/* Small: a dense strip of figures */
+.uid-stat--sm {
+  gap: 12px;
+}
+
+.uid-stat--sm .uid-stat__icon {
+  width: 32px;
+  height: 32px;
+}
+
+.uid-stat--sm .uid-stat__value {
+  font-size: var(--uid-font-size-xl, 20px);
+}
+
+.uid-stat--sm .uid-stat__title {
+  font-size: var(--uid-font-size-xs);
+}
+
 .uid-stat--trend-below .uid-stat__value-row {
   flex-direction: column;
   align-items: flex-start;

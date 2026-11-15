@@ -31,4 +31,16 @@ describe('UidBadge', () => {
     const wrapper = mount(UidBadge)
     expect(wrapper.classes()).toContain('uid-badge--default')
   })
+
+  it('marker puts a dot of the tone before the text', () => {
+    const wrapper = mount(UidBadge, { props: { marker: true, variant: 'success' }, slots: { default: 'Up' } })
+    expect(wrapper.find('.uid-badge__marker').exists()).toBe(true)
+    expect(wrapper.find('.uid-badge__marker').attributes('aria-hidden')).toBe('true')
+    expect(wrapper.text()).toBe('Up')
+    expect(mount(UidBadge, { slots: { default: 'x' } }).find('.uid-badge__marker').exists()).toBe(false)
+  })
+
+  it('has an accent variant apart from info', () => {
+    expect(mount(UidBadge, { props: { variant: 'accent' } }).classes()).toContain('uid-badge--accent')
+  })
 })

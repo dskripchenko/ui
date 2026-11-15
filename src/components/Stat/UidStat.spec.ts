@@ -131,4 +131,9 @@ describe('UidStat', () => {
       expect(w.find('.uid-stat__trend').text()).toContain('2,9%')
     })
   })
+
+  it('size sm marks a dense stat', () => {
+    expect(mount(UidStat, { props: { title: 'Runs', value: 4, size: 'sm' } }).classes()).toContain('uid-stat--sm')
+    expect(mount(UidStat, { props: { title: 'Runs', value: 4 } }).classes()).not.toContain('uid-stat--sm')
+  })
 })

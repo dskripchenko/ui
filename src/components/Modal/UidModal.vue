@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import './UidModal.css'
-import { onBeforeUnmount, ref, watch, nextTick, useId } from 'vue'
+import { onBeforeUnmount, ref, watch, nextTick, useId, type Component } from 'vue'
 import { X } from 'lucide-vue-next'
 import UidIcon from '../../icons/UidIcon.vue'
 import { useFocusTrap } from '../../composables/useFocusTrap.js'
 import { useScrollLock } from '../../composables/useScrollLock.js'
 import { useOverlayStack } from '../../composables/useOverlayStack.js'
 import { useLocale } from '../../composables/useLocale.js'
+import type { Tone } from '../../types/index.js'
 
 const locale = useLocale()
 
@@ -19,6 +20,12 @@ export interface UidModalProps {
   /** Close on the Escape key (default). Turn off for a dialog that must be answered. */
   closeOnEsc?: boolean
   hideClose?: boolean
+  /** A line under the title: what the dialog is about. */
+  subtitle?: string
+  /** An icon in a tinted square before the title. */
+  icon?: Component
+  /** The tint of the icon; the accent when unset. */
+  iconTone?: Tone
 }
 
 const model = defineModel<boolean>({ default: false })
@@ -29,6 +36,9 @@ const props = withDefaults(defineProps<UidModalProps>(), {
   closeOnEsc: true,
   hideClose: false,
   width: undefined,
+  subtitle: undefined,
+  icon: undefined,
+  iconTone: undefined,
 })
 
 const emit = defineEmits<{
@@ -42,6 +52,7 @@ defineSlots<{
 }>()
 
 const titleId = useId()
+const subtitleId = useId()
 const dialogRef = ref<HTMLElement | null>(null)
 const { activate, deactivate } = useFocusTrap(dialogRef)
 const layer = useOverlayStack()
@@ -106,17 +117,38 @@ function onEscape(event: KeyboardEvent): void {
           role="dialog"
           aria-modal="true"
           :aria-labelledby="title ? titleId : undefined"
+          :aria-describedby="subtitle ? subtitleId : undefined"
           tabindex="-1"
         >
           <div class="uid-modal__header">
             <slot name="header">
-              <p
-                v-if="title"
-                :id="titleId"
-                class="uid-modal__title"
+              <span
+                v-if="icon"
+                class="uid-modal__icon"
+                :class="iconTone && `uid-modal__icon--${iconTone}`"
+                aria-hidden="true"
               >
-                {{ title }}
-              </p>
+                <UidIcon
+                  :icon="icon"
+                  :size="18"
+                />
+              </span>
+              <div class="uid-modal__heading">
+                <p
+                  v-if="title"
+                  :id="titleId"
+                  class="uid-modal__title"
+                >
+                  {{ title }}
+                </p>
+                <p
+                  v-if="subtitle"
+                  :id="subtitleId"
+                  class="uid-modal__subtitle"
+                >
+                  {{ subtitle }}
+                </p>
+              </div>
             </slot>
             <button
               v-if="!hideClose"

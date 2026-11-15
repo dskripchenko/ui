@@ -33,11 +33,11 @@
     opacity var(--uid-duration-fast) var(--uid-ease-out);
 }
 
-.uid-button:hover:not([disabled]):not([data-loading='true']) {
+.uid-button:hover:not([disabled]):not([aria-disabled='true']):not([data-loading='true']) {
   background: var(--uid-button-bg-hover);
 }
 
-.uid-button:active:not([disabled]):not([data-loading='true']) {
+.uid-button:active:not([disabled]):not([aria-disabled='true']):not([data-loading='true']) {
   transform: scale(0.98);
 }
 

@@ -30,6 +30,8 @@ export interface UidStatProps {
    * (`below`) — which keeps a row of cards uniform whatever the value length.
    */
   trendPlacement?: 'inline' | 'below'
+  /** `sm`: a smaller value and icon, for a dense strip of figures. */
+  size?: 'sm' | 'md'
 }
 
 const props = withDefaults(defineProps<UidStatProps>(), {
@@ -39,6 +41,7 @@ const props = withDefaults(defineProps<UidStatProps>(), {
   variant: 'card',
   locale: undefined,
   trendPlacement: 'inline',
+  size: 'md',
 })
 
 const uidLocale = useLocale()
@@ -90,6 +93,7 @@ const formattedTrend = computed(() => {
     :class="[
       `uid-stat--${tone}`,
       variant === 'ghost' && 'uid-stat--ghost',
+      size === 'sm' && 'uid-stat--sm',
       trendPlacement === 'below' && 'uid-stat--trend-below',
       loading && 'uid-stat--loading',
     ]"
@@ -103,7 +107,7 @@ const formattedTrend = computed(() => {
         <UidIcon
           v-if="icon"
           :icon="icon"
-          :size="20"
+          :size="size === 'sm' ? 16 : 20"
         />
       </slot>
     </span>

@@ -117,4 +117,32 @@ describe('UidButton', () => {
     expect(wrapper.find('.uid-button__prepend').exists()).toBe(true)
     expect(wrapper.find('.uid-button__icon').exists()).toBe(true)
   })
+
+  it('with href renders a link that looks like the button', () => {
+    const wrapper = mount(UidButton, { props: { href: '/docs', external: true }, slots: { default: 'Docs' } })
+    expect(wrapper.element.tagName).toBe('A')
+    expect(wrapper.attributes('href')).toBe('/docs')
+    expect(wrapper.attributes('target')).toBe('_blank')
+    expect(wrapper.attributes('rel')).toBe('noopener noreferrer')
+    expect(wrapper.attributes('type')).toBeUndefined()
+    expect(wrapper.classes()).toContain('uid-button--primary')
+  })
+
+  it('with to renders the registered RouterLink, and an <a> without a router', () => {
+    const RouterLink = { name: 'RouterLink', props: ['to'], template: '<a :data-to="to"><slot /></a>' }
+    const routed = mount(UidButton, { props: { to: '/runs' }, slots: { default: 'Runs' }, global: { components: { RouterLink } } })
+    expect(routed.attributes('data-to')).toBe('/runs')
+    const plain = mount(UidButton, { props: { to: '/runs' }, slots: { default: 'Runs' } })
+    expect(plain.element.tagName).toBe('A')
+    expect(plain.attributes('href')).toBe('/runs')
+  })
+
+  it('a disabled link loses its target, leaves the tab order and swallows the click', async () => {
+    const wrapper = mount(UidButton, { props: { href: '/docs', disabled: true }, slots: { default: 'Docs' } })
+    expect(wrapper.attributes('href')).toBeUndefined()
+    expect(wrapper.attributes('tabindex')).toBe('-1')
+    expect(wrapper.attributes('aria-disabled')).toBe('true')
+    await wrapper.trigger('click')
+    expect(wrapper.emitted('click')).toBeUndefined()
+  })
 })
