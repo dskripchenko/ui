@@ -1,5 +1,12 @@
 # @dskripchenko/ui
 
+## 1.62.0
+
+### Minor Changes
+
+- b84d4db: - `UidDataList`: on a phone a cell between the first and the last marked `data-phone` stays visible, on a line below them; the rest are still hidden.
+  - `UidPageHeader`: the top padding comes from `--uid-page-header-padding`, so a page that already spaces its top can set it to `0`.
+
 ## 1.61.0
 
 ### Minor Changes
