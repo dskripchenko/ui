@@ -1,5 +1,11 @@
 # @dskripchenko/ui
 
+## 1.64.0
+
+### Minor Changes
+
+- fea911b: feat: design tokens for non-CSS platforms — `@dskripchenko/ui/tokens` (JS with types) and `@dskripchenko/ui/tokens.json`, generated from the CSS tokens and themes with every `var()` resolved per theme; px, ms and unitless values as numbers
+
 ## 1.63.0
 
 ### Minor Changes
