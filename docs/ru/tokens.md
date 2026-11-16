@@ -484,3 +484,24 @@ import '@fontsource-variable/inter';
 
 - Уникальные значения для одного компонента, не предполагающие переиспользования.
 - Magic-числа из дизайна, которые ещё не устоялись (положи их инлайн с TODO, повышай до токена, когда увидишь повтор).
+
+## Токены вне CSS (React Native, нативные приложения)
+
+Для платформ без CSS custom properties те же токены выгружаются при сборке
+в JS и JSON. Источник прежний — CSS-файлы: `src/tokens/*.css` и
+`src/styles/themes.css`.
+
+```ts
+import { primitives, themes } from '@dskripchenko/ui/tokens'
+
+const t = themes.dark
+const card = { backgroundColor: t['surface-raised'], borderRadius: primitives['radius-lg'], padding: primitives['space-md'] }
+```
+
+- Ключи — имена переменных без `--uid-`: `primitives['space-md']`,
+  `themes.light['text-primary']`.
+- `themes.light` и `themes.dark` — семантические токены и алиасы
+  `--uid-color-*`, все ссылки `var()` уже разрешены для своей темы.
+- `px`, `ms` и безразмерные значения — числа (`16`, `200`, `1.5`); цвета,
+  тени, шрифтовые стеки и кривые анимации — строки.
+- Тот же набор без JS — `@dskripchenko/ui/tokens.json`.

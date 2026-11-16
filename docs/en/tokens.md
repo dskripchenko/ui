@@ -262,3 +262,22 @@ Fixed scale prevents layer fights. Multiples of 100 leave room within each layer
 
 - One-off values used only in a single component.
 - Magic numbers from designs that haven't settled — keep them inline with a TODO; promote to a token when you see them repeat.
+
+## Tokens outside CSS (React Native, native apps)
+
+For platforms without CSS custom properties the same tokens are exported to JS and JSON at
+build time. The CSS files stay the single source: `src/tokens/*.css` and `src/styles/themes.css`.
+
+```ts
+import { primitives, themes } from '@dskripchenko/ui/tokens'
+
+const t = themes.dark
+const card = { backgroundColor: t['surface-raised'], borderRadius: primitives['radius-lg'], padding: primitives['space-md'] }
+```
+
+- Keys are the variable names without `--uid-`: `primitives['space-md']`, `themes.light['text-primary']`.
+- `themes.light` and `themes.dark` hold the semantic tokens and the `--uid-color-*` aliases, with
+  every `var()` reference resolved for that theme.
+- `px`, `ms` and unitless values are numbers (`16`, `200`, `1.5`); colors, shadows, font stacks
+  and easing curves are strings.
+- The same set without JS: `@dskripchenko/ui/tokens.json`.

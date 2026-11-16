@@ -247,3 +247,22 @@ Feste Skala verhindert Schichtenkonflikte. Vielfache von 100 lassen Platz innerh
 
 - Einmalige Werte, die nur in einer Komponente vorkommen.
 - Magic Numbers aus Designs, die noch nicht stabil sind — inline mit TODO. Erst zu Token erheben, wenn Wiederholung sichtbar wird.
+
+## Tokens außerhalb von CSS (React Native, native Apps)
+
+Für Plattformen ohne CSS Custom Properties werden dieselben Tokens beim Build als JS und JSON
+exportiert. Die Quelle bleiben die CSS-Dateien: `src/tokens/*.css` und `src/styles/themes.css`.
+
+```ts
+import { primitives, themes } from '@dskripchenko/ui/tokens'
+
+const t = themes.dark
+const card = { backgroundColor: t['surface-raised'], borderRadius: primitives['radius-lg'], padding: primitives['space-md'] }
+```
+
+- Schlüssel sind die Variablennamen ohne `--uid-`: `primitives['space-md']`, `themes.light['text-primary']`.
+- `themes.light` und `themes.dark` enthalten die semantischen Tokens und die Aliase
+  `--uid-color-*`; alle `var()`-Verweise sind für das jeweilige Theme aufgelöst.
+- Werte in `px`, `ms` und ohne Einheit sind Zahlen (`16`, `200`, `1.5`); Farben, Schatten,
+  Schriftstapel und Easing-Kurven sind Strings.
+- Derselbe Satz ohne JS: `@dskripchenko/ui/tokens.json`.

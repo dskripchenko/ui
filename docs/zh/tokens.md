@@ -244,3 +244,20 @@ import '@fontsource-variable/inter'
 
 - 单组件中只用一次的一次性值。
 - 设计稿中尚未稳定的魔法数字——内联并加 TODO；看到重复时再升级为 token。
+
+## CSS 之外的令牌（React Native、原生应用）
+
+对于不支持 CSS 自定义属性的平台，构建时会把同一套令牌导出为 JS 和 JSON。唯一来源仍是 CSS 文件：
+`src/tokens/*.css` 和 `src/styles/themes.css`。
+
+```ts
+import { primitives, themes } from '@dskripchenko/ui/tokens'
+
+const t = themes.dark
+const card = { backgroundColor: t['surface-raised'], borderRadius: primitives['radius-lg'], padding: primitives['space-md'] }
+```
+
+- 键名是去掉 `--uid-` 前缀的变量名：`primitives['space-md']`、`themes.light['text-primary']`。
+- `themes.light` 和 `themes.dark` 包含语义令牌和 `--uid-color-*` 别名，所有 `var()` 引用都已按各自主题解析。
+- `px`、`ms` 和无单位的值是数字（`16`、`200`、`1.5`）；颜色、阴影、字体栈和缓动曲线是字符串。
+- 不需要 JS 时可用同一套数据：`@dskripchenko/ui/tokens.json`。
