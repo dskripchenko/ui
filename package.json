@@ -16,7 +16,8 @@
     "storybook",
     "lucide",
     "i18n",
-    "a11y"
+    "a11y",
+    "react-native"
   ],
   "homepage": "https://dskripchenko.github.io/ui/",
   "repository": {
@@ -62,6 +63,12 @@
     "./styles/fonts.css": "./dist/styles/fonts.css",
     "./styles/all.css": "./dist/styles/all.css",
     "./styles/index.css": "./dist/styles/index.css",
+    "./tokens": {
+      "types": "./dist/tokens/index.d.ts",
+      "import": "./dist/tokens/index.mjs",
+      "require": "./dist/tokens/index.cjs"
+    },
+    "./tokens.json": "./dist/tokens/tokens.json",
     "./package.json": "./package.json"
   },
   "sideEffects": [
@@ -73,9 +80,9 @@
   "scripts": {
     "dev": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "build": "vue-tsc --noEmit -p tsconfig.build.json && vite build && node scripts/build-styles.mjs && node scripts/check-dist.mjs",
-    "build:lib": "vite build && node scripts/build-styles.mjs && node scripts/check-dist.mjs",
-    "build:analyze": "ANALYZE=true vite build && node scripts/build-styles.mjs",
+    "build": "vue-tsc --noEmit -p tsconfig.build.json && vite build && node scripts/build-styles.mjs && node scripts/build-tokens.mjs && node scripts/check-dist.mjs",
+    "build:lib": "vite build && node scripts/build-styles.mjs && node scripts/build-tokens.mjs && node scripts/check-dist.mjs",
+    "build:analyze": "ANALYZE=true vite build && node scripts/build-styles.mjs && node scripts/build-tokens.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "eslint src",
