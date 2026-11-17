@@ -89,6 +89,28 @@ document.documentElement.dataset.theme = prefersDark ? 'dark' : 'light'
 
 Das Kit liefert `useTheme()` als Composable, das das Lesen/Schreiben des Attributs und das Abonnieren der Systempräferenz kapselt.
 
+## Die Wahl der Person: `useColorTheme()`
+
+`useColorTheme()` hält die Wahl der Person — `light`, `dark` oder `system` — über `useTheme()`: in `localStorage` (Schlüssel `theme`, `COLOR_THEME_STORAGE_KEY`) für den ersten Paint beim nächsten Besuch und mit `save` dort, wo alle ihre Apps sie lesen. Solange `system` gewählt ist, folgt die Seite den Änderungen des Systems.
+
+```ts
+import { useColorTheme } from '@dskripchenko/ui'
+
+const { theme, choice, init, choose, toggle, adopt } = useColorTheme({
+  save: (choice) => api.savePreferences({ theme: choice }),
+})
+
+init()                       // beim Start: die gemerkte Wahl
+choose('dark')               // Wahl hier: anwenden, merken, speichern
+adopt(session.preferences.theme) // in einer anderen App gewählt: anwenden, nicht zurückspeichern
+```
+
+`choose()` und `toggle()` rufen `save` auf; `adopt()` nicht und übergeht alles außer einer bekannten Wahl. Ein Zustand pro Seite.
+
+## Stille Anmeldung
+
+Apps mit einem gemeinsamen OpenID-Connect-Provider lassen eine dort angemeldete Person ohne „Anmelden" herein: der Server der App startet die Anmeldung mit `prompt=none`. `shouldSignInSilently()` entscheidet bei einer Navigation, `silentSignInUrl()` ist die Adresse, die sie startet — nur für einen Gast, dem der Server es anbietet, und nicht nach dem Abmelden (`?out`) oder mit dem Grund eines Fehlschlags (`?sso`).
+
 ## Eigene Themes
 
 Definiere dein eigenes Theme — es ist nur ein weiterer Selektor:

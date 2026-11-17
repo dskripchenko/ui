@@ -145,6 +145,52 @@ document.documentElement.dataset.theme = prefersDark ? 'dark' : 'light'
 
 The kit ships a `useTheme()` composable that wraps reading/writing the attribute and subscribing to system changes.
 
+## The person's choice: `useColorTheme()`
+
+`useColorTheme()` keeps what the person chose — `light`, `dark` or `system` — over `useTheme()`: in `localStorage` (key `theme`, `COLOR_THEME_STORAGE_KEY`) for the first paint of the next visit, and, with `save`, where every app of theirs reads it. While the choice is `system`, the page follows the system's changes.
+
+```ts
+import { useColorTheme } from '@dskripchenko/ui'
+
+const { theme, choice, init, choose, toggle, adopt } = useColorTheme({
+  // the user's setting on the server, shared by all their apps
+  save: (choice) => api.savePreferences({ theme: choice }),
+})
+
+init()                       // on start: the remembered choice
+choose('dark')               // the person's choice here: applied, remembered, saved
+adopt(session.preferences.theme) // chosen in another app: applied, not saved back
+```
+
+`choose()` and `toggle()` call `save`; `adopt()` does not, and passes over anything but a known choice. One state for the page: every call shares it.
+
+A first-paint script that reads the same key avoids a flash of the wrong theme:
+
+```js
+try {
+  var theme = localStorage.getItem('theme')
+  if (theme === 'light' || theme === 'dark') document.documentElement.dataset.theme = theme
+} catch (e) {}
+```
+
+## Silent sign-in
+
+Apps that share an OpenID Connect provider let a person signed in to one of them into the next without pressing "Sign in": the app's server starts the sign-in with `prompt=none`, and the provider answers at once. `shouldSignInSilently()` decides on a navigation; `silentSignInUrl()` is the address that starts it.
+
+```ts
+import { shouldSignInSilently, silentSignInUrl } from '@dskripchenko/ui'
+
+router.beforeEach(async (to) => {
+  await session.load()
+  if (shouldSignInSilently({ signedIn: !!session.user, offered: session.sso.silent }, to.query)) {
+    window.location.assign(silentSignInUrl(to.fullPath))
+    return false
+  }
+})
+```
+
+It goes only for a guest the server offers it to (the server stops offering it after a refusal), and not on a page reached by signing out (`?out`) or with the reason a sign-in failed (`?sso`).
+
 ## Custom themes
 
 Define your own theme — it's just another selector:

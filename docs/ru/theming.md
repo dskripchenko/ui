@@ -123,6 +123,52 @@ document.documentElement.dataset.theme = prefersDark ? 'dark' : 'light'
 
 Внутри kit'а есть composable `useTheme()` (см. фазу 0 в [ROADMAP](../internal/roadmap.md)), который инкапсулирует чтение/запись атрибута и подписку на системные изменения.
 
+## Выбор человека: `useColorTheme()`
+
+`useColorTheme()` хранит выбор человека — `light`, `dark` или `system` — поверх `useTheme()`: в `localStorage` (ключ `theme`, `COLOR_THEME_STORAGE_KEY`) для первой отрисовки при следующем визите, а с `save` — там, где его читают все приложения человека. Пока выбрано `system`, страница следует за изменениями системы.
+
+```ts
+import { useColorTheme } from '@dskripchenko/ui'
+
+const { theme, choice, init, choose, toggle, adopt } = useColorTheme({
+  // настройка пользователя на сервере, общая для всех его приложений
+  save: (choice) => api.savePreferences({ theme: choice }),
+})
+
+init()                       // при старте: запомненный выбор
+choose('dark')               // выбор здесь: применить, запомнить, сохранить
+adopt(session.preferences.theme) // выбрано в другом приложении: применить, не сохранять обратно
+```
+
+`choose()` и `toggle()` вызывают `save`; `adopt()` — нет и пропускает всё, кроме известного выбора. Состояние одно на страницу: все вызовы делят его.
+
+Скрипт первой отрисовки, читающий тот же ключ, убирает вспышку не той темы:
+
+```js
+try {
+  var theme = localStorage.getItem('theme')
+  if (theme === 'light' || theme === 'dark') document.documentElement.dataset.theme = theme
+} catch (e) {}
+```
+
+## Тихий вход
+
+Приложения с общим провайдером OpenID Connect пускают человека, вошедшего в одно из них, в следующее без кнопки «Войти»: сервер приложения начинает вход с `prompt=none`, провайдер отвечает сразу. `shouldSignInSilently()` решает при переходе; `silentSignInUrl()` — адрес, который начинает такой вход.
+
+```ts
+import { shouldSignInSilently, silentSignInUrl } from '@dskripchenko/ui'
+
+router.beforeEach(async (to) => {
+  await session.load()
+  if (shouldSignInSilently({ signedIn: !!session.user, offered: session.sso.silent }, to.query)) {
+    window.location.assign(silentSignInUrl(to.fullPath))
+    return false
+  }
+})
+```
+
+Только для гостя, которому сервер это предлагает (после отказа сервер перестаёт предлагать), и не на странице после выхода (`?out`) или с причиной неудачного входа (`?sso`).
+
 ## Кастомные темы
 
 Пользователь может определить свою тему — это просто ещё один селектор:
