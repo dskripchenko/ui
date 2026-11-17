@@ -84,6 +84,28 @@ document.documentElement.dataset.theme = prefersDark ? 'dark' : 'light'
 
 组件库提供 `useTheme()` composable，封装了属性读写和系统偏好订阅。
 
+## 用户的选择：`useColorTheme()`
+
+`useColorTheme()` 在 `useTheme()` 之上保存用户的选择 —— `light`、`dark` 或 `system`：存于 `localStorage`（键 `theme`，`COLOR_THEME_STORAGE_KEY`）以便下次首屏渲染；传入 `save` 时，同时保存到用户所有应用都读取的地方。选择为 `system` 时，页面跟随系统变化。
+
+```ts
+import { useColorTheme } from '@dskripchenko/ui'
+
+const { theme, choice, init, choose, toggle, adopt } = useColorTheme({
+  save: (choice) => api.savePreferences({ theme: choice }),
+})
+
+init()                       // 启动时：已记住的选择
+choose('dark')               // 在此处选择：应用、记住、保存
+adopt(session.preferences.theme) // 在其他应用中选择：应用，不回写
+```
+
+`choose()` 与 `toggle()` 会调用 `save`；`adopt()` 不会，且忽略未知的值。整个页面共享同一状态。
+
+## 静默登录
+
+共享同一 OpenID Connect 提供方的应用，可让已在其中一个应用登录的用户无需点击“登录”即可进入下一个：应用服务器以 `prompt=none` 发起登录。`shouldSignInSilently()` 在导航时判断，`silentSignInUrl()` 返回发起地址 —— 仅对服务器提供该选项的访客生效，退出后（`?out`）或带有失败原因（`?sso`）时不生效。
+
 ## 自定义主题
 
 定义自己的主题——只是另一个选择器：

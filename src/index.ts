@@ -481,6 +481,10 @@ export { ru, en } from './locales/index.js'
 export type { UidLocale, UidPartialLocale, UidMediaLocale } from './locales/index.js'
 
 export { useTheme } from './composables/useTheme.js'
+export { useColorTheme, resetColorTheme, COLOR_THEME_STORAGE_KEY } from './composables/useColorTheme.js'
+export type { ThemeChoice, UseColorThemeOptions } from './composables/useColorTheme.js'
+export { shouldSignInSilently, silentSignInUrl } from './utils/silentSignIn.js'
+export type { SilentSignInState } from './utils/silentSignIn.js'
 export { trackFocusModality } from './composables/useFocusModality.js'
 export type { Theme } from './composables/useTheme.js'
 
