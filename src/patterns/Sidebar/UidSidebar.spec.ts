@@ -153,6 +153,16 @@ describe('UidSidebarItem to / RouterLink', () => {
     expect(base).toMatch(/border-width:\s*0/)
   })
 
+  // The line under the sidebar's header and the one under the top bar are one line (the shell bar's height).
+  it('the header is as tall as the top bar, with its line', () => {
+    const header = /\.uid-pattern-sidebar__header \{([^}]*)\}/.exec(sidebarCss)?.[1] ?? ''
+    const topBar = /\.uid-top-bar \{([^}]*)\}/.exec(readFileSync(resolve(process.cwd(), 'src/patterns/TopBar/UidTopBar.css'), 'utf8'))?.[1] ?? ''
+    expect(header).toContain('min-height: var(--uid-shell-bar-height, 56px)')
+    expect(topBar).toContain('height: var(--uid-shell-bar-height, 56px)')
+    expect(header).toContain('border-bottom: 1px solid var(--uid-border-subtle)')
+    expect(topBar).toContain('border-bottom: 1px solid var(--uid-border-subtle)')
+  })
+
   // A <button> item would show the browser's own button: border, grey background, centred text.
   it('a button item drops the browser button look', () => {
     const rule = /button\.uid-sidebar-item \{([^}]*)\}/.exec(sidebarCss)?.[1] ?? ''

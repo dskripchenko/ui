@@ -30,8 +30,12 @@
 
 /* Header / Footer */
 .uid-pattern-sidebar__header {
-  padding: var(--uid-space-md);
-  border-bottom: 1px solid var(--uid-color-border);
+  /* As tall as the top bar, its line included: the two lines under them meet. */
+  display: flex;
+  align-items: center;
+  min-height: var(--uid-shell-bar-height, 56px);
+  padding: 0 var(--uid-space-md);
+  border-bottom: 1px solid var(--uid-border-subtle);
   flex-shrink: 0;
 }
 

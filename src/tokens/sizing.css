@@ -2,4 +2,6 @@
   --uid-size-sm:  32px;
   --uid-size-md:  40px;
   --uid-size-lg:  48px;
+  /* The application shell's bars: the top bar and the sidebar's header share one line under them. */
+  --uid-shell-bar-height: 56px;
 }

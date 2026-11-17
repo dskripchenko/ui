@@ -2,7 +2,7 @@
   display: flex;
   gap: var(--uid-space-sm);
   align-items: center;
-  height: 56px;
+  height: var(--uid-shell-bar-height, 56px);
   padding: 0 var(--uid-space-lg);
   border-bottom: 1px solid var(--uid-border-subtle);
   background: var(--uid-surface-raised);
