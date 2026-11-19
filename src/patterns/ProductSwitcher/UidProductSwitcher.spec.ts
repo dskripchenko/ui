@@ -40,4 +40,29 @@ describe('UidProductSwitcher', () => {
     const wrapper = mount(UidProductSwitcher, { props: { items: [{ key: 'a', label: 'Alpha', href: '/a' }] } })
     expect(wrapper.find('.uid-product-switcher__letter').text()).toBe('A')
   })
+
+  it('shows what waits in another product over its icon, never on the current one', () => {
+    const wrapper = mount(UidProductSwitcher, {
+      props: {
+        items: [{ ...items[0]!, badge: 3 }, { ...items[1]!, badge: 5 }],
+        badgeLabel: (name: string, n: number) => `${name}, ${n} new`,
+      },
+    })
+    expect(wrapper.find('[data-test="product-badge-docs"] .uid-notification-badge__count').text()).toBe('3')
+    expect(wrapper.find('[data-test="product-badge-tasks"] .uid-notification-badge__count').exists()).toBe(false)
+    expect(wrapper.findAll('a')[0]?.attributes('aria-label')).toBe('Docs, 3 new')
+    expect(wrapper.findAll('a')[1]?.attributes('aria-label')).toBe('Tasks')
+  })
+
+  it('shows no count for nothing, and 99+ for a lot', () => {
+    const none = mount(UidProductSwitcher, { props: { items: [{ ...items[0]!, badge: 0 }, items[1]!] } })
+    expect(none.find('.uid-notification-badge__count').exists()).toBe(false)
+    const many = mount(UidProductSwitcher, { props: { items: [{ ...items[0]!, badge: 250 }, items[1]!] } })
+    expect(many.find('.uid-notification-badge__count').text()).toBe('99+')
+  })
+
+  it('marks the compact button when something waits in another product', () => {
+    const wrapper = mount(UidProductSwitcher, { props: { items: [{ ...items[0]!, badge: 2 }, items[1]!], compact: true } })
+    expect(wrapper.find('.uid-notification-badge__dot').exists()).toBe(true)
+  })
 })

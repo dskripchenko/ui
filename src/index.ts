@@ -483,6 +483,8 @@ export type { UidLocale, UidPartialLocale, UidMediaLocale } from './locales/inde
 export { useTheme } from './composables/useTheme.js'
 export { useColorTheme, resetColorTheme, COLOR_THEME_STORAGE_KEY } from './composables/useColorTheme.js'
 export type { ThemeChoice, UseColorThemeOptions } from './composables/useColorTheme.js'
+export { useProductBadges } from './composables/useProductBadges.js'
+export type { ProductAddress, UseProductBadgesOptions } from './composables/useProductBadges.js'
 export { shouldSignInSilently, silentSignInUrl } from './utils/silentSignIn.js'
 export type { SilentSignInState } from './utils/silentSignIn.js'
 export { trackFocusModality } from './composables/useFocusModality.js'
