@@ -71,3 +71,14 @@
   padding: 0 4px;
   font-size: 10px;
 }
+
+/*
+ * The segments stand side by side: a count centred on the corner (as on the
+ * bell) would cover the next product. Here it keeps to its own segment — its
+ * right edge on the segment's, «12» and «99+» growing over its own icon.
+ */
+.uid-product-switcher__badge.uid-notification-badge--top-right .uid-notification-badge__count,
+.uid-product-switcher__badge.uid-notification-badge--top-right .uid-notification-badge__dot {
+  right: 0;
+  transform: translateY(-40%);
+}
