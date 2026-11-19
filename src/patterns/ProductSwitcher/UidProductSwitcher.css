@@ -61,3 +61,13 @@
   font-weight: var(--uid-font-weight-semibold);
   text-transform: uppercase;
 }
+
+/* A product's count over its icon, on the corner as on the bell, a size smaller. */
+.uid-product-switcher__badge {
+  --uid-notif-badge-size: 16px;
+}
+
+.uid-product-switcher__badge .uid-notification-badge__count {
+  padding: 0 4px;
+  font-size: 10px;
+}
