@@ -1,5 +1,11 @@
 # @dskripchenko/ui
 
+## 1.67.1
+
+### Patch Changes
+
+- 741c286: `UidProductSwitcher`: a product's count keeps to its own segment (its right edge on the segment's) instead of covering the next product when it is two or three digits wide.
+
 ## 1.67.0
 
 ### Minor Changes
